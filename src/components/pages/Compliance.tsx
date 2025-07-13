@@ -5,7 +5,6 @@ export default function Compliance() {
   const complianceVendors = [
     { name: 'Supabase', status: 'Compliant', certs: ['SOC 2', 'HIPAA'], lastAudit: '2024-11-15' },
     { name: 'GitHub Enterprise', status: 'Compliant', certs: ['SOC 2', 'ISO 27001'], lastAudit: '2024-10-20' },
-    { name: 'TradingView', status: 'Review', certs: ['SOC 2'], lastAudit: '2024-09-10' },
     { name: 'JotForm Enterprise', status: 'Pending', certs: ['GDPR'], lastAudit: '2024-08-05' },
   ];
 

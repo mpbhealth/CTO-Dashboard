@@ -1,0 +1,112 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-primary: theme('colors.slate.900');
+    --color-muted: theme('colors.slate.600');
+    --color-accent: theme('colors.indigo.600');
+    --color-accent-hover: theme('colors.indigo.700');
+  }
+  
+  /* Ensure all menu items are clickable */
+  button, a {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+  }
+  
+  /* Fix for sidebar nav items */
+  nav ul li, 
+  nav ul li button, 
+  nav div,
+  .sidebar-item {
+    pointer-events: auto !important; 
+    cursor: pointer !important;
+    position: relative;
+    z-index: 41;
+  }
+}
+
+@layer utilities {
+  .text-primary {
+    color: var(--color-primary);
+  }
+  
+  .text-muted {
+    color: var(--color-muted);
+  }
+  
+  .bg-primary {
+    background-color: var(--color-primary);
+  }
+  
+  .bg-accent {
+    background-color: var(--color-accent);
+  }
+  
+  .hover\:bg-accent:hover {
+    background-color: var(--color-accent-hover);
+  }
+  
+  /* Fix for sidebar menu hover */
+  .hover\:bg-slate-800:hover {
+    background-color: theme('colors.slate.800');
+  }
+  
+  /* Fix for sidebar menu items */
+  .sidebar-menu-item {
+    position: relative;
+    z-index: 45;
+    pointer-events: auto !important;
+  }
+
+  /* Critical sidebar fixes */
+  .sidebar-wrapper {
+    pointer-events: auto !important;
+    position: relative;
+    z-index: 40;
+  }
+  
+  .sidebar-category {
+    position: relative;
+    z-index: 41;
+    pointer-events: auto !important;
+  }
+  
+  .sidebar-btn {
+    position: relative;
+    z-index: 45;
+    pointer-events: auto !important;
+  }
+  
+  .sidebar-icon {
+    pointer-events: auto !important;
+  }
+  
+  .sidebar-section {
+    position: relative;
+    z-index: 42;
+    pointer-events: auto !important;
+  }
+  
+  /* Mobile menu fixes */
+  @media (max-width: 768px) {
+    .sidebar-wrapper {
+      z-index: 999;
+    }
+    
+    .sidebar-btn, 
+    .sidebar-menu-item,
+    .sidebar-category {
+      z-index: 1000;
+    }
+  }
+  
+  /* Add debug outline - uncomment if needed for troubleshooting */
+  /* 
+  .sidebar-debug * {
+    outline: 1px solid rgba(255,0,0,0.2);
+  }
+  */
+}

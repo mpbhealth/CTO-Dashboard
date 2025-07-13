@@ -1,0 +1,193 @@
+import React from 'react';
+import { Shield, CheckCircle, AlertTriangle, Clock, FileText } from 'lucide-react';
+
+export default function Compliance() {
+  const complianceVendors = [
+    { name: 'Supabase', status: 'Compliant', certs: ['SOC 2', 'HIPAA'], lastAudit: '2024-11-15' },
+    { name: 'GitHub Enterprise', status: 'Compliant', certs: ['SOC 2', 'ISO 27001'], lastAudit: '2024-10-20' },
+    { name: 'TradingView', status: 'Review', certs: ['SOC 2'], lastAudit: '2024-09-10' },
+    { name: 'JotForm Enterprise', status: 'Pending', certs: ['GDPR'], lastAudit: '2024-08-05' },
+  ];
+
+  const auditLogs = [
+    { date: '2024-12-15', event: 'HIPAA Risk Assessment Completed', severity: 'info', details: 'No critical findings identified' },
+    { date: '2024-12-10', event: 'Data Encryption Audit', severity: 'warning', details: 'Legacy system encryption needs update' },
+    { date: '2024-12-05', event: 'Access Control Review', severity: 'success', details: 'All access controls properly configured' },
+    { date: '2024-11-28', event: 'Vendor Security Assessment', severity: 'info', details: 'Quarterly vendor security review completed' },
+  ];
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'Compliant':
+        return <CheckCircle className="w-5 h-5 text-emerald-600" />;
+      case 'Review':
+        return <AlertTriangle className="w-5 h-5 text-amber-600" />;
+      case 'Pending':
+        return <Clock className="w-5 h-5 text-red-600" />;
+      default:
+        return <Shield className="w-5 h-5 text-slate-600" />;
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'Compliant':
+        return 'bg-emerald-100 text-emerald-800';
+      case 'Review':
+        return 'bg-amber-100 text-amber-800';
+      case 'Pending':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-slate-100 text-slate-800';
+    }
+  };
+
+  const getSeverityColor = (severity: string) => {
+    switch (severity) {
+      case 'success':
+        return 'bg-emerald-100 text-emerald-800';
+      case 'warning':
+        return 'bg-amber-100 text-amber-800';
+      case 'error':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-blue-100 text-blue-800';
+    }
+  };
+
+  return (
+    <div className="space-y-8">
+      {/* Header */}
+      <div>
+        <h1 className="text-3xl font-bold text-slate-900">Security & Compliance</h1>
+        <p className="text-slate-600 mt-2">Monitor compliance status, security audits, and data governance</p>
+      </div>
+
+      {/* Compliance Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center">
+              <CheckCircle className="w-6 h-6 text-emerald-600" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-slate-600">HIPAA Compliant</p>
+              <p className="text-2xl font-bold text-emerald-600">98%</p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+              <Shield className="w-6 h-6 text-blue-600" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-slate-600">SOC 2 Status</p>
+              <p className="text-2xl font-bold text-blue-600">Active</p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center">
+              <AlertTriangle className="w-6 h-6 text-amber-600" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-slate-600">Open Issues</p>
+              <p className="text-2xl font-bold text-amber-600">3</p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+              <FileText className="w-6 h-6 text-purple-600" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-slate-600">Last Audit</p>
+              <p className="text-lg font-bold text-slate-900">Dec 15</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Vendor Compliance */}
+      <div className="bg-white rounded-xl shadow-sm border border-slate-200">
+        <div className="p-6 border-b border-slate-200">
+          <h2 className="text-xl font-semibold text-slate-900">Vendor Compliance Status</h2>
+          <p className="text-slate-600 mt-1">Track compliance certifications for all third-party vendors</p>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-slate-50">
+              <tr>
+                <th className="text-left px-6 py-4 text-sm font-semibold text-slate-900">Vendor</th>
+                <th className="text-left px-6 py-4 text-sm font-semibold text-slate-900">Status</th>
+                <th className="text-left px-6 py-4 text-sm font-semibold text-slate-900">Certifications</th>
+                <th className="text-left px-6 py-4 text-sm font-semibold text-slate-900">Last Audit</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-200">
+              {complianceVendors.map((vendor, index) => (
+                <tr key={index} className="hover:bg-slate-50 transition-colors">
+                  <td className="px-6 py-4">
+                    <div className="flex items-center space-x-3">
+                      {getStatusIcon(vendor.status)}
+                      <span className="font-medium text-slate-900">{vendor.name}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(vendor.status)}`}>
+                      {vendor.status}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex flex-wrap gap-1">
+                      {vendor.certs.map((cert, certIndex) => (
+                        <span key={certIndex} className="px-2 py-1 bg-slate-100 text-slate-700 rounded text-xs">
+                          {cert}
+                        </span>
+                      ))}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 text-sm text-slate-900">
+                    {new Date(vendor.lastAudit).toLocaleDateString()}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Audit Log */}
+      <div className="bg-white rounded-xl shadow-sm border border-slate-200">
+        <div className="p-6 border-b border-slate-200">
+          <h2 className="text-xl font-semibold text-slate-900">Recent Audit Activity</h2>
+          <p className="text-slate-600 mt-1">Security and compliance audit trail</p>
+        </div>
+        <div className="p-6">
+          <div className="space-y-4">
+            {auditLogs.map((log, index) => (
+              <div key={index} className="flex items-start space-x-4 p-4 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
+                <div className={`px-2 py-1 rounded text-xs font-medium ${getSeverityColor(log.severity)}`}>
+                  {log.severity.toUpperCase()}
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-medium text-slate-900">{log.event}</h3>
+                    <span className="text-sm text-slate-600">{new Date(log.date).toLocaleDateString()}</span>
+                  </div>
+                  <p className="text-sm text-slate-600 mt-1">{log.details}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

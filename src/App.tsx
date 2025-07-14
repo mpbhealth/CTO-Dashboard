@@ -9,6 +9,7 @@ import AdvisorPerformance from './components/pages/AdvisorPerformance';
 import TechStack from './components/pages/TechStack';
 import Roadmap from './components/pages/Roadmap';
 import RoadVisualizerWithFilters from './components/pages/RoadVisualizerWithFilters';
+import QuickLinks from './components/pages/QuickLinks';
 import RoadmapPresentation from './components/pages/RoadmapPresentation';
 import Projects from './components/pages/Projects';
 import Compliance from './components/pages/Compliance';
@@ -75,6 +76,8 @@ function App() {
         return <Roadmap />;
       case 'road-visualizer':
         return <RoadVisualizerWithFilters />;
+      case 'quick-links':
+        return <QuickLinks />;
       case 'roadmap-presentation':
         return <RoadmapPresentation />;
       case 'projects':

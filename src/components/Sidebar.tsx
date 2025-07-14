@@ -29,6 +29,7 @@ import {
   Menu,
   X,
   ChevronsLeft,
+  Link2,
   ChevronsRight
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
@@ -48,6 +49,7 @@ const menuItems = [
   { id: 'advisor-performance', label: 'Advisor Performance', icon: Award, category: 'analytics' },
   { id: 'marketing-analytics', label: 'Marketing Analytics', icon: LineChart, category: 'analytics' },
   { id: 'tech-stack', label: 'Tech Stack', icon: Code2, category: 'development' },
+  { id: 'quick-links', label: 'QuickLinks Directory', icon: Link2, category: 'development' },
   { id: 'roadmap', label: 'Roadmap', icon: Calendar, category: 'development' },
   { id: 'road-visualizer', label: 'Roadmap Visualizer', icon: Map, category: 'development' },
   { id: 'roadmap-presentation', label: 'Roadmap Presentation', icon: Presentation, category: 'development' },

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Upload, CheckCircle, AlertCircle, RefreshCw, FileUp } from 'lucide-react';
 import Papa from 'papaparse';
-import { UniversalImportRecord, processUniversalImport } from '../../lib/supabaseUtils';
+import { UniversalImportRecord, processUniversalImport, sanitizeObject, sanitizeString } from '../../lib/supabaseUtils';
 
 interface CsvUploaderProps {
   onSuccess?: () => void;
@@ -166,12 +166,15 @@ export default function CsvUploader({ onSuccess, onError }: CsvUploaderProps) {
           
           // Validate all rows
           results.data.forEach((row: any) => {
+            // Sanitize the row data first to prevent XSS
+            const sanitizedRow = sanitizeObject(row);
+            
             const { isValid, errors, validTypes } = validateRow(row);
             if (isValid) {
               // Convert the row to our universal format
-              validRows.push(row as UniversalImportRecord);
+              validRows.push(sanitizedRow as UniversalImportRecord);
             } else {
-              invalidRows.push({ row, errors });
+              invalidRows.push({ row: sanitizedRow, errors });
             }
           });
 

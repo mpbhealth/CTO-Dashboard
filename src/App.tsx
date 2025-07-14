@@ -33,13 +33,13 @@ function App() {
 
   // Detect mobile devices and set sidebar state accordingly
   useEffect(() => {
-    const checkIfMobile = () => {
+    function checkIfMobile() {
       const mobile = window.innerWidth < 768;
       setIsMobile(mobile);
       if (mobile) {
         setIsSidebarExpanded(false);
       }
-    };
+    }
     
     // Initial check
     checkIfMobile();

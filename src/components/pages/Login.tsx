@@ -55,19 +55,23 @@ export default function Login({ onLoginSuccess }: LoginProps) {
     setSuccess(null);
 
     try {
-      // Validate passcode
-      if (passcode !== '1977') {
-        throw new Error('Invalid passcode. Please enter the correct passcode to register.');
-      }
-
       // Validate password match
       if (password !== confirmPassword) {
         throw new Error('Passwords do not match.');
       }
 
-      // Register with Supabase
-      const { data, error } = await supabase.auth.signUp({
-        email,
+      // First verify passcode with edge function
+      const { data: verifyData, error: verifyError } = await supabase.functions.invoke('verify-passcode', {
+        body: { passcode },
+      });
+      
+      if (verifyError || !verifyData.valid) {
+        throw new Error(verifyError?.message || 'Invalid passcode. Please enter the correct passcode to register.');
+      }
+
+      // Then register with Supabase
+      const { data, error } = await supabase.auth.signUp({ 
+        email, 
         password,
         options: {
           data: {

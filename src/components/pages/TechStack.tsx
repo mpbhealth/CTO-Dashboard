@@ -9,10 +9,18 @@ type TechStackItem = Database['public']['Tables']['tech_stack']['Row'];
 
 export default function TechStack() {
   const { data: techStack, loading, error, refetch } = useTechStack();
+  const isMounted = useRef(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
   
   if (loading) {
     return (
@@ -70,13 +78,22 @@ export default function TechStack() {
 
         if (error) throw error;
         
-        // Refresh the data after successful deletion
-        refetch();
+        // Only update state if component is still mounted
+        if (isMounted.current) {
+          // Refresh the data after successful deletion
+          refetch();
+        }
       } catch (err) {
-        console.error('Error deleting technology:', err);
-        alert('Failed to delete technology. Please try again.');
+        // Only update state if component is still mounted
+        if (isMounted.current) {
+          console.error('Error deleting technology:', err);
+          alert('Failed to delete technology. Please try again.');
+        }
       } finally {
-        setDeletingId(null);
+        // Only update state if component is still mounted
+        if (isMounted.current) {
+          setDeletingId(null);
+        }
       }
     }
   };

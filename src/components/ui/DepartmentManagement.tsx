@@ -152,7 +152,7 @@ export default function DepartmentManagement({
     
     // Basic validation
     if (!formData.name.trim()) {
-      setFormError('Error: A department cannot be its own parent');
+      setFormError('Department name is required');
       setIsSubmitting(false);
       return;
     }
@@ -169,42 +169,24 @@ export default function DepartmentManagement({
         .map(item => item.trim())
         .filter(item => item.length > 0);
       
-      // Validate parent department (prevent circular reference)
-      if (formData.parent_department_id === selectedDepartment.id) {
-        setFormError('A department cannot be its own parent');
+      // Enhanced circular reference detection
+      const hasCycle = (startId: string, currentId: string | null, visited = new Set<string>()): boolean => {
+        if (!currentId) return false;
+        if (startId === currentId) return true;
+        if (visited.has(currentId)) return false;
+        
+        visited.add(currentId);
+        const parent = departments.find(d => d.id === currentId)?.parent_department_id;
+        
+        return hasCycle(startId, parent, visited);
+      };
+      
+      // Check for circular reference
+      if (formData.parent_department_id && 
+          hasCycle(selectedDepartment.id, formData.parent_department_id)) {
+        setFormError('Circular department reference detected. A department cannot be a descendant of itself.');
         setIsSubmitting(false);
         return;
-      }
-      
-      // Check for circular parent references
-      if (formData.parent_department_id) {
-        let parentId = formData.parent_department_id;
-        const visited = new Set();
-        let foundCircular = false;
-        
-        while (parentId) {
-          if (visited.has(parentId)) {
-            setFormError('Error: Circular department reference detected');
-            setIsSubmitting(false);
-            foundCircular = true;
-            return;
-          }
-          
-          visited.add(parentId);
-          const parent = departments.find(d => d.id === parentId);
-          parentId = parent?.parent_department_id || null;
-          
-          // If we've reached a department that would make our selected department its parent,
-          // that would create a cycle when we update
-          if (parentId === selectedDepartment.id) {
-            setFormError('Error: Circular department reference detected');
-            setIsSubmitting(false);
-            foundCircular = true;
-            return;
-          }
-        }
-        
-        if (foundCircular) return;
       }
       
       // Prepare update data with proper null handling

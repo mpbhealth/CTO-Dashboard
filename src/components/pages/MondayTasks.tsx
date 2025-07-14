@@ -61,8 +61,6 @@ export default function MondayTasks() {
   const [selectedStatus, setSelectedStatus] = useState('All');
   const [selectedTasks, setSelectedTasks] = useState<Set<string>>(new Set());
 
-  const MONDAY_API_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjMzMDUwODY1MywiYWFpIjoxMSwidWlkIjo1NDQyNTQ2NCwiaWFkIjoiMjAyNC0wMy0wOFQxNjo0OTo0OS4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MjA3NjA5MTIsInJnbiI6InVzZTEifQ.1Pvr4_W_VG-x4DOlskQXAI0t9CjsfTw89m894b8q8Oc';
-
   useEffect(() => {
     fetchMondayData();
   }, []);
@@ -95,11 +93,12 @@ export default function MondayTasks() {
       }
     `;
 
-    const response = await fetch('https://api.monday.com/v2', {
-      method: 'POST',
+    const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/monday-api`;
+    const response = await fetch(apiUrl, {
+      method: 'POST', 
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': MONDAY_API_TOKEN,
+        'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
       },
       body: JSON.stringify({ query }),
     });
@@ -144,11 +143,12 @@ export default function MondayTasks() {
       }
     `;
 
-    const response = await fetch('https://api.monday.com/v2', {
+    const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/monday-api`;
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': MONDAY_API_TOKEN,
+        'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
       },
       body: JSON.stringify({ query }),
     });

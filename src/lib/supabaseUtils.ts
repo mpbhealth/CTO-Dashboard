@@ -1,6 +1,42 @@
 import { supabase } from './supabase';
 
 /**
+ * Sanitizes a string to prevent XSS attacks
+ * @param input String to sanitize
+ * @returns Sanitized string
+ */
+export function sanitizeString(input: string | null | undefined): string {
+  if (input === null || input === undefined) return '';
+  
+  return String(input)
+    .replace(/[<>]/g, '') // Remove angle brackets to prevent HTML injection
+    .trim();
+}
+
+/**
+ * Sanitizes an object by sanitizing all string values
+ * @param obj Object to sanitize
+ * @returns New object with sanitized string values
+ */
+export function sanitizeObject<T extends Record<string, any>>(obj: T): T {
+  const result = {} as T;
+  
+  for (const [key, value] of Object.entries(obj)) {
+    if (typeof value === 'string') {
+      result[key as keyof T] = sanitizeString(value) as any;
+    } else if (Array.isArray(value)) {
+      result[key as keyof T] = value.map(item => 
+        typeof item === 'string' ? sanitizeString(item) : item
+      ) as any;
+    } else {
+      result[key as keyof T] = value;
+    }
+  }
+  
+  return result;
+}
+
+/**
  * Performs a batch upsert operation for an array of records
  * 
  * @param tableName The name of the table to upsert to
@@ -18,9 +54,12 @@ export async function batchUpsert<T extends Record<string, any>>(
   let inserted = 0;
   let errors = 0;
 
+  // Sanitize all records before inserting
+  const sanitizedRecords = records.map(record => sanitizeObject(record));
+
   // Process in batches
-  for (let i = 0; i < records.length; i += batchSize) {
-    const batch = records.slice(i, i + batchSize);
+  for (let i = 0; i < sanitizedRecords.length; i += batchSize) {
+    const batch = sanitizedRecords.slice(i, i + batchSize);
     const { error } = await supabase
       .from(tableName)
       .upsert(batch, { onConflict });

@@ -199,8 +199,8 @@ export default function AddDepartmentModal({ onClose, onSuccess, departments, em
                 className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               >
                 <option value="">Select a Manager</option>
-               {employees.map(emp => (
-                 <option key={emp.id} value={emp.id}>
+               {employees.filter(emp => emp.user_id).map(emp => (
+                 <option key={emp.id} value={emp.user_id}>
                    {emp.first_name} {emp.last_name} - {emp.title}
                  </option>
                ))}

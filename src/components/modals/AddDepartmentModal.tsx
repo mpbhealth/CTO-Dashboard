@@ -200,9 +200,9 @@ export default function AddDepartmentModal({ onClose, onSuccess, departments, em
               >
                 <option value="">Select a Manager</option>
                 {employees
-                  .filter(emp => emp.employment_status === 'active')
+                  .filter(emp => emp.employment_status === 'active' && emp.user_id)
                   .map(emp => (
-                  <option key={emp.id} value={emp.id}>
+                  <option key={emp.id} value={emp.user_id}>
                     {emp.first_name} {emp.last_name} - {emp.title}
                   </option>
                 ))}

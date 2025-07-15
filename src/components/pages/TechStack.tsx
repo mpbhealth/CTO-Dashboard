@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useTechStack } from '../../hooks/useSupabaseData';
 import { Server, Edit, Trash2, Plus, Search } from 'lucide-react';
 import AddTechnologyModal from '../modals/AddTechnologyModal';

@@ -13,6 +13,7 @@ import {
   LineChart,
   MousePointer,
   PieChart,
+  Plus,
   RefreshCw,
   Search,
   Settings,

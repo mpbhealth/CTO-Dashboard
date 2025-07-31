@@ -21,7 +21,9 @@ import {
   MousePointer,
   ShoppingCart,
   FileText,
-  Settings
+  Settings,
+  X,
+  AlertCircle
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import KPICard from '../ui/KPICard';
@@ -53,9 +55,15 @@ export default function MarketingAnalytics() {
   const [fbConnected, setFbConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
-  const [isConnecting, setIsConnecting] = useState(false);
-  const [connectionError, setConnectionError] = useState<string | null>(null);
   const [showGAForm, setShowGAForm] = useState(false);
+  const [showFBForm, setShowFBForm] = useState(false);
+  const [gaCredentials, setGaCredentials] = useState({
+    measurementId: '',
+    viewId: ''
+  });
+  const [fbCredentials, setFbCredentials] = useState({
+    pixelId: ''
+  });
   const [gaFormData, setGAFormData] = useState({
     analytics_key: '',
     view_id: '',
@@ -223,9 +231,6 @@ export default function MarketingAnalytics() {
 
     setIsConnecting(true);
     setConnectionError(null);
-
-    setIsConnecting(true);
-    setConnectionError(null);
     
     try {
       // Get current user for created_by field
@@ -241,6 +246,17 @@ export default function MarketingAnalytics() {
       if (existing && existing.length > 0) {
         // Update existing record
         const { data: marketing, error } = await supabase
+          .from('marketing_integrations')
+          .update({
+            ga_property_id: gaCredentials.measurementId,
+            ga_measurement_id: gaCredentials.viewId,
+            ga_connected: true
+          })
+          .eq('id', existing[0].id);
+
+        if (error) throw error;
+      }
+
       const result = await updateProperty(selectedPropertyId, {
         ga_property_id: gaCredentials.measurementId,
         ga_measurement_id: gaCredentials.viewId,
@@ -250,9 +266,20 @@ export default function MarketingAnalytics() {
       if (!result.success) {
         throw new Error(result.error);
       }
-    setConnectionError(null);
-    
-    try {
+
+      setGaConnected(true);
+      setShowGAForm(false);
+      setConnectionError(null);
+    } catch (error) {
+      console.error('Error connecting to Google Analytics:', error);
+      setConnectionError(error instanceof Error ? error.message : 'Failed to connect Google Analytics');
+    } finally {
+      setIsConnecting(false);
+    }
+  };
+
+  // Function to connect Facebook
+  const connectFacebook = async () => {
     if (!selectedPropertyId) {
       setConnectionError('Please select a property first');
       return;
@@ -260,7 +287,8 @@ export default function MarketingAnalytics() {
 
     setIsConnecting(true);
     setConnectionError(null);
-
+    
+    try {
       // Get current user for created_by field
       const result = await updateProperty(selectedPropertyId, {
         fb_pixel_id: fbCredentials.pixelId,
@@ -270,11 +298,13 @@ export default function MarketingAnalytics() {
       if (!result.success) {
         throw new Error(result.error);
       }
+
+      setFbConnected(true);
+      setShowFBForm(false);
+      setConnectionError(null);
+    } catch (error) {
       console.error('Error connecting to Facebook:', error);
       setConnectionError(error instanceof Error ? error.message : 'Failed to connect to Facebook');
-      setIsConfiguring(false);
-      setConnectionError(error instanceof Error ? error.message : 'Failed to connect Google Analytics');
-      setConnectionError(error instanceof Error ? error.message : 'Failed to connect Facebook');
     } finally {
       setIsConnecting(false);
     }
@@ -725,6 +755,7 @@ export default function MarketingAnalytics() {
 
       {/* Tab Content - only show if property is selected */}
       {selectedPropertyId && (
+      <>
       {activeTab === 'overview' && (
         <div className="space-y-8">
           {/* Website Traffic Chart */}
@@ -1416,6 +1447,7 @@ export default function MarketingAnalytics() {
           </div>
         </div>
       )}
+      </>
       )}
 
       {/* Add Property Modal */}

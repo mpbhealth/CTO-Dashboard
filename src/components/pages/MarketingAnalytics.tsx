@@ -313,10 +313,14 @@ export default function MarketingAnalytics() {
   // Function to add new property
   const handleAddProperty = async (propertyData: { name: string; website_url: string }) => {
     try {
+      setIsAddingProperty(true);
+      setError(null);
+      
       const result = await addProperty({
         name: propertyData.name,
-        website_url: propertyData.website_url,
+        website_url: formData.websiteUrl,
         ga_property_id: null,
+        ga_measurement_id: null,
         ga_measurement_id: null,
         ga_connected: false,
         fb_pixel_id: null,
@@ -327,8 +331,12 @@ export default function MarketingAnalytics() {
         setSelectedPropertyId(result.data.id);
         setIsAddPropertyModalOpen(false);
       }
+      setIsAddPropertyModalOpen(false);
+      // The refetch will happen automatically due to the hook
     } catch (error) {
-      console.error('Error adding property:', error);
+      setError(err instanceof Error ? err.message : 'Failed to add property');
+    } finally {
+      setIsAddingProperty(false);
     }
   };
 
@@ -1457,6 +1465,85 @@ export default function MarketingAnalytics() {
             <div className="flex items-center justify-between p-6 border-b border-slate-200">
               <h2 className="text-xl font-semibold text-slate-900">Add Marketing Property</h2>
               <button
+                onClick={() => setIsAddPropertyModalOpen(false)}
+                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.target as HTMLFormElement);
+              handleAddProperty({
+                name: formData.get('name') as string,
+                websiteUrl: formData.get('websiteUrl') as string
+              });
+            }} className="p-6 space-y-4">
+              {error && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-sm text-red-600">{error}</p>
+                </div>
+              )}
+
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-1">
+                  Property Name *
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  required
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  placeholder="e.g., MPB Health Website"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="websiteUrl" className="block text-sm font-medium text-slate-700 mb-1">
+                  Website URL *
+                </label>
+                <input
+                  type="url"
+                  id="websiteUrl"
+                  name="websiteUrl"
+                  required
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  placeholder="https://mpb.health"
+                />
+              </div>
+
+              <div className="flex items-center justify-end space-x-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setIsAddPropertyModalOpen(false)}
+                  className="px-4 py-2 text-slate-600 hover:text-slate-800 transition-colors"
+                  disabled={isAddingProperty}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isAddingProperty}
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isAddingProperty ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      <span>Adding...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="w-4 h-4" />
+                      <span>Add Property</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
                 onClick={() => setIsAddPropertyModalOpen(false)}
                 className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
               >

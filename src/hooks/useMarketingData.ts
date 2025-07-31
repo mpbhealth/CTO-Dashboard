@@ -65,8 +65,14 @@ export function useMarketingProperties() {
       const { data, error } = await supabase
         .from('marketing_properties')
         .insert([{
-          ...propertyData,
-          user_id: user.id
+          user_id: user.id,
+          name: propertyData.name,
+          website_url: propertyData.website_url,
+          ga_property_id: propertyData.ga_property_id,
+          ga_measurement_id: propertyData.ga_measurement_id,
+          ga_connected: propertyData.ga_connected || false,
+          fb_pixel_id: propertyData.fb_pixel_id,
+          fb_connected: propertyData.fb_connected || false
         }])
         .select()
         .single();

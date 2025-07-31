@@ -1,47 +1,32 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useMarketingProperties, useMarketingMetrics, aggregateMetrics, getTrafficSourceData } from '../../hooks/useMarketingData';
-import { 
-  BarChart3, 
-  TrendingUp, 
-  Clock,
-  Users, 
-  Globe, 
-  Filter,
-  RefreshCw, 
-  Download, 
-  Search, 
-  Plus,
-  ExternalLink,
-  CheckCircle,
-  AlertCircle
-} from 'lucide-react';
 import {
   ArrowUpRight,
   BarChart3,
   Calendar,
-  Clock,
   Download,
-  FileText,
-  Filter,
-  Globe,
-  LineChart,
-  MousePointer,
-  PieChart,
-  RefreshCw,
-  Search,
+  Plus,
   Settings,
-  ShoppingCart,
+  RefreshCw,
+  Globe,
+  MousePointer,
   Target,
-  TrendingUp,
-  Users,
-  X,
   Zap,
+  CheckCircle,
+  AlertCircle,
+  ExternalLink,
+  Filter,
+  X,
+  Clock,
+  TrendingUp,
+  FileText,
+  ShoppingCart,
+  Users,
+  LineChart
 } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
-import KPICard from '../ui/KPICard';
-import ExportDropdown from '../ui/ExportDropdown';
 import AddPropertyForm from '../ui/AddPropertyForm';
+import ExportDropdown from '../ui/ExportDropdown';
 import { 
   LineChart as RechartsLineChart, 
   Line, 
@@ -71,11 +56,6 @@ export default function MarketingAnalytics() {
   const [fbConnected, setFbConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
-  const { metrics, loading: metricsLoading, error: metricsError, kpis, trafficSources } = useMarketingMetrics(
-    selectedProperty, 
-    timeRange,
-    { source: sourceFilter, conversion: conversionFilter }
-  );
   const [showGAForm, setShowGAForm] = useState(false);
   const [showFBForm, setShowFBForm] = useState(false);
   const [gaCredentials, setGaCredentials] = useState({
@@ -893,7 +873,7 @@ export default function MarketingAnalytics() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="p-3 border border-slate-200 rounded-lg bg-white">
                 <div className="flex items-center space-x-2">
-                  <PieChart className="w-4 h-4 text-purple-600" />
+                  <RechartsPieChart className="w-4 h-4 text-purple-600" />
                   <span className="text-sm font-medium text-slate-900">Google Tag Manager</span>
                 </div>
               </div>

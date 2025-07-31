@@ -30,7 +30,8 @@ import {
   X,
   ChevronsLeft,
   Link2,
-  ChevronsRight
+  ChevronsRight,
+  CheckSquare
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
@@ -55,6 +56,7 @@ const menuItems = [
   { id: 'roadmap-presentation', label: 'Roadmap Presentation', icon: Presentation, category: 'development' },
   { id: 'projects', label: 'Projects', icon: FolderKanban, category: 'development' },
   { id: 'monday-tasks', label: 'Monday Tasks', icon: Zap, category: 'development' },
+  { id: 'assignments', label: 'Assignments', icon: CheckSquare, category: 'development' },
   { id: 'notepad', label: 'Notepad', icon: StickyNote, category: 'development' },
   { id: 'compliance', label: 'Compliance', icon: ShieldCheck, category: 'operations' },
   { id: 'saas', label: 'SaaS Spend', icon: Database, category: 'operations' },

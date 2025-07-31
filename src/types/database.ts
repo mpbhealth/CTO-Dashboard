@@ -9,6 +9,41 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      assignments: {
+        Row: {
+          id: string
+          title: string
+          description: string | null
+          assigned_to: string | null
+          project_id: string | null
+          status: 'todo' | 'in_progress' | 'done'
+          due_date: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          description?: string | null
+          assigned_to?: string | null
+          project_id?: string | null
+          status?: 'todo' | 'in_progress' | 'done'
+          due_date?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          description?: string | null
+          assigned_to?: string | null
+          project_id?: string | null
+          status?: 'todo' | 'in_progress' | 'done'
+          due_date?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
       member_status_updates: {
         Row: {
           id: string

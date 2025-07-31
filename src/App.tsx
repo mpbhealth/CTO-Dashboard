@@ -26,6 +26,7 @@ import PerformanceEvaluation from './components/pages/PerformanceEvaluation';
 import OrganizationalStructure from './components/pages/OrganizationalStructure';
 import PolicyManagement from './components/pages/PolicyManagement';
 import MarketingAnalytics from './components/pages/MarketingAnalytics';
+import Assignments from './components/pages/Assignments';
 
 function App() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -84,6 +85,8 @@ function App() {
         return <Projects />;
       case 'monday-tasks':
         return <MondayTasks />;
+      case 'assignments':
+        return <Assignments />;
       case 'compliance':
         return <Compliance />;
       case 'saas':

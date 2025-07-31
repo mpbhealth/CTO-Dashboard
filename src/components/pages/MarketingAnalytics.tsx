@@ -18,10 +18,8 @@ import {
   Target,
   ArrowUpRight,
   Calendar,
-  MousePointer,
   ShoppingCart,
   MousePointer
-  Target,
   MousePointer,
   X,
   AlertCircle,

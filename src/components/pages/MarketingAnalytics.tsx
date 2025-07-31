@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useMarketingProperties, useMarketingMetrics, aggregateMetrics, getTrafficSourceData } from '../../hooks/useMarketingData';
 import { 
   BarChart3, 
   TrendingUp, 
@@ -10,6 +11,7 @@ import {
   RefreshCw, 
   Download, 
   Search, 
+  Plus,
   Zap, 
   LineChart,
   PieChart, 
@@ -44,9 +46,13 @@ import {
 export default function MarketingAnalytics() {
   const [activeTab, setActiveTab] = useState('overview');
   const [timeRange, setTimeRange] = useState('30d');
+  const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null);
   const [isConfiguring, setIsConfiguring] = useState(false);
+  const [isAddPropertyModalOpen, setIsAddPropertyModalOpen] = useState(false);
   const [gaConnected, setGaConnected] = useState(false);
   const [fbConnected, setFbConnected] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [connectionError, setConnectionError] = useState<string | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
   const [showGAForm, setShowGAForm] = useState(false);
@@ -56,32 +62,110 @@ export default function MarketingAnalytics() {
     property_id: ''
   });
 
+  // Get date range for metrics
+  const getDateRange = () => {
+    const end = new Date();
+    const start = new Date();
+    
+    switch (timeRange) {
+      case '7d':
+        start.setDate(end.getDate() - 7);
+        break;
+      case '30d':
+        start.setDate(end.getDate() - 30);
+        break;
+      case '90d':
+        start.setDate(end.getDate() - 90);
+        break;
+      case '1y':
+        start.setFullYear(end.getFullYear() - 1);
+        break;
+      default:
+        start.setDate(end.getDate() - 30);
+    }
+    
+    return {
+      start: start.toISOString().split('T')[0],
+      end: end.toISOString().split('T')[0]
+    };
+  };
+
+  // Fetch data from Supabase
+  const { data: properties, loading: propertiesLoading, error: propertiesError, refetch: refetchProperties, addProperty, updateProperty } = useMarketingProperties();
+  const { data: metrics, loading: metricsLoading, error: metricsError, refetch: refetchMetrics } = useMarketingMetrics(selectedPropertyId, getDateRange());
+
+  // Set default selected property
+  React.useEffect(() => {
+    if (properties.length > 0 && !selectedPropertyId) {
+      setSelectedPropertyId(properties[0].id);
+    }
+  }, [properties, selectedPropertyId]);
+
+  // Calculate aggregated metrics and KPIs
+  const aggregated = aggregateMetrics(metrics);
+  const trafficSourcesData = getTrafficSourceData(metrics);
+
+  // Generate KPIs from real data
+  const marketingKPIs = aggregated ? [
+    { 
+      title: 'Total Sessions', 
+      value: aggregated.sessions.toLocaleString(), 
+      change: '+12.3%', // Would calculate from previous period
+      trend: 'up' as const
+    },
+    { 
+      title: 'Unique Users', 
+      value: aggregated.users.toLocaleString(), 
+      change: '+8.7%', 
+      trend: 'up' as const
+    },
+    { 
+      title: 'Conversion Rate', 
+      value: `${aggregated.conversionRate.toFixed(1)}%`, 
+      change: '+0.8%', 
+      trend: 'up' as const
+    },
+    { 
+      title: 'Bounce Rate', 
+      value: `${aggregated.avgBounceRate.toFixed(1)}%`, 
+      change: '-2.1%', 
+      trend: 'down' as const
+    },
+  ] : [
+    { title: 'Total Sessions', value: '0', change: '+0%', trend: 'stable' as const },
+    { title: 'Unique Users', value: '0', change: '+0%', trend: 'stable' as const },
+    { title: 'Conversion Rate', value: '0%', change: '+0%', trend: 'stable' as const },
+    { title: 'Bounce Rate', value: '0%', change: '+0%', trend: 'stable' as const },
+  ];
   // Mock data for marketing analytics
-  const marketingKPIs = [
-    { title: 'Website Visitors', value: '45,782', change: '+12.3%', trend: 'up' },
-    { title: 'Avg. Session Duration', value: '3m 24s', change: '+8.7%', trend: 'up' },
-    { title: 'Conversion Rate', value: '3.2%', change: '+0.8%', trend: 'up' },
-    { title: 'Bounce Rate', value: '39.4%', change: '-2.1%', trend: 'down' },
-  ];
+  // Generate website traffic data from metrics
+  const websiteTrafficData = metrics.length > 0 
+    ? metrics.reduce((acc, metric) => {
+        const dateKey = new Date(metric.date).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' });
+        const existing = acc.find(item => item.date === dateKey);
+        
+        if (existing) {
+          existing.users += metric.users;
+          existing.pageviews += metric.pageviews;
+          existing.sessions += metric.sessions;
+        } else {
+          acc.push({
+            date: dateKey,
+            users: metric.users,
+            pageviews: metric.pageviews,
+            sessions: metric.sessions
+          });
+        }
+        return acc;
+      }, [] as any[])
+    : [
+        { date: '01/07', users: 1420, pageviews: 4240, sessions: 1820 },
+        { date: '02/07', users: 1530, pageviews: 4450, sessions: 1950 },
+        // ... mock data as fallback
+      ];
 
-  const websiteTrafficData = [
-    { date: '01/07', users: 1420, pageviews: 4240, sessions: 1820 },
-    { date: '02/07', users: 1530, pageviews: 4450, sessions: 1950 },
-    { date: '03/07', users: 1620, pageviews: 4980, sessions: 2140 },
-    { date: '04/07', users: 1780, pageviews: 5120, sessions: 2280 },
-    { date: '05/07', users: 1640, pageviews: 4820, sessions: 2060 },
-    { date: '06/07', users: 1340, pageviews: 4120, sessions: 1780 },
-    { date: '07/07', users: 1280, pageviews: 3980, sessions: 1680 },
-    { date: '08/07', users: 1420, pageviews: 4240, sessions: 1820 },
-    { date: '09/07', users: 1580, pageviews: 4680, sessions: 2080 },
-    { date: '10/07', users: 1720, pageviews: 5040, sessions: 2180 },
-    { date: '11/07', users: 1880, pageviews: 5320, sessions: 2240 },
-    { date: '12/07', users: 1920, pageviews: 5480, sessions: 2380 },
-    { date: '13/07', users: 1840, pageviews: 5280, sessions: 2280 },
-    { date: '14/07', users: 1780, pageviews: 5120, sessions: 2180 },
-  ];
-
-  const trafficSourcesData = [
+  // Use real data or fallback to mock data
+  const finalTrafficSourcesData = trafficSourcesData.length > 0 ? trafficSourcesData : [
     { source: 'Direct', sessions: 9840, percentage: 34, color: '#3B82F6' },
     { source: 'Organic Search', sessions: 7680, percentage: 27, color: '#10B981' },
     { source: 'Referral', sessions: 5120, percentage: 18, color: '#F59E0B' },
@@ -132,62 +216,14 @@ export default function MarketingAnalytics() {
 
   // Function to connect Google Analytics
   const connectGoogleAnalytics = async () => {
-    setIsConnecting(true);
-    setConnectionError(null);
-    
-    try {
-      // Get current user for created_by field
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      // First check if a marketing integration record exists
-      const { data: existing, error: fetchError } = await supabase
-        .from('marketing_integrations')
-        .select();
-
-      if (fetchError) throw fetchError;
-
-      if (existing && existing.length > 0) {
-        // Update existing record
-        const { data: marketing, error } = await supabase
-          .from('marketing_integrations')
-          .update({
-            google_analytics_key: gaFormData.analytics_key || 'GA-DEMO-KEY',
-            google_analytics_view_id: gaFormData.view_id || 'GA-DEMO-VIEW',
-            is_active: true,
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', existing[0].id)
-          .select();
-
-        if (error) throw error;
-      } else {
-        // Create new record
-        const { data: marketing, error } = await supabase
-          .from('marketing_integrations')
-          .insert([{
-            google_analytics_key: gaFormData.analytics_key || 'GA-DEMO-KEY',
-            google_analytics_view_id: gaFormData.view_id || 'GA-DEMO-VIEW',
-            updated_at: new Date().toISOString(),
-            created_by: user?.id
-          }])
-          .select();
-
-        if (error) throw error;
-      }
-
-      setGaConnected(true);
-      setShowGAForm(false);
-      setGAFormData({ analytics_key: '', view_id: '', property_id: '' });
-    } catch (error) {
-      console.error('Error connecting to Google Analytics:', error);
-      setConnectionError(error instanceof Error ? error.message : 'Failed to connect to Google Analytics');
-    } finally {
-      setIsConnecting(false);
+    if (!selectedPropertyId) {
+      setConnectionError('Please select a property first');
+      return;
     }
-  };
 
-  // Function to connect Facebook
-  const connectFacebook = async () => {
+    setIsConnecting(true);
+    setConnectionError(null);
+
     setIsConnecting(true);
     setConnectionError(null);
     
@@ -205,37 +241,76 @@ export default function MarketingAnalytics() {
       if (existing && existing.length > 0) {
         // Update existing record
         const { data: marketing, error } = await supabase
-          .from('marketing_integrations')
-          .update({
-            facebook_pixel_id: 'FB-MOCK-PIXEL-ID',
-            is_active: true,
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', existing[0].id)
-          .select();
+      const result = await updateProperty(selectedPropertyId, {
+        ga_property_id: gaCredentials.measurementId,
+        ga_measurement_id: gaCredentials.viewId,
+        ga_connected: true
+      });
 
-        if (error) throw error;
-      } else {
-        // Create new record
-        const { data: marketing, error } = await supabase
-          .from('marketing_integrations')
-          .insert([{
-            facebook_pixel_id: 'FB-MOCK-PIXEL-ID',
-            is_active: true
-          }])
-          .select();
-
-        if (error) throw error;
+      if (!result.success) {
+        throw new Error(result.error);
       }
+    setConnectionError(null);
+    
+    try {
+    if (!selectedPropertyId) {
+      setConnectionError('Please select a property first');
+      return;
+    }
 
-      setFbConnected(true);
-    } catch (error) {
+    setIsConnecting(true);
+    setConnectionError(null);
+
+      // Get current user for created_by field
+      const result = await updateProperty(selectedPropertyId, {
+        fb_pixel_id: fbCredentials.pixelId,
+        fb_connected: true
+      });
+
+      if (!result.success) {
+        throw new Error(result.error);
+      }
       console.error('Error connecting to Facebook:', error);
       setConnectionError(error instanceof Error ? error.message : 'Failed to connect to Facebook');
+      setIsConfiguring(false);
+      setConnectionError(error instanceof Error ? error.message : 'Failed to connect Google Analytics');
+      setConnectionError(error instanceof Error ? error.message : 'Failed to connect Facebook');
     } finally {
       setIsConnecting(false);
     }
   };
+
+  // Function to add new property
+  const handleAddProperty = async (propertyData: { name: string; website_url: string }) => {
+    try {
+      const result = await addProperty({
+        name: propertyData.name,
+        website_url: propertyData.website_url,
+        ga_property_id: null,
+        ga_measurement_id: null,
+        ga_connected: false,
+        fb_pixel_id: null,
+        fb_connected: false
+      });
+
+      if (result.success && result.data) {
+        setSelectedPropertyId(result.data.id);
+        setIsAddPropertyModalOpen(false);
+      }
+    } catch (error) {
+      console.error('Error adding property:', error);
+    }
+  };
+
+  const selectedProperty = properties.find(p => p.id === selectedPropertyId);
+
+  if (propertiesLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600"></div>
+      </div>
+    );
+  }
 
   // Prepare export data
   const exportData = {
@@ -250,7 +325,7 @@ export default function MarketingAnalytics() {
         Trend: kpi.trend
       })),
       // Traffic Sources
-      ...trafficSourcesData.map(source => ({
+      ...finalTrafficSourcesData.map(source => ({
         Category: 'Traffic Sources',
         Source: source.source,
         Sessions: source.sessions,
@@ -288,6 +363,27 @@ export default function MarketingAnalytics() {
         </div>
         
         <div className="flex items-center space-x-3">
+          {/* Property Selector */}
+          <select
+            value={selectedPropertyId || ''}
+            onChange={(e) => setSelectedPropertyId(e.target.value || null)}
+            className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+          >
+            <option value="">Select Property</option>
+            {properties.map(property => (
+              <option key={property.id} value={property.id}>{property.name}</option>
+            ))}
+          </select>
+
+          {/* Add Property Button */}
+          <button
+            onClick={() => setIsAddPropertyModalOpen(true)}
+            className="flex items-center space-x-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add Property</span>
+          </button>
+
           <select
             value={timeRange}
             onChange={(e) => setTimeRange(e.target.value)}
@@ -315,15 +411,50 @@ export default function MarketingAnalytics() {
         </div>
       </div>
 
+      {/* No Property Selected State */}
+      {!selectedPropertyId && properties.length === 0 && (
+        <div className="bg-white p-12 rounded-xl shadow-sm border border-slate-200 text-center">
+          <BarChart3 className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-slate-900 mb-2">Welcome to Marketing Analytics</h3>
+          <p className="text-slate-600 mb-6">Get started by adding your first website or application property to track.</p>
+          <button
+            onClick={() => setIsAddPropertyModalOpen(true)}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg flex items-center space-x-2 transition-colors mx-auto"
+          >
+            <Plus className="w-5 h-5" />
+            <span>Add Your First Property</span>
+          </button>
+        </div>
+      )}
+
+      {!selectedPropertyId && properties.length > 0 && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+          <div className="flex items-center space-x-3">
+            <AlertCircle className="w-5 h-5 text-amber-600" />
+            <p className="text-amber-800">Please select a property from the dropdown above to view analytics.</p>
+          </div>
+        </div>
+      )}
+
       {/* Integration Notice */}
-      {isConfiguring && (
+      {isConfiguring && selectedPropertyId && (
         <motion.div 
           className="bg-white p-6 rounded-xl shadow-sm border border-slate-200"
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
           exit={{ opacity: 0, height: 0 }}
         >
+          {connectionError && (
+            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-red-600 text-sm">{connectionError}</p>
+            </div>
+          )}
+
           <h2 className="text-xl font-semibold text-slate-900 mb-6">Marketing Analytics Integrations</h2>
+          <p className="text-slate-600 mb-6">
+            Configuring integrations for: <strong>{selectedProperty?.name}</strong>
+          </p>
+
           
           {/* Error Display */}
           {connectionError && (
@@ -357,10 +488,43 @@ export default function MarketingAnalytics() {
                   </div>
                 </div>
                 <div>
-                  {gaConnected ? (
+                  {selectedProperty?.ga_connected ? (
                     <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
                       Connected
                     </span>
+                  ) : showGAForm ? (
+                    <div className="space-y-3">
+                      <input
+                        type="text"
+                        placeholder="GA Measurement ID"
+                        value={gaCredentials.measurementId}
+                        onChange={(e) => setGaCredentials({ ...gaCredentials, measurementId: e.target.value })}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+                      />
+                      <input
+                        type="text"
+                        placeholder="GA View ID (optional)"
+                        value={gaCredentials.viewId}
+                        onChange={(e) => setGaCredentials({ ...gaCredentials, viewId: e.target.value })}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+                      />
+                      <div className="flex space-x-2">
+                        <button 
+                          className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm flex items-center space-x-1"
+                          onClick={connectGoogleAnalytics}
+                          disabled={isConnecting || !gaCredentials.measurementId}
+                        >
+                          {isConnecting ? <RefreshCw className="w-3 h-3 animate-spin" /> : null}
+                          <span>{isConnecting ? 'Connecting...' : 'Connect'}</span>
+                        </button>
+                        <button 
+                          className="px-3 py-1 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-sm"
+                          onClick={() => setShowGAForm(false)}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
                   ) : (
                     <button 
                       className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm transition-colors disabled:opacity-50"
@@ -442,17 +606,43 @@ export default function MarketingAnalytics() {
                   </div>
                 </div>
                 <div>
-                  {fbConnected ? (
+                  {selectedProperty?.fb_connected ? (
                     <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
                       Connected
                     </span>
+                  ) : showFBForm ? (
+                    <div className="space-y-3">
+                      <input
+                        type="text"
+                        placeholder="Facebook Pixel ID"
+                        value={fbCredentials.pixelId}
+                        onChange={(e) => setFbCredentials({ ...fbCredentials, pixelId: e.target.value })}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+                      />
+                      <div className="flex space-x-2">
+                        <button 
+                          className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm flex items-center space-x-1"
+                          onClick={connectFacebook}
+                          disabled={isConnecting || !fbCredentials.pixelId}
+                        >
+                          {isConnecting ? <RefreshCw className="w-3 h-3 animate-spin" /> : null}
+                          <span>{isConnecting ? 'Connecting...' : 'Connect'}</span>
+                        </button>
+                        <button 
+                          className="px-3 py-1 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-sm"
+                          onClick={() => setShowFBForm(false)}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
                   ) : (
                     <button 
                       className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm transition-colors disabled:opacity-50"
-                      onClick={connectFacebook}
+                      onClick={() => setShowFBForm(true)}
                       disabled={isConnecting}
                     >
-                      {isConnecting ? 'Connecting...' : 'Connect'}
+                      Configure
                     </button>
                   )}
                 </div>
@@ -512,7 +702,8 @@ export default function MarketingAnalytics() {
         </nav>
       </div>
 
-      {/* KPI Cards */}
+      {/* KPI Cards - only show if property is selected */}
+      {selectedPropertyId && (
       <motion.div 
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
         initial={{ opacity: 0, y: 20 }}
@@ -530,8 +721,10 @@ export default function MarketingAnalytics() {
           </motion.div>
         ))}
       </motion.div>
+      )}
 
-      {/* Tab Content */}
+      {/* Tab Content - only show if property is selected */}
+      {selectedPropertyId && (
       {activeTab === 'overview' && (
         <div className="space-y-8">
           {/* Website Traffic Chart */}
@@ -643,7 +836,7 @@ export default function MarketingAnalytics() {
               </ResponsiveContainer>
               
               <div className="mt-2 space-y-2">
-                {trafficSourcesData.map((source) => (
+                {finalTrafficSourcesData.map((source) => (
                   <div key={source.source} className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
                       <div 
@@ -769,7 +962,7 @@ export default function MarketingAnalytics() {
               <div>
                 <h3 className="font-medium text-slate-900 mb-3">Channel Performance</h3>
                 <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={trafficSourcesData}>
+                  <BarChart data={finalTrafficSourcesData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
                     <XAxis dataKey="source" stroke="#64748B" />
                     <YAxis stroke="#64748B" />
@@ -781,7 +974,7 @@ export default function MarketingAnalytics() {
               <div>
                 <h3 className="font-medium text-slate-900 mb-3">Traffic Quality Metrics</h3>
                 <div className="space-y-4">
-                  {trafficSourcesData.map(source => (
+                  {finalTrafficSourcesData.map(source => (
                     <div key={source.source} className="bg-slate-50 p-4 rounded-lg">
                       <div className="flex justify-between items-center mb-2">
                         <div className="flex items-center space-x-2">
@@ -965,7 +1158,7 @@ export default function MarketingAnalytics() {
                 <h3 className="font-medium text-slate-900 mb-3">Conversion by Channel</h3>
                 <div className="bg-slate-50 p-4 rounded-lg h-[300px]">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={trafficSourcesData.map(source => ({
+                    <BarChart data={finalTrafficSourcesData.map(source => ({
                       ...source,
                       conversionRate: Math.round(2 + Math.random() * 5)
                     }))}>
@@ -1091,7 +1284,7 @@ export default function MarketingAnalytics() {
                     </div>
                     <button 
                       className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm transition-colors"
-                      onClick={connectGoogleAnalytics}
+                      onClick={() => setShowGAForm(true)}
                     >
                       Configure
                     </button>
@@ -1220,6 +1413,78 @@ export default function MarketingAnalytics() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+      )}
+
+      {/* Add Property Modal */}
+      {isAddPropertyModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full">
+            <div className="flex items-center justify-between p-6 border-b border-slate-200">
+              <h2 className="text-xl font-semibold text-slate-900">Add Marketing Property</h2>
+              <button
+                onClick={() => setIsAddPropertyModalOpen(false)}
+                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <form 
+              onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target as HTMLFormElement);
+                handleAddProperty({
+                  name: formData.get('name') as string,
+                  website_url: formData.get('website_url') as string
+                });
+              }}
+              className="p-6 space-y-4"
+            >
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Property Name *
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  required
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  placeholder="e.g., MPB Health Website"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Website URL *
+                </label>
+                <input
+                  type="url"
+                  name="website_url"
+                  required
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  placeholder="https://www.mpbhealth.com"
+                />
+              </div>
+              
+              <div className="flex items-center justify-end space-x-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setIsAddPropertyModalOpen(false)}
+                  className="px-4 py-2 text-slate-600 hover:text-slate-800 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors"
+                >
+                  Add Property
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

@@ -22,6 +22,9 @@ import {
   ShoppingCart,
   FileText,
   Settings,
+  Globe,
+  Target,
+  MousePointer,
   X,
   AlertCircle,
   CheckCircle,
@@ -51,13 +54,19 @@ import {
 export default function MarketingAnalytics() {
   const [activeTab, setActiveTab] = useState('overview');
   const [timeRange, setTimeRange] = useState('30d');
+  const [sourceFilter, setSourceFilter] = useState('');
+  const [conversionFilter, setConversionFilter] = useState('');
   const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null);
   const [isConfiguring, setIsConfiguring] = useState(false);
   const [isAddPropertyModalOpen, setIsAddPropertyModalOpen] = useState(false);
   const [gaConnected, setGaConnected] = useState(false);
   const [fbConnected, setFbConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
-  const [connectionError, setConnectionError] = useState<string | null>(null);
+  const { metrics, loading: metricsLoading, error: metricsError, kpis, trafficSources } = useMarketingMetrics(
+    selectedProperty, 
+    timeRange,
+    { source: sourceFilter, conversion: conversionFilter }
+  );
   const [showGAForm, setShowGAForm] = useState(false);
   const [showFBForm, setShowFBForm] = useState(false);
   const [gaCredentials, setGaCredentials] = useState({
@@ -216,6 +225,26 @@ export default function MarketingAnalytics() {
     { value: '1y', label: 'Last year' },
   ];
 
+  const trafficSources = [
+    { value: '', label: 'All Sources' },
+    { value: 'google', label: 'Google' },
+    { value: 'facebook', label: 'Facebook' },
+    { value: 'email', label: 'Email' },
+    { value: 'referral', label: 'Referral' },
+    { value: 'direct', label: 'Direct' },
+    { value: 'social', label: 'Social Media' },
+    { value: 'paid', label: 'Paid Ads' }
+  ];
+
+  const conversionTypes = [
+    { value: '', label: 'All Conversions' },
+    { value: 'signup', label: 'User Signup' },
+    { value: 'purchase', label: 'Purchase' },
+    { value: 'form_submission', label: 'Form Submission' },
+    { value: 'newsletter', label: 'Newsletter Subscribe' },
+    { value: 'download', label: 'Download' },
+    { value: 'contact', label: 'Contact Form' }
+  ];
   const tabs = [
     { id: 'overview', label: 'Overview', icon: BarChart3 },
     { id: 'traffic', label: 'Traffic Sources', icon: Globe },
@@ -318,6 +347,12 @@ export default function MarketingAnalytics() {
     setIsAddPropertyModalOpen(false);
   };
 
+  const clearFilters = () => {
+    setSourceFilter('');
+    setConversionFilter('');
+  };
+
+  const hasActiveFilters = sourceFilter || conversionFilter;
   const selectedProperty = properties.find(p => p.id === selectedPropertyId);
 
   if (propertiesLoading) {
@@ -492,6 +527,82 @@ export default function MarketingAnalytics() {
                 <Settings className="w-4 h-4" />
                 <span>Configure Integrations</span>
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Advanced Filters */}
+      {selectedProperty && (
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-3">
+              <Filter className="w-5 h-5 text-indigo-600" />
+              <h3 className="text-lg font-semibold text-slate-900">Advanced Filters</h3>
+              {hasActiveFilters && (
+                <span className="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full text-xs font-medium">
+                  {(sourceFilter ? 1 : 0) + (conversionFilter ? 1 : 0)} active
+                </span>
+              )}
+            </div>
+            {hasActiveFilters && (
+              <button
+                onClick={clearFilters}
+                className="flex items-center space-x-1 text-sm text-slate-600 hover:text-slate-800 transition-colors"
+              >
+                <X className="w-4 h-4" />
+                <span>Clear Filters</span>
+              </button>
+            )}
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                <div className="flex items-center space-x-2">
+                  <Globe className="w-4 h-4" />
+                  <span>Traffic Source</span>
+                </div>
+              </label>
+              <select
+                value={sourceFilter}
+                onChange={(e) => setSourceFilter(e.target.value)}
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              >
+                {trafficSources.map(source => (
+                  <option key={source.value} value={source.value}>{source.label}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                <div className="flex items-center space-x-2">
+                  <Target className="w-4 h-4" />
+                  <span>Conversion Type</span>
+                </div>
+              </label>
+              <select
+                value={conversionFilter}
+                onChange={(e) => setConversionFilter(e.target.value)}
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              >
+                {conversionTypes.map(conversion => (
+                  <option key={conversion.value} value={conversion.value}>{conversion.label}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex items-end">
+              <div className="text-sm text-slate-600">
+                <div className="flex items-center space-x-2 mb-1">
+                  <MousePointer className="w-4 h-4" />
+                  <span>Active Filters:</span>
+                </div>
+                <p className="text-xs">
+                  {!hasActiveFilters ? 'None selected' : 
+                   `${sourceFilter ? sourceFilter : 'All sources'}, ${conversionFilter ? conversionFilter : 'All conversions'}`}
+                </p>
+              </div>
             </div>
           </div>
         </div>

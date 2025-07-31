@@ -100,6 +100,7 @@ export interface Database {
           campaign_name: string | null
           revenue: number
           created_at: string
+          conversion_type: string | null
         }
         Insert: {
           id?: string
@@ -115,6 +116,7 @@ export interface Database {
           campaign_name?: string | null
           revenue?: number
           created_at?: string
+          conversion_type?: string | null
         }
         Update: {
           id?: string
@@ -130,6 +132,7 @@ export interface Database {
           campaign_name?: string | null
           revenue?: number
           created_at?: string
+          conversion_type?: string | null
         }
       }
       member_status_updates: {

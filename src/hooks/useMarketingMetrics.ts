@@ -15,9 +15,14 @@ export interface MarketingMetric {
   campaign_name: string | null;
   revenue: number;
   created_at: string;
+  conversion_type: string | null;
 }
 
-export function useMarketingMetrics(propertyId: string | null, timeRange: string = '30d') {
+export function useMarketingMetrics(
+  propertyId: string | null, 
+  timeRange: string = '30d',
+  filters: { source?: string; conversion?: string } = {}
+) {
   const [metrics, setMetrics] = useState<MarketingMetric[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -36,13 +41,22 @@ export function useMarketingMetrics(propertyId: string | null, timeRange: string
         const days = parseInt(timeRange.replace('d', ''), 10);
         const startDate = new Date(Date.now() - days * 86400000).toISOString().split('T')[0];
 
-        const { data, error } = await supabase
+        let query = supabase
           .from('marketing_metrics')
           .select('*')
           .eq('property_id', propertyId)
           .gte('date', startDate)
           .order('date', { ascending: true });
 
+        // Apply filters
+        if (filters.source) {
+          query = query.eq('traffic_source', filters.source);
+        }
+        if (filters.conversion) {
+          query = query.eq('conversion_type', filters.conversion);
+        }
+
+        const { data, error } = await query;
         if (error) throw error;
         setMetrics(data || []);
       } catch (err) {
@@ -54,7 +68,7 @@ export function useMarketingMetrics(propertyId: string | null, timeRange: string
     };
 
     fetchMetrics();
-  }, [propertyId, timeRange]);
+  }, [propertyId, timeRange, filters.source, filters.conversion]);
 
   // Calculate aggregated KPIs from metrics
   const calculateKPIs = () => {

@@ -404,78 +404,6 @@ export default function MarketingAnalytics() {
     filename: 'MPB_Health_Marketing_Analytics_Report'
   };
 
-  const handleManualReport = async () => {
-    try {
-      const { data, error } = await supabase.functions.invoke('monthly-marketing-report');
-      
-      if (error) throw error;
-      
-      alert('Monthly report generated successfully! Check the sync logs for details.');
-    } catch (err) {
-      console.error('Error generating report:', err);
-      alert('Failed to generate monthly report. Please try again.');
-    }
-  };
-
-  const handleIngestSampleData = async () => {
-    if (!selectedProperty) {
-      alert('Please select a property first');
-      return;
-    }
-
-    try {
-      // Generate sample GA4 data for the selected property
-      const sampleMetrics = generateSampleGAData();
-      
-      const { data, error } = await supabase.functions.invoke('ingest-marketing-metrics', {
-        body: {
-          property_id: selectedProperty,
-          metrics: sampleMetrics,
-          source: 'ga4_sample'
-        }
-      });
-      
-      if (error) throw error;
-      
-      alert(`Successfully ingested ${sampleMetrics.length} sample metrics! Refresh to see the data.`);
-      // Refresh the data
-      window.location.reload();
-    } catch (err) {
-      console.error('Error ingesting sample data:', err);
-      alert('Failed to ingest sample data. Please try again.');
-    }
-  };
-
-  const generateSampleGAData = () => {
-    const metrics = [];
-    const now = new Date();
-    
-    // Generate data for the last 30 days
-    for (let i = 30; i >= 0; i--) {
-      const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
-      const dateStr = date.toISOString().split('T')[0];
-      
-      // Generate realistic but random metrics
-      const baseSessions = 800 + Math.floor(Math.random() * 400);
-      const baseUsers = Math.floor(baseSessions * (0.7 + Math.random() * 0.2));
-      
-      metrics.push({
-        date: dateStr,
-        sessions: baseSessions,
-        users: baseUsers,
-        pageviews: Math.floor(baseSessions * (2 + Math.random() * 2)),
-        bounce_rate: 0.3 + Math.random() * 0.4,
-        conversions: Math.floor(baseSessions * (0.02 + Math.random() * 0.03)),
-        avg_session_duration: 180 + Math.random() * 240,
-        revenue: Math.floor(Math.random() * 5000),
-        traffic_source: ['google', 'facebook', 'email', 'direct', 'referral'][Math.floor(Math.random() * 5)],
-        conversion_type: ['signup', 'purchase', 'form_submission'][Math.floor(Math.random() * 3)]
-      });
-    }
-    
-    return metrics;
-  };
-
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -531,23 +459,6 @@ export default function MarketingAnalytics() {
           <button className="flex items-center space-x-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors">
             <RefreshCw className="w-4 h-4" />
             <span>Refresh</span>
-          </button>
-          
-          <button 
-            onClick={handleIngestSampleData}
-            disabled={!selectedProperty}
-            className="flex items-center space-x-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Add Sample Data</span>
-          </button>
-          
-          <button 
-            onClick={handleManualReport}
-            className="flex items-center space-x-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
-          >
-            <FileText className="w-4 h-4" />
-            <span>Generate Report</span>
           </button>
           
           <ExportDropdown data={exportData} />
@@ -980,6 +891,43 @@ export default function MarketingAnalytics() {
                   <span className="text-sm font-medium text-slate-900">Google Ads</span>
                 </div>
               </div>
+            </div>
+          </div>
+        </motion.div>
+      )}
+      
+      {/* Export Summary for Current View */}
+      {selectedProperty && filteredMetrics.length > 0 && (
+        <motion.div 
+          className="bg-gradient-to-r from-indigo-50 to-blue-50 border border-indigo-200 rounded-xl p-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.8 }}
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-indigo-900">Export Current View</h3>
+              <p className="text-sm text-indigo-700 mt-1">
+                {filteredMetrics.length} data points • {activeFiltersCount} filters applied • {timeRange} time range
+              </p>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {sourceFilter !== 'all' && (
+                  <span className="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full text-xs">
+                    Source: {sourceFilter}
+                  </span>
+                )}
+                {conversionFilter !== 'all' && (
+                  <span className="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full text-xs">
+                    Conversion: {conversionFilter}
+                  </span>
+                )}
+                <span className="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full text-xs">
+                  {timeRange} range
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center space-x-3">
+              <ExportDropdown data={filteredExportData} />
             </div>
           </div>
         </motion.div>

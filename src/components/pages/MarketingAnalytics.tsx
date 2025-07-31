@@ -126,18 +126,41 @@ export default function MarketingAnalytics() {
   const connectGoogleAnalytics = async () => {
     // In a real implementation, this would trigger OAuth flow
     try {
-      const { data: marketing, error } = await supabase
+      // First check if a marketing integration record exists
+      const { data: existing, error: fetchError } = await supabase
         .from('marketing_integrations')
-        .update({
-          google_analytics_key: 'GA-MOCK-KEY',
-          google_analytics_view_id: 'GA-MOCK-VIEW-ID',
-          is_active: true,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', '1')
         .select();
 
-      if (error) throw error;
+      if (fetchError) throw fetchError;
+
+      if (existing && existing.length > 0) {
+        // Update existing record
+        const { data: marketing, error } = await supabase
+          .from('marketing_integrations')
+          .update({
+            google_analytics_key: 'GA-MOCK-KEY',
+            google_analytics_view_id: 'GA-MOCK-VIEW-ID',
+            is_active: true,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', existing[0].id)
+          .select();
+
+        if (error) throw error;
+      } else {
+        // Create new record
+        const { data: marketing, error } = await supabase
+          .from('marketing_integrations')
+          .insert([{
+            google_analytics_key: 'GA-MOCK-KEY',
+            google_analytics_view_id: 'GA-MOCK-VIEW-ID',
+            is_active: true
+          }])
+          .select();
+
+        if (error) throw error;
+      }
+
       setGaConnected(true);
     } catch (error) {
       console.error('Error connecting to Google Analytics:', error);
@@ -149,17 +172,39 @@ export default function MarketingAnalytics() {
   const connectFacebook = async () => {
     // In a real implementation, this would trigger OAuth flow
     try {
-      const { data: marketing, error } = await supabase
+      // First check if a marketing integration record exists
+      const { data: existing, error: fetchError } = await supabase
         .from('marketing_integrations')
-        .update({
-          facebook_pixel_id: 'FB-MOCK-PIXEL-ID',
-          is_active: true,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', '1')
         .select();
 
-      if (error) throw error;
+      if (fetchError) throw fetchError;
+
+      if (existing && existing.length > 0) {
+        // Update existing record
+        const { data: marketing, error } = await supabase
+          .from('marketing_integrations')
+          .update({
+            facebook_pixel_id: 'FB-MOCK-PIXEL-ID',
+            is_active: true,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', existing[0].id)
+          .select();
+
+        if (error) throw error;
+      } else {
+        // Create new record
+        const { data: marketing, error } = await supabase
+          .from('marketing_integrations')
+          .insert([{
+            facebook_pixel_id: 'FB-MOCK-PIXEL-ID',
+            is_active: true
+          }])
+          .select();
+
+        if (error) throw error;
+      }
+
       setFbConnected(true);
     } catch (error) {
       console.error('Error connecting to Facebook:', error);

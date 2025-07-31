@@ -24,11 +24,10 @@ import { useAssignments } from '../../hooks/useAssignments';
 import { useProjects } from '../../hooks/useSupabaseData';
 import AssignmentForm from '../ui/AssignmentForm';
 import { Assignment, AssignmentCreateData } from '../../types/Assignment';
-import { supabase } from '../../lib/supabase';
 
 
 export default function Assignments() {
-  const { data: assignments, loading, error, refetch, addAssignment, updateAssignment, deleteAssignment } = useAssignments();
+  const { data: assignments, loading, error, refetch, addAssignment, updateAssignment, deleteAssignment, currentUser } = useAssignments();
   const { data: projects, loading: projectsLoading } = useProjects();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProject, setSelectedProject] = useState('All');
@@ -42,28 +41,14 @@ export default function Assignments() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
-  const [currentUser, setCurrentUser] = useState<any>(null);
   
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    assigned_to: '',
     project_id: '',
     status: 'todo',
     due_date: ''
   });
-
-  // Get current user on component mount
-  useEffect(() => {
-    const getCurrentUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setCurrentUser(user);
-      if (user) {
-        setFormData(prev => ({ ...prev, assigned_to: user.id }));
-      }
-    };
-    getCurrentUser();
-  }, []);
 
   const handleCreateAssignment = async (data: AssignmentCreateData) => {
     const result = await addAssignment(data);
@@ -174,7 +159,6 @@ export default function Assignments() {
       const result = await addAssignment({
         title: formData.title,
         description: formData.description || null,
-        assigned_to: formData.assigned_to,
         project_id: formData.project_id || null,
         status: formData.status,
         due_date: formData.due_date || null
@@ -188,7 +172,6 @@ export default function Assignments() {
       setFormData({
         title: '',
         description: '',
-        assigned_to: currentUser?.id || '',
         project_id: '',
         status: 'todo',
         due_date: ''
@@ -213,7 +196,6 @@ export default function Assignments() {
       const result = await updateAssignment(selectedAssignment.id, {
         title: formData.title,
         description: formData.description || null,
-        assigned_to: formData.assigned_to,
         project_id: formData.project_id || null,
         status: formData.status,
         due_date: formData.due_date || null
@@ -254,7 +236,6 @@ export default function Assignments() {
     setFormData({
       title: assignment.title,
       description: assignment.description || '',
-      assigned_to: assignment.assigned_to || '',
       project_id: assignment.project_id || '',
       status: assignment.status,
       due_date: assignment.due_date || ''
@@ -668,7 +649,6 @@ export default function Assignments() {
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         onCreate={handleCreateAssignment}
-        currentUserId={currentUser?.id}
       />
 
       {/* Edit Assignment Modal */}
@@ -773,22 +753,6 @@ export default function Assignments() {
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">
-                    Assigned To *
-                  </label>
-                  <select
-                    name="assigned_to"
-                    required
-                    value={formData.assigned_to}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                  >
-                    <option value="">Select Assignee</option>
-                    <option value={currentUser?.id || ''}>Me</option>
-                  </select>
                 </div>
               </div>
 

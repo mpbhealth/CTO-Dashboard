@@ -15,7 +15,6 @@ export interface Assignment {
 export interface AssignmentCreateData {
   title: string;
   description?: string;
-  assigned_to: string;
   project_id?: string;
   status: AssignmentStatus;
   due_date?: string;

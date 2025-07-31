@@ -1,32 +1,27 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useMarketingProperties, useMarketingMetrics, aggregateMetrics, getTrafficSourceData } from '../../hooks/useMarketingData';
-import { 
-  TrendingUp, 
-  Clock,
-  Users, 
-  Globe, 
-  Filter,
-  RefreshCw, 
-  Download, 
-  Search, 
-  Plus,
-  ExternalLink,
-  CheckCircle,
-  AlertCircle
-} from 'lucide-react';
 import {
   ArrowUpRight,
+  BarChart3,
   Calendar,
   Clock,
   Download,
+  FileText,
+  Filter,
+  Globe,
+  LineChart,
+  MousePointer,
+  PieChart,
+  RefreshCw,
+  Search,
+  Settings,
+  ShoppingCart,
+  Target,
+  TrendingUp,
   Users,
   X,
   Zap,
-  BarChart3,
-  DollarSign,
-  Activity,
-  Building2
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import KPICard from '../ui/KPICard';

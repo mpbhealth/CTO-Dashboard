@@ -196,12 +196,40 @@ export default function MarketingAnalytics() {
       // Get current user for created_by field
       const { data: { user } } = await supabase.auth.getUser();
       
-      // First check if a marketing integration record exists
-          updated_at: new Date().toISOString(),
-          created_by: user?.id
-        .from('marketing_integrations')
-        .select();
+        // First check if a marketing integration record exists
+        const { data: existing, error: fetchError } = await supabase
+          .from('marketing_integrations')
+          .select();
 
+        if (fetchError) throw fetchError;
+        
+        if (existing && existing.length > 0) {
+          // Update existing record
+          const { data, error } = await supabase
+            .from('marketing_integrations')
+            .update({
+              facebook_pixel_id: gaCredentials.pixelId || 'FB-MOCK-PIXEL-ID',
+              is_active: true,
+              updated_at: new Date().toISOString()
+            })
+            .eq('id', existing[0].id)
+            .select();
+          
+          if (error) throw error;
+        } else {
+          // Create new record
+          const { data, error } = await supabase
+            .from('marketing_integrations')
+            .insert([{
+              facebook_pixel_id: gaCredentials.pixelId || 'FB-MOCK-PIXEL-ID',
+              is_active: true,
+              updated_at: new Date().toISOString(),
+              created_by: user?.id
+            }])
+            .select();
+          
+          if (error) throw error;
+        }
       if (fetchError) throw fetchError;
 
       if (existing && existing.length > 0) {

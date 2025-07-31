@@ -216,7 +216,6 @@ export default function MondayTasks() {
             });
           });
         }
-        });
       });
 
       setTasks(allTasks);

@@ -23,11 +23,14 @@ import {
   FileText,
   Settings,
   X,
-  AlertCircle
+  AlertCircle,
+  CheckCircle,
+  ExternalLink
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import KPICard from '../ui/KPICard';
 import ExportDropdown from '../ui/ExportDropdown';
+import AddPropertyForm from '../ui/AddPropertyForm';
 import { 
   LineChart as RechartsLineChart, 
   Line, 
@@ -310,34 +313,9 @@ export default function MarketingAnalytics() {
     }
   };
 
-  // Function to add new property
-  const handleAddProperty = async (propertyData: { name: string; website_url: string }) => {
-    try {
-      setIsAddingProperty(true);
-      setError(null);
-      
-      const result = await addProperty({
-        name: propertyData.name,
-        website_url: formData.websiteUrl,
-        ga_property_id: null,
-        ga_measurement_id: null,
-        ga_measurement_id: null,
-        ga_connected: false,
-        fb_pixel_id: null,
-        fb_connected: false
-      });
-
-      if (result.success && result.data) {
-        setSelectedPropertyId(result.data.id);
-        setIsAddPropertyModalOpen(false);
-      }
-      setIsAddPropertyModalOpen(false);
-      // The refetch will happen automatically due to the hook
-    } catch (error) {
-      setError(err instanceof Error ? err.message : 'Failed to add property');
-    } finally {
-      setIsAddingProperty(false);
-    }
+  const handleAddPropertySuccess = () => {
+    refetchProperties();
+    setIsAddPropertyModalOpen(false);
   };
 
   const selectedProperty = properties.find(p => p.id === selectedPropertyId);
@@ -402,25 +380,20 @@ export default function MarketingAnalytics() {
         
         <div className="flex items-center space-x-3">
           {/* Property Selector */}
-          <select
-            value={selectedPropertyId || ''}
-            onChange={(e) => setSelectedPropertyId(e.target.value || null)}
-            className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-          >
-            <option value="">Select Property</option>
-            {properties.map(property => (
-              <option key={property.id} value={property.id}>{property.name}</option>
-            ))}
-          </select>
-
-          {/* Add Property Button */}
-          <button
-            onClick={() => setIsAddPropertyModalOpen(true)}
-            className="flex items-center space-x-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Add Property</span>
-          </button>
+          {properties.length > 0 && (
+            <select
+              value={selectedPropertyId || ''}
+              onChange={(e) => setSelectedPropertyId(e.target.value)}
+              className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            >
+              <option value="">Select Property</option>
+              {properties.map(property => (
+                <option key={property.id} value={property.id}>
+                  {property.name}
+                </option>
+              ))}
+            </select>
+          )}
 
           <select
             value={timeRange}
@@ -431,6 +404,14 @@ export default function MarketingAnalytics() {
               <option key={range.value} value={range.value}>{range.label}</option>
             ))}
           </select>
+          
+          <button
+            onClick={() => setIsAddPropertyModalOpen(true)}
+            className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add Property</span>
+          </button>
           
           <button 
             className="flex items-center space-x-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors"
@@ -449,15 +430,84 @@ export default function MarketingAnalytics() {
         </div>
       </div>
 
-      {/* No Property Selected State */}
-      {!selectedPropertyId && properties.length === 0 && (
-        <div className="bg-white p-12 rounded-xl shadow-sm border border-slate-200 text-center">
+      {/* Property Status & Connection Info */}
+      {selectedProperty && (
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text-slate-900 mb-2">{selectedProperty.name}</h2>
+              <div className="flex items-center space-x-4">
+                {selectedProperty.website_url && (
+                  <div className="flex items-center space-x-2 text-sm text-slate-600">
+                    <Globe className="w-4 h-4" />
+                    <a 
+                      href={selectedProperty.website_url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="hover:text-indigo-600 transition-colors"
+                    >
+                      {selectedProperty.website_url}
+                      <ExternalLink className="w-3 h-3 inline ml-1" />
+                    </a>
+                  </div>
+                )}
+                <div className="flex items-center space-x-2">
+                  {selectedProperty.ga_connected ? (
+                    <CheckCircle className="w-4 h-4 text-emerald-600" />
+                  ) : (
+                    <AlertCircle className="w-4 h-4 text-amber-600" />
+                  )}
+                  <span className="text-sm text-slate-600">
+                    GA4: {selectedProperty.ga_connected ? 'Connected' : 'Not Connected'}
+                  </span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  {selectedProperty.fb_connected ? (
+                    <CheckCircle className="w-4 h-4 text-emerald-600" />
+                  ) : (
+                    <AlertCircle className="w-4 h-4 text-amber-600" />
+                  )}
+                  <span className="text-sm text-slate-600">
+                    Facebook: {selectedProperty.fb_connected ? 'Connected' : 'Not Connected'}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center space-x-3">
+              <button
+                onClick={() => {
+                  setGaCredentials({
+                    measurementId: selectedProperty.ga_property_id || '',
+                    viewId: selectedProperty.ga_measurement_id || ''
+                  });
+                  setFbCredentials({
+                    pixelId: selectedProperty.fb_pixel_id || ''
+                  });
+                  setGaConnected(selectedProperty.ga_connected);
+                  setFbConnected(selectedProperty.fb_connected);
+                  setIsConfiguring(true);
+                }}
+                className="flex items-center space-x-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors"
+              >
+                <Settings className="w-4 h-4" />
+                <span>Configure Integrations</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Empty State - No Properties */}
+      {!propertiesLoading && properties.length === 0 && (
+        <div className="text-center py-16 bg-white rounded-xl shadow-sm border border-slate-200">
           <BarChart3 className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-slate-900 mb-2">Welcome to Marketing Analytics</h3>
-          <p className="text-slate-600 mb-6">Get started by adding your first website or application property to track.</p>
+          <h3 className="text-lg font-medium text-slate-900 mb-2">No Marketing Properties</h3>
+          <p className="text-slate-600 mb-6 max-w-md mx-auto">
+            Get started by adding your first website or application property to track analytics.
+          </p>
           <button
             onClick={() => setIsAddPropertyModalOpen(true)}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg flex items-center space-x-2 transition-colors mx-auto"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg inline-flex items-center space-x-2 transition-colors"
           >
             <Plus className="w-5 h-5" />
             <span>Add Your First Property</span>
@@ -740,25 +790,74 @@ export default function MarketingAnalytics() {
         </nav>
       </div>
 
-      {/* KPI Cards - only show if property is selected */}
-      {selectedPropertyId && (
-      <motion.div 
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
-        {marketingKPIs.map((metric, index) => (
-          <motion.div
-            key={metric.title}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: index * 0.1 }}
-          >
-            <KPICard data={metric} />
-          </motion.div>
-        ))}
-      </motion.div>
+      {/* KPI Cards - Only show if property selected */}
+      {selectedProperty && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {marketingKPIs.map((metric, index) => (
+            <motion.div
+              key={metric.title}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: index * 0.1 }}
+              className="bg-white p-6 rounded-xl shadow-sm border border-slate-200"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-slate-600 text-sm font-medium">{metric.title}</p>
+                  <p className="text-slate-900 text-3xl font-bold mt-1">{metric.value}</p>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <TrendingUp className={`w-4 h-4 ${metric.trend === 'up' ? 'text-emerald-600' : 'text-red-600'}`} />
+                  <span className={`text-sm font-medium ${metric.trend === 'up' ? 'text-emerald-600' : 'text-red-600'}`}>
+                    {metric.change}
+                  </span>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      )}
+
+      {/* Charts Section - Only show if property selected */}
+      {selectedProperty && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Sessions Over Time */}
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+            <h3 className="text-lg font-semibold text-slate-900 mb-4">Sessions Over Time</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <RechartsLineChart data={metrics.length > 0 ? metrics : []}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="date" />
+                <YAxis />
+                <Tooltip />
+                <Line type="monotone" dataKey="sessions" stroke="#3B82F6" strokeWidth={2} />
+              </RechartsLineChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Traffic Sources */}
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+            <h3 className="text-lg font-semibold text-slate-900 mb-4">Traffic Sources</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <RechartsPieChart>
+                <Pie
+                  data={[
+                    { name: 'Direct', value: 4567, fill: '#3B82F6' },
+                    { name: 'Organic Search', value: 3421, fill: '#10B981' },
+                    { name: 'Social Media', value: 2134, fill: '#F59E0B' },
+                    { name: 'Referral', value: 1876, fill: '#EF4444' },
+                  ]}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={80}
+                  dataKey="value"
+                  label
+                />
+                <Tooltip />
+              </RechartsPieChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
       )}
 
       {/* Tab Content - only show if property is selected */}
@@ -1459,154 +1558,11 @@ export default function MarketingAnalytics() {
       )}
 
       {/* Add Property Modal */}
-      {isAddPropertyModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-xl max-w-md w-full">
-            <div className="flex items-center justify-between p-6 border-b border-slate-200">
-              <h2 className="text-xl font-semibold text-slate-900">Add Marketing Property</h2>
-              <button
-                onClick={() => setIsAddPropertyModalOpen(false)}
-                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <form onSubmit={(e) => {
-              e.preventDefault();
-              const formData = new FormData(e.target as HTMLFormElement);
-              handleAddProperty({
-                name: formData.get('name') as string,
-                websiteUrl: formData.get('websiteUrl') as string
-              });
-            }} className="p-6 space-y-4">
-              {error && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                  <p className="text-sm text-red-600">{error}</p>
-                </div>
-              )}
-
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-1">
-                  Property Name *
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  required
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                  placeholder="e.g., MPB Health Website"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="websiteUrl" className="block text-sm font-medium text-slate-700 mb-1">
-                  Website URL *
-                </label>
-                <input
-                  type="url"
-                  id="websiteUrl"
-                  name="websiteUrl"
-                  required
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                  placeholder="https://mpb.health"
-                />
-              </div>
-
-              <div className="flex items-center justify-end space-x-3 pt-4">
-                <button
-                  type="button"
-                  onClick={() => setIsAddPropertyModalOpen(false)}
-                  className="px-4 py-2 text-slate-600 hover:text-slate-800 transition-colors"
-                  disabled={isAddingProperty}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={isAddingProperty}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isAddingProperty ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      <span>Adding...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Plus className="w-4 h-4" />
-                      <span>Add Property</span>
-                    </>
-                  )}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-                onClick={() => setIsAddPropertyModalOpen(false)}
-                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            
-            <form 
-              onSubmit={(e) => {
-                e.preventDefault();
-                const formData = new FormData(e.target as HTMLFormElement);
-                handleAddProperty({
-                  name: formData.get('name') as string,
-                  website_url: formData.get('website_url') as string
-                });
-              }}
-              className="p-6 space-y-4"
-            >
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Property Name *
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  required
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                  placeholder="e.g., MPB Health Website"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Website URL *
-                </label>
-                <input
-                  type="url"
-                  name="website_url"
-                  required
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                  placeholder="https://www.mpbhealth.com"
-                />
-              </div>
-              
-              <div className="flex items-center justify-end space-x-3 pt-4">
-                <button
-                  type="button"
-                  onClick={() => setIsAddPropertyModalOpen(false)}
-                  className="px-4 py-2 text-slate-600 hover:text-slate-800 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors"
-                >
-                  Add Property
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <AddPropertyForm
+        isOpen={isAddPropertyModalOpen}
+        onClose={() => setIsAddPropertyModalOpen(false)}
+        onSuccess={handleAddPropertySuccess}
+      />
     </div>
   );
 }

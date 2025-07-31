@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useMarketingProperties, useMarketingMetrics, aggregateMetrics, getTrafficSourceData } from '../../hooks/useMarketingData';
 import { 
-  BarChart3, 
   TrendingUp, 
   Clock,
   Users, 
@@ -22,18 +21,7 @@ import {
   Calendar,
   Clock,
   Download,
-  FileText,
-  Filter,
-  Globe,
-  LineChart,
-  MousePointer,
-  PieChart,
-  RefreshCw,
-  Search,
-  Settings,
-  ShoppingCart,
-  Target,
-  TrendingUp,
+import { BarChart3, DollarSign, Activity, Building2 } from 'lucide-react';
   Users,
   X,
   Zap,

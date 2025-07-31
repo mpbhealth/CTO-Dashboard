@@ -168,9 +168,10 @@ export default function MarketingAnalytics() {
             google_analytics_key: 'GA-MOCK-KEY',
           google_analytics_key: gaFormData.analytics_key || 'GA-DEMO-KEY',
           google_analytics_view_id: gaFormData.view_id || 'GA-DEMO-VIEW',
+            updated_at: new Date().toISOString(),
+            created_by: user?.id
           }])
-          updated_at: new Date().toISOString(),
-          created_by: user?.id
+          .select();
 
         if (error) throw error;
       }

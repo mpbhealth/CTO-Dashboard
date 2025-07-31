@@ -20,8 +20,7 @@ import {
   Calendar,
   MousePointer,
   ShoppingCart,
-  FileText,
-  Settings,
+  MousePointer
   Globe,
   Target,
   MousePointer,

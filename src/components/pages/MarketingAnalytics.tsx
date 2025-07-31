@@ -47,6 +47,14 @@ export default function MarketingAnalytics() {
   const [isConfiguring, setIsConfiguring] = useState(false);
   const [gaConnected, setGaConnected] = useState(false);
   const [fbConnected, setFbConnected] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [connectionError, setConnectionError] = useState<string | null>(null);
+  const [showGAForm, setShowGAForm] = useState(false);
+  const [gaFormData, setGAFormData] = useState({
+    analytics_key: '',
+    view_id: '',
+    property_id: ''
+  });
 
   // Mock data for marketing analytics
   const marketingKPIs = [
@@ -124,8 +132,13 @@ export default function MarketingAnalytics() {
 
   // Function to connect Google Analytics
   const connectGoogleAnalytics = async () => {
-    // In a real implementation, this would trigger OAuth flow
+    setIsConnecting(true);
+    setConnectionError(null);
+    
     try {
+      // Get current user for created_by field
+      const { data: { user } } = await supabase.auth.getUser();
+      
       // First check if a marketing integration record exists
       const { data: existing, error: fetchError } = await supabase
         .from('marketing_integrations')
@@ -153,27 +166,38 @@ export default function MarketingAnalytics() {
           .from('marketing_integrations')
           .insert([{
             google_analytics_key: 'GA-MOCK-KEY',
-            google_analytics_view_id: 'GA-MOCK-VIEW-ID',
-            is_active: true
+          google_analytics_key: gaFormData.analytics_key || 'GA-DEMO-KEY',
+          google_analytics_view_id: gaFormData.view_id || 'GA-DEMO-VIEW',
           }])
-          .select();
+          updated_at: new Date().toISOString(),
+          created_by: user?.id
 
         if (error) throw error;
       }
 
       setGaConnected(true);
+      setShowGAForm(false);
+      setGAFormData({ analytics_key: '', view_id: '', property_id: '' });
     } catch (error) {
       console.error('Error connecting to Google Analytics:', error);
-      // In real app, handle error better
+      setConnectionError(error instanceof Error ? error.message : 'Failed to connect to Google Analytics');
+    } finally {
+      setIsConnecting(false);
     }
   };
 
   // Function to connect Facebook
   const connectFacebook = async () => {
-    // In a real implementation, this would trigger OAuth flow
+    setIsConnecting(true);
+    setConnectionError(null);
+    
     try {
+      // Get current user for created_by field
+      const { data: { user } } = await supabase.auth.getUser();
+      
       // First check if a marketing integration record exists
-      const { data: existing, error: fetchError } = await supabase
+          updated_at: new Date().toISOString(),
+          created_by: user?.id
         .from('marketing_integrations')
         .select();
 
@@ -208,7 +232,9 @@ export default function MarketingAnalytics() {
       setFbConnected(true);
     } catch (error) {
       console.error('Error connecting to Facebook:', error);
-      // In real app, handle error better
+      setConnectionError(error instanceof Error ? error.message : 'Failed to connect to Facebook');
+    } finally {
+      setIsConnecting(false);
     }
   };
 
@@ -299,6 +325,26 @@ export default function MarketingAnalytics() {
           exit={{ opacity: 0, height: 0 }}
         >
           <h2 className="text-xl font-semibold text-slate-900 mb-6">Marketing Analytics Integrations</h2>
+          
+          {/* Error Display */}
+          {connectionError && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <div className="flex items-center space-x-2 text-red-800">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+                <span className="text-sm font-medium">Configuration Error</span>
+              </div>
+              <p className="text-sm text-red-700 mt-1">{connectionError}</p>
+              <button 
+                onClick={() => setConnectionError(null)}
+                className="mt-2 text-red-600 hover:text-red-800 text-xs underline"
+              >
+                Dismiss
+              </button>
+            </div>
+          )}
+          
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="border border-slate-200 rounded-lg p-4">
               <div className="flex items-center justify-between mb-4">
@@ -318,14 +364,68 @@ export default function MarketingAnalytics() {
                     </span>
                   ) : (
                     <button 
-                      className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm"
-                      onClick={connectGoogleAnalytics}
+                      className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm transition-colors disabled:opacity-50"
+                      onClick={() => setShowGAForm(true)}
+                      disabled={isConnecting}
                     >
-                      Connect
+                      {isConnecting ? 'Connecting...' : 'Configure'}
                     </button>
                   )}
                 </div>
               </div>
+              
+              {/* Google Analytics Configuration Form */}
+              {showGAForm && !gaConnected && (
+                <div className="mt-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
+                  <h4 className="font-medium text-slate-900 mb-3">Configure Google Analytics</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs font-medium text-slate-700 mb-1">
+                        Measurement ID (Optional)
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="G-XXXXXXXXXX"
+                        value={gaFormData.analytics_key}
+                        onChange={(e) => setGAFormData({ ...gaFormData, analytics_key: e.target.value })}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-slate-700 mb-1">
+                        View ID (Optional)
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="123456789"
+                        value={gaFormData.view_id}
+                        onChange={(e) => setGAFormData({ ...gaFormData, view_id: e.target.value })}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                    <div className="flex items-center justify-end space-x-2 pt-2">
+                      <button
+                        onClick={() => {
+                          setShowGAForm(false);
+                          setGAFormData({ analytics_key: '', view_id: '', property_id: '' });
+                        }}
+                        className="px-3 py-1 text-slate-600 hover:text-slate-800 text-sm"
+                        disabled={isConnecting}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={connectGoogleAnalytics}
+                        disabled={isConnecting}
+                        className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm transition-colors disabled:opacity-50"
+                      >
+                        {isConnecting ? 'Connecting...' : 'Connect'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
               <div className="text-sm text-slate-600">
                 Integration with Google Analytics 4 enables real-time website analytics, user behavior tracking, and goal completion metrics.
               </div>
@@ -349,10 +449,11 @@ export default function MarketingAnalytics() {
                     </span>
                   ) : (
                     <button 
-                      className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm"
+                      className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm transition-colors disabled:opacity-50"
                       onClick={connectFacebook}
+                      disabled={isConnecting}
                     >
-                      Connect
+                      {isConnecting ? 'Connecting...' : 'Connect'}
                     </button>
                   )}
                 </div>
@@ -523,8 +624,9 @@ export default function MarketingAnalytics() {
                     cy="50%"
                     innerRadius={60}
                     outerRadius={90}
-                    paddingAngle={4}
-                    dataKey="sessions"
+                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm transition-colors disabled:opacity-50"
+                    onClick={() => setShowGAForm(true)}
+                    disabled={isConnecting}
                   >
                     {trafficSourcesData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
@@ -921,7 +1023,7 @@ export default function MarketingAnalytics() {
                     Filter
                   </button>
                   <button className="px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm transition-colors">
-                    New Campaign
+                    {isConnecting ? 'Connecting...' : 'Configure'}
                   </button>
                 </div>
               </div>

@@ -464,6 +464,24 @@ export default function MarketingAnalytics() {
           <ExportDropdown data={exportData} />
         </div>
       </div>
+      
+      {/* Export Filtered Data Section */}
+      {selectedProperty && (
+        <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-medium text-slate-900">Export Filtered Data</h3>
+              <p className="text-sm text-slate-600">
+                Export {filteredMetrics.length} records for {properties.find(p => p.id === selectedProperty)?.name}
+                {activeFiltersCount > 0 && ` (${activeFiltersCount} filters applied)`}
+              </p>
+            </div>
+            <div className="flex items-center space-x-3">
+              <ExportDropdown data={filteredExportData} />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Property Status & Connection Info */}
       {selectedProperty && (

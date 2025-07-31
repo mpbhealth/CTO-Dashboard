@@ -8,14 +8,12 @@ interface AssignmentFormProps {
   isOpen: boolean;
   onClose: () => void;
   onCreate: (data: AssignmentCreateData) => Promise<void>;
-  currentUserId?: string;
 }
 
 export default function AssignmentForm({ 
   isOpen, 
   onClose, 
-  onCreate, 
-  currentUserId 
+  onCreate
 }: AssignmentFormProps) {
   const { data: projects } = useProjects();
   const [formData, setFormData] = useState({
@@ -36,10 +34,6 @@ export default function AssignmentForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!currentUserId) {
-      setError('User not authenticated');
-      return;
-    }
 
     setIsSubmitting(true);
     setError(null);
@@ -48,7 +42,6 @@ export default function AssignmentForm({
       await onCreate({
         title: formData.title,
         description: formData.description || undefined,
-        assigned_to: currentUserId,
         project_id: formData.project_id || undefined,
         status: formData.status,
         due_date: formData.due_date || undefined
@@ -188,15 +181,6 @@ export default function AssignmentForm({
               </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
-                Assigned To
-              </label>
-              <div className="flex items-center space-x-2 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg">
-                <User className="w-4 h-4 text-slate-500" />
-                <span className="text-sm text-slate-700">Me (Current User)</span>
-              </div>
-            </div>
           </div>
 
           <div className="flex items-center justify-end space-x-3 pt-4">

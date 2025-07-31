@@ -7,14 +7,51 @@ export function useAssignments() {
   const [data, setData] = useState<Assignment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentUser, setCurrentUser] = useState<any>(null);
 
   const fetchData = async () => {
     try {
       setLoading(true);
       
+      // Get current user first
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+      
+      // Ensure user record exists in users table
+      const { data: userRecord, error: userError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('auth_user_id', user.id)
+        .single();
+      
+      if (userError && userError.code === 'PGRST116') {
+        // User doesn't exist, create them
+        const { data: newUser, error: createError } = await supabase
+          .from('users')
+          .insert([{
+            auth_user_id: user.id,
+            email: user.email || '',
+            full_name: user.user_metadata?.full_name || user.email || ''
+          }])
+          .select('id')
+          .single();
+        
+        if (createError) throw createError;
+        setCurrentUser(newUser);
+      } else if (userError) {
+        throw userError;
+      } else {
+        setCurrentUser(userRecord);
+      }
+      
       const { data: assignments, error } = await supabase
         .from('assignments')
-        .select('*')
+        .select(`
+          *,
+          projects(name)
+        `)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -33,9 +70,24 @@ export function useAssignments() {
 
   const addAssignment = async (assignmentData: AssignmentCreateData) => {
     try {
+      // Get the user's ID from the users table
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
+      
+      const { data: userRecord } = await supabase
+        .from('users')
+        .select('id')
+        .eq('auth_user_id', user.id)
+        .single();
+      
+      if (!userRecord) throw new Error('User profile not found');
+      
       const { data, error } = await supabase
         .from('assignments')
-        .insert([assignmentData])
+        .insert([{
+          ...assignmentData,
+          assigned_to: userRecord.id
+        }])
         .select()
         .single();
       
@@ -98,6 +150,7 @@ export function useAssignments() {
     data, 
     loading, 
     error, 
+    currentUser,
     refetch: fetchData,
     addAssignment,
     updateAssignment,

@@ -22,16 +22,10 @@ import {
 } from 'lucide-react';
 import { useAssignments } from '../../hooks/useAssignments';
 import { useProjects } from '../../hooks/useSupabaseData';
+import AssignmentForm from '../ui/AssignmentForm';
+import { Assignment, AssignmentCreateData } from '../../types/Assignment';
 import { supabase } from '../../lib/supabase';
 
-interface AssignmentFormData {
-  title: string;
-  description: string;
-  assigned_to: string;
-  project_id: string;
-  status: 'todo' | 'in_progress' | 'done';
-  due_date: string;
-}
 
 export default function Assignments() {
   const { data: assignments, loading, error, refetch, addAssignment, updateAssignment, deleteAssignment } = useAssignments();
@@ -50,7 +44,7 @@ export default function Assignments() {
   const [formError, setFormError] = useState<string | null>(null);
   const [currentUser, setCurrentUser] = useState<any>(null);
   
-  const [formData, setFormData] = useState<AssignmentFormData>({
+  const [formData, setFormData] = useState({
     title: '',
     description: '',
     assigned_to: '',
@@ -71,6 +65,13 @@ export default function Assignments() {
     getCurrentUser();
   }, []);
 
+  const handleCreateAssignment = async (data: AssignmentCreateData) => {
+    const result = await addAssignment(data);
+    if (!result.success) {
+      throw new Error(result.error);
+    }
+    return result.data;
+  };
   if (loading || projectsLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -662,17 +663,24 @@ export default function Assignments() {
         )}
       </div>
 
-      {/* Add/Edit Assignment Modal */}
-      {(isAddModalOpen || isEditModalOpen) && (
+      {/* Assignment Form Modal */}
+      <AssignmentForm
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onCreate={handleCreateAssignment}
+        currentUserId={currentUser?.id}
+      />
+
+      {/* Edit Assignment Modal */}
+      {isEditModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-6 border-b border-slate-200">
               <h2 className="text-xl font-semibold text-slate-900">
-                {isAddModalOpen ? 'Add New Assignment' : 'Edit Assignment'}
+                Edit Assignment
               </h2>
               <button
                 onClick={() => {
-                  setIsAddModalOpen(false);
                   setIsEditModalOpen(false);
                   setSelectedAssignment(null);
                   setFormError(null);
@@ -683,7 +691,7 @@ export default function Assignments() {
               </button>
             </div>
 
-            <form onSubmit={isAddModalOpen ? handleAddAssignment : handleEditAssignment} className="p-6 space-y-4">
+            <form onSubmit={handleEditAssignment} className="p-6 space-y-4">
               {formError && (
                 <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
                   <p className="text-sm text-red-600">{formError}</p>
@@ -788,7 +796,6 @@ export default function Assignments() {
                 <button
                   type="button"
                   onClick={() => {
-                    setIsAddModalOpen(false);
                     setIsEditModalOpen(false);
                     setSelectedAssignment(null);
                     setFormError(null);
@@ -804,7 +811,7 @@ export default function Assignments() {
                   className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg flex items-center space-x-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Save className="w-4 h-4" />
-                  <span>{isSubmitting ? (isAddModalOpen ? 'Adding...' : 'Updating...') : (isAddModalOpen ? 'Add Assignment' : 'Update Assignment')}</span>
+                  <span>{isSubmitting ? 'Updating...' : 'Update Assignment'}</span>
                 </button>
               </div>
             </form>

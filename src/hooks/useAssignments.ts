@@ -1,10 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { Database } from '../types/database';
+import { Assignment, AssignmentCreateData, AssignmentUpdateData } from '../types/Assignment';
 
-type Assignment = Database['public']['Tables']['assignments']['Row'];
-type AssignmentInsert = Database['public']['Tables']['assignments']['Insert'];
-type AssignmentUpdate = Database['public']['Tables']['assignments']['Update'];
 
 export function useAssignments() {
   const [data, setData] = useState<Assignment[]>([]);
@@ -15,7 +12,6 @@ export function useAssignments() {
     try {
       setLoading(true);
       
-      // First, let's check if the assignments table exists and is accessible
       const { data: assignments, error } = await supabase
         .from('assignments')
         .select('*')
@@ -25,7 +21,7 @@ export function useAssignments() {
       setData(assignments || []);
     } catch (err) {
       console.error('Error fetching assignments:', err);
-      setError(err instanceof Error ? err.message : 'Failed to load assignments. Please check if the assignments table exists in Supabase.');
+      setError(err instanceof Error ? err.message : 'Failed to load assignments. Please make sure you\'re connected to Supabase.');
     } finally {
       setLoading(false);
     }
@@ -35,7 +31,7 @@ export function useAssignments() {
     fetchData();
   }, []);
 
-  const addAssignment = async (assignmentData: AssignmentInsert) => {
+  const addAssignment = async (assignmentData: AssignmentCreateData) => {
     try {
       const { data, error } = await supabase
         .from('assignments')
@@ -51,7 +47,7 @@ export function useAssignments() {
     }
   };
 
-  const updateAssignment = async (id: string, updates: AssignmentUpdate) => {
+  const updateAssignment = async (id: string, updates: AssignmentUpdateData) => {
     try {
       const { data, error } = await supabase
         .from('assignments')

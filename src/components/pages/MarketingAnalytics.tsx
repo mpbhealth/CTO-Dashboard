@@ -1,6 +1,21 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useMarketingProperties, useMarketingMetrics, aggregateMetrics, getTrafficSourceData } from '../../hooks/useMarketingData';
+import { 
+  BarChart3, 
+  TrendingUp, 
+  Clock,
+  Users, 
+  Globe, 
+  Filter,
+  RefreshCw, 
+  Download, 
+  Search, 
+  Plus,
+  ExternalLink,
+  CheckCircle,
+  AlertCircle
+} from 'lucide-react';
 import {
   ArrowUpRight,
   BarChart3,

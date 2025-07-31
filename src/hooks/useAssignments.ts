@@ -14,18 +14,18 @@ export function useAssignments() {
   const fetchData = async () => {
     try {
       setLoading(true);
+      
+      // First, let's check if the assignments table exists and is accessible
       const { data: assignments, error } = await supabase
         .from('assignments')
-        .select(`
-          *,
-          projects(name, status)
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
       setData(assignments || []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      console.error('Error fetching assignments:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load assignments. Please check if the assignments table exists in Supabase.');
     } finally {
       setLoading(false);
     }

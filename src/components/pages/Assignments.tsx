@@ -35,7 +35,7 @@ interface AssignmentFormData {
 
 export default function Assignments() {
   const { data: assignments, loading, error, refetch, addAssignment, updateAssignment, deleteAssignment } = useAssignments();
-  const { data: projects } = useProjects();
+  const { data: projects, loading: projectsLoading } = useProjects();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProject, setSelectedProject] = useState('All');
   const [selectedStatus, setSelectedStatus] = useState('All');
@@ -71,10 +71,13 @@ export default function Assignments() {
     getCurrentUser();
   }, []);
 
-  if (loading) {
+  if (loading || projectsLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600"></div>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+          <p className="text-slate-600">Loading assignments...</p>
+        </div>
       </div>
     );
   }
@@ -84,7 +87,13 @@ export default function Assignments() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <p className="text-red-600 mb-4">Error loading assignments: {error}</p>
-          <p className="text-slate-600">Please make sure you're connected to Supabase.</p>
+          <p className="text-slate-600 mb-4">Please make sure the assignments table exists in Supabase.</p>
+          <button
+            onClick={() => refetch()}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors"
+          >
+            Retry
+          </button>
         </div>
       </div>
     );

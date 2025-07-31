@@ -21,7 +21,6 @@ import {
   MousePointer,
   ShoppingCart,
   MousePointer
-  Globe,
   Target,
   MousePointer,
   X,

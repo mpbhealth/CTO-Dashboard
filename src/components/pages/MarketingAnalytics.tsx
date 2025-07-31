@@ -17,14 +17,27 @@ import {
   PieChart, 
   Target,
   ArrowUpRight,
+import {
+  ArrowUpRight,
+  BarChart3,
   Calendar,
-  ShoppingCart,
-  MousePointer
+  Clock,
+  Download,
+  FileText,
+  Filter,
+  Globe,
+  LineChart,
   MousePointer,
+  PieChart,
+  RefreshCw,
+  Search,
+  Settings,
+  ShoppingCart,
+  Target,
+  TrendingUp,
+  Users,
   X,
-  AlertCircle,
-  CheckCircle,
-  ExternalLink
+  Zap,
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import KPICard from '../ui/KPICard';

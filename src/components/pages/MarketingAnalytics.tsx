@@ -17,14 +17,16 @@ import {
 } from 'lucide-react';
 import {
   ArrowUpRight,
-  BarChart3,
   Calendar,
   Clock,
   Download,
-import { BarChart3, DollarSign, Activity, Building2 } from 'lucide-react';
   Users,
   X,
   Zap,
+  BarChart3,
+  DollarSign,
+  Activity,
+  Building2
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import KPICard from '../ui/KPICard';

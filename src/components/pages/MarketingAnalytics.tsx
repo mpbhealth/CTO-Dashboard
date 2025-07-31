@@ -151,8 +151,8 @@ export default function MarketingAnalytics() {
         const { data: marketing, error } = await supabase
           .from('marketing_integrations')
           .update({
-            google_analytics_key: 'GA-MOCK-KEY',
-            google_analytics_view_id: 'GA-MOCK-VIEW-ID',
+            google_analytics_key: gaFormData.analytics_key || 'GA-DEMO-KEY',
+            google_analytics_view_id: gaFormData.view_id || 'GA-DEMO-VIEW',
             is_active: true,
             updated_at: new Date().toISOString()
           })
@@ -165,9 +165,8 @@ export default function MarketingAnalytics() {
         const { data: marketing, error } = await supabase
           .from('marketing_integrations')
           .insert([{
-            google_analytics_key: 'GA-MOCK-KEY',
-          google_analytics_key: gaFormData.analytics_key || 'GA-DEMO-KEY',
-          google_analytics_view_id: gaFormData.view_id || 'GA-DEMO-VIEW',
+            google_analytics_key: gaFormData.analytics_key || 'GA-DEMO-KEY',
+            google_analytics_view_id: gaFormData.view_id || 'GA-DEMO-VIEW',
             updated_at: new Date().toISOString(),
             created_by: user?.id
           }])
@@ -196,40 +195,11 @@ export default function MarketingAnalytics() {
       // Get current user for created_by field
       const { data: { user } } = await supabase.auth.getUser();
       
-        // First check if a marketing integration record exists
-        const { data: existing, error: fetchError } = await supabase
-          .from('marketing_integrations')
-          .select();
+      // First check if a marketing integration record exists
+      const { data: existing, error: fetchError } = await supabase
+        .from('marketing_integrations')
+        .select();
 
-        if (fetchError) throw fetchError;
-        
-        if (existing && existing.length > 0) {
-          // Update existing record
-          const { data, error } = await supabase
-            .from('marketing_integrations')
-            .update({
-              facebook_pixel_id: gaCredentials.pixelId || 'FB-MOCK-PIXEL-ID',
-              is_active: true,
-              updated_at: new Date().toISOString()
-            })
-            .eq('id', existing[0].id)
-            .select();
-          
-          if (error) throw error;
-        } else {
-          // Create new record
-          const { data, error } = await supabase
-            .from('marketing_integrations')
-            .insert([{
-              facebook_pixel_id: gaCredentials.pixelId || 'FB-MOCK-PIXEL-ID',
-              is_active: true,
-              updated_at: new Date().toISOString(),
-              created_by: user?.id
-            }])
-            .select();
-          
-          if (error) throw error;
-        }
       if (fetchError) throw fetchError;
 
       if (existing && existing.length > 0) {
@@ -653,9 +623,8 @@ export default function MarketingAnalytics() {
                     cy="50%"
                     innerRadius={60}
                     outerRadius={90}
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm transition-colors disabled:opacity-50"
-                    onClick={() => setShowGAForm(true)}
-                    disabled={isConnecting}
+                    paddingAngle={5}
+                    dataKey="sessions"
                   >
                     {trafficSourcesData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
@@ -1052,7 +1021,7 @@ export default function MarketingAnalytics() {
                     Filter
                   </button>
                   <button className="px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm transition-colors">
-                    {isConnecting ? 'Connecting...' : 'Configure'}
+                    New Campaign
                   </button>
                 </div>
               </div>

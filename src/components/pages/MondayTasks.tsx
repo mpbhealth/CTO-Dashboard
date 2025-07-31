@@ -94,22 +94,46 @@ export default function MondayTasks() {
     `;
 
     const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/monday-api`;
-    const response = await fetch(apiUrl, {
-      method: 'POST', 
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-      },
-      body: JSON.stringify({ query }),
-    });
-
-    const data = await response.json();
     
-    if (data.errors) {
-      throw new Error(data.errors[0].message);
-    }
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'POST', 
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({ query }),
+      });
 
-    setBoards(data.data.boards);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      
+      // Check for API-level errors
+      if (data.error) {
+        throw new Error(data.error);
+      }
+      
+      if (data.errors && Array.isArray(data.errors) && data.errors.length > 0) {
+        throw new Error(data.errors[0].message || 'Monday.com API error');
+      }
+
+      // Validate response structure
+      if (!data.data || !Array.isArray(data.data.boards)) {
+        console.warn('Unexpected response structure:', data);
+        setBoards([]); // Set empty array as fallback
+        return;
+      }
+
+      setBoards(data.data.boards);
+    } catch (err) {
+      console.error('Error fetching boards:', err);
+      // Set empty boards array on error so the UI doesn't break
+      setBoards([]);
+      throw err;
+    }
   };
 
   const fetchItems = async () => {
@@ -144,41 +168,70 @@ export default function MondayTasks() {
     `;
 
     const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/monday-api`;
-    const response = await fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-      },
-      body: JSON.stringify({ query }),
-    });
-
-    const data = await response.json();
     
-    if (data.errors) {
-      throw new Error(data.errors[0].message);
-    }
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({ query }),
+      });
 
-    // Flatten items from all boards
-    const allTasks: MondayTask[] = [];
-    data.data.boards.forEach((board: any) => {
-      board.items_page.items.forEach((item: any) => {
-        allTasks.push({
-          ...item,
-          board: {
-            id: board.id,
-            name: board.name,
-          },
-          group: board.groups[0] || { id: '', title: 'Default' }, // Assign to first group or default
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      
+      // Check for API-level errors
+      if (data.error) {
+        throw new Error(data.error);
+      }
+      
+      if (data.errors && Array.isArray(data.errors) && data.errors.length > 0) {
+        throw new Error(data.errors[0].message || 'Monday.com API error');
+      }
+
+      // Validate response structure
+      if (!data.data || !Array.isArray(data.data.boards)) {
+        console.warn('Unexpected response structure for items:', data);
+        setTasks([]); // Set empty array as fallback
+        return;
+      }
+
+      // Flatten items from all boards
+      const allTasks: MondayTask[] = [];
+      data.data.boards.forEach((board: any) => {
+        if (board.items_page && Array.isArray(board.items_page.items)) {
+          board.items_page.items.forEach((item: any) => {
+            allTasks.push({
+              ...item,
+              board: {
+                id: board.id,
+                name: board.name,
+              },
+              group: (board.groups && board.groups[0]) || { id: '', title: 'Default' },
+            });
+          });
+        }
         });
       });
-    });
 
-    setTasks(allTasks);
+      setTasks(allTasks);
+    } catch (err) {
+      console.error('Error fetching items:', err);
+      // Set empty tasks array on error so the UI doesn't break
+      setTasks([]);
+      throw err;
+    }
   };
 
   const syncMondayTasks = async () => {
     setSyncing(true);
+    setError(null);
+    
     try {
       await fetchMondayData();
       
@@ -194,7 +247,8 @@ export default function MondayTasks() {
         }]);
 
     } catch (err) {
-      setError('Failed to sync tasks: ' + (err instanceof Error ? err.message : 'Unknown error'));
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      setError('Failed to sync tasks: ' + errorMessage);
       
       // Log failed sync
       await supabase
@@ -202,7 +256,7 @@ export default function MondayTasks() {
         .insert([{
           operation: 'sync_tasks',
           status: 'failed',
-          message: err instanceof Error ? err.message : 'Unknown error',
+          message: errorMessage,
           items_processed: 0,
           errors_count: 1
         }]);

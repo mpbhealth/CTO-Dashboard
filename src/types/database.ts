@@ -44,6 +44,94 @@ export interface Database {
           updated_at?: string
         }
       }
+      marketing_properties: {
+        Row: {
+          id: string
+          user_id: string
+          name: string
+          website_url: string | null
+          ga_property_id: string | null
+          ga_measurement_id: string | null
+          ga_connected: boolean
+          fb_pixel_id: string | null
+          fb_connected: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          name: string
+          website_url?: string | null
+          ga_property_id?: string | null
+          ga_measurement_id?: string | null
+          ga_connected?: boolean
+          fb_pixel_id?: string | null
+          fb_connected?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          name?: string
+          website_url?: string | null
+          ga_property_id?: string | null
+          ga_measurement_id?: string | null
+          ga_connected?: boolean
+          fb_pixel_id?: string | null
+          fb_connected?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      marketing_metrics: {
+        Row: {
+          id: string
+          property_id: string
+          date: string
+          sessions: number
+          users: number
+          pageviews: number
+          bounce_rate: number
+          conversions: number
+          avg_session_duration: number
+          traffic_source: string | null
+          campaign_name: string | null
+          revenue: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          property_id: string
+          date: string
+          sessions?: number
+          users?: number
+          pageviews?: number
+          bounce_rate?: number
+          conversions?: number
+          avg_session_duration?: number
+          traffic_source?: string | null
+          campaign_name?: string | null
+          revenue?: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          property_id?: string
+          date?: string
+          sessions?: number
+          users?: number
+          pageviews?: number
+          bounce_rate?: number
+          conversions?: number
+          avg_session_duration?: number
+          traffic_source?: string | null
+          campaign_name?: string | null
+          revenue?: number
+          created_at?: string
+        }
+      }
       member_status_updates: {
         Row: {
           id: string

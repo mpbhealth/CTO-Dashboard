@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 
+// Export interfaces for use in other components
+export type { Department, EmployeeProfile, DepartmentWorkflow, WorkflowStep, DepartmentRelationship, OrgChartPosition, PolicyDocument, DepartmentMetric };
+
 export type Json =
   | string
   | number

@@ -17,27 +17,18 @@ import {
   PieChart, 
   Target,
   ArrowUpRight,
-import {
-  ArrowUpRight,
-  BarChart3,
   Calendar,
-  Clock,
-  Download,
-  FileText,
-  Filter,
-  Globe,
-  LineChart,
   MousePointer,
-  PieChart,
-  RefreshCw,
-  Search,
-  Settings,
   ShoppingCart,
+  FileText,
+  Settings,
+  Globe,
   Target,
-  TrendingUp,
-  Users,
+  MousePointer,
   X,
-  Zap,
+  AlertCircle,
+  CheckCircle,
+  ExternalLink
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import KPICard from '../ui/KPICard';
@@ -71,6 +62,7 @@ export default function MarketingAnalytics() {
   const [gaConnected, setGaConnected] = useState(false);
   const [fbConnected, setFbConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
+  const [connectionError, setConnectionError] = useState<string | null>(null);
   const { metrics, loading: metricsLoading, error: metricsError, kpis, trafficSources } = useMarketingMetrics(
     selectedProperty, 
     timeRange,
@@ -362,7 +354,15 @@ export default function MarketingAnalytics() {
   };
 
   const hasActiveFilters = sourceFilter || conversionFilter;
+  const activeFiltersCount = (sourceFilter ? 1 : 0) + (conversionFilter ? 1 : 0);
   const selectedProperty = properties.find(p => p.id === selectedPropertyId);
+  const filteredMetrics = metrics || [];
+  const filteredExportData = {
+    title: 'Filtered Marketing Analytics Report',
+    data: [],
+    headers: [],
+    filename: 'Filtered_Marketing_Analytics_Report'
+  };
 
   if (propertiesLoading) {
     return (
@@ -481,7 +481,7 @@ export default function MarketingAnalytics() {
             <div>
               <h3 className="text-lg font-medium text-slate-900">Export Filtered Data</h3>
               <p className="text-sm text-slate-600">
-                Export {filteredMetrics.length} records for {properties.find(p => p.id === selectedProperty)?.name}
+                Export {filteredMetrics.length} records for {properties.find(p => p.id === selectedPropertyId)?.name}
                 {activeFiltersCount > 0 && ` (${activeFiltersCount} filters applied)`}
               </p>
             </div>
@@ -535,7 +535,7 @@ export default function MarketingAnalytics() {
                 </div>
               </div>
             </div>
-            <div className="flex items-center space-x-3">
+            {activeFiltersCount > 0 && (
               <button
                 onClick={() => {
                   setGaCredentials({
@@ -548,13 +548,14 @@ export default function MarketingAnalytics() {
                   setGaConnected(selectedProperty.ga_connected);
                   setFbConnected(selectedProperty.fb_connected);
                   setIsConfiguring(true);
+                  setTimeRange('30d');
                 }}
                 className="flex items-center space-x-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors"
               >
                 <Settings className="w-4 h-4" />
                 <span>Configure Integrations</span>
               </button>
-            </div>
+            )}
           </div>
         </div>
       )}
@@ -577,7 +578,7 @@ export default function MarketingAnalytics() {
                 className="flex items-center space-x-1 text-sm text-slate-600 hover:text-slate-800 transition-colors"
               >
                 <X className="w-4 h-4" />
-                <span>Clear Filters</span>
+                Clear All Filters ({activeFiltersCount})
               </button>
             )}
           </div>
@@ -900,43 +901,6 @@ export default function MarketingAnalytics() {
                   <span className="text-sm font-medium text-slate-900">Google Ads</span>
                 </div>
               </div>
-            </div>
-          </div>
-        </motion.div>
-      )}
-      
-      {/* Export Summary for Current View */}
-      {selectedProperty && filteredMetrics.length > 0 && (
-        <motion.div 
-          className="bg-gradient-to-r from-indigo-50 to-blue-50 border border-indigo-200 rounded-xl p-6"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.8 }}
-        >
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-semibold text-indigo-900">Export Current View</h3>
-              <p className="text-sm text-indigo-700 mt-1">
-                {filteredMetrics.length} data points • {activeFiltersCount} filters applied • {timeRange} time range
-              </p>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {sourceFilter !== 'all' && (
-                  <span className="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full text-xs">
-                    Source: {sourceFilter}
-                  </span>
-                )}
-                {conversionFilter !== 'all' && (
-                  <span className="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full text-xs">
-                    Conversion: {conversionFilter}
-                  </span>
-                )}
-                <span className="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full text-xs">
-                  {timeRange} range
-                </span>
-              </div>
-            </div>
-            <div className="flex items-center space-x-3">
-              <ExportDropdown data={filteredExportData} />
             </div>
           </div>
         </motion.div>

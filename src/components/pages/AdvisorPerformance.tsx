@@ -194,7 +194,7 @@ export default function AdvisorPerformance() {
           </div>
           
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={topAdvisors} layout="horizontal">
+            <BarChart data={topAdvisors} layout="horizontal" margin={{ top: 5, right: 30, left: 80, bottom: 5 }}>
               <XAxis type="number" stroke="#64748B" tickFormatter={(value) => `$${value / 1000}K`} />
               <YAxis dataKey="name" type="category" stroke="#64748B" width={80} />
               <Tooltip 
@@ -243,7 +243,7 @@ export default function AdvisorPerformance() {
           </div>
           
           <ResponsiveContainer width="100%" height={300}>
-            <RadarChart cx="50%" cy="50%" outerRadius="70%" data={advisorSkills}>
+            <RadarChart cx="50%" cy="50%" outerRadius="70%" data={advisorSkills} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
               <PolarGrid stroke="#E2E8F0" />
               <PolarAngleAxis dataKey="skill" tick={{ fontSize: 12, fill: '#64748B' }} />
               <PolarRadiusAxis 
@@ -295,7 +295,7 @@ export default function AdvisorPerformance() {
           </div>
           
           <ResponsiveContainer width="100%" height={200}>
-            <LineChart data={salesTrends}>
+            <LineChart data={salesTrends} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
               <XAxis dataKey="month" stroke="#64748B" />
               <YAxis stroke="#64748B" tickFormatter={(value) => `$${value / 1000}K`} />
               <Tooltip 

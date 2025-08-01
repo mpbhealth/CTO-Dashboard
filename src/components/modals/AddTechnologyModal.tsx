@@ -121,7 +121,7 @@ export default function AddTechnologyModal({ isOpen, onClose, onSuccess }: AddTe
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-4 md:p-6 space-y-4 w-full">
           {error && (
             <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
               <p className="text-sm text-red-600">{error}</p>
@@ -139,7 +139,7 @@ export default function AddTechnologyModal({ isOpen, onClose, onSuccess }: AddTe
               required
               value={formData.name}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base md:text-sm"
               placeholder="e.g., React, Node.js, PostgreSQL"
             />
           </div>
@@ -154,7 +154,7 @@ export default function AddTechnologyModal({ isOpen, onClose, onSuccess }: AddTe
               required
               value={formData.category}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base md:text-sm"
             >
               <option value="">Select a category</option>
               {categories.map(category => (

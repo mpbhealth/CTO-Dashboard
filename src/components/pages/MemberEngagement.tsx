@@ -29,7 +29,7 @@ export default function MemberEngagement() {
         <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
           <h2 className="text-lg font-semibold text-slate-900 mb-4">Daily Logins (Last 30 Days)</h2>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={dailyLoginsData}>
+            <LineChart data={dailyLoginsData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
               <XAxis dataKey="date" stroke="#64748B" />
               <YAxis stroke="#64748B" />
               <Tooltip 
@@ -56,7 +56,7 @@ export default function MemberEngagement() {
         <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
           <h2 className="text-lg font-semibold text-slate-900 mb-4">Feature Usage Distribution</h2>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={featureUsageData} layout="horizontal">
+            <BarChart data={featureUsageData} layout="horizontal" margin={{ top: 5, right: 30, left: 80, bottom: 5 }}>
               <XAxis type="number" stroke="#64748B" />
               <YAxis dataKey="feature" type="category" stroke="#64748B" width={80} />
               <Tooltip 

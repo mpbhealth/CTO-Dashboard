@@ -129,19 +129,19 @@ function App() {
         {/* Hamburger menu for mobile - only visible when sidebar is closed */}
         {isMobile && !isSidebarExpanded && (
          <button 
-           className="fixed top-4 left-4 p-2 rounded-md bg-indigo-600 text-white shadow-lg md:hidden"
+           className="fixed top-4 left-4 p-3 rounded-md bg-indigo-600 text-white shadow-lg md:hidden z-50"
            onClick={toggleSidebar}
            aria-label="Open menu"
            style={{zIndex: 999, pointerEvents: 'auto'}}
          >
-           <Menu className="w-6 h-6" />
+           <Menu className="w-5 h-5" />
           </button>
         )}
 
        <main className={`flex-1 overflow-y-auto transition-all duration-300 ${
-         isMobile ? 'p-4' : 'p-8 pl-12'
+         isMobile ? 'p-3' : 'p-8 pl-12'
         } ${
-         isSidebarExpanded ? 'md:pl-96' : isMobile ? 'ml-0' : 'md:pl-32'
+         isSidebarExpanded ? 'md:pl-96' : isMobile ? 'ml-0 pt-16' : 'md:pl-32'
         }`}>
           {renderContent()}
         </main>

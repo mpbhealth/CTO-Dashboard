@@ -148,7 +148,7 @@ export default function MemberRetention() {
             </div>
           </div>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={retentionTimeline}>
+            <LineChart data={retentionTimeline} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
               <defs>
                 <linearGradient id="retentionGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#10B981" stopOpacity={0.3}/>
@@ -197,7 +197,7 @@ export default function MemberRetention() {
             </div>
           </div>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={churnTimeline}>
+            <BarChart data={churnTimeline} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
               <XAxis dataKey="month" stroke="#64748B" />
               <YAxis stroke="#64748B" />
               <Tooltip 

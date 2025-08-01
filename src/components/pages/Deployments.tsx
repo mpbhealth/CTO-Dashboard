@@ -4,6 +4,7 @@ import { useDeploymentLogs, useProjects, useRoadmapItems } from '../../hooks/use
 import { GitBranch, CheckCircle, XCircle, Clock, Filter, Plus, Edit, Trash2, Save, X, RefreshCw, Calendar, User, ExternalLink, Play, Pause } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { Database } from '../../types/database';
+import ExportDropdown from '../ui/ExportDropdown';
 
 type DeploymentLog = Database['public']['Tables']['deployment_logs']['Row'];
 type Project = Database['public']['Tables']['projects']['Row'];
@@ -288,13 +289,28 @@ export default function Deployments() {
           <button
             onClick={() => refetch()}
             className="flex items-center space-x-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors"
+            title="Refresh deployment logs"
           >
             <RefreshCw className="w-4 h-4" />
             <span>Refresh</span>
           </button>
+          <ExportDropdown data={{
+            title: 'MPB Health Deployment Logs',
+            data: deploymentLogs.map(log => ({
+              Project: log.project,
+              Environment: log.env,
+              Status: log.status,
+              'Deployment Time': new Date(log.timestamp).toLocaleString(),
+              'Log Message': log.log,
+              'Created Date': new Date(log.created_at).toLocaleDateString()
+            })),
+            headers: ['Project', 'Environment', 'Status', 'Deployment Time', 'Log Message'],
+            filename: 'MPB_Health_Deployment_Logs'
+          }} />
           <button
             onClick={() => setIsAddModalOpen(true)}
             className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
+            title="Add new deployment log"
           >
             <Plus className="w-4 h-4" />
             <span>Add Deployment</span>

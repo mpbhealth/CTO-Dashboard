@@ -3,6 +3,7 @@ import { useVendors } from '../../hooks/useSupabaseData';
 import { CreditCard, TrendingUp, Calendar, DollarSign, Edit, Trash2, Plus } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { Database } from '../../types/database';
+import ExportDropdown from '../ui/ExportDropdown';
 
 type Vendor = Database['public']['Tables']['vendors']['Row'];
 
@@ -195,16 +196,35 @@ export default function SaaSSpend() {
           <h1 className="text-3xl font-bold text-slate-900">SaaS Spend Management</h1>
           <p className="text-slate-600 mt-2">Track and optimize software subscriptions and vendor costs</p>
         </div>
-        <button 
-          onClick={() => {
-            resetFormData();
-            setIsAddModalOpen(true);
-          }}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Add Vendor</span>
-        </button>
+        <div className="flex items-center space-x-3">
+          <ExportDropdown data={{
+            title: 'MPB Health SaaS Spend Report',
+            data: vendors.map(vendor => ({
+              Name: vendor.name,
+              Category: vendor.category,
+              'Monthly Cost': vendor.billing_cycle === 'Monthly' ? `$${vendor.cost}` : `$${Math.round(vendor.cost / 12)}`,
+              'Annual Cost': vendor.billing_cycle === 'Yearly' ? `$${vendor.cost}` : `$${vendor.cost * 12}`,
+              'Billing Cycle': vendor.billing_cycle,
+              'Renewal Date': new Date(vendor.renewal_date).toLocaleDateString(),
+              Owner: vendor.owner,
+              Justification: vendor.justification,
+              'Created Date': new Date(vendor.created_at).toLocaleDateString()
+            })),
+            headers: ['Name', 'Category', 'Monthly Cost', 'Annual Cost', 'Billing Cycle', 'Renewal Date', 'Owner'],
+            filename: 'MPB_Health_SaaS_Spend_Report'
+          }} />
+          <button 
+            onClick={() => {
+              resetFormData();
+              setIsAddModalOpen(true);
+            }}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+            title="Add new vendor"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add Vendor</span>
+          </button>
+        </div>
       </div>
 
       {/* Spend Overview */}
@@ -330,6 +350,7 @@ export default function SaaSSpend() {
                         <button 
                           onClick={() => handleEditVendor(vendor)}
                           className="p-2 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                          title="Edit vendor"
                         >
                           <Edit className="w-4 h-4" />
                         </button>
@@ -337,6 +358,7 @@ export default function SaaSSpend() {
                           onClick={() => handleDeleteVendor(vendor)}
                           disabled={deletingId === vendor.id}
                           className="p-2 text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          title="Delete vendor"
                         >
                           {deletingId === vendor.id ? (
                             <div className="w-4 h-4 border-2 border-red-600 border-t-transparent rounded-full animate-spin" />

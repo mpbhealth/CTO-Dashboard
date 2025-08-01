@@ -452,6 +452,7 @@ export default function Roadmap() {
                   onClick={() => openEditModal(item)}
                   className="p-2 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
                   title="Edit initiative"
+                  title="Edit initiative"
                 >
                   <Edit className="w-4 h-4" />
                 </button>
@@ -459,6 +460,7 @@ export default function Roadmap() {
                   onClick={() => handleDeleteItem(item)}
                   disabled={deletingId === item.id}
                   className="p-2 text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Delete initiative"
                   title="Delete initiative"
                 >
                   {deletingId === item.id ? (

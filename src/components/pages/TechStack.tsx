@@ -4,6 +4,7 @@ import { Server, Edit, Trash2, Plus, Search } from 'lucide-react';
 import AddTechnologyModal from '../modals/AddTechnologyModal';
 import { supabase } from '../../lib/supabase';
 import { Database } from '../../types/database';
+import ExportDropdown from '../ui/ExportDropdown';
 
 type TechStackItem = Database['public']['Tables']['tech_stack']['Row'];
 
@@ -116,13 +117,30 @@ export default function TechStack() {
           <button
             onClick={() => refetch()}
             className="flex items-center space-x-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors"
+            title="Refresh technology stack"
           >
             <Server className="w-4 h-4" />
             <span>Refresh</span>
           </button>
+          <ExportDropdown data={{
+            title: 'MPB Health Technology Stack',
+            data: techStack.map(item => ({
+              Technology: item.name,
+              Category: item.category,
+              Version: item.version,
+              Owner: item.owner,
+              Status: item.status,
+              Notes: item.notes,
+              'Created Date': new Date(item.created_at).toLocaleDateString(),
+              'Updated Date': new Date(item.updated_at).toLocaleDateString()
+            })),
+            headers: ['Technology', 'Category', 'Version', 'Owner', 'Status', 'Notes'],
+            filename: 'MPB_Health_Technology_Stack'
+          }} />
           <button 
             onClick={() => setIsAddModalOpen(true)}
             className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors shadow-md hover:shadow-lg"
+            title="Add new technology"
           >
             <Plus className="w-4 h-4" />
             <span>Add Technology</span>

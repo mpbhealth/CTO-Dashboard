@@ -3,6 +3,7 @@ import { useProjects } from '../../hooks/useSupabaseData';
 import { FolderOpen, Github, ExternalLink, Users, BarChart3, Plus, Edit, Trash2, Globe } from 'lucide-react';
 import AddProjectModal from '../modals/AddProjectModal';
 import EditProjectModal from '../modals/EditProjectModal';
+import ExportDropdown from '../ui/ExportDropdown';
 import { supabase } from '../../lib/supabase';
 import { Database } from '../../types/database';
 
@@ -95,13 +96,33 @@ export default function Projects() {
           <h1 className="text-3xl font-bold text-slate-900">Active Projects</h1>
           <p className="text-slate-600 mt-2">Track progress and manage development projects across MPB Health</p>
         </div>
-        <button
-          onClick={() => setIsAddModalOpen(true)}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Add Project</span>
-        </button>
+        <div className="flex items-center space-x-3">
+          <ExportDropdown data={{
+            title: 'MPB Health Active Projects',
+            data: projects.map(project => ({
+              Name: project.name,
+              Description: project.description,
+              Status: project.status,
+              Progress: `${project.progress}%`,
+              Team: project.team.join(', '),
+              'GitHub Link': project.github_link || 'N/A',
+              'Monday Link': project.monday_link || 'N/A',
+              'Website URL': project.website_url || 'N/A',
+              'Created Date': new Date(project.created_at).toLocaleDateString(),
+              'Updated Date': new Date(project.updated_at).toLocaleDateString()
+            })),
+            headers: ['Name', 'Description', 'Status', 'Progress', 'Team', 'GitHub Link', 'Website URL'],
+            filename: 'MPB_Health_Active_Projects'
+          }} />
+          <button
+            onClick={() => setIsAddModalOpen(true)}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+            title="Add new project"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add Project</span>
+          </button>
+        </div>
       </div>
 
       {/* Project Stats */}
@@ -234,6 +255,7 @@ export default function Projects() {
                         handleEditProject(project);
                       }}
                       className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-3 rounded-lg text-sm font-medium transition-colors"
+                      title="Edit project"
                     >
                       Edit Project
                     </button>
@@ -244,6 +266,7 @@ export default function Projects() {
                       }}
                       className="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-2 px-3 rounded-lg text-sm font-medium transition-colors"
                     >
+                      title="Delete project"
                       View Analytics
                     </button>
                   </div>

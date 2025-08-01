@@ -164,6 +164,7 @@ export default function AIAgents() {
               <button 
                 className="flex items-center space-x-2 px-3 py-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
                 onClick={() => setSelectedAgent(selectedAgent === agent.id ? null : agent.id)}
+                title="Edit agent prompt"
               >
                 <Edit className="w-4 h-4" />
                 <span className="text-sm">Edit Prompt</span>
@@ -171,16 +172,21 @@ export default function AIAgents() {
               <div className="flex items-center space-x-2">
                 {agent.status === 'Live' ? (
                   <button className="flex items-center space-x-1 px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                    title="Pause agent"
                     <Pause className="w-4 h-4" />
                     <span className="text-sm">Pause</span>
                   </button>
                 ) : (
                   <button className="flex items-center space-x-1 px-3 py-2 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors">
+                    title="Deploy agent"
                     <Play className="w-4 h-4" />
                     <span className="text-sm">Deploy</span>
                   </button>
                 )}
-                <button className="p-2 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
+                <button 
+                  className="p-2 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                  title="Agent settings"
+                >
                   <Settings className="w-4 h-4" />
                 </button>
               </div>

@@ -150,12 +150,14 @@ export default function Overview() {
                     <button
                       onClick={() => handleEditMember(member)}
                       className="p-1 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
+                      title="Edit team member"
                     >
                       <Edit className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleDeleteMember(member)}
                       className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                      title="Delete team member"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>

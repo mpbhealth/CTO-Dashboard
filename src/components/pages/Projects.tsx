@@ -14,7 +14,7 @@ export default function Projects() {
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [selectedProjectForEdit, setSelectedProjectForEdit] = useState<Project | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   if (loading) {
@@ -56,7 +56,7 @@ export default function Projects() {
   };
 
   const handleEditProject = (project: Project) => {
-    setSelectedProject(project);
+    setSelectedProjectForEdit(project);
     setIsEditModalOpen(true);
   };
 
@@ -352,7 +352,7 @@ export default function Projects() {
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
         onSuccess={handleEditSuccess}
-        project={selectedProject}
+        project={selectedProjectForEdit}
       />
     </div>
   );

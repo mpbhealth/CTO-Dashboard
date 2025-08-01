@@ -10,6 +10,7 @@ type Project = Database['public']['Tables']['projects']['Row'];
 
 export default function Projects() {
   const { data: projects, loading, error, refetch } = useProjects();
+  const [selectedProject, setSelectedProject] = useState<string | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
@@ -149,7 +150,11 @@ export default function Projects() {
       {/* Projects Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {projects.map((project) => (
-          <div key={project.id} className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+          <div 
+            key={project.id} 
+            className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-all duration-200 cursor-pointer group hover:border-indigo-200"
+            onClick={() => setSelectedProject(selectedProject === project.id ? null : project.id)}
+          >
             <div className="flex items-start justify-between mb-4">
               <div className="flex-1">
                 <h3 className="text-xl font-semibold text-slate-900 mb-2">{project.name}</h3>
@@ -161,14 +166,20 @@ export default function Projects() {
                 </span>
                 <div className="flex items-center space-x-1">
                   <button
-                    onClick={() => handleEditProject(project)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEditProject(project);
+                    }}
                     className="p-1 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
                     title="Edit project"
                   >
                     <Edit className="w-4 h-4" />
                   </button>
                   <button
-                    onClick={() => handleDeleteProject(project)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteProject(project);
+                    }}
                     disabled={deletingId === project.id}
                     className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     title="Delete project"
@@ -184,7 +195,7 @@ export default function Projects() {
             </div>
 
             {/* Progress Bar */}
-            <div className="mb-4">
+            <div className={`mb-4 transition-all duration-200 ${selectedProject === project.id ? 'bg-indigo-50 p-3 rounded-lg' : ''}`}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-slate-700">Progress</span>
                 <span className="text-sm font-medium text-slate-900">{project.progress}%</span>
@@ -196,6 +207,49 @@ export default function Projects() {
                 ></div>
               </div>
             </div>
+
+            {/* Expanded Details */}
+            {selectedProject === project.id && (
+              <div className="mb-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
+                <h4 className="font-medium text-slate-900 mb-2">Project Details</h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-slate-600">Created:</span>
+                    <span className="text-slate-900">{new Date(project.created_at).toLocaleDateString()}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-600">Last Updated:</span>
+                    <span className="text-slate-900">{new Date(project.updated_at).toLocaleDateString()}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-600">Team Size:</span>
+                    <span className="text-slate-900">{project.team.length} members</span>
+                  </div>
+                </div>
+                <div className="mt-3 pt-3 border-t border-slate-200">
+                  <div className="flex space-x-2">
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEditProject(project);
+                      }}
+                      className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-3 rounded-lg text-sm font-medium transition-colors"
+                    >
+                      Edit Project
+                    </button>
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        alert(`Viewing detailed analytics for ${project.name}`);
+                      }}
+                      className="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-2 px-3 rounded-lg text-sm font-medium transition-colors"
+                    >
+                      View Analytics
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Team Members */}
             <div className="mb-4">

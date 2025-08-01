@@ -1,9 +1,10 @@
 import React from 'react';
+import { useState } from 'react';
 import KPICard from '../ui/KPICard';
 import {
   ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, BarChart, Bar
 } from 'recharts';
-import { CheckCircle, AlertTriangle, XCircle } from 'lucide-react';
+import { CheckCircle, AlertTriangle, XCircle, RefreshCw } from 'lucide-react';
 import {
   uptimeKPIs,
   uptimeTimeline,
@@ -11,6 +12,17 @@ import {
 } from '../../data/mockUptime';
 
 export default function SystemUptime() {
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState(new Date());
+
+  const fetchUptimeData = async () => {
+    setIsRefreshing(true);
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    setLastUpdated(new Date());
+    setIsRefreshing(false);
+  };
+
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'Healthy':
@@ -39,8 +51,25 @@ export default function SystemUptime() {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-3xl font-bold text-slate-900">System Uptime Timeline</h1>
-      <p className="text-slate-600 mt-2">Monitor system health, uptime metrics, and component status</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-slate-900">System Uptime Timeline</h1>
+          <p className="text-slate-600 mt-2">Monitor system health, uptime metrics, and component status</p>
+        </div>
+        <div className="flex items-center space-x-3">
+          <span className="text-sm text-slate-500">
+            Last updated: {lastUpdated.toLocaleTimeString()}
+          </span>
+          <button
+            onClick={fetchUptimeData}
+            disabled={isRefreshing}
+            className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+            <span>{isRefreshing ? 'Refreshing...' : 'Refresh Uptime'}</span>
+          </button>
+        </div>
+      </div>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -108,25 +137,51 @@ export default function SystemUptime() {
 
       {/* System Components Status */}
       <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-        <h2 className="text-lg font-semibold text-slate-900 mb-4">System Components Status</h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-slate-900">System Components Status</h2>
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 text-sm">
+              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+              <span className="text-slate-600">Live Status</span>
+            </div>
+          </div>
+        </div>
         <div className="space-y-4">
-          {systemComponents.map((component) => (
-            <div key={component.name} className="flex items-center justify-between p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
+          {systemComponents.map((component, index) => (
+            <div 
+              key={component.name} 
+              className="flex items-center justify-between p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer group"
+              onClick={() => alert(`Viewing details for ${component.name}`)}
+            >
               <div className="flex items-center space-x-3">
                 {getStatusIcon(component.status)}
                 <div>
                   <h3 className="font-medium text-slate-900">{component.name}</h3>
-                  <p className="text-sm text-slate-600">Uptime: {component.uptime}%</p>
+                  <div className="flex items-center space-x-2">
+                    <p className="text-sm text-slate-600">Uptime: {component.uptime}%</p>
+                    <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  </div>
                 </div>
               </div>
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-6">
                 <div className="text-right">
                   <p className="text-sm font-medium text-slate-900">{component.responseTime}ms</p>
                   <p className="text-xs text-slate-600">avg response</p>
                 </div>
-                <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(component.status)}`}>
-                  {component.status}
-                </span>
+                <div className="flex items-center space-x-2">
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(component.status)}`}>
+                    {component.status}
+                  </span>
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      alert(`Checking ${component.name}...`);
+                    }}
+                    className="opacity-0 group-hover:opacity-100 transition-opacity text-indigo-600 hover:text-indigo-800 text-sm font-medium"
+                  >
+                    Check →
+                  </button>
+                </div>
               </div>
             </div>
           ))}

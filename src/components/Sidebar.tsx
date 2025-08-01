@@ -153,9 +153,9 @@ export default function Sidebar({
         {isSidebarExpanded ? <ChevronsLeft className="w-4 h-4" /> : <ChevronsRight className="w-4 h-4" />}
       </button>
       
-     <div className={`${isSidebarExpanded ? 'p-6' : 'p-4'} flex-1 flex flex-col relative z-50`} style={{pointerEvents: 'auto'}}>
+     <div className={`${isSidebarExpanded ? 'p-6' : 'p-4'} flex-1 flex flex-col relative z-50 bg-slate-900`} style={{pointerEvents: 'auto'}}>
         {/* Header */}
-       <div className="mb-8 sidebar-section" style={{pointerEvents: 'auto'}}>
+       <div className="mb-8 sidebar-section bg-slate-900" style={{pointerEvents: 'auto'}}>
          <div className={`flex items-center ${isSidebarExpanded ? 'space-x-3' : 'justify-center'}`} style={{pointerEvents: 'auto'}}>
            <div className="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg cursor-pointer" style={{pointerEvents: 'auto'}}>
              <Building2 className="w-7 h-7 text-white" />
@@ -170,9 +170,9 @@ export default function Sidebar({
         </div>
         
         {/* Navigation Menu */}
-       <nav className="flex-1 space-y-6 overflow-y-auto" style={{pointerEvents: 'auto', zIndex: 50}}>
+       <nav className="flex-1 space-y-6 overflow-y-auto bg-slate-900" style={{pointerEvents: 'auto', zIndex: 50}}>
           {Object.entries(groupedItems).map(([category, items]) => (
-           <div key={category} className="sidebar-category" style={{position: 'relative', zIndex: 51, pointerEvents: 'auto'}}>
+           <div key={category} className="sidebar-category bg-slate-900" style={{position: 'relative', zIndex: 51, pointerEvents: 'auto'}}>
               {isSidebarExpanded && (
                 <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 px-2">
                   {categories[category]}
@@ -215,8 +215,8 @@ export default function Sidebar({
         </nav>
         
         {/* User Profile */}
-       <div className="mt-auto pt-6 border-t border-slate-700/50" style={{pointerEvents: 'auto', zIndex: 50}}>
-         <div className={`flex items-center ${isSidebarExpanded ? 'space-x-3 p-3' : 'justify-center p-2'} rounded-lg hover:bg-slate-800 transition-colors cursor-pointer mb-3`} style={{pointerEvents: 'auto'}}>
+       <div className="mt-auto pt-6 bg-slate-900" style={{pointerEvents: 'auto', zIndex: 50}}>
+         <div className={`flex items-center ${isSidebarExpanded ? 'space-x-3 p-3' : 'justify-center p-2'} rounded-lg hover:bg-slate-800 transition-colors cursor-pointer mb-3 bg-slate-900`} style={{pointerEvents: 'auto'}}>
             <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center shadow-lg">
               <span className="text-sm font-bold text-white">VT</span>
             </div>

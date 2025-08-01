@@ -186,7 +186,12 @@ export default function Sidebar({
                   return (
                    <li key={item.id} className={`${!isSidebarExpanded ? 'flex justify-center' : ''} sidebar-menu-item`} style={{pointerEvents: 'auto', zIndex: 53, position: 'relative'}}>
                       <button
-                        onClick={() => onTabChange(item.id)}
+                        onClick={() => {
+                          onTabChange(item.id);
+                          if (isMobile) {
+                            onSidebarToggle?.();
+                          }
+                        }}
                         aria-current={isActive ? 'page' : undefined}
                         title={item.label}
                        className={`flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-all duration-200 group text-left w-full cursor-pointer sidebar-btn ${

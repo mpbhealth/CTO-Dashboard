@@ -17,7 +17,9 @@ import {
   X,
   Upload,
   Share2,
-  Paperclip
+  Paperclip,
+  History,
+  Eye
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { usePolicyDocuments } from '../../hooks/useOrganizationalData';
@@ -34,6 +36,10 @@ export default function PolicyManagement() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [expandedPolicy, setExpandedPolicy] = useState<string | null>(null);
+  const [showHistory, setShowHistory] = useState(false);
+  const [selectedPolicyForHistory, setSelectedPolicyForHistory] = useState<any>(null);
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
+  const [policyHistory, setPolicyHistory] = useState<any[]>([]);
 
   const loading = policiesLoading || departmentsLoading;
   const error = policiesError;
@@ -74,6 +80,73 @@ export default function PolicyManagement() {
         setDeletingId(null);
       }
     }
+  };
+
+  const downloadPolicy = async (policy: any) => {
+    setDownloadingId(policy.id);
+    try {
+      // Create a formatted document for download
+      const docContent = `
+${policy.title}
+Version: ${policy.version}
+Status: ${policy.status}
+Department: ${getDepartmentName(policy.department_id)}
+
+${policy.content || 'No content available'}
+
+Created: ${new Date(policy.created_at).toLocaleDateString()}
+Last Updated: ${new Date(policy.updated_at).toLocaleDateString()}
+      `.trim();
+
+      // Create and download file
+      const blob = new Blob([docContent], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${policy.title.replace(/\s+/g, '_')}_v${policy.version}.txt`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Error downloading policy:', err);
+      alert('Failed to download policy. Please try again.');
+    } finally {
+      setDownloadingId(null);
+    }
+  };
+
+  const viewPolicyHistory = async (policy: any) => {
+    setSelectedPolicyForHistory(policy);
+    setShowHistory(true);
+    
+    // Mock history data - in real implementation, this would come from a policy_history table
+    setPolicyHistory([
+      {
+        id: '1',
+        version: policy.version,
+        status: policy.status,
+        modified_by: 'Current Version',
+        modified_at: policy.updated_at,
+        changes: 'Current active version'
+      },
+      {
+        id: '2',
+        version: '1.0',
+        status: 'archived',
+        modified_by: 'Vinnie R. Tannous',
+        modified_at: '2024-01-15T10:00:00Z',
+        changes: 'Initial policy creation and approval'
+      },
+      {
+        id: '3',
+        version: '0.9',
+        status: 'draft',
+        modified_by: 'Sarah Johnson',
+        modified_at: '2024-01-10T09:30:00Z',
+        changes: 'Draft version with initial requirements'
+      }
+    ]);
   };
 
   const getDepartmentName = (departmentId) => {
@@ -267,6 +340,25 @@ export default function PolicyManagement() {
                   
                   <div className="flex items-center space-x-1">
                     <button
+                      onClick={() => downloadPolicy(policy)}
+                      disabled={downloadingId === policy.id}
+                      className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors disabled:opacity-50"
+                      title="Download policy"
+                    >
+                      {downloadingId === policy.id ? (
+                        <div className="w-4 h-4 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        <Download className="w-4 h-4" />
+                      )}
+                    </button>
+                    <button
+                      onClick={() => viewPolicyHistory(policy)}
+                      className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      title="View policy history"
+                    >
+                      <History className="w-4 h-4" />
+                    </button>
+                    <button
                       className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
                       title="Edit policy"
                     >
@@ -370,6 +462,83 @@ export default function PolicyManagement() {
             <Plus className="w-4 h-4" />
             <span>Create New Policy</span>
           </button>
+        </div>
+      )}
+
+      {/* Policy History Modal */}
+      {showHistory && selectedPolicyForHistory && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-6 border-b border-slate-200">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <History className="w-5 h-5 text-blue-600" />
+                </div>
+                <h2 className="text-xl font-semibold text-slate-900">
+                  Policy History: {selectedPolicyForHistory.title}
+                </h2>
+              </div>
+              <button
+                onClick={() => {
+                  setShowHistory(false);
+                  setSelectedPolicyForHistory(null);
+                }}
+                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6">
+              <div className="space-y-4">
+                {policyHistory.map((version, index) => (
+                  <div key={version.id} className="flex items-start space-x-4 p-4 border border-slate-200 rounded-lg">
+                    <div className="flex-shrink-0">
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                        index === 0 ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-600'
+                      }`}>
+                        <span className="text-xs font-medium">v{version.version}</span>
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-medium text-slate-900">Version {version.version}</h4>
+                        <div className="flex items-center space-x-2">
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(version.status)}`}>
+                            {version.status}
+                          </span>
+                          <span className="text-sm text-slate-500">
+                            {new Date(version.modified_at).toLocaleDateString()}
+                          </span>
+                        </div>
+                      </div>
+                      <p className="text-sm text-slate-600 mb-2">{version.changes}</p>
+                      <div className="flex items-center space-x-2 text-xs text-slate-500">
+                        <User className="w-3 h-3" />
+                        <span>Modified by {version.modified_by}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={() => alert(`Viewing version ${version.version}`)}
+                        className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                        title="View this version"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => downloadPolicy({...selectedPolicyForHistory, version: version.version})}
+                        className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
+                        title="Download this version"
+                      >
+                        <Download className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       )}
 

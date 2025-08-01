@@ -12,7 +12,10 @@ import {
   User, 
   Users,
   TrendingUp,
-  MessageSquare
+  MessageSquare,
+  Send,
+  X,
+  Star
 } from 'lucide-react';
 import { useEmployeeProfiles } from "../../hooks/useOrganizationalData";
 import { usePerformanceSystem, PerformanceReview } from '../../hooks/usePerformanceSystem';
@@ -34,9 +37,16 @@ function PerformanceEvaluation() {
   const [selectedEmployee, setSelectedEmployee] = useState<string | null>(null);
   const [selectedTab, setSelectedTab] = useState<'reviews' | 'kpis' | 'development' | 'feedback'>('reviews');
   const [searchTerm, setSearchTerm] = useState('');
+  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
+  const [feedbackForm, setFeedbackForm] = useState({
+    feedback_type: 'praise' as 'praise' | 'criticism' | 'suggestion' | 'question',
+    content: '',
+    is_anonymous: false
+  });
+  const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
 
   const { data: employees, loading: employeesLoading } = useEmployeeProfiles();
-  const { useEmployeeReviews, useEmployeeKpis, useCareerDevelopmentPlans, useEmployeeFeedback } = usePerformanceSystem();
+  const { useEmployeeReviews, useEmployeeKpis, useCareerDevelopmentPlans, useEmployeeFeedback, useProvideFeedback } = usePerformanceSystem();
 
   // Fetch data based on selected employee
   const { 
@@ -59,6 +69,8 @@ function PerformanceEvaluation() {
     data: feedback, 
     isLoading: feedbackLoading 
   } = useEmployeeFeedback(selectedEmployee || undefined);
+
+  const provideFeedbackMutation = useProvideFeedback();
 
   if (employeesLoading) {
     return (
@@ -118,6 +130,53 @@ function PerformanceEvaluation() {
     }
   };
 
+  const openFeedbackModal = (employeeId: string) => {
+    setSelectedEmployee(employeeId);
+    setIsFeedbackModalOpen(true);
+  };
+
+  const handleSubmitFeedback = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedEmployee || !feedbackForm.content.trim()) return;
+
+    setIsSubmittingFeedback(true);
+    
+    try {
+      await provideFeedbackMutation.mutateAsync({
+        recipient_id: selectedEmployee,
+        provider_id: feedbackForm.is_anonymous ? null : 'current-user-id', // In real app, get current user ID
+        feedback_type: feedbackForm.feedback_type,
+        content: feedbackForm.content.trim(),
+        is_anonymous: feedbackForm.is_anonymous
+      });
+
+      // Reset form and close modal
+      setFeedbackForm({
+        feedback_type: 'praise',
+        content: '',
+        is_anonymous: false
+      });
+      setIsFeedbackModalOpen(false);
+      
+      alert('Feedback submitted successfully!');
+    } catch (err) {
+      console.error('Error submitting feedback:', err);
+      alert('Failed to submit feedback. Please try again.');
+    } finally {
+      setIsSubmittingFeedback(false);
+    }
+  };
+
+  const handleFeedbackInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value, type } = e.target;
+    if (type === 'checkbox') {
+      const target = e.target as HTMLInputElement;
+      setFeedbackForm(prev => ({ ...prev, [name]: target.checked }));
+    } else {
+      setFeedbackForm(prev => ({ ...prev, [name]: value }));
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -164,6 +223,15 @@ function PerformanceEvaluation() {
                     {employee.first_name} {employee.last_name}
                   </p>
                   <p className="text-sm text-slate-600 truncate">{employee.title}</p>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openFeedbackModal(employee.id);
+                    }}
+                    className="mt-1 text-xs text-indigo-600 hover:text-indigo-800 font-medium"
+                  >
+                    Give Feedback
+                  </button>
                 </div>
               </div>
             ))}
@@ -200,6 +268,13 @@ function PerformanceEvaluation() {
                   <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
                     <Plus className="w-4 h-4" />
                     <span>New Review</span>
+                  </button>
+                  <button
+                    onClick={() => openFeedbackModal(selectedEmployee)}
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+                  >
+                    <MessageSquare className="w-4 h-4" />
+                    <span>Give Feedback</span>
                   </button>
                 </div>
               </div>
@@ -570,6 +645,13 @@ function PerformanceEvaluation() {
                         <MessageSquare className="w-12 h-12 text-slate-300 mx-auto mb-3" />
                         <h4 className="text-lg font-medium text-slate-700 mb-2">No feedback yet</h4>
                         <p className="text-slate-500 mb-4">Collect feedback to help improve performance</p>
+                        <button
+                          onClick={() => openFeedbackModal(selectedEmployee)}
+                          className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors mx-auto"
+                        >
+                          <Plus className="w-4 h-4" />
+                          <span>Provide Feedback</span>
+                        </button>
                       </div>
                     )}
                   </div>
@@ -587,6 +669,108 @@ function PerformanceEvaluation() {
           )}
         </div>
       </div>
+
+      {/* Feedback Modal */}
+      {isFeedbackModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-6 border-b border-slate-200">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
+                  <MessageSquare className="w-5 h-5 text-emerald-600" />
+                </div>
+                <h2 className="text-xl font-semibold text-slate-900">
+                  Provide Feedback for {selectedEmployeeDetails?.first_name} {selectedEmployeeDetails?.last_name}
+                </h2>
+              </div>
+              <button
+                onClick={() => setIsFeedbackModalOpen(false)}
+                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmitFeedback} className="p-6 space-y-6">
+              <div>
+                <label htmlFor="feedback_type" className="block text-sm font-medium text-slate-700 mb-2">
+                  Feedback Type
+                </label>
+                <select
+                  id="feedback_type"
+                  name="feedback_type"
+                  value={feedbackForm.feedback_type}
+                  onChange={handleFeedbackInputChange}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                >
+                  <option value="praise">👏 Praise</option>
+                  <option value="suggestion">💡 Suggestion</option>
+                  <option value="criticism">🔧 Constructive Criticism</option>
+                  <option value="question">❓ Question</option>
+                </select>
+              </div>
+
+              <div>
+                <label htmlFor="content" className="block text-sm font-medium text-slate-700 mb-2">
+                  Feedback Content *
+                </label>
+                <textarea
+                  id="content"
+                  name="content"
+                  required
+                  rows={6}
+                  value={feedbackForm.content}
+                  onChange={handleFeedbackInputChange}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  placeholder="Share your feedback here..."
+                />
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="is_anonymous"
+                  name="is_anonymous"
+                  checked={feedbackForm.is_anonymous}
+                  onChange={handleFeedbackInputChange}
+                  className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                />
+                <label htmlFor="is_anonymous" className="text-sm text-slate-700">
+                  Submit anonymously
+                </label>
+              </div>
+
+              <div className="flex items-center justify-end space-x-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setIsFeedbackModalOpen(false)}
+                  className="px-4 py-2 text-slate-600 hover:text-slate-800 transition-colors"
+                  disabled={isSubmittingFeedback}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmittingFeedback || !feedbackForm.content.trim()}
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-lg flex items-center space-x-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSubmittingFeedback ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      <span>Submitting...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4" />
+                      <span>Submit Feedback</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

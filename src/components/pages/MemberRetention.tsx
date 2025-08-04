@@ -18,13 +18,7 @@ import {
   Cell
 } from 'recharts';
 import { TrendingDown, TrendingUp, Users, Calendar } from 'lucide-react';
-import {
-  retentionKPIs,
-  retentionTimeline,
-  churnTimeline,
-  churnReasons,
-  cohortAnalysis
-} from '../../data/mockRetention';
+import { retentionKPIs, churnReasons } from '../../data/consolidatedMockData';
 import { useMemberStatusData, getStatusCounts } from '../../hooks/useMemberStatusData';
 
 export default function MemberRetention() {

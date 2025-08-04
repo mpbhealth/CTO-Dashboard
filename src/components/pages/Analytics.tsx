@@ -34,8 +34,7 @@ import {
 } from 'recharts';
 import { useEnrollmentData } from '../../hooks/useEnrollmentData';
 import { useMemberStatusData, getStatusCounts } from '../../hooks/useMemberStatusData';
-import * as mpbData from '../../data/mpbAnalyticsData';
-import * as saudeMaxData from '../../data/saudeMaxAnalyticsData';
+import { departmentData, getDepartmentData } from '../../data/consolidatedMockData';
 
 export default function Analytics() {
   const [timeRange, setTimeRange] = useState('30d');
@@ -46,7 +45,7 @@ export default function Analytics() {
   const { refetch: refetchStatus } = useMemberStatusData();
 
   // Get the data for the selected department
-  const departmentData = selectedDepartment === 'mpb' ? mpbData : saudeMaxData;
+  const currentDepartmentData = getDepartmentData(selectedDepartment);
 
   const timeRanges = [
     { value: '7d', label: 'Last 7 days' },
@@ -70,7 +69,7 @@ export default function Analytics() {
     title: `${selectedDepartment === 'mpb' ? 'MPB Health' : 'SaudeMAX'} Analytics Dashboard Report`,
     data: [
       // KPI Data
-      ...departmentData.kpiMetrics.map(kpi => ({
+      ...currentDepartmentData.kpiMetrics.map(kpi => ({
         Department: selectedDepartment === 'mpb' ? 'MPB Health' : 'SaudeMAX',
         Category: 'Key Metrics',
         Metric: kpi.title, 
@@ -79,7 +78,7 @@ export default function Analytics() {
       })),
 
       // Daily Active Users
-      ...departmentData.dailyActiveUsers.map(day => ({
+      ...currentDepartmentData.dailyActiveUsers.map(day => ({
         Department: selectedDepartment === 'mpb' ? 'MPB Health' : 'SaudeMAX',
         Category: 'User Engagement',
         Date: new Date(day.date).toLocaleDateString(),
@@ -89,7 +88,7 @@ export default function Analytics() {
       })),
 
       // Revenue 
-      ...departmentData.revenueData.map(item => ({
+      ...(currentDepartmentData.revenueData || []).map(item => ({
         Department: selectedDepartment === 'mpb' ? 'MPB Health' : 'SaudeMAX',
         Category: 'Revenue',
         Month: item.month,
@@ -99,7 +98,7 @@ export default function Analytics() {
       })),
 
       // Satisfaction
-      ...departmentData.satisfactionScores.map(item => ({
+      ...(currentDepartmentData.satisfactionScores || []).map(item => ({
         Department: selectedDepartment === 'mpb' ? 'MPB Health' : 'SaudeMAX',
         Category: 'Customer Satisfaction',
         Month: item.month,
@@ -108,7 +107,7 @@ export default function Analytics() {
       })),
 
       // Regional Performance
-      ...departmentData.regionalPerformance.map(region => ({
+      ...(currentDepartmentData.regionalPerformance || []).map(region => ({
         Department: selectedDepartment === 'mpb' ? 'MPB Health' : 'SaudeMAX',
         Category: 'Regional Performance',
         Region: region.region,
@@ -193,7 +192,7 @@ export default function Analytics() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        {departmentData.kpiMetrics.map((metric, index) => (
+        {currentDepartmentData.kpiMetrics.map((metric, index) => (
           <motion.div
             key={metric.title}
             initial={{ opacity: 0, y: 20 }}
@@ -226,6 +225,7 @@ export default function Analytics() {
           
           <ResponsiveContainer width="100%" height={300}>
             <AreaChart data={departmentData.dailyActiveUsers} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+            <AreaChart data={currentDepartmentData.dailyActiveUsers} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
               <defs>
                 <linearGradient id="userGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.3}/>
@@ -284,6 +284,7 @@ export default function Analytics() {
           
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={departmentData.revenueData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+            <BarChart data={currentDepartmentData.revenueData || []} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" stroke="#64748B" />
               <YAxis 
@@ -333,6 +334,7 @@ export default function Analytics() {
           
           <ResponsiveContainer width="100%" height={200}>
             <LineChart data={departmentData.satisfactionScores} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+            <LineChart data={currentDepartmentData.satisfactionScores || []} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" stroke="#64748B" />
               <YAxis domain={[3.5, 5]} stroke="#64748B" />
@@ -385,7 +387,7 @@ export default function Analytics() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
-                {departmentData.regionalPerformance.map((region) => (
+                {(currentDepartmentData.regionalPerformance || []).map((region) => (
                   <tr key={region.region} className="hover:bg-slate-50 transition-colors">
                     <td className="px-6 py-4">
                       <span className="font-medium text-slate-900">{region.region}</span>
@@ -438,7 +440,7 @@ export default function Analytics() {
           </div>
           
           <ul className="space-y-3">
-            {departmentData.insights.map((insight, index) => (
+            {(currentDepartmentData.insights || []).map((insight, index) => (
               <motion.li 
                 key={index} 
                 className="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg"
@@ -473,7 +475,7 @@ export default function Analytics() {
           </div>
           
           <ul className="space-y-3">
-            {departmentData.recommendations.map((recommendation, index) => (
+            {(currentDepartmentData.recommendations || []).map((recommendation, index) => (
               <motion.li 
                 key={index} 
                 className="flex items-start space-x-3 p-3 bg-emerald-50 rounded-lg"

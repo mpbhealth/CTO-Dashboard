@@ -32,14 +32,7 @@ import {
   Filter,
   RefreshCw
 } from 'lucide-react';
-import {
-  advisorKpis,
-  topAdvisors,
-  advisorSkills,
-  salesTrends,
-  performanceMetrics,
-  planBreakdown
-} from '../../data/mockAdvisorPerformance';
+import { advisorKpis, topAdvisors } from '../../data/consolidatedMockData';
 
 export default function AdvisorPerformance() {
   const [selectedAdvisor, setSelectedAdvisor] = useState('Wendy A.');

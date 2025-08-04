@@ -4,11 +4,7 @@ import {
   LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer,
   BarChart, Bar, Legend
 } from 'recharts';
-import {
-  memberEngagementKPIs,
-  dailyLoginsData,
-  featureUsageData
-} from '../../data/mockMemberEngagement';
+import { memberEngagementKPIs, dailyLoginsData, featureUsageData } from '../../data/consolidatedMockData';
 
 export default function MemberEngagement() {
   return (

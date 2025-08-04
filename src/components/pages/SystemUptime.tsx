@@ -5,11 +5,7 @@ import {
   ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, BarChart, Bar
 } from 'recharts';
 import { CheckCircle, AlertTriangle, XCircle, RefreshCw } from 'lucide-react';
-import {
-  uptimeKPIs,
-  uptimeTimeline,
-  systemComponents
-} from '../../data/mockUptime';
+import { uptimeKPIs, systemComponents } from '../../data/consolidatedMockData';
 
 export default function SystemUptime() {
   const [isRefreshing, setIsRefreshing] = useState(false);

@@ -224,7 +224,6 @@ export default function Analytics() {
           </div>
           
           <ResponsiveContainer width="100%" height={300}>
-            <AreaChart data={departmentData.dailyActiveUsers} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
             <AreaChart data={currentDepartmentData.dailyActiveUsers} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
               <defs>
                 <linearGradient id="userGradient" x1="0" y1="0" x2="0" y2="1">
@@ -283,7 +282,6 @@ export default function Analytics() {
           </div>
           
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={departmentData.revenueData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
             <BarChart data={currentDepartmentData.revenueData || []} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" stroke="#64748B" />
@@ -333,7 +331,6 @@ export default function Analytics() {
           </div>
           
           <ResponsiveContainer width="100%" height={200}>
-            <LineChart data={departmentData.satisfactionScores} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
             <LineChart data={currentDepartmentData.satisfactionScores || []} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" stroke="#64748B" />

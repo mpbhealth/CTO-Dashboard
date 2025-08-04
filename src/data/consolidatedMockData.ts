@@ -97,6 +97,86 @@ export const systemComponents = [
   { name: 'Payment Gateway', status: 'Healthy', uptime: 99.98, responseTime: 178 },
 ];
 
+// === ADVISOR PERFORMANCE EXTENDED DATA ===
+export const performanceMetrics = [
+  { advisor: 'Wendy A.', calls: 174, meetings: 68, proposals: 45 },
+  { advisor: 'Steve M.', calls: 156, meetings: 62, proposals: 38 },
+  { advisor: 'Rachel C.', calls: 142, meetings: 58, proposals: 34 },
+  { advisor: 'Chris B.', calls: 128, meetings: 44, proposals: 28 },
+  { advisor: 'Taylor D.', calls: 96, meetings: 32, proposals: 18 },
+];
+
+export const salesTrends = [
+  { month: 'Aug', sales: 542000, deals: 128, advisors: 12 },
+  { month: 'Sep', sales: 598000, deals: 142, advisors: 12 },
+  { month: 'Oct', sales: 634000, deals: 156, advisors: 13 },
+  { month: 'Nov', sales: 612000, deals: 148, advisors: 13 },
+  { month: 'Dec', sales: 684200, deals: 164, advisors: 14 },
+];
+
+export const planBreakdown = [
+  { plan: 'Premium Individual', sales: 245000, percentage: 36, color: '#3B82F6' },
+  { plan: 'Family Plan', sales: 198000, percentage: 29, color: '#10B981' },
+  { plan: 'Basic Individual', sales: 156000, percentage: 23, color: '#F59E0B' },
+  { plan: 'Student Plan', sales: 85200, percentage: 12, color: '#EF4444' },
+];
+
+export const advisorSkills = [
+  { skill: 'Communication', score: 92 },
+  { skill: 'Product Knowledge', score: 88 },
+  { skill: 'Closing Techniques', score: 85 },
+  { skill: 'Follow-up', score: 90 },
+  { skill: 'Objection Handling', score: 82 },
+  { skill: 'Needs Assessment', score: 87 },
+];
+
+// === RETENTION DATA EXTENDED ===
+export const retentionTimeline = [
+  { month: 'Jun', retention: 87.8 },
+  { month: 'Jul', retention: 88.2 },
+  { month: 'Aug', retention: 88.7 },
+  { month: 'Sep', retention: 89.1 },
+  { month: 'Oct', retention: 89.4 },
+  { month: 'Nov', retention: 89.2 },
+];
+
+export const churnTimeline = [
+  { month: 'Jun', voluntary: 89, involuntary: 23 },
+  { month: 'Jul', voluntary: 78, involuntary: 19 },
+  { month: 'Aug', voluntary: 82, involuntary: 21 },
+  { month: 'Sep', voluntary: 75, involuntary: 18 },
+  { month: 'Oct', voluntary: 71, involuntary: 16 },
+  { month: 'Nov', voluntary: 68, involuntary: 14 },
+];
+
+export const cohortAnalysis = [
+  { cohort: 'Oct 2024', month1: 100, month2: 92, month3: 87, month4: 82, month5: 78, month6: 74 },
+  { cohort: 'Sep 2024', month1: 100, month2: 94, month3: 89, month4: 84, month5: 80, month6: 76 },
+  { cohort: 'Aug 2024', month1: 100, month2: 91, month3: 85, month4: 81, month5: 77, month6: null },
+  { cohort: 'Jul 2024', month1: 100, month2: 93, month3: 88, month4: 83, month5: null, month6: null },
+  { cohort: 'Jun 2024', month1: 100, month2: 90, month3: 84, month4: null, month5: null, month6: null },
+  { cohort: 'May 2024', month1: 100, month2: 89, month3: null, month4: null, month5: null, month6: null },
+];
+
+// === UPTIME DATA EXTENDED ===
+export const uptimeTimeline = [
+  { date: '12/01', uptime: 99.97 },
+  { date: '12/02', uptime: 99.98 },
+  { date: '12/03', uptime: 99.99 },
+  { date: '12/04', uptime: 99.96 },
+  { date: '12/05', uptime: 99.98 },
+  { date: '12/06', uptime: 99.97 },
+  { date: '12/07', uptime: 99.99 },
+  { date: '12/08', uptime: 99.98 },
+  { date: '12/09', uptime: 99.97 },
+  { date: '12/10', uptime: 99.98 },
+  { date: '12/11', uptime: 99.99 },
+  { date: '12/12', uptime: 99.98 },
+  { date: '12/13', uptime: 99.97 },
+  { date: '12/14', uptime: 99.98 },
+  { date: '12/15', uptime: 99.98 },
+];
+
 // === DEPARTMENT SPECIFIC DATA ===
 export const departmentData = {
   mpb: {
@@ -117,6 +197,38 @@ export const departmentData = {
       { date: '2024-07-13', users: 4270, mobile: 3202, desktop: 1068 },
       { date: '2024-07-14', users: 4120, mobile: 3090, desktop: 1030 },
       { date: '2024-07-15', users: 4827, mobile: 3620, desktop: 1207 },
+    ],
+    revenueData: [
+      { month: 'Aug', revenue: 425000, newMembers: 142, growth: 8.2 },
+      { month: 'Sep', revenue: 448000, newMembers: 156, growth: 5.4 },
+      { month: 'Oct', revenue: 462000, newMembers: 149, growth: 3.1 },
+      { month: 'Nov', revenue: 479000, newMembers: 167, growth: 3.7 },
+      { month: 'Dec', revenue: 487250, newMembers: 158, growth: 1.7 },
+    ],
+    satisfactionScores: [
+      { month: 'Aug', score: 4.4, responses: 234 },
+      { month: 'Sep', score: 4.5, responses: 267 },
+      { month: 'Oct', score: 4.6, responses: 289 },
+      { month: 'Nov', score: 4.7, responses: 312 },
+      { month: 'Dec', score: 4.7, responses: 298 },
+    ],
+    regionalPerformance: [
+      { region: 'Northeast', users: 1420, revenue: 142000, growth: 12.3 },
+      { region: 'Southeast', users: 1280, revenue: 128000, growth: 8.7 },
+      { region: 'Midwest', users: 980, revenue: 98000, growth: 15.2 },
+      { region: 'West', users: 1147, revenue: 119250, growth: 6.8 },
+    ],
+    insights: [
+      'User engagement increased 8.3% month-over-month with mobile usage driving growth',
+      'Customer satisfaction reached all-time high of 4.7/5 stars',
+      'Northeast region showing strongest growth at 12.3% quarter-over-quarter',
+      'ID Card feature adoption reached 62% of active users'
+    ],
+    recommendations: [
+      'Focus marketing efforts on high-performing Northeast region',
+      'Expand mobile app features to capitalize on 75% mobile usage',
+      'Launch referral program to leverage high satisfaction scores',
+      'Investigate and replicate Midwest growth strategies in other regions'
     ],
     currency: '$',
     region: 'North America'
@@ -144,6 +256,38 @@ export const departmentData = {
       { date: '2024-07-13', users: 2890, mobile: 2312, desktop: 578 },
       { date: '2024-07-14', users: 2750, mobile: 2200, desktop: 550 },
       { date: '2024-07-15', users: 3216, mobile: 2573, desktop: 643 },
+    ],
+    revenueData: [
+      { month: 'Aug', revenue: 980000, newMembers: 189, growth: 18.5 },
+      { month: 'Sep', revenue: 1050000, newMembers: 210, growth: 7.1 },
+      { month: 'Oct', revenue: 1120000, newMembers: 198, growth: 6.7 },
+      { month: 'Nov', revenue: 1180000, newMembers: 234, growth: 5.4 },
+      { month: 'Dec', revenue: 1200000, newMembers: 216, growth: 1.7 },
+    ],
+    satisfactionScores: [
+      { month: 'Aug', score: 3.9, responses: 156 },
+      { month: 'Sep', score: 4.1, responses: 178 },
+      { month: 'Oct', score: 4.2, responses: 194 },
+      { month: 'Nov', score: 4.3, responses: 201 },
+      { month: 'Dec', score: 4.4, responses: 187 },
+    ],
+    regionalPerformance: [
+      { region: 'São Paulo', users: 1289, revenue: 480000, growth: 22.1 },
+      { region: 'Rio de Janeiro', users: 854, revenue: 320000, growth: 18.3 },
+      { region: 'Brasília', users: 567, revenue: 210000, growth: 15.7 },
+      { region: 'Outros Estados', users: 506, revenue: 190000, growth: 12.4 },
+    ],
+    insights: [
+      'Brazilian market showing exceptional 15.7% growth with strong regional expansion',
+      'São Paulo leading with 1,289 active users and 22.1% growth rate',
+      'Customer satisfaction improved 0.5 points to 4.4/5 stars', 
+      'Mobile-first strategy successful with 80% mobile app usage'
+    ],
+    recommendations: [
+      'Accelerate expansion in high-growth São Paulo and Rio markets',
+      'Localize more features for Portuguese-speaking audience',
+      'Partner with local healthcare providers for market penetration',
+      'Invest in customer success to maintain satisfaction trajectory'
     ],
     currency: 'R$',
     region: 'Brazil'

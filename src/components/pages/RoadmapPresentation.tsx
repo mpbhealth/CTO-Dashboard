@@ -77,7 +77,7 @@ import { generatePresentationData, exportToPowerPoint, GraphicsUtils, type Graph
 import { exportPresentationToPowerPoint } from '../../utils/powerPointExport';
 
 // Import mock data for other dashboards
-import { advisorKpis, topAdvisors, salesTrends } from '../../data/mockAdvisorPerformance';
+import { advisorKpis, topAdvisors, salesTrends, performanceMetrics, planBreakdown, advisorSkills } from '../../data/consolidatedMockData';
 import { kpiMetrics, mrrData } from '../../data/mockAnalytics';
 import { memberEngagementKPIs, dailyLoginsData } from '../../data/mockMemberEngagement';
 import { retentionKPIs, retentionTimeline } from '../../data/mockRetention';

@@ -30,14 +30,14 @@ import {
   GraphicsUtils 
 } from '../../utils/presentationUtils';
 import { 
-  kpiMetrics, 
   advisorKpis,
   topAdvisors,
   salesTrends,
   planBreakdown,
   advisorSkills,
   performanceMetrics
-} from '../../data/consolidatedMockData';
+} from '@data/mockAdvisorPerformance';
+import { kpiMetrics } from '@data/consolidatedMockData';
 
 interface PresentationSlide {
   id: string;

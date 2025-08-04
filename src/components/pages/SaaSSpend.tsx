@@ -1,28 +1,42 @@
 import React, { useState } from 'react';
-import { useVendors } from '../../hooks/useSupabaseData';
+import { useSaaSExpenses } from '../../hooks/useSaaSExpenses';
+import SaaSExpenseUploader from '../ui/SaaSExpenseUploader';
 import { CreditCard, TrendingUp, Calendar, DollarSign, Edit, Trash2, Plus } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
-import { Database } from '../../types/database';
 import ExportDropdown from '../ui/ExportDropdown';
+import { motion } from 'framer-motion';
 
-type Vendor = Database['public']['Tables']['vendors']['Row'];
+interface SaaSExpenseFormData {
+  department: string;
+  application: string;
+  description: string;
+  cost_monthly: number;
+  cost_annual: number;
+  platform: string;
+  url: string;
+  renewal_date: string;
+  notes: string;
+}
 
 export default function SaaSSpend() {
-  const { data: vendors, loading, error, refetch } = useVendors();
+  const { data: expenses, loading, error, metrics, refetch, addExpense, updateExpense, deleteExpense, bulkImport } = useSaaSExpenses();
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [showImporter, setShowImporter] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [selectedVendor, setSelectedVendor] = useState<Vendor | null>(null);
-  const [formData, setFormData] = useState({
-    name: '',
-    category: '',
-    cost: 0,
-    billing_cycle: 'Monthly' as 'Monthly' | 'Yearly',
+  const [selectedExpense, setSelectedExpense] = useState<any>(null);
+  const [formData, setFormData] = useState<SaaSExpenseFormData>({
+    department: '',
+    application: '',
+    description: '',
+    cost_monthly: 0,
+    cost_annual: 0,
+    platform: '',
+    url: '',
     renewal_date: '',
-    owner: '',
-    justification: ''
+    notes: ''
   });
 
   if (loading) {
@@ -38,27 +52,17 @@ export default function SaaSSpend() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <p className="text-red-600 mb-4">Error loading data: {error}</p>
-          <p className="text-slate-600">Please make sure you're connected to Supabase.</p>
+          <p className="text-slate-600">Please make sure the saas_expenses table exists in Supabase.</p>
         </div>
       </div>
     );
   }
 
-  const categories = ['All', ...Array.from(new Set(vendors.map(vendor => vendor.category)))];
+  const departments = ['All', ...Array.from(new Set(expenses.map(expense => expense.department)))];
   
-  const filteredVendors = vendors.filter(vendor => 
-    selectedCategory === 'All' || vendor.category === selectedCategory
+  const filteredExpenses = expenses.filter(expense => 
+    selectedCategory === 'All' || expense.department === selectedCategory
   );
-
-  const totalMonthlySpend = vendors
-    .filter(v => v.billing_cycle === 'Monthly')
-    .reduce((sum, v) => sum + v.cost, 0);
-
-  const totalYearlySpend = vendors
-    .filter(v => v.billing_cycle === 'Yearly')
-    .reduce((sum, v) => sum + v.cost, 0);
-
-  const totalAnnualSpend = totalMonthlySpend * 12 + totalYearlySpend;
 
   const getRenewalStatus = (renewalDate: string) => {
     const renewal = new Date(renewalDate);
@@ -70,34 +74,33 @@ export default function SaaSSpend() {
     return { status: 'ok', color: 'bg-emerald-100 text-emerald-800' };
   };
 
-  const handleEditVendor = (vendor: Vendor) => {
-    setSelectedVendor(vendor);
+  const handleEditExpense = (expense: any) => {
+    setSelectedExpense(expense);
     setFormData({
-      name: vendor.name,
-      category: vendor.category,
-      cost: vendor.cost,
-      billing_cycle: vendor.billing_cycle,
-      renewal_date: vendor.renewal_date,
-      owner: vendor.owner,
-      justification: vendor.justification
+      department: expense.department,
+      application: expense.application,
+      description: expense.description || '',
+      cost_monthly: expense.cost_monthly,
+      cost_annual: expense.cost_annual,
+      platform: expense.platform || '',
+      url: expense.url || '',
+      renewal_date: expense.renewal_date || '',
+      notes: expense.notes || ''
     });
     setIsEditModalOpen(true);
   };
 
-  const handleDeleteVendor = async (vendor: Vendor) => {
-    if (window.confirm(`Are you sure you want to delete "${vendor.name}"? This action cannot be undone.`)) {
-      setDeletingId(vendor.id);
+  const handleDeleteExpense = async (expense: any) => {
+    if (window.confirm(`Are you sure you want to delete "${expense.application}"? This action cannot be undone.`)) {
+      setDeletingId(expense.id);
       try {
-        const { error } = await supabase
-          .from('vendors')
-          .delete()
-          .eq('id', vendor.id);
-
-        if (error) throw error;
-        refetch();
+        const result = await deleteExpense(expense.id);
+        if (!result.success) {
+          throw new Error(result.error);
+        }
       } catch (err) {
-        console.error('Error deleting vendor:', err);
-        alert('Failed to delete vendor. Please try again.');
+        console.error('Error deleting expense:', err);
+        alert('Failed to delete expense. Please try again.');
       } finally {
         setDeletingId(null);
       }
@@ -106,75 +109,55 @@ export default function SaaSSpend() {
 
   const resetFormData = () => {
     setFormData({
-      name: '',
-      category: '',
-      cost: 0,
-      billing_cycle: 'Monthly',
+      department: '',
+      application: '',
+      description: '',
+      cost_monthly: 0,
+      cost_annual: 0,
+      platform: '',
+      url: '',
       renewal_date: '',
-      owner: '',
-      justification: ''
+      notes: ''
     });
   };
 
-  const handleAddVendor = async (e: React.FormEvent) => {
+  const handleAddExpense = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     
     try {
-      const { error } = await supabase
-        .from('vendors')
-        .insert([{
-          name: formData.name,
-          category: formData.category,
-          cost: formData.cost,
-          billing_cycle: formData.billing_cycle,
-          renewal_date: formData.renewal_date,
-          owner: formData.owner,
-          justification: formData.justification
-        }]);
-
-      if (error) throw error;
+      const result = await addExpense(formData);
+      if (!result.success) {
+        throw new Error(result.error);
+      }
       
       resetFormData();
-      refetch();
       setIsAddModalOpen(false);
     } catch (err) {
-      console.error('Error adding vendor:', err);
-      alert('Failed to add vendor. Please try again.');
+      console.error('Error adding expense:', err);
+      alert('Failed to add expense. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleUpdateVendor = async (e: React.FormEvent) => {
+  const handleUpdateExpense = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedVendor) return;
+    if (!selectedExpense) return;
     
     setIsSubmitting(true);
     
     try {
-      const { error } = await supabase
-        .from('vendors')
-        .update({
-          name: formData.name,
-          category: formData.category,
-          cost: formData.cost,
-          billing_cycle: formData.billing_cycle,
-          renewal_date: formData.renewal_date,
-          owner: formData.owner,
-          justification: formData.justification,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', selectedVendor.id);
-
-      if (error) throw error;
+      const result = await updateExpense(selectedExpense.id, formData);
+      if (!result.success) {
+        throw new Error(result.error);
+      }
       
-      refetch();
       setIsEditModalOpen(false);
-      setSelectedVendor(null);
+      setSelectedExpense(null);
     } catch (err) {
-      console.error('Error updating vendor:', err);
-      alert('Failed to update vendor. Please try again.');
+      console.error('Error updating expense:', err);
+      alert('Failed to update expense. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -184,8 +167,17 @@ export default function SaaSSpend() {
     const { name, value, type } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'number' ? parseFloat(value) : value
+      [name]: type === 'number' ? parseFloat(value) || 0 : value
     }));
+  };
+
+  const handleImportSuccess = (count: number) => {
+    // Refresh data after successful import
+    // The hook will automatically refresh, no need to call refetch
+  };
+
+  const handleImportError = (error: string) => {
+    console.error('Import error:', error);
   };
 
   return (
@@ -194,24 +186,33 @@ export default function SaaSSpend() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-slate-900">SaaS Spend Management</h1>
-          <p className="text-slate-600 mt-2">Track and optimize software subscriptions and vendor costs</p>
+          <p className="text-slate-600 mt-2">Track and optimize software subscriptions and departmental SaaS costs</p>
         </div>
         <div className="flex items-center space-x-3">
+          <button 
+            onClick={() => setShowImporter(!showImporter)}
+            className="flex items-center space-x-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors"
+          >
+            <TrendingUp className="w-4 h-4" />
+            <span>{showImporter ? 'Hide Importer' : 'Import CSV'}</span>
+          </button>
           <ExportDropdown data={{
-            title: 'MPB Health SaaS Spend Report',
-            data: vendors.map(vendor => ({
-              Name: vendor.name,
-              Category: vendor.category,
-              'Monthly Cost': vendor.billing_cycle === 'Monthly' ? `$${vendor.cost}` : `$${Math.round(vendor.cost / 12)}`,
-              'Annual Cost': vendor.billing_cycle === 'Yearly' ? `$${vendor.cost}` : `$${vendor.cost * 12}`,
-              'Billing Cycle': vendor.billing_cycle,
-              'Renewal Date': new Date(vendor.renewal_date).toLocaleDateString(),
-              Owner: vendor.owner,
-              Justification: vendor.justification,
-              'Created Date': new Date(vendor.created_at).toLocaleDateString()
+            title: 'MPB Health SaaS Expenses Report',
+            data: expenses.map(expense => ({
+              Department: expense.department,
+              Application: expense.application,
+              Description: expense.description || '',
+              'Monthly Cost': `$${expense.cost_monthly}`,
+              'Annual Cost': `$${expense.cost_annual}`,
+              Platform: expense.platform || '',
+              URL: expense.url || '',
+              'Renewal Date': expense.renewal_date ? new Date(expense.renewal_date).toLocaleDateString() : 'N/A',
+              Notes: expense.notes || '',
+              'Source Sheet': expense.source_sheet,
+              'Created Date': new Date(expense.created_at).toLocaleDateString()
             })),
-            headers: ['Name', 'Category', 'Monthly Cost', 'Annual Cost', 'Billing Cycle', 'Renewal Date', 'Owner'],
-            filename: 'MPB_Health_SaaS_Spend_Report'
+            headers: ['Department', 'Application', 'Monthly Cost', 'Annual Cost', 'Platform', 'Renewal Date'],
+            filename: 'MPB_Health_SaaS_Expenses_Report'
           }} />
           <button 
             onClick={() => {
@@ -219,13 +220,29 @@ export default function SaaSSpend() {
               setIsAddModalOpen(true);
             }}
             className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
-            title="Add new vendor"
+            title="Add new expense"
           >
             <Plus className="w-4 h-4" />
-            <span>Add Vendor</span>
+            <span>Add Expense</span>
           </button>
         </div>
       </div>
+
+      {/* CSV Import Section */}
+      {showImporter && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <SaaSExpenseUploader
+            onSuccess={handleImportSuccess}
+            onError={handleImportError}
+            onBulkImport={bulkImport}
+          />
+        </motion.div>
+      )}
 
       {/* Spend Overview */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -236,7 +253,7 @@ export default function SaaSSpend() {
             </div>
             <div>
               <p className="text-sm font-medium text-slate-600">Monthly Spend</p>
-              <p className="text-2xl font-bold text-slate-900">${totalMonthlySpend.toLocaleString()}</p>
+              <p className="text-2xl font-bold text-slate-900">${metrics.totalMonthly.toLocaleString()}</p>
             </div>
           </div>
         </div>
@@ -248,7 +265,7 @@ export default function SaaSSpend() {
             </div>
             <div>
               <p className="text-sm font-medium text-slate-600">Annual Spend</p>
-              <p className="text-2xl font-bold text-slate-900">${totalAnnualSpend.toLocaleString()}</p>
+              <p className="text-2xl font-bold text-slate-900">${metrics.totalAnnual.toLocaleString()}</p>
             </div>
           </div>
         </div>
@@ -260,12 +277,7 @@ export default function SaaSSpend() {
             </div>
             <div>
               <p className="text-sm font-medium text-slate-600">Renewals (30 days)</p>
-              <p className="text-2xl font-bold text-slate-900">
-                {vendors.filter(v => {
-                  const days = Math.ceil((new Date(v.renewal_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
-                  return days <= 30 && days > 0;
-                }).length}
-              </p>
+              <p className="text-2xl font-bold text-slate-900">{metrics.renewingNext30Days}</p>
             </div>
           </div>
         </div>
@@ -276,91 +288,104 @@ export default function SaaSSpend() {
               <CreditCard className="w-6 h-6 text-purple-600" />
             </div>
             <div>
-              <p className="text-sm font-medium text-slate-600">Active Vendors</p>
-              <p className="text-2xl font-bold text-slate-900">{vendors.length}</p>
+              <p className="text-sm font-medium text-slate-600">SaaS Tools</p>
+              <p className="text-2xl font-bold text-slate-900">{metrics.totalTools}</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Category Filter */}
+      {/* Department Filter */}
       <div className="flex items-center space-x-4">
-        <label className="text-sm font-medium text-slate-700">Filter by category:</label>
+        <label className="text-sm font-medium text-slate-700">Filter by department:</label>
         <select
           className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
         >
-          {categories.map(category => (
-            <option key={category} value={category}>{category}</option>
+          {departments.map(department => (
+            <option key={department} value={department}>{department}</option>
           ))}
         </select>
       </div>
 
-      {/* Vendors Table */}
+      {/* Expenses Table */}
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-slate-50 border-b border-slate-200">
               <tr>
-                <th className="text-left px-6 py-4 text-sm font-semibold text-slate-900">Vendor</th>
-                <th className="text-left px-6 py-4 text-sm font-semibold text-slate-900">Category</th>
-                <th className="text-left px-6 py-4 text-sm font-semibold text-slate-900">Cost</th>
-                <th className="text-left px-6 py-4 text-sm font-semibold text-slate-900">Billing</th>
+                <th className="text-left px-6 py-4 text-sm font-semibold text-slate-900">Application</th>
+                <th className="text-left px-6 py-4 text-sm font-semibold text-slate-900">Department</th>
+                <th className="text-left px-6 py-4 text-sm font-semibold text-slate-900">Monthly Cost</th>
+                <th className="text-left px-6 py-4 text-sm font-semibold text-slate-900">Annual Cost</th>
                 <th className="text-left px-6 py-4 text-sm font-semibold text-slate-900">Renewal</th>
-                <th className="text-left px-6 py-4 text-sm font-semibold text-slate-900">Owner</th>
+                <th className="text-left px-6 py-4 text-sm font-semibold text-slate-900">Platform</th>
                 <th className="text-left px-6 py-4 text-sm font-semibold text-slate-900">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
-              {filteredVendors.map((vendor) => {
-                const renewalStatus = getRenewalStatus(vendor.renewal_date);
+              {filteredExpenses.map((expense) => {
+                const renewalStatus = expense.renewal_date ? getRenewalStatus(expense.renewal_date) : { status: 'ok', color: 'bg-slate-100 text-slate-600' };
                 return (
-                  <tr key={vendor.id} className="hover:bg-slate-50 transition-colors">
+                  <tr key={expense.id} className="hover:bg-slate-50 transition-colors">
                     <td className="px-6 py-4">
                       <div>
-                        <p className="font-semibold text-slate-900">{vendor.name}</p>
-                        <p className="text-sm text-slate-600">{vendor.justification}</p>
+                        <p className="font-semibold text-slate-900">{expense.application}</p>
+                        <p className="text-sm text-slate-600">{expense.description}</p>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-slate-900">{vendor.category}</td>
+                    <td className="px-6 py-4 text-sm text-slate-900">{expense.department}</td>
                     <td className="px-6 py-4">
-                      <span className="font-semibold text-slate-900">${vendor.cost}</span>
-                      <span className="text-sm text-slate-600">/{vendor.billing_cycle.toLowerCase()}</span>
+                      <span className="font-semibold text-slate-900">${expense.cost_monthly}</span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`px-2 py-1 rounded text-xs font-medium ${
-                        vendor.billing_cycle === 'Monthly' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'
-                      }`}>
-                        {vendor.billing_cycle}
-                      </span>
+                      <span className="font-semibold text-slate-900">${expense.cost_annual}</span>
+                    </td>
+                    <td className="px-6 py-4">
+                      {expense.renewal_date ? (
+                        <div>
+                          <p className="text-sm text-slate-900">{new Date(expense.renewal_date).toLocaleDateString()}</p>
+                          <span className={`inline-block px-2 py-1 rounded text-xs font-medium mt-1 ${renewalStatus.color}`}>
+                            {renewalStatus.status === 'urgent' ? 'Urgent' : 
+                             renewalStatus.status === 'warning' ? 'Soon' : 'OK'}
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="text-sm text-slate-500">Not set</span>
+                      )}
                     </td>
                     <td className="px-6 py-4">
                       <div>
-                        <p className="text-sm text-slate-900">{new Date(vendor.renewal_date).toLocaleDateString()}</p>
-                        <span className={`inline-block px-2 py-1 rounded text-xs font-medium mt-1 ${renewalStatus.color}`}>
-                          {renewalStatus.status === 'urgent' ? 'Urgent' : 
-                           renewalStatus.status === 'warning' ? 'Soon' : 'OK'}
-                        </span>
+                        <p className="text-sm text-slate-900">{expense.platform || 'N/A'}</p>
+                        {expense.url && (
+                          <a 
+                            href={expense.url} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-xs text-indigo-600 hover:text-indigo-800"
+                          >
+                            Visit →
+                          </a>
+                        )}
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-slate-900">{vendor.owner}</td>
                     <td className="px-6 py-4">
                       <div className="flex items-center space-x-2">
                         <button 
-                          onClick={() => handleEditVendor(vendor)}
+                          onClick={() => handleEditExpense(expense)}
                           className="p-2 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
-                          title="Edit vendor"
+                          title="Edit expense"
                         >
                           <Edit className="w-4 h-4" />
                         </button>
                         <button 
-                          onClick={() => handleDeleteVendor(vendor)}
-                          disabled={deletingId === vendor.id}
+                          onClick={() => handleDeleteExpense(expense)}
+                          disabled={deletingId === expense.id}
                           className="p-2 text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                          title="Delete vendor"
+                          title="Delete expense"
                         >
-                          {deletingId === vendor.id ? (
+                          {deletingId === expense.id ? (
                             <div className="w-4 h-4 border-2 border-red-600 border-t-transparent rounded-full animate-spin" />
                           ) : (
                             <Trash2 className="w-4 h-4" />
@@ -376,16 +401,16 @@ export default function SaaSSpend() {
         </div>
       </div>
 
-      {/* Edit Vendor Modal */}
+      {/* Edit Expense Modal */}
       {isEditModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl shadow-xl max-w-xl w-full max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-6 border-b border-slate-200">
-              <h2 className="text-xl font-semibold text-slate-900">Edit SaaS Vendor</h2>
+              <h2 className="text-xl font-semibold text-slate-900">Edit SaaS Expense</h2>
               <button
                 onClick={() => {
                   setIsEditModalOpen(false);
-                  setSelectedVendor(null);
+                  setSelectedExpense(null);
                 }}
                 className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
               >
@@ -395,17 +420,17 @@ export default function SaaSSpend() {
               </button>
             </div>
 
-            <form onSubmit={handleUpdateVendor} className="p-6 space-y-4">
+            <form onSubmit={handleUpdateExpense} className="p-6 space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">
-                    Vendor Name *
+                    Application Name *
                   </label>
                   <input
                     type="text"
-                    name="name"
+                    name="application"
                     required
-                    value={formData.name}
+                    value={formData.application}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   />
@@ -413,13 +438,13 @@ export default function SaaSSpend() {
 
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">
-                    Category *
+                    Department *
                   </label>
                   <input
                     type="text"
-                    name="category"
+                    name="department"
                     required
-                    value={formData.category}
+                    value={formData.department}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   />
@@ -427,13 +452,15 @@ export default function SaaSSpend() {
 
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">
-                    Cost *
+                    Monthly Cost *
                   </label>
                   <input
                     type="number"
-                    name="cost"
+                    name="cost_monthly"
                     required
-                    value={formData.cost}
+                    step="0.01"
+                    min="0"
+                    value={formData.cost_monthly}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   />
@@ -441,43 +468,41 @@ export default function SaaSSpend() {
 
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">
-                    Billing Cycle *
+                    Annual Cost *
                   </label>
-                  <select
-                    name="billing_cycle"
+                  <input
+                    type="number"
+                    name="cost_annual"
                     required
-                    value={formData.billing_cycle}
+                    step="0.01"
+                    min="0"
+                    value={formData.cost_annual}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                  >
-                    <option value="Monthly">Monthly</option>
-                    <option value="Yearly">Yearly</option>
-                  </select>
+                  />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">
-                    Renewal Date *
+                    Platform
+                  </label>
+                  <input
+                    type="text"
+                    name="platform"
+                    value={formData.platform}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                    Renewal Date
                   </label>
                   <input
                     type="date"
                     name="renewal_date"
-                    required
                     value={formData.renewal_date}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">
-                    Owner *
-                  </label>
-                  <input
-                    type="text"
-                    name="owner"
-                    required
-                    value={formData.owner}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   />
@@ -485,13 +510,38 @@ export default function SaaSSpend() {
 
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-slate-700 mb-1">
-                    Justification *
+                    URL
+                  </label>
+                  <input
+                    type="url"
+                    name="url"
+                    value={formData.url}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                    Description
                   </label>
                   <textarea
-                    name="justification"
-                    required
-                    rows={3}
-                    value={formData.justification}
+                    name="description"
+                    rows={2}
+                    value={formData.description}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  ></textarea>
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                    Notes
+                  </label>
+                  <textarea
+                    name="notes"
+                    rows={2}
+                    value={formData.notes}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   ></textarea>
@@ -503,7 +553,7 @@ export default function SaaSSpend() {
                   type="button"
                   onClick={() => {
                     setIsEditModalOpen(false);
-                    setSelectedVendor(null);
+                    setSelectedExpense(null);
                   }}
                   className="px-4 py-2 text-slate-600 hover:text-slate-800 transition-colors"
                 >
@@ -511,9 +561,10 @@ export default function SaaSSpend() {
                 </button>
                 <button
                   type="submit"
+                  disabled={isSubmitting}
                   className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors"
                 >
-                  Update Vendor
+                  {isSubmitting ? 'Updating...' : 'Update Expense'}
                 </button>
               </div>
             </form>
@@ -521,12 +572,12 @@ export default function SaaSSpend() {
         </div>
       )}
       
-      {/* Add Vendor Modal */}
+      {/* Add Expense Modal */}
       {isAddModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl shadow-xl max-w-xl w-full max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-6 border-b border-slate-200">
-              <h2 className="text-xl font-semibold text-slate-900">Add New SaaS Vendor</h2>
+              <h2 className="text-xl font-semibold text-slate-900">Add New SaaS Expense</h2>
               <button
                 onClick={() => {
                   setIsAddModalOpen(false);
@@ -540,17 +591,17 @@ export default function SaaSSpend() {
               </button>
             </div>
 
-            <form onSubmit={handleAddVendor} className="p-6 space-y-4">
+            <form onSubmit={handleAddExpense} className="p-6 space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">
-                    Vendor Name *
+                    Application Name *
                   </label>
                   <input
                     type="text"
-                    name="name"
+                    name="application"
                     required
-                    value={formData.name}
+                    value={formData.application}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                     placeholder="e.g., Supabase, GitHub, etc."
@@ -559,93 +610,119 @@ export default function SaaSSpend() {
 
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">
-                    Category *
+                    Department *
                   </label>
                   <input
                     type="text"
-                    name="category"
+                    name="department"
                     required
-                    value={formData.category}
+                    value={formData.department}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                    placeholder="e.g., Database, Version Control, etc."
+                    placeholder="e.g., Engineering, Marketing, etc."
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">
-                    Cost *
+                    Monthly Cost *
                   </label>
                   <input
                     type="number"
-                    name="cost"
+                    name="cost_monthly"
                     required
                     min="0"
                     step="0.01"
-                    value={formData.cost}
+                    value={formData.cost_monthly}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                    placeholder="e.g., 49.99"
+                    placeholder="49.99"
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">
-                    Billing Cycle *
+                    Annual Cost *
                   </label>
-                  <select
-                    name="billing_cycle"
+                  <input
+                    type="number"
+                    name="cost_annual"
                     required
-                    value={formData.billing_cycle}
+                    min="0"
+                    step="0.01"
+                    value={formData.cost_annual}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                  >
-                    <option value="Monthly">Monthly</option>
-                    <option value="Yearly">Yearly</option>
-                  </select>
+                    placeholder="599.88"
+                  />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">
-                    Renewal Date *
+                    Platform
+                  </label>
+                  <input
+                    type="text"
+                    name="platform"
+                    value={formData.platform}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    placeholder="e.g., Cloud Platform, SaaS Tool"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                    Renewal Date
                   </label>
                   <input
                     type="date"
                     name="renewal_date"
-                    required
                     value={formData.renewal_date}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   />
                 </div>
 
-                <div>
+                <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-slate-700 mb-1">
-                    Owner *
+                    URL
                   </label>
                   <input
-                    type="text"
-                    name="owner"
-                    required
-                    value={formData.owner}
+                    type="url"
+                    name="url"
+                    value={formData.url}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                    placeholder="e.g., Vinnie R. Tannous, DevOps Team, etc."
+                    placeholder="https://example.com"
                   />
                 </div>
 
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-slate-700 mb-1">
-                    Justification *
+                    Description
                   </label>
                   <textarea
-                    name="justification"
-                    required
-                    rows={3}
-                    value={formData.justification}
+                    name="description"
+                    rows={2}
+                    value={formData.description}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                    placeholder="Why is this vendor necessary? What value does it provide?"
+                    placeholder="Brief description of the tool's purpose"
+                  ></textarea>
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                    Notes
+                  </label>
+                  <textarea
+                    name="notes"
+                    rows={2}
+                    value={formData.notes}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    placeholder="Additional notes or comments"
                   ></textarea>
                 </div>
               </div>
@@ -675,7 +752,7 @@ export default function SaaSSpend() {
                   ) : (
                     <>
                       <Plus className="w-4 h-4" />
-                      <span>Add Vendor</span>
+                      <span>Add Expense</span>
                     </>
                   )}
                 </button>

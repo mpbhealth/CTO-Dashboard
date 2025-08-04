@@ -146,6 +146,7 @@ export function useSaaSExpenses() {
     totalMonthly: data.reduce((sum, expense) => sum + (expense.cost_monthly || 0), 0),
     totalAnnual: data.reduce((sum, expense) => sum + (expense.cost_annual || 0), 0),
     totalTools: data.length,
+    totalDepartments: new Set(data.map(expense => expense.department)).size,
     renewingNext30Days: data.filter(expense => {
       if (!expense.renewal_date) return false;
       const renewalDate = new Date(expense.renewal_date);

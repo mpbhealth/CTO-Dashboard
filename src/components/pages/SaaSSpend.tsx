@@ -399,6 +399,23 @@ export default function SaaSSpend() {
             </tbody>
           </table>
         </div>
+
+        {filteredExpenses.length === 0 && (
+          <div className="text-center py-12">
+            <CreditCard className="w-12 h-12 text-slate-400 mx-auto mb-4" />
+            <p className="text-slate-600 mb-4">No SaaS expenses found for the selected department.</p>
+            <button
+              onClick={() => {
+                resetFormData();
+                setIsAddModalOpen(true);
+              }}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors mx-auto"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Add Your First SaaS Expense</span>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Edit Expense Modal */}

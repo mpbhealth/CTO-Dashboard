@@ -35,9 +35,16 @@ import {
   salesTrends,
   planBreakdown,
   advisorSkills,
-  performanceMetrics
-} from '@data/mockAdvisorPerformance';
-import { kpiMetrics } from '@data/consolidatedMockData';
+  performanceMetrics,
+  kpiMetrics,
+  mrrData,
+  memberEngagementKPIs,
+  dailyLoginsData,
+  retentionKPIs,
+  retentionTimeline,
+  uptimeKPIs,
+  systemComponents
+} from '../../data/consolidatedMockData';
 
 interface PresentationSlide {
   id: string;

@@ -130,6 +130,49 @@ export const advisorSkills = [
   { skill: 'Needs Assessment', score: 87 },
 ];
 
+// === ANALYTICS DATA (was mockAnalytics) ===
+export const mrrData = [
+  { month: 'May', revenue: 74500, growth: 8.2 },
+  { month: 'June', revenue: 78100, growth: 4.8 },
+  { month: 'July', revenue: 82450, growth: 5.6 },
+  { month: 'August', revenue: 87200, growth: 5.8 },
+  { month: 'September', revenue: 92100, growth: 5.6 },
+];
+
+// === MEMBER ENGAGEMENT DATA (was mockMemberEngagement) ===
+// Note: memberEngagementKPIs already exists above, but adding any missing ones
+export const sessionDurationData = [
+  { date: '07/26', duration: 6.2, bounceRate: 23.4 },
+  { date: '07/27', duration: 6.4, bounceRate: 22.8 },
+  { date: '07/28', duration: 6.1, bounceRate: 24.1 },
+  { date: '07/29', duration: 6.7, bounceRate: 21.9 },
+  { date: '07/30', duration: 6.8, bounceRate: 21.2 },
+];
+
+// === RETENTION DATA EXTENDED (was mockRetention) ===
+// Note: retentionKPIs and retentionTimeline already exist above
+export const monthlyRetentionData = [
+  { month: 'May', newSignups: 156, retained: 142, rate: 91.0 },
+  { month: 'June', newSignups: 178, retained: 164, rate: 92.1 },
+  { month: 'July', newSignups: 189, retained: 173, rate: 91.5 },
+  { month: 'August', newSignups: 201, retained: 186, rate: 92.5 },
+];
+
+// === UPTIME DATA EXTENDED (was mockUptime) ===
+// Note: uptimeKPIs and systemComponents already exist above
+export const incidentHistory = [
+  { date: '2024-07-15', duration: 12, severity: 'minor', resolved: true },
+  { date: '2024-07-08', duration: 3, severity: 'major', resolved: true },
+  { date: '2024-06-22', duration: 8, severity: 'minor', resolved: true },
+];
+
+export const responseTimeHistory = [
+  { date: '07/26', avgResponse: 145, p95Response: 298 },
+  { date: '07/27', avgResponse: 132, p95Response: 276 },
+  { date: '07/28', avgResponse: 158, p95Response: 312 },
+  { date: '07/29', avgResponse: 141, p95Response: 287 },
+  { date: '07/30', avgResponse: 142, p95Response: 289 },
+];
 // === RETENTION DATA EXTENDED ===
 export const retentionTimeline = [
   { month: 'Jun', retention: 87.8 },

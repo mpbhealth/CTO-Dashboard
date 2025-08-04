@@ -1,0 +1,75 @@
+{
+  "name": "SaaS Expense Tracker",
+  "description": "Tracks software and SaaS expenses per user",
+  "tables": [
+    {
+      "name": "saas_expenses",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "isPrimaryKey": true,
+          "defaultValue": "gen_random_uuid()"
+        },
+        {
+          "name": "name",
+          "type": "text",
+          "isNullable": false
+        },
+        {
+          "name": "category",
+          "type": "text"
+        },
+        {
+          "name": "amount",
+          "type": "numeric"
+        },
+        {
+          "name": "frequency",
+          "type": "text"
+        },
+        {
+          "name": "vendor_url",
+          "type": "text"
+        },
+        {
+          "name": "login_email",
+          "type": "text"
+        },
+        {
+          "name": "login_username",
+          "type": "text"
+        },
+        {
+          "name": "login_password",
+          "type": "text"
+        },
+        {
+          "name": "notes",
+          "type": "text"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp",
+          "defaultValue": "now()"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp",
+          "defaultValue": "now()"
+        },
+        {
+          "name": "user_id",
+          "type": "uuid",
+          "references": {
+            "table": "auth.users",
+            "column": "id"
+          }
+        }
+      ],
+      "rls": true,
+      "policies": []
+    }
+  ],
+  "seed": "./seed_saas_expenses.sql"
+}

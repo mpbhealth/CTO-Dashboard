@@ -20,7 +20,7 @@ export function useKPIData() {
       if (error) throw error;
       setData(kpiData || []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : 'Failed to load KPI data');
     } finally {
       setLoading(false);
     }

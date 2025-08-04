@@ -181,12 +181,10 @@ export default function QuickLinks() {
       if (error) throw error;
       
       // Update the link in state to reflect new click count
-      if (isMounted) {
         setLinks(links.map(link => 
           link.id === linkId 
             ? { ...link, click_count: link.click_count + 1 } 
             : link
-        ));
       }
     } catch (err) {
       console.error('Error updating click count:', err);

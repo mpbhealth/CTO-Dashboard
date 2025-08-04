@@ -120,16 +120,9 @@ export default function MondayTasks() {
         throw new Error(data.errors[0].message || 'Monday.com API error');
       }
 
-      // Validate response structure
-      if (!data.data || !Array.isArray(data.data.boards)) {
-        console.warn('Unexpected response structure:', data);
-        setBoards([]); // Set empty array as fallback
-        return;
-      }
 
       setBoards(data.data.boards);
     } catch (err) {
-      console.error('Error fetching boards:', err);
       // Set empty boards array on error so the UI doesn't break
       setBoards([]);
       throw err;

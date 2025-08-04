@@ -56,7 +56,6 @@ export default function Notepad() {
       if (error) throw error;
       setNotes(notes || []);
     } catch (err) {
-      console.error('Error fetching notes:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch notes');
     } finally {
       setLoading(false);
@@ -88,7 +87,6 @@ export default function Notepad() {
       setContent(''); // Clear input
       setSaveSuccess(true);
     } catch (err) {
-      console.error('Error adding note:', err);
       setError(err instanceof Error ? err.message : 'Failed to save note');
     } finally {
       setSaving(false);
@@ -108,7 +106,6 @@ export default function Notepad() {
       // Update state by removing deleted note
       setNotes(notes.filter(note => note.id !== id));
     } catch (err) {
-      console.error('Error deleting note:', err);
       setError(err instanceof Error ? err.message : 'Failed to delete note');
     }
   };

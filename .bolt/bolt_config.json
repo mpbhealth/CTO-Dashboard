@@ -1,0 +1,57 @@
+{
+  "name": "Super Premium Assignments Project",
+  "description": "Bolt config with RLS policies handled via post-deploy seed SQL only",
+  "tables": [
+    {
+      "name": "assignments",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "isPrimaryKey": true,
+          "defaultValue": "gen_random_uuid()"
+        },
+        {
+          "name": "title",
+          "type": "text",
+          "isNullable": false
+        },
+        {
+          "name": "description",
+          "type": "text"
+        },
+        {
+          "name": "assigned_to",
+          "type": "uuid",
+          "isNullable": false
+        },
+        {
+          "name": "status",
+          "type": "text",
+          "defaultValue": "'To Do'"
+        },
+        {
+          "name": "due_date",
+          "type": "date"
+        },
+        {
+          "name": "project_id",
+          "type": "uuid"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp",
+          "defaultValue": "now()"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp",
+          "defaultValue": "now()"
+        }
+      ],
+      "rls": true,
+      "policies": []
+    }
+  ],
+  "seed": "./seed_assignments_policy.sql"
+}

@@ -43,8 +43,6 @@ type SortBy = 'name' | 'category' | 'clicks' | 'date';
 
 export default function QuickLinks() {
   const [links, setLinks] = useState<QuickLink[]>([]);
-  const [filteredLinks, setFilteredLinks] = useState<QuickLink[]>([]);
-  const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -57,6 +55,36 @@ export default function QuickLinks() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [isMounted, setIsMounted] = useState(true);
 
+  // Derive categories from current links (this updates automatically when links change)
+  const categories = Array.from(new Set(links.map(link => link.category).filter(Boolean) as string[]));
+
+  // Derive filtered links from current state
+  const filteredLinks = links.filter(link => {
+    const matchesSearch = searchTerm === '' || 
+      link.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (link.description && link.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (link.url.toLowerCase().includes(searchTerm.toLowerCase()));
+    
+    const matchesCategory = selectedCategory === 'All' || link.category === selectedCategory;
+    
+    return matchesSearch && matchesCategory;
+  });
+
+  // Sort filtered links
+  const sortedFilteredLinks = [...filteredLinks].sort((a, b) => {
+    switch (sortBy) {
+      case 'name':
+        return a.name.localeCompare(b.name);
+      case 'category':
+        return (a.category || '').localeCompare(b.category || '');
+      case 'clicks':
+        return (b.click_count || 0) - (a.click_count || 0);
+      case 'date':
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      default:
+        return 0;
+    }
+  });
   // Fetch quick links on component mount
   useEffect(() => {
     fetchQuickLinks();
@@ -66,11 +94,6 @@ export default function QuickLinks() {
       setIsMounted(false);
     };
   }, []);
-
-  // Filter and sort links when dependencies change
-  useEffect(() => {
-    filterAndSortLinks();
-  }, [links, searchTerm, selectedCategory, sortBy]);
 
   const fetchQuickLinks = async () => {
     try {
@@ -83,12 +106,6 @@ export default function QuickLinks() {
 
       if (isMounted) {
         setLinks(data || []);
-        
-        // Extract unique categories
-        const uniqueCategories = Array.from(
-          new Set(data?.map(link => link.category).filter(Boolean) as string[])
-        );
-        setCategories(uniqueCategories);
       }
     } catch (err) {
       if (isMounted) {
@@ -100,38 +117,6 @@ export default function QuickLinks() {
         setLoading(false);
       }
     }
-  };
-
-  const filterAndSortLinks = () => {
-    // Filter by search term and category
-    let filtered = links.filter(link => {
-      const matchesSearch = searchTerm === '' || 
-        link.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (link.description && link.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (link.url.toLowerCase().includes(searchTerm.toLowerCase()));
-      
-      const matchesCategory = selectedCategory === 'All' || link.category === selectedCategory;
-      
-      return matchesSearch && matchesCategory;
-    });
-
-    // Sort links
-    filtered = [...filtered].sort((a, b) => {
-      switch (sortBy) {
-        case 'name':
-          return a.name.localeCompare(b.name);
-        case 'category':
-          return (a.category || '').localeCompare(b.category || '');
-        case 'clicks':
-          return (b.click_count || 0) - (a.click_count || 0);
-        case 'date':
-          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-        default:
-          return 0;
-      }
-    });
-
-    setFilteredLinks(filtered);
   };
 
   const handleDeleteLink = async (link: QuickLink) => {
@@ -568,7 +553,55 @@ export default function QuickLinks() {
               <span>Add Quick Link</span>
             </button>
           </div>
-        )}
+        ) : viewMode === 'grid' ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {sortedFilteredLinks.map((link) => (
+              <motion.div
+                key={link.id}
+                layout
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.2 }}
+                className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow"
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
+                      {link.icon ? (
+                        <span className="text-2xl">{link.icon}</span>
+                      ) : (
+                        getCategoryIcon(link.category)
+                      )}
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-slate-900 line-clamp-1">{link.name}</h3>
+                      <span className="text-xs text-slate-500">
+                        {link.category || 'Uncategorized'}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <button
+                      onClick={() => handleEditLink(link)}
+                      className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                      title="Edit link"
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteLink(link)}
+                      disabled={deletingId === link.id}
+                      className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+                      title="Delete link"
+                    >
+                      {deletingId === link.id ? (
+                        <div className="w-4 h-4 border-2 border-red-600 border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        <Trash2 className="w-4 h-4" />
+                      )}
+                    </button>
+                  </div>
+                </div>
       </div>
 
       {/* Add Quick Link Modal */}

@@ -553,8 +553,6 @@ export default function QuickLinks() {
               <span>Add Quick Link</span>
             </button>
           </div>
-        ) : (
-          viewMode === 'grid' ? renderGridView() : renderListView()
         )}
       </div>
 

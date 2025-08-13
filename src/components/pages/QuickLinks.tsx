@@ -553,55 +553,9 @@ export default function QuickLinks() {
               <span>Add Quick Link</span>
             </button>
           </div>
-        ) : viewMode === 'grid' ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {sortedFilteredLinks.map((link) => (
-              <motion.div
-                key={link.id}
-                layout
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.2 }}
-                className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
-                      {link.icon ? (
-                        <span className="text-2xl">{link.icon}</span>
-                      ) : (
-                        getCategoryIcon(link.category)
-                      )}
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-slate-900 line-clamp-1">{link.name}</h3>
-                      <span className="text-xs text-slate-500">
-                        {link.category || 'Uncategorized'}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <button
-                      onClick={() => handleEditLink(link)}
-                      className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
-                      title="Edit link"
-                    >
-                      <Pencil className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => handleDeleteLink(link)}
-                      disabled={deletingId === link.id}
-                      className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
-                      title="Delete link"
-                    >
-                      {deletingId === link.id ? (
-                        <div className="w-4 h-4 border-2 border-red-600 border-t-transparent rounded-full animate-spin" />
-                      ) : (
-                        <Trash2 className="w-4 h-4" />
-                      )}
-                    </button>
-                  </div>
-                </div>
+        ) : (
+          viewMode === 'grid' ? renderGridView() : renderListView()
+        )}
       </div>
 
       {/* Add Quick Link Modal */}

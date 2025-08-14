@@ -10,41 +10,13 @@ function ErrorBoundary({ children }: { children: React.ReactNode }) {
   const [error, setError] = React.useState<Error | null>(null);
 
   React.useEffect(() => {
-    // Filter out third-party extension errors
-    const shouldIgnoreError = (error: any) => {
-      const errorMessage = error?.message || error?.toString() || '';
-      const errorStack = error?.stack || '';
-      
-      // Ignore Keplr wallet extension errors
-      if (errorMessage.includes('keplr') || errorMessage.includes('Keplr')) return true;
-      if (errorStack.includes('injectedScript.bundle.js')) return true;
-      if (errorStack.includes('extension://')) return true;
-      
-      // Ignore other common wallet/extension errors
-      if (errorMessage.includes('MetaMask') || errorMessage.includes('ethereum')) return true;
-      if (errorMessage.includes('getOfflineSigner')) return true;
-      if (errorMessage.includes('wallet')) return true;
-      
-      return false;
-    };
-
     const handleError = (event: ErrorEvent) => {
-      if (shouldIgnoreError(event.error)) {
-        console.debug('Suppressed third-party extension error:', event.error?.message);
-        return;
-      }
-      
       console.error('Application error caught:', event.error);
       setHasError(true);
       setError(event.error);
     };
 
     const handleRejection = (event: PromiseRejectionEvent) => {
-      if (shouldIgnoreError(event.reason)) {
-        console.debug('Suppressed third-party extension rejection:', event.reason);
-        return;
-      }
-      
       console.error('Unhandled promise rejection:', event.reason);
       setHasError(true);
       setError(new Error(event.reason));

@@ -13,37 +13,11 @@ export default function AuthWrapper({ children }: AuthWrapperProps) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Suppress console warnings from third-party extensions
-    const originalConsoleWarn = console.warn;
-    const originalConsoleError = console.error;
-    
-    console.warn = (...args) => {
-      const message = args.join(' ').toLowerCase();
-      if (message.includes('keplr') || message.includes('wallet') || message.includes('extension')) {
-        return; // Suppress wallet extension warnings
-      }
-      originalConsoleWarn.apply(console, args);
-    };
-    
-    console.error = (...args) => {
-      const message = args.join(' ').toLowerCase();
-      if (message.includes('keplr') || message.includes('injectedscript') || message.includes('getofflinesigner')) {
-        return; // Suppress wallet extension errors
-      }
-      originalConsoleError.apply(console, args);
-    };
-
     // If Supabase is not configured, skip auth and show demo mode
     if (!isSupabaseConfigured) {
       console.warn('Supabase not configured - running in demo mode');
       setUser({ id: 'demo-user', email: 'demo@example.com' } as User);
       setLoading(false);
-      
-      // Restore original console methods
-      return () => {
-        console.warn = originalConsoleWarn;
-        console.error = originalConsoleError;
-      };
       return;
     }
 

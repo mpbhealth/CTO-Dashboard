@@ -41,33 +41,5 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    
-    <!-- Suppress third-party extension console spam -->
-    <script>
-      // Override console methods to filter out extension errors
-      (function() {
-        const originalError = console.error;
-        const originalWarn = console.warn;
-        
-        console.error = function(...args) {
-          const message = args.join(' ').toLowerCase();
-          if (message.includes('keplr') || 
-              message.includes('injectedscript') || 
-              message.includes('wallet') ||
-              message.includes('getofflinesigner')) {
-            return; // Suppress crypto wallet extension errors
-          }
-          originalError.apply(console, args);
-        };
-        
-        console.warn = function(...args) {
-          const message = args.join(' ').toLowerCase();
-          if (message.includes('keplr') || message.includes('wallet')) {
-            return; // Suppress crypto wallet extension warnings
-          }
-          originalWarn.apply(console, args);
-        };
-      })();
-    </script>
   </body>
 </html>

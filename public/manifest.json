@@ -15,19 +15,19 @@
   "prefer_related_applications": false,
   "icons": [
     {
-      "src": "/icons/icon-72x72.png",
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 72 72'%3E%3Crect width='72' height='72' fill='%234F46E5'/%3E%3Cpath d='M18 36L27 27L36 36L54 18L63 27L36 54L18 36Z' fill='white'/%3E%3C/svg%3E",
       "sizes": "72x72",
       "type": "image/png",
       "purpose": "maskable any"
     },
     {
-      "src": "/icons/icon-96x96.png",
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Crect width='96' height='96' fill='%234F46E5'/%3E%3Cpath d='M24 48L36 36L48 48L72 24L84 36L48 72L24 48Z' fill='white'/%3E%3C/svg%3E",
       "sizes": "96x96",
       "type": "image/png",
       "purpose": "maskable any"
     },
     {
-      "src": "/icons/icon-128x128.png",
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'%3E%3Crect width='128' height='128' fill='%234F46E5'/%3E%3Cpath d='M32 64L48 48L64 64L96 32L112 48L64 96L32 64Z' fill='white'/%3E%3C/svg%3E",
       "sizes": "128x128",
       "type": "image/png",
       "purpose": "maskable any"
@@ -51,25 +51,25 @@
       "purpose": "maskable any"
     },
     {
-      "src": "/icons/icon-384x384.png",
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 384'%3E%3Crect width='384' height='384' fill='%234F46E5'/%3E%3Cpath d='M96 192L144 144L192 192L288 96L336 144L192 288L96 192Z' fill='white'/%3E%3C/svg%3E",
       "sizes": "384x384",
       "type": "image/png",
       "purpose": "maskable any"
     },
     {
-      "src": "/icons/icon-512x512.png",
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%234F46E5'/%3E%3Cpath d='M128 256L192 192L256 256L384 128L448 192L256 384L128 256Z' fill='white'/%3E%3C/svg%3E",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable any"
     },
     {
-      "src": "/icons/icon-maskable-192x192.png",
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='32' fill='%234F46E5'/%3E%3Cpath d='M48 96L72 72L96 96L144 48L168 72L96 144L48 96Z' fill='white'/%3E%3C/svg%3E",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "/icons/icon-maskable-512x512.png",
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='85' fill='%234F46E5'/%3E%3Cpath d='M128 256L192 192L256 256L384 128L448 192L256 384L128 256Z' fill='white'/%3E%3C/svg%3E",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
@@ -77,14 +77,14 @@
   ],
   "screenshots": [
     {
-      "src": "/screenshots/desktop-dashboard.png",
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1280 720'%3E%3Crect width='1280' height='720' fill='%23F8FAFC'/%3E%3Ctext x='640' y='360' text-anchor='middle' dominant-baseline='middle' font-family='Arial' font-size='32' fill='%23334155'%3EMPB Health Dashboard%3C/text%3E%3C/svg%3E",
       "sizes": "1280x720",
       "type": "image/png",
       "form_factor": "wide",
       "label": "MPB Health Dashboard Overview"
     },
     {
-      "src": "/screenshots/mobile-dashboard.png",
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 375 812'%3E%3Crect width='375' height='812' fill='%23F8FAFC'/%3E%3Ctext x='187' y='406' text-anchor='middle' dominant-baseline='middle' font-family='Arial' font-size='18' fill='%23334155'%3EMobile Dashboard%3C/text%3E%3C/svg%3E",
       "sizes": "375x812",
       "type": "image/png",
       "form_factor": "narrow",
@@ -99,7 +99,7 @@
       "url": "/?tab=analytics",
       "icons": [
         {
-          "src": "/icons/shortcut-analytics.png",
+          "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Crect width='96' height='96' fill='%234F46E5'/%3E%3Cpath d='M24 72L32 64L40 72L56 56L64 64L40 88L24 72Z' fill='white'/%3E%3C/svg%3E",
           "sizes": "96x96",
           "type": "image/png"
         }
@@ -112,7 +112,7 @@
       "url": "/?tab=projects",
       "icons": [
         {
-          "src": "/icons/shortcut-projects.png",
+          "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Crect width='96' height='96' fill='%2310B981'/%3E%3Cpath d='M24 48L32 40L40 48L56 32L64 40L40 64L24 48Z' fill='white'/%3E%3C/svg%3E",
           "sizes": "96x96",
           "type": "image/png"
         }
@@ -125,7 +125,7 @@
       "url": "/?tab=roadmap",
       "icons": [
         {
-          "src": "/icons/shortcut-roadmap.png",
+          "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Crect width='96' height='96' fill='%23F59E0B'/%3E%3Cpath d='M24 48L32 40L40 48L56 32L64 40L40 64L24 48Z' fill='white'/%3E%3C/svg%3E",
           "sizes": "96x96",
           "type": "image/png"
         }

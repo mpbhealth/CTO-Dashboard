@@ -2,9 +2,9 @@
 <browserconfig>
   <msapplication>
     <tile>
-      <square70x70logo src="/icons/icon-72x72.png"/>
-      <square150x150logo src="/icons/icon-144x144.png"/>
-      <square310x310logo src="/icons/icon-512x512.png"/>
+      <square70x70logo src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 70 70'%3E%3Crect width='70' height='70' fill='%234F46E5'/%3E%3Cpath d='M17.5 35L26.25 26.25L35 35L52.5 17.5L61.25 26.25L35 52.5L17.5 35Z' fill='white'/%3E%3C/svg%3E"/>
+      <square150x150logo src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 150 150'%3E%3Crect width='150' height='150' fill='%234F46E5'/%3E%3Cpath d='M37.5 75L56.25 56.25L75 75L112.5 37.5L131.25 56.25L75 112.5L37.5 75Z' fill='white'/%3E%3C/svg%3E"/>
+      <square310x310logo src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 310 310'%3E%3Crect width='310' height='310' fill='%234F46E5'/%3E%3Cpath d='M77.5 155L116.25 116.25L155 155L232.5 77.5L271.25 116.25L155 232.5L77.5 155Z' fill='white'/%3E%3C/svg%3E"/>
       <TileColor>#4F46E5</TileColor>
     </tile>
   </msapplication>

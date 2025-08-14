@@ -16,9 +16,9 @@
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1E1B4B" />
     
     <!-- Apple Touch Icon -->
-    <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
-    <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-192x192.png" />
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%234F46E5'/%3E%3Cpath d='M45 90L67.5 67.5L90 90L135 45L157.5 67.5L90 135L45 90Z' fill='white'/%3E%3C/svg%3E" />
+    <link rel="apple-touch-icon" sizes="152x152" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 152 152'%3E%3Crect width='152' height='152' fill='%234F46E5'/%3E%3Cpath d='M38 76L57 57L76 76L114 38L133 57L76 114L38 76Z' fill='white'/%3E%3C/svg%3E" />
+    <link rel="apple-touch-icon" sizes="180x180" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%234F46E5'/%3E%3Cpath d='M45 90L67.5 67.5L90 90L135 45L157.5 67.5L90 135L45 90Z' fill='white'/%3E%3C/svg%3E" />
     
     <!-- Apple PWA Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -26,7 +26,7 @@
     <meta name="apple-mobile-web-app-title" content="MPB Dashboard" />
     
     <!-- Microsoft Tiles -->
-    <meta name="msapplication-TileImage" content="/icons/icon-144x144.png" />
+    <meta name="msapplication-TileImage" content="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 144 144'%3E%3Crect width='144' height='144' fill='%234F46E5'/%3E%3Cpath d='M36 72L54 54L72 72L108 36L126 54L72 108L36 72Z' fill='white'/%3E%3C/svg%3E" />
     <meta name="msapplication-TileColor" content="#4F46E5" />
     <meta name="msapplication-config" content="/browserconfig.xml" />
     
@@ -37,6 +37,32 @@
     
     <title>MPB Health CTO Dashboard - Executive Technology Leadership</title>
     <meta name="description" content="Comprehensive executive dashboard for MPB Health's technology leadership team with analytics, project management, and organizational insights." />
+    
+    <!-- Production Debug Script -->
+    <script>
+      console.log('=== MPB Health Dashboard Debug Info ===');
+      console.log('Environment checks:', {
+        hasRoot: !!document.getElementById('root'),
+        userAgent: navigator.userAgent.substring(0, 50),
+        url: window.location.href,
+        timestamp: new Date().toISOString()
+      });
+      
+      // Enhanced error capturing for production debugging
+      window.addEventListener('error', (e) => {
+        console.error('🔥 Global Error:', {
+          message: e.message,
+          filename: e.filename,
+          lineno: e.lineno,
+          colno: e.colno,
+          error: e.error
+        });
+      });
+      
+      window.addEventListener('unhandledrejection', (e) => {
+        console.error('🔥 Unhandled Promise Rejection:', e.reason);
+      });
+    </script>
   </head>
   <body>
     <div id="root"></div>

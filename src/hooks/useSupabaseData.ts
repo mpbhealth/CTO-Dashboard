@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
+import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { Database } from '../types/database';
 
 type Tables = Database['public']['Tables'];
@@ -12,6 +12,19 @@ export function useKPIData() {
   const fetchData = async () => {
     try {
       setLoading(true);
+      
+      // If Supabase is not configured, return mock data
+      if (!isSupabaseConfigured) {
+        console.warn('Supabase not configured - returning mock KPI data');
+        setData([
+          { id: '1', title: 'Daily Active Users', value: '4,827', change: '+8.3%', trend: 'up', created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+          { id: '2', title: 'Monthly Revenue', value: '$487,250', change: '+12.3%', trend: 'up', created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+          { id: '3', title: 'Customer Satisfaction', value: '4.7/5', change: '+0.3', trend: 'up', created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+          { id: '4', title: 'User Retention', value: '89.4%', change: '+2.1%', trend: 'up', created_at: new Date().toISOString(), updated_at: new Date().toISOString() }
+        ]);
+        return;
+      }
+      
       const { data: kpiData, error } = await supabase
         .from('kpi_data')
         .select('*')

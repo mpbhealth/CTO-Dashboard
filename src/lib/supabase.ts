@@ -4,8 +4,22 @@ import { Database } from '../types/database';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables');
-}
+// Fallback values for development/demo mode
+const defaultUrl = 'https://demo.supabase.co';
+const defaultKey = 'demo-key';
 
-export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
+// Use environment variables if available, otherwise use demo values
+const finalUrl = supabaseUrl || defaultUrl;
+const finalKey = supabaseAnonKey || defaultKey;
+
+// Log configuration status
+console.log('Supabase Configuration:', {
+  hasUrl: !!supabaseUrl,
+  hasKey: !!supabaseAnonKey,
+  usingFallback: !supabaseUrl || !supabaseAnonKey
+});
+
+export const supabase = createClient<Database>(finalUrl, finalKey);
+
+// Export configuration status for components to use
+export const isSupabaseConfigured = !!(supabaseUrl && supabaseAnonKey);

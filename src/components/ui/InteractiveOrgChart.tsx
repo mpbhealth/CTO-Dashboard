@@ -301,18 +301,16 @@ export default function InteractiveOrgChart({
           stroke={isSelected ? '#1E40AF' : isHighlighted ? '#059669' : '#E2E8F0'}
           strokeWidth={isSelected || isHighlighted ? 3 : 2}
           onMouseDown={(e) => handleMouseDown(e, department.id)}
-          onClick={() => setSelectedDepartment(isSelected ? null : department.id)}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           className="drop-shadow-md"
-         onClick={(e) => {
-           if (!dragState.isDragging) {
-             setSelectedDepartment(isSelected ? null : department.id);
-             if (onDepartmentSelect) onDepartmentSelect(department.id);
-           }
-           if (onDepartmentSelect) onDepartmentSelect(department.id);
-         }}
-        />
+          onClick={(e) => {
+            if (!dragState.isDragging) {
+              setSelectedDepartment(isSelected ? null : department.id);
+              if (onDepartmentSelect) onDepartmentSelect(department.id);
+            }
+          }}
+         />
 
         {/* Department icon */}
         <foreignObject x={10} y={10} width={24} height={24}>

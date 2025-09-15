@@ -150,7 +150,7 @@ export default function IntegrationsHub() {
       if (sftpRes.data) setSftpConfigs(sftpRes.data);
       if (marketingRes.data) setMarketingIntegrations(marketingRes.data);
       if (mondayRes.data && mondayRes.data.length > 0) setMondayConfig(mondayRes.data[0]);
-      if (logsRes.data) setSyncLogs(logsRes.data);
+      if (logsRes.data) setSyncLogs(logsRes.data as SyncLog[]);
     } catch (error) {
       console.error('Error fetching integration data:', error);
     } finally {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Calendar, 
@@ -7,14 +7,11 @@ import {
   Clock, 
   AlertCircle, 
   RefreshCw, 
-  Download, 
   Plus, 
   ExternalLink,
-  Filter,
   Search,
   X,
   FolderPlus,
-  Settings,
   Zap
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
@@ -61,11 +58,7 @@ export default function MondayTasks() {
   const [selectedStatus, setSelectedStatus] = useState('All');
   const [selectedTasks, setSelectedTasks] = useState<Set<string>>(new Set());
 
-  useEffect(() => {
-    fetchMondayData();
-  }, []);
-
-  const fetchMondayData = async () => {
+  const fetchMondayData = useCallback(async () => {
     setLoading(true);
     setError(null);
 
@@ -79,7 +72,11 @@ export default function MondayTasks() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchMondayData();
+  }, [fetchMondayData]);
 
   const fetchBoards = async () => {
     const query = `

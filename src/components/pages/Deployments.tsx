@@ -1,14 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { useDeploymentLogs, useProjects, useRoadmapItems } from '../../hooks/useSupabaseData';
-import { GitBranch, CheckCircle, XCircle, Clock, Filter, Plus, Edit, Trash2, Save, X, RefreshCw, Calendar, User, ExternalLink, Play, Pause } from 'lucide-react';
+import { GitBranch, CheckCircle, XCircle, Clock, Filter, Plus, Edit, Trash2, Save, X, RefreshCw, Calendar } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { Database } from '../../types/database';
 import ExportDropdown from '../ui/ExportDropdown';
 
 type DeploymentLog = Database['public']['Tables']['deployment_logs']['Row'];
-type Project = Database['public']['Tables']['projects']['Row'];
-type RoadmapItem = Database['public']['Tables']['roadmap_items']['Row'];
 
 interface DeploymentFormData {
   project: string;
@@ -41,14 +39,7 @@ export default function Deployments() {
     timestamp: new Date().toISOString().slice(0, 16)
   });
 
-  // Auto-create deployments for completed projects
-  useEffect(() => {
-    if (projects && roadmapItems && deploymentLogs) {
-      autoCreateDeploymentsForCompletedProjects();
-    }
-  }, [projects, roadmapItems, deploymentLogs]);
-
-  const autoCreateDeploymentsForCompletedProjects = async () => {
+  const autoCreateDeploymentsForCompletedProjects = useCallback(async () => {
     if (!projects || !roadmapItems || !deploymentLogs) return;
 
     // Find completed roadmap items that have corresponding projects
@@ -85,7 +76,14 @@ export default function Deployments() {
         }
       }
     }
-  };
+  }, [projects, roadmapItems, deploymentLogs]);
+
+  // Auto-create deployments for completed projects
+  useEffect(() => {
+    if (projects && roadmapItems && deploymentLogs) {
+      autoCreateDeploymentsForCompletedProjects();
+    }
+  }, [projects, roadmapItems, deploymentLogs, autoCreateDeploymentsForCompletedProjects]);
 
   if (loading || projectsLoading || roadmapLoading) {
     return (

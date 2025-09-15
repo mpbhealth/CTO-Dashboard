@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import { 
   Award, 
   BarChart3, 
@@ -14,8 +13,7 @@ import {
   TrendingUp,
   MessageSquare,
   Send,
-  X,
-  Star
+  X
 } from 'lucide-react';
 import { useEmployeeProfiles } from "../../hooks/useOrganizationalData";
 import { usePerformanceSystem, PerformanceReview } from '../../hooks/usePerformanceSystem';
@@ -255,7 +253,7 @@ function PerformanceEvaluation() {
                   <div className="flex items-center space-x-4">
                     <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center">
                       <span className="text-xl font-medium text-indigo-600">
-                        {selectedEmployeeDetails?.first_name[0]}{selectedEmployeeDetails?.last_name[0]}
+                        {selectedEmployeeDetails?.first_name}{selectedEmployeeDetails?.last_name}
                       </span>
                     </div>
                     <div>
@@ -338,10 +336,6 @@ function PerformanceEvaluation() {
                     {reviewsLoading ? (
                       <div className="flex items-center justify-center h-64">
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-                      </div>
-                    ) : reviewsError ? (
-                      <div className="text-center py-8">
-                        <p className="text-red-500">Error loading reviews</p>
                       </div>
                     ) : reviews && reviews.length > 0 ? (
                       <div className="space-y-4">
@@ -706,7 +700,7 @@ function PerformanceEvaluation() {
                   <option value="praise">👏 Praise</option>
                   <option value="suggestion">💡 Suggestion</option>
                   <option value="criticism">🔧 Constructive Criticism</option>
-                  <option value="question">❓ Question</option>
+                  <option value="question">❓ Question</r
                 </select>
               </div>
 

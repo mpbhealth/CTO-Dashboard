@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   CheckSquare, 
   Plus, 
   Search, 
-  Filter, 
   Calendar, 
   User, 
   Building, 
@@ -17,17 +16,16 @@ import {
   RefreshCw,
   X,
   Save,
-  FolderKanban,
   Zap
 } from 'lucide-react';
 import { useAssignments } from '../../hooks/useAssignments';
 import { useProjects } from '../../hooks/useSupabaseData';
 import AssignmentForm from '../ui/AssignmentForm';
-import { Assignment, AssignmentCreateData } from '../../types/Assignment';
+import { AssignmentCreateData } from '../../types/Assignment';
 
 
 export default function Assignments() {
-  const { data: assignments, loading, error, refetch, addAssignment, updateAssignment, deleteAssignment, currentUser } = useAssignments();
+  const { data: assignments, loading, error, refetch, addAssignment, updateAssignment, deleteAssignment } = useAssignments();
   const { data: projects, loading: projectsLoading } = useProjects();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProject, setSelectedProject] = useState('All');
@@ -37,7 +35,7 @@ export default function Assignments() {
   const [activeTab, setActiveTab] = useState<'assignments' | 'monday'>('assignments');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [selectedAssignment, setSelectedAssignment] = useState(null);
+  const [selectedAssignment, setSelectedAssignment] = useState<any>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
@@ -98,9 +96,6 @@ export default function Assignments() {
     return matchesSearch && matchesProject && matchesStatus && matchesAssignee;
   });
 
-  // Get unique assignees for filter
-  const assignees = ['All', ...Array.from(new Set(assignments.map(a => a.assigned_to).filter(Boolean)))];
-  const projectOptions = ['All', ...projects.map(p => ({ id: p.id, name: p.name }))];
   const statuses = ['All', 'todo', 'in_progress', 'done'];
 
   const getStatusIcon = (status: string) => {
@@ -147,41 +142,6 @@ export default function Assignments() {
         return 'bg-yellow-100 text-yellow-800 border-yellow-200';
       default:
         return 'bg-slate-50 text-slate-700 border-slate-200';
-    }
-  };
-
-  const handleAddAssignment = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setFormError(null);
-
-    try {
-      const result = await addAssignment({
-        title: formData.title,
-        description: formData.description || null,
-        project_id: formData.project_id || null,
-        status: formData.status,
-        due_date: formData.due_date || null
-      });
-
-      if (!result.success) {
-        throw new Error(result.error);
-      }
-
-      // Reset form
-      setFormData({
-        title: '',
-        description: '',
-        project_id: '',
-        status: 'todo',
-        due_date: ''
-      });
-
-      setIsAddModalOpen(false);
-    } catch (err) {
-      setFormError(err instanceof Error ? err.message : 'An error occurred');
-    } finally {
-      setIsSubmitting(false);
     }
   };
 

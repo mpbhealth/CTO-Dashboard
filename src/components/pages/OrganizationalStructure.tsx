@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import { 
   useDepartments, 
   useEmployeeProfiles, 
@@ -33,7 +32,6 @@ export default function OrganizationalStructure() {
   const [activeTab, setActiveTab] = useState('org-chart');
   const [searchTerm, setSearchTerm] = useState('');
   const [isEditMode, setIsEditMode] = useState(false);
-  const [selectedDepartmentId, setSelectedDepartmentId] = useState<string | null>(null);
   const [isAddDepartmentModalOpen, setIsAddDepartmentModalOpen] = useState(false);
 
   const { data: departments, loading: departmentsLoading, error: departmentsError, refetch: refetchDepartments } = useDepartments();
@@ -132,7 +130,7 @@ export default function OrganizationalStructure() {
   };
 
   const handleDepartmentSelect = (departmentId: string) => {
-    setSelectedDepartmentId(departmentId);
+    // setSelectedDepartmentId(departmentId);
   };
 
   return (

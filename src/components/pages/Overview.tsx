@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import KPICard from '../ui/KPICard';
 import { useKPIData, useTeamMembers } from '../../hooks/useSupabaseData';
-import { Users, Building, MapPin, Calendar, Plus, Edit, Trash2 } from 'lucide-react';
+import { Users, Building, Calendar, Plus, Edit, Trash2 } from 'lucide-react';
 import AddTeamMemberModal from '../modals/AddTeamMemberModal';
 import EditTeamMemberModal from '../modals/EditTeamMemberModal';
 import { supabase } from '../../lib/supabase';
@@ -88,8 +88,6 @@ export default function Overview() {
     acc[member.department] = (acc[member.department] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
-
-  const totalBudget = Object.keys(departmentStats).length * 600000; // Estimated budget per department
 
   return (
     <div className="space-y-8">

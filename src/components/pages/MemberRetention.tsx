@@ -5,26 +5,21 @@ import CsvUploader from '../ui/CsvUploader';
 import {
   ResponsiveContainer, 
   LineChart, 
-  Line, 
   XAxis, 
   YAxis, 
   Tooltip, 
-  AreaChart, 
   Area,
   BarChart,
-  Bar,
-  PieChart,
-  Pie,
-  Cell
+  Bar
 } from 'recharts';
 import { TrendingDown, TrendingUp, Users, Calendar } from 'lucide-react';
-import { retentionKPIs, churnReasons } from '../../data/consolidatedMockData';
-import { useMemberStatusData, getStatusCounts } from '../../hooks/useMemberStatusData';
+import { retentionKPIs, churnReasons, retentionTimeline, churnTimeline, cohortAnalysis } from '../../data/consolidatedMockData';
+import { useMemberStatusData } from '../../hooks/useMemberStatusData';
 
 export default function MemberRetention() {
   const [selectedTimeframe, setSelectedTimeframe] = useState('6m');
   const [showImporter, setShowImporter] = useState(false);
-  const { data: memberStatusData, loading: statusLoading, error: statusError, refetch: refetchStatus } = useMemberStatusData();
+  const { refetch: refetchStatus } = useMemberStatusData();
 
   const timeframes = [
     { value: '3m', label: 'Last 3 months' },
@@ -68,22 +63,6 @@ export default function MemberRetention() {
         </motion.div>
       )}
       
-      {/* CSV Import Section */}
-      {showImporter && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
-          exit={{ opacity: 0, height: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <CsvUploader
-            onSuccess={refetchStatus}
-            title="Import Member Status Data"
-            description="Upload member status changes to track retention trends"
-          />
-        </motion.div>
-      )}
-
       {/* KPI Cards */}
       <motion.div 
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
@@ -91,16 +70,6 @@ export default function MemberRetention() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        {/* Import Status Data Button */}
-        <button
-          onClick={() => setShowImporter(!showImporter)}
-          className="flex items-center space-x-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors"
-        >
-          <Calendar className="w-4 h-4" />
-          <span>{showImporter ? 'Hide Importer' : 'Import Status Data'}</span>
-        </button>
-        
-        {/* KPI Cards */}
         {/* Import Status Data Button */}
         <button
           onClick={() => setShowImporter(!showImporter)}

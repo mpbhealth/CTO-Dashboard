@@ -5,7 +5,6 @@ import {
   ArrowUpRight,
   BarChart3,
   Calendar,
-  Download,
   Plus,
   Settings,
   RefreshCw,
@@ -53,7 +52,6 @@ export default function MarketingAnalytics() {
   const [isConfiguring, setIsConfiguring] = useState(false);
   const [isAddPropertyModalOpen, setIsAddPropertyModalOpen] = useState(false);
   const [gaConnected, setGaConnected] = useState(false);
-  const [fbConnected, setFbConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
   const [showGAForm, setShowGAForm] = useState(false);
@@ -100,8 +98,8 @@ export default function MarketingAnalytics() {
   };
 
   // Fetch data from Supabase
-  const { data: properties, loading: propertiesLoading, error: propertiesError, refetch: refetchProperties, addProperty, updateProperty } = useMarketingProperties();
-  const { data: metrics, loading: metricsLoading, error: metricsError, refetch: refetchMetrics } = useMarketingMetrics(selectedPropertyId, getDateRange());
+  const { data: properties, loading: propertiesLoading, refetch: refetchProperties, updateProperty } = useMarketingProperties();
+  const { data: metrics } = useMarketingMetrics(selectedPropertyId, getDateRange());
 
   // Set default selected property
   React.useEffect(() => {
@@ -266,7 +264,7 @@ export default function MarketingAnalytics() {
 
       if (existing && existing.length > 0) {
         // Update existing record
-        const { data: marketing, error } = await supabase
+        const { error } = await supabase
           .from('marketing_integrations')
           .update({
             ga_property_id: gaCredentials.measurementId,
@@ -320,7 +318,7 @@ export default function MarketingAnalytics() {
         throw new Error(result.error);
       }
 
-      setFbConnected(true);
+      setGaConnected(true);
       setShowFBForm(false);
       setConnectionError(null);
     } catch (error) {
@@ -534,7 +532,6 @@ export default function MarketingAnalytics() {
                     pixelId: selectedProperty.fb_pixel_id || ''
                   });
                   setGaConnected(selectedProperty.ga_connected);
-                  setFbConnected(selectedProperty.fb_connected);
                   setIsConfiguring(true);
                   setTimeRange('30d');
                 }}

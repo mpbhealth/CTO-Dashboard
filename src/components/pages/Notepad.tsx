@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
-  Plus, 
   Trash2, 
   Save,
   Clock, 
@@ -82,7 +81,6 @@ export default function Notepad() {
       
       if (error) throw error;
       
-      // Update state with new note
       setNotes([...(data || []), ...notes]);
       setContent(''); // Clear input
       setSaveSuccess(true);

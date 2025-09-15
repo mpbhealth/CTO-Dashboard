@@ -2,7 +2,7 @@ import React from 'react';
 import KPICard from '../ui/KPICard';
 import {
   LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer,
-  BarChart, Bar, Legend
+  BarChart, Bar
 } from 'recharts';
 import { memberEngagementKPIs, dailyLoginsData, featureUsageData } from '../../data/consolidatedMockData';
 

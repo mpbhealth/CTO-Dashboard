@@ -15,8 +15,7 @@
     z-index: 999;
     pointer-events: auto;
   }
-}
-  
+
   /* Ensure all menu items are clickable */
   button, a {
     pointer-events: auto !important;

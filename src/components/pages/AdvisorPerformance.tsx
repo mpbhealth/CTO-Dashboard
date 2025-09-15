@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import KPICard from '../ui/KPICard';
@@ -33,7 +32,7 @@ import {
   Filter,
   RefreshCw
 } from 'lucide-react';
-import { advisorKpis, topAdvisors } from '../../data/consolidatedMockData';
+import { advisorKpis, topAdvisors, salesTrends, planBreakdown, advisorSkills, performanceMetrics } from '../../data/consolidatedMockData';
 
 export default function AdvisorPerformance() {
   const [selectedAdvisor, setSelectedAdvisor] = useState('Wendy A.');
@@ -451,7 +450,7 @@ export default function AdvisorPerformance() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
-              {topAdvisors.map((advisor, index) => {
+              {topAdvisors.map((advisor) => {
                 const metrics = performanceMetrics.find(m => m.advisor === advisor.name);
                 return (
                   <tr key={advisor.name} className="hover:bg-slate-50 transition-colors">

@@ -701,6 +701,7 @@ function PerformanceEvaluation() {
                   <option value="suggestion">💡 Suggestion</option>
                   <option value="criticism">🔧 Constructive Criticism</option>
                   <option value="question">❓ Question</r
+                  </option>
                 </select>
               </div>
 

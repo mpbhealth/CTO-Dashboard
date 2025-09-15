@@ -9,6 +9,13 @@
     --color-accent: theme('colors.indigo.600');
     --color-accent-hover: theme('colors.indigo.700');
   }
+
+  /* Mobile hamburger menu */
+  .mobile-hamburger {
+    z-index: 999;
+    pointer-events: auto;
+  }
+}
   
   /* Ensure all menu items are clickable */
   button, a {

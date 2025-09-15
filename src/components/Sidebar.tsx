@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  LayoutDashboard, 
   Code2, 
   UserSquare2,
   Calendar, 
@@ -13,7 +12,6 @@ import {
   Building2,
   BarChart3,
   Users,
-  UserCheck,
   TrendingDown,
   Award,
   Server,

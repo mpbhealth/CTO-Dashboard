@@ -5,7 +5,7 @@ import { supabase } from '../../lib/supabase';
 interface AddQuickLinkModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: (link: any) => void;
+  onSuccess: (link: { id: string; title: string; url: string; category: string; created_at: string; }) => void;
   existingCategories: string[];
 }
 

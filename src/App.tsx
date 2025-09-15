@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Menu } from 'lucide-react';
 import Sidebar from './components/Sidebar';
 import Overview from './components/pages/Overview';
@@ -129,10 +129,9 @@ function App() {
         {/* Hamburger menu for mobile - only visible when sidebar is closed */}
         {isMobile && !isSidebarExpanded && (
          <button 
-           className="fixed top-4 left-4 p-3 rounded-md bg-indigo-600 text-white shadow-lg md:hidden z-50"
+           className="fixed top-4 left-4 p-3 rounded-md bg-indigo-600 text-white shadow-lg md:hidden z-50 mobile-hamburger"
            onClick={toggleSidebar}
            aria-label="Open menu"
-           style={{zIndex: 999, pointerEvents: 'auto'}}
          >
            <Menu className="w-5 h-5" />
           </button>

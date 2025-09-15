@@ -164,7 +164,7 @@ export function useMarketingMetrics(propertyId: string | null, dateRange: { star
 
   useEffect(() => {
     fetchData();
-  }, [propertyId, dateRange.start, dateRange.end]);
+  }, [propertyId, dateRange.start, dateRange.end, fetchData]);
 
   const addMetrics = async (metricsData: Omit<MarketingMetric, 'id' | 'created_at'>[]) => {
     try {

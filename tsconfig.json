@@ -10,7 +10,9 @@
       "@lib/*": ["./src/lib/*"],
       "@utils/*": ["./src/utils/*"],
       "@types/*": ["./src/types/*"]
-    }
+    },
+    "strict": true,
+    "forceConsistentCasingInFileNames": true
   },
   "references": [
     { "path": "./tsconfig.app.json" },

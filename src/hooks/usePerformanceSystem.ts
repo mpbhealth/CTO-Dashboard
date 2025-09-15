@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
 
@@ -28,7 +27,7 @@ export interface PerformanceReview {
   updated_at: string;
 }
 
-export interface PerformanceReviewInput extends Omit<PerformanceReview, 'id' | 'created_at' | 'updated_at'> {}
+export type PerformanceReviewInput = Omit<PerformanceReview, 'id' | 'created_at' | 'updated_at'>;
 
 export interface ReviewCriterion {
   id: string;

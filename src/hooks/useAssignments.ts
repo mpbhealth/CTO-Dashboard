@@ -7,7 +7,7 @@ export function useAssignments() {
   const [data, setData] = useState<Assignment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [currentUser, setCurrentUser] = useState<{ id: string; auth_user_id: string; email: string; full_name?: string } | null>(null);
 
   const fetchData = async () => {
     try {

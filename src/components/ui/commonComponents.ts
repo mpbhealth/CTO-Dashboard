@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { formatCurrency, formatDate, getStatusColor } from '../utils/commonHelpers';
+import { formatCurrency, formatDate, getStatusColor } from '../../utils/commonHelpers';
 
 // Common animation variants
 export const fadeInUp = {

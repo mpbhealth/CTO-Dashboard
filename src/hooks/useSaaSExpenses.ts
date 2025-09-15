@@ -31,7 +31,7 @@ export interface SaaSExpenseCreateData {
   source_sheet?: string;
 }
 
-export interface SaaSExpenseUpdateData extends Partial<SaaSExpenseCreateData> {}
+export type SaaSExpenseUpdateData = Partial<SaaSExpenseCreateData>;
 
 export function useSaaSExpenses() {
   const [data, setData] = useState<SaaSExpense[]>([]);

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useSaaSExpenses } from '../../hooks/useSaaSExpenses';
 import SaaSExpenseUploader from '../ui/SaaSExpenseUploader';
 import { CreditCard, TrendingUp, Calendar, DollarSign, Edit, Trash2, Plus } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
 import ExportDropdown from '../ui/ExportDropdown';
 import { motion } from 'framer-motion';
 

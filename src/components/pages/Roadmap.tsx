@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useRoadmapItems, useProjects } from '../../hooks/useSupabaseData';
-import { Calendar, User, AlertCircle, CheckCircle, Clock, Filter, Plus, Edit, Trash2, RefreshCw, Search, X } from 'lucide-react';
+import { Calendar, User, AlertCircle, CheckCircle, Clock, Plus, Edit, Trash2, RefreshCw, Search, X } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { Database } from '../../types/database';
 
@@ -72,15 +72,16 @@ export default function Roadmap() {
 
   // Filter roadmap items
   const filteredItems = roadmapItems.filter(item => {
-    const matchesQuarter = selectedQuarter === 'All' || item.quarter === selectedQuarter;
-    const matchesStatus = selectedStatus === 'All' || item.status === selectedStatus;
-    const matchesDepartment = selectedDepartment === 'All' || item.department === selectedDepartment;
     const matchesSearch = searchTerm === '' || 
       item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.owner.toLowerCase().includes(searchTerm.toLowerCase());
     
-    return matchesQuarter && matchesStatus && matchesDepartment && matchesSearch;
+    const matchesQuarter = selectedQuarter === 'All' || item.quarter === selectedQuarter;
+    const matchesStatus = selectedStatus === 'All' || item.status === selectedStatus;
+    const matchesDepartment = selectedDepartment === 'All' || item.department === selectedDepartment;
+    
+    return matchesSearch && matchesQuarter && matchesStatus && matchesDepartment;
   });
 
   // Check if roadmap item exists in projects
@@ -354,6 +355,7 @@ export default function Roadmap() {
               value={selectedQuarter}
               onChange={(e) => setSelectedQuarter(e.target.value)}
             >
+              <option value="All">All Quarters</option>
               {quarters.map(quarter => (
                 <option key={quarter} value={quarter}>{quarter === 'All' ? 'All Quarters' : quarter}</option>
               ))}

@@ -165,33 +165,6 @@ export interface Database {
           source_system?: string | null
           created_at?: string
           updated_at?: string
-          member_id: string
-          status_date: string
-          new_status: 'active' | 'inactive' | 'lapsed' | 'churned' | 'on_hold' | 'suspended'
-          reason: string | null
-          source_system: string | null
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          member_id: string
-          status_date: string
-          new_status: 'active' | 'inactive' | 'lapsed' | 'churned' | 'on_hold' | 'suspended'
-          reason?: string | null
-          source_system?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          member_id?: string
-          status_date?: string
-          new_status?: 'active' | 'inactive' | 'lapsed' | 'churned' | 'on_hold' | 'suspended'
-          reason?: string | null
-          source_system?: string | null
-          created_at?: string
-          updated_at?: string
         }
       }
       member_enrollments: {

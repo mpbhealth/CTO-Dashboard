@@ -5,7 +5,7 @@ import {
   ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, BarChart, Bar
 } from 'recharts';
 import { CheckCircle, AlertTriangle, XCircle, RefreshCw } from 'lucide-react';
-import { uptimeKPIs, systemComponents } from '../../data/consolidatedMockData';
+import { uptimeKPIs, systemComponents, uptimeTimeline } from '../../data/consolidatedMockData';
 
 export default function SystemUptime() {
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -143,7 +143,7 @@ export default function SystemUptime() {
           </div>
         </div>
         <div className="space-y-4">
-          {systemComponents.map((component, index) => (
+          {systemComponents.map((component) => (
             <div 
               key={component.name} 
               className="flex items-center justify-between p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer group"

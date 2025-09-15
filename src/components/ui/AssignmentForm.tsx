@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { X, Plus, Calendar, User, Building, CheckSquare, Save } from 'lucide-react';
+import { X, Plus, Calendar, CheckSquare, Save } from 'lucide-react';
 import { AssignmentStatus, AssignmentCreateData } from '../../types/Assignment';
 import { useProjects } from '../../hooks/useSupabaseData';
-import { supabase } from '../../lib/supabase';
 
 interface AssignmentFormProps {
   isOpen: boolean;

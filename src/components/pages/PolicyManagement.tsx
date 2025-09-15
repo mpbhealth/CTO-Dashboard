@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   FileText, 
@@ -15,9 +15,6 @@ import {
   AlertCircle, 
   User,
   X,
-  Upload,
-  Share2,
-  Paperclip,
   History,
   Eye
 } from 'lucide-react';

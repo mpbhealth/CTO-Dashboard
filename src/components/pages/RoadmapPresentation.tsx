@@ -6,9 +6,8 @@ import {
   Eye, 
   Edit, 
   Play, 
-  Share2, 
   Save, 
-  RotateCcw, 
+  RefreshCw, 
   Plus,
   Trash2,
   Settings,
@@ -236,6 +235,7 @@ export default function RoadmapPresentation() {
       metadata: {
         ...presentation.metadata,
         totalSlides: presentation.slides.length + 1,
+        estimatedDuration: presentation.slides.length * 2, // 2 minutes per slide
         lastModified: new Date().toISOString()
       }
     });
@@ -508,7 +508,7 @@ export default function RoadmapPresentation() {
         <div className="flex items-center space-x-3">
           <button
             onClick={() => setIsPreviewMode(!isPreviewMode)}
-            className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
+            className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${ 
               isPreviewMode 
                 ? 'bg-slate-600 text-white' 
                 : 'bg-slate-100 hover:bg-slate-200 text-slate-700'

@@ -1,4 +1,4 @@
-import React from 'react';
+//
 import { useAPIStatuses } from '../../hooks/useSupabaseData';
 import { Activity, CheckCircle, AlertTriangle, XCircle, Clock } from 'lucide-react';
 

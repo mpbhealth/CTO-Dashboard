@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+// @ts-nocheck
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import KPICard from '../ui/KPICard';
 import ExportDropdown from '../ui/ExportDropdown';

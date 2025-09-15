@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Users, 
@@ -17,6 +17,7 @@ import {
   Download,
   Eye
 } from 'lucide-react';
+import { X } from 'lucide-react';
 import { EmployeeProfile, Department } from '../../hooks/useOrganizationalData';
 import { supabase } from '../../lib/supabase';
 import AddEmployeeModal from '../modals/AddEmployeeModal';

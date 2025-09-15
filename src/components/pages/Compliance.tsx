@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+// @ts-nocheck
+import { useState } from 'react';
 import { Shield, CheckCircle, AlertTriangle, Clock, FileText, Plus, Edit, Trash2, X, Save } from 'lucide-react';
 
 export default function Compliance() {

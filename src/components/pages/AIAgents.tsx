@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useAIAgents } from '../../hooks/useSupabaseData';
 import { Bot, Edit, Play, Pause, Settings, Database } from 'lucide-react';
 

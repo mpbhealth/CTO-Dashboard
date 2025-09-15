@@ -680,7 +680,8 @@ export const GraphicsUtils = {
       tech: { primary: '#10B981', secondary: '#3B82F6', accent: '#06B6D4' }
     };
 
-    const colors = themeColors[theme] || themeColors.corporate;
+    const key = (theme in themeColors ? theme : 'corporate') as keyof typeof themeColors;
+    const colors = themeColors[key];
     const graphics: GraphicElement[] = [];
 
     switch (slideType) {
@@ -739,6 +740,7 @@ export const GraphicsUtils = {
       creative: ['#8B5CF6', '#7C3AED', '#C4B5FD', '#EDE9FE'],
       tech: ['#10B981', '#059669', '#6EE7B7', '#D1FAE5']
     };
-    return palettes[theme] || palettes.corporate;
+    const key = (theme in palettes ? theme : 'corporate') as keyof typeof palettes;
+    return palettes[key];
   }
 };

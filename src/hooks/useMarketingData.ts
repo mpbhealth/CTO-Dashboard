@@ -245,7 +245,7 @@ export const getTrafficSourceData = (metrics: MarketingMetric[]) => {
 };
 
 const getSourceColor = (source: string): string => {
-  const colors = {
+  const colors: Record<string, string> = {
     'Direct': '#3B82F6',
     'Organic Search': '#10B981',
     'Referral': '#F59E0B',

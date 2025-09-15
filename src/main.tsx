@@ -35,13 +35,7 @@ function ErrorBoundary({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  // Catch React errors
-  const componentDidCatch = React.useCallback((error: Error, errorInfo: any) => {
-    console.error('React Error Boundary caught:', error, errorInfo);
-    setHasError(true);
-    setError(error);
-    setErrorInfo(errorInfo.componentStack || error.stack);
-  }, []);
+  // Note: React 18 function components cannot implement componentDidCatch.
 
   if (hasError) {
     return (

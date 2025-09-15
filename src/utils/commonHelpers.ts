@@ -1,4 +1,4 @@
-import { COLORS, STATUS_TYPES } from '../lib/constants';
+import { STATUS_TYPES } from '../lib/constants';
 
 // Common formatting utilities
 export const formatCurrency = (amount: number, currency = 'USD'): string => {
@@ -35,7 +35,7 @@ export const formatPercentage = (value: number, decimals = 1): string => {
 
 // Status styling utilities
 export const getStatusColor = (status: string, type: keyof typeof STATUS_TYPES) => {
-  const statusMap = {
+  const statusMap: Record<string, Record<string, string>> = {
     ASSIGNMENT: {
       todo: 'bg-slate-100 text-slate-800',
       in_progress: 'bg-amber-100 text-amber-800',

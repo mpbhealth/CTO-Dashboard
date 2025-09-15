@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { 
   Award, 
   BarChart3, 
@@ -700,8 +700,7 @@ function PerformanceEvaluation() {
                   <option value="praise">👏 Praise</option>
                   <option value="suggestion">💡 Suggestion</option>
                   <option value="criticism">🔧 Constructive Criticism</option>
-                  <option value="question">❓ Question</r
-                  </option>
+                  <option value="question">❓ Question</option>
                 </select>
               </div>
 

@@ -6,8 +6,6 @@ import {
   Users,
   DollarSign,
   Activity,
-  Calendar,
-  Filter,
   RefreshCw,
   Upload,
   Building2
@@ -26,19 +24,15 @@ import {
   ResponsiveContainer,
   BarChart,
   Bar,
-  PieChart,
-  Pie,
-  Cell,
   AreaChart,
   Area
 } from 'recharts';
 import { useEnrollmentData } from '../../hooks/useEnrollmentData';
-import { useMemberStatusData, getStatusCounts } from '../../hooks/useMemberStatusData';
-import { departmentData, getDepartmentData } from '../../data/consolidatedMockData';
+import { useMemberStatusData } from '../../hooks/useMemberStatusData';
+import { getDepartmentData } from '../../data/consolidatedMockData';
 
 export default function Analytics() {
   const [timeRange, setTimeRange] = useState('30d');
-  const [selectedMetric, setSelectedMetric] = useState('revenue');
   const [showImporter, setShowImporter] = useState(false);
   const [selectedDepartment, setSelectedDepartment] = useState<'mpb' | 'saudemax'>('mpb');
   const { refetch: refetchEnrollments } = useEnrollmentData();

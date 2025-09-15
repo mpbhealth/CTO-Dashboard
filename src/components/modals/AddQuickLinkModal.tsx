@@ -63,7 +63,7 @@ export default function AddQuickLinkModal({
       // URL validation
       try {
         new URL(formData.url);
-      } catch (e) {
+      } catch {
         newErrors.url = 'Please enter a valid URL (include http:// or https://)';
       }
     }

@@ -28,34 +28,6 @@ export default function EditProjectModal({ isOpen, onClose, onSuccess, project }
 
   const statuses = ['Planning', 'Building', 'Live'];
 
-  const teamMembers = [
-    'Sarah Johnson',
-    'Michael Chen',
-    'Emily Rodriguez',
-    'David Kim',
-    'Daniel Jimenez',
-    'Vandana Rathore',
-    'Alex Thompson',
-    'Maria Garcia',
-    'Robert Wilson',
-    'Carlos Silva',
-    'Ana Rodriguez',
-    'Vinnie R. Tannous',
-    'Frontend Team',
-    'Backend Team',
-    'DevOps Team',
-    'AI Team',
-    'Mobile Team',
-    'UX Team',
-    'Engineering Team',
-    'Product Team',
-    'Operations Team',
-    'Legal Team',
-    'Trading Team',
-    'Health Team',
-    'Insurance Team'
-  ];
-
   // Populate form when project changes
   useEffect(() => {
     if (project) {

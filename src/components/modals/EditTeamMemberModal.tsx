@@ -94,7 +94,7 @@ export default function EditTeamMemberModal({ isOpen, onClose, onSuccess, member
       
       setShowCustomDepartment(isCustomDepartment);
     }
-  }, [member]);
+  }, [member, departments]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

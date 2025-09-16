@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import KPICard from '../ui/KPICard';
 import ExportDropdown from '../ui/ExportDropdown';
+import CsvUploader from '../ui/CsvUploader';
 import {
   ResponsiveContainer, 
   BarChart, 
@@ -30,13 +31,16 @@ import {
   FileText,
   CheckCircle,
   Filter,
-  RefreshCw
+  RefreshCw,
+  Upload,
+  BarChart3
 } from 'lucide-react';
 import { advisorKpis, topAdvisors, salesTrends, planBreakdown, advisorSkills, performanceMetrics } from '../../data/consolidatedMockData';
 
 export default function AdvisorPerformance() {
-  const [selectedAdvisor, setSelectedAdvisor] = useState('Wendy A.');
+  const [selectedAdvisor, setSelectedAdvisor] = useState('');
   const [timeRange, setTimeRange] = useState('30d');
+  const [showImporter, setShowImporter] = useState(false);
 
   const timeRanges = [
     { value: '7d', label: 'Last 7 days' },
@@ -44,6 +48,15 @@ export default function AdvisorPerformance() {
     { value: '90d', label: 'Last 3 months' },
     { value: '1y', label: 'Last year' },
   ];
+
+  const toggleImporter = () => {
+    setShowImporter(!showImporter);
+  };
+
+  const handleImportSuccess = () => {
+    // Refresh data after successful import
+    console.log('Advisor data imported successfully');
+  };
 
   // Prepare comprehensive export data
   const exportData = {
@@ -137,6 +150,14 @@ export default function AdvisorPerformance() {
             <span>Filter</span>
           </button>
           
+          <button
+            onClick={toggleImporter}
+            className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
+          >
+            <Upload className="w-4 h-4" />
+            <span>Import Data</span>
+          </button>
+          
           <button className="flex items-center space-x-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors">
             <RefreshCw className="w-4 h-4" />
             <span>Refresh</span>
@@ -146,6 +167,22 @@ export default function AdvisorPerformance() {
         </div>
       </div>
 
+      {/* Import Section */}
+      {showImporter && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <CsvUploader
+            onSuccess={handleImportSuccess}
+            title="Import Advisor Performance Data"
+            description="Upload advisor sales performance, activity metrics, and skill assessments"
+          />
+        </motion.div>
+      )}
+
       {/* KPI Cards */}
       <motion.div 
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
@@ -153,20 +190,36 @@ export default function AdvisorPerformance() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        {advisorKpis.map((metric) => (
-          <motion.div
-            key={metric.title}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-          >
-            <KPICard data={metric} />
-          </motion.div>
-        ))}
+        {advisorKpis.length > 0 ? (
+          advisorKpis.map((metric) => (
+            <motion.div
+              key={metric.title}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+            >
+              <KPICard data={metric} />
+            </motion.div>
+          ))
+        ) : (
+          <div className="col-span-full bg-slate-50 rounded-xl p-12 text-center border-2 border-dashed border-slate-200">
+            <BarChart3 className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-slate-900 mb-2">No Advisor Performance Data Available</h3>
+            <p className="text-slate-500 mb-4">Upload advisor sales data, activity metrics, and performance KPIs to track team productivity.</p>
+            <button
+              onClick={toggleImporter}
+              className="inline-flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
+            >
+              <Upload className="h-4 w-4" />
+              <span>Upload Advisor Data</span>
+            </button>
+          </div>
+        )}
       </motion.div>
 
       {/* Main Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {topAdvisors.length > 0 || advisorSkills.length > 0 ? (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Top Advisors Sales Chart */}
         <motion.div 
           className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow"
@@ -224,15 +277,17 @@ export default function AdvisorPerformance() {
                 <p className="text-sm text-slate-600">Top advisor skill breakdown</p>
               </div>
             </div>
-            <select
-              value={selectedAdvisor}
-              onChange={(e) => setSelectedAdvisor(e.target.value)}
-              className="px-3 py-1 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-            >
-              {topAdvisors.map(advisor => (
-                <option key={advisor.name} value={advisor.name}>{advisor.name}</option>
-              ))}
-            </select>
+            {topAdvisors.length > 0 && (
+              <select
+                value={selectedAdvisor}
+                onChange={(e) => setSelectedAdvisor(e.target.value)}
+                className="px-3 py-1 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              >
+                {topAdvisors.map(advisor => (
+                  <option key={advisor.name} value={advisor.name}>{advisor.name}</option>
+                ))}
+              </select>
+            )}
           </div>
           
           <ResponsiveContainer width="100%" height={300}>
@@ -266,9 +321,11 @@ export default function AdvisorPerformance() {
             </RadarChart>
           </ResponsiveContainer>
         </motion.div>
-      </div>
+        </div>
+      ) : null}
 
       {/* Secondary Analytics */}
+      {salesTrends.length > 0 || planBreakdown.length > 0 || performanceMetrics.length > 0 ? (
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Sales Trends */}
         <motion.div 
@@ -422,8 +479,10 @@ export default function AdvisorPerformance() {
           </div>
         </motion.div>
       </div>
+      ) : null}
 
       {/* Detailed Performance Table */}
+      {topAdvisors.length > 0 ? (
       <motion.div 
         className="bg-white rounded-xl shadow-sm border border-slate-200"
         initial={{ opacity: 0, y: 20 }}
@@ -490,6 +549,7 @@ export default function AdvisorPerformance() {
           </table>
         </div>
       </motion.div>
+      ) : null}
     </div>
   );
 }

@@ -12,7 +12,7 @@ import {
   BarChart,
   Bar
 } from 'recharts';
-import { TrendingDown, TrendingUp, Users, Calendar } from 'lucide-react';
+import { TrendingDown, TrendingUp, Users, Calendar, Upload, BarChart3 } from 'lucide-react';
 import { retentionKPIs, churnReasons, retentionTimeline, churnTimeline, cohortAnalysis } from '../../data/consolidatedMockData';
 import { useMemberStatusData } from '../../hooks/useMemberStatusData';
 
@@ -70,30 +70,48 @@ export default function MemberRetention() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        {/* Import Status Data Button */}
-        <button
-          onClick={() => setShowImporter(!showImporter)}
-          className="flex items-center space-x-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors"
-        >
-          <Calendar className="w-4 h-4" />
-          <span>{showImporter ? 'Hide Importer' : 'Import Status Data'}</span>
-        </button>
-        
-        {/* KPI Cards */}
-        {retentionKPIs.map((metric, index) => (
-          <motion.div
-            key={metric.title}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: index * 0.1 }}
-          >
-            <KPICard data={metric} />
-          </motion.div>
-        ))}
+        {retentionKPIs.length > 0 ? (
+          <>
+            {/* Import Status Data Button */}
+            <button
+              onClick={() => setShowImporter(!showImporter)}
+              className="flex items-center space-x-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors"
+            >
+              <Calendar className="w-4 h-4" />
+              <span>{showImporter ? 'Hide Importer' : 'Import Status Data'}</span>
+            </button>
+            
+            {/* KPI Cards */}
+            {retentionKPIs.map((metric, index) => (
+              <motion.div
+                key={metric.title}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+              >
+                <KPICard data={metric} />
+              </motion.div>
+            ))}
+          </>
+        ) : (
+          <div className="col-span-full bg-slate-50 rounded-xl p-12 text-center border-2 border-dashed border-slate-200">
+            <BarChart3 className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-slate-900 mb-2">No Member Retention Data Available</h3>
+            <p className="text-slate-500 mb-4">Upload member status data to track retention rates, churn analysis, and cohort performance.</p>
+            <button
+              onClick={() => setShowImporter(!showImporter)}
+              className="inline-flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
+            >
+              <Upload className="h-4 w-4" />
+              <span>Upload Retention Data</span>
+            </button>
+          </div>
+        )}
       </motion.div>
 
       {/* Main Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {retentionTimeline.length > 0 || churnTimeline.length > 0 ? (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Retention Rate Timeline */}
         <motion.div 
           className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow"
@@ -176,9 +194,11 @@ export default function MemberRetention() {
             </BarChart>
           </ResponsiveContainer>
         </motion.div>
-      </div>
+        </div>
+      ) : null}
 
       {/* Secondary Analytics */}
+      {churnReasons.length > 0 || cohortAnalysis.length > 0 ? (
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Churn Reasons */}
         <motion.div 
@@ -316,8 +336,10 @@ export default function MemberRetention() {
           </div>
         </motion.div>
       </div>
+      ) : null}
 
       {/* Insights Section */}
+      {retentionKPIs.length > 0 ? (
       <motion.div 
         className="bg-white p-6 rounded-xl shadow-sm border border-slate-200"
         initial={{ opacity: 0, y: 20 }}
@@ -354,6 +376,7 @@ export default function MemberRetention() {
           </div>
         </div>
       </motion.div>
+      ) : null}
     </div>
   );
 }

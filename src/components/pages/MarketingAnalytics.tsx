@@ -171,39 +171,11 @@ export default function MarketingAnalytics() {
         // ... mock data as fallback
       ];
 
-  // Use real data or fallback to mock data
-  const finalTrafficSourcesData = trafficSourcesData.length > 0 ? trafficSourcesData : [
-    { source: 'Direct', sessions: 9840, percentage: 34, color: '#3B82F6' },
-    { source: 'Organic Search', sessions: 7680, percentage: 27, color: '#10B981' },
-    { source: 'Referral', sessions: 5120, percentage: 18, color: '#F59E0B' },
-    { source: 'Social', sessions: 3840, percentage: 13, color: '#8B5CF6' },
-    { source: 'Email', sessions: 1440, percentage: 5, color: '#EC4899' },
-    { source: 'Other', sessions: 960, percentage: 3, color: '#6B7280' },
-  ];
-
-  const campaignPerformanceData = [
-    { campaign: 'Summer Promotion', visitors: 12400, conversions: 620, revenue: 31000, roi: 520 },
-    { campaign: 'Email Newsletter', visitors: 8700, conversions: 348, revenue: 17400, roi: 340 },
-    { campaign: 'Social Media Ads', visitors: 15800, conversions: 474, revenue: 23700, roi: 280 },
-    { campaign: 'Search Ads', visitors: 9200, conversions: 552, revenue: 27600, roi: 420 },
-    { campaign: 'Referral Program', visitors: 4300, conversions: 258, revenue: 12900, roi: 390 },
-  ];
-
-  const conversionFunnelData = [
-    { stage: 'Website Visits', value: 45782, color: '#3B82F6' },
-    { stage: 'Product Views', value: 22891, color: '#818CF8' },
-    { stage: 'Add to Cart', value: 7327, color: '#A78BFA' },
-    { stage: 'Checkout Started', value: 3206, color: '#C084FC' },
-    { stage: 'Purchases', value: 1465, color: '#E879F9' },
-  ];
-
-  const topPagesData = [
-    { url: '/home', pageviews: 12840, avgTime: '2m 12s', bounceRate: '32%' },
-    { url: '/products', pageviews: 8720, avgTime: '3m 45s', bounceRate: '28%' },
-    { url: '/pricing', pageviews: 6540, avgTime: '2m 38s', bounceRate: '25%' },
-    { url: '/about', pageviews: 4320, avgTime: '1m 55s', bounceRate: '42%' },
-    { url: '/blog', pageviews: 3780, avgTime: '4m 12s', bounceRate: '36%' },
-  ];
+  // Use real data only - no demo data
+  const finalTrafficSourcesData = trafficSourcesData || [];
+  const campaignPerformanceData: any[] = [];
+  const conversionFunnelData: any[] = [];
+  const topPagesData: any[] = [];
 
   const timeRanges = [
     { value: '7d', label: 'Last 7 days' },
@@ -965,12 +937,7 @@ export default function MarketingAnalytics() {
             <ResponsiveContainer width="100%" height={300}>
               <RechartsPieChart>
                 <Pie
-                  data={[
-                    { name: 'Direct', value: 4567, fill: '#3B82F6' },
-                    { name: 'Organic Search', value: 3421, fill: '#10B981' },
-                    { name: 'Social Media', value: 2134, fill: '#F59E0B' },
-                    { name: 'Referral', value: 1876, fill: '#EF4444' },
-                  ]}
+                  data={finalTrafficSourcesData}
                   cx="50%"
                   cy="50%"
                   outerRadius={80}
@@ -989,6 +956,35 @@ export default function MarketingAnalytics() {
       <>
       {activeTab === 'overview' && (
         <div className="space-y-8">
+          {/* Empty State for Analytics Data */}
+          {finalTrafficSourcesData.length === 0 && campaignPerformanceData.length === 0 && (
+            <motion.div 
+              className="bg-slate-50 rounded-xl p-12 text-center border-2 border-dashed border-slate-200"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <BarChart3 className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-slate-900 mb-2">No Marketing Data Available</h3>
+              <p className="text-slate-500 mb-4">Connect your Google Analytics and other marketing platforms to see comprehensive analytics.</p>
+              <div className="flex justify-center space-x-4">
+                <button
+                  onClick={() => setShowGAForm(true)}
+                  className="inline-flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  <Globe className="h-4 w-4" />
+                  <span>Connect Google Analytics</span>
+                </button>
+                <button
+                  onClick={() => setShowFBForm(true)}
+                  className="inline-flex items-center space-x-2 bg-slate-600 text-white px-4 py-2 rounded-lg hover:bg-slate-700 transition-colors"
+                >
+                  <Target className="h-4 w-4" />
+                  <span>Connect Facebook Pixel</span>
+                </button>
+              </div>
+            </motion.div>
+          )}
           {/* Website Traffic Chart */}
           <motion.div 
             className="bg-white p-6 rounded-xl shadow-sm border border-slate-200"

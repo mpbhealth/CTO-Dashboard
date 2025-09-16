@@ -1,53 +1,14 @@
 // Consolidated Mock Data for MPB Health CTO Dashboard
 // This file consolidates all mock data to reduce redundancy
+// Analytics data removed - ready for file uploads
 
 // === ANALYTICS DATA ===
-export const kpiMetrics = [
-  { title: 'Daily Active Users', value: '4,827', change: '+8.3%', trend: 'up' },
-  { title: 'Monthly Revenue', value: '$487,250', change: '+12.3%', trend: 'up' },
-  { title: 'Customer Satisfaction', value: '4.7/5', change: '+0.3', trend: 'up' },
-  { title: 'User Retention', value: '89.4%', change: '+2.1%', trend: 'up' },
-];
+export const kpiMetrics: any[] = [];
 
 // === MEMBER ENGAGEMENT DATA ===
-export const memberEngagementKPIs = [
-  { title: 'Total Logins (30 days)', value: '8,247', change: '+15.3%', trend: 'up' },
-  { title: 'Avg. Session Duration', value: '6m 42s', change: '+8.7%', trend: 'up' },
-  { title: 'ID Card Usage', value: '62%', change: '+4.2%', trend: 'up' },
-  { title: 'Most Viewed Section', value: 'Benefits', change: '34% of visits', trend: 'stable' },
-];
-
-export const dailyLoginsData = [
-  { date: '12/01', logins: 245, mobile: 147, desktop: 98 },
-  { date: '12/02', logins: 289, mobile: 173, desktop: 116 },
-  { date: '12/03', logins: 267, mobile: 160, desktop: 107 },
-  { date: '12/04', logins: 312, mobile: 187, desktop: 125 },
-  { date: '12/05', logins: 298, mobile: 179, desktop: 119 },
-  { date: '12/06', logins: 334, mobile: 200, desktop: 134 },
-  { date: '12/07', logins: 278, mobile: 167, desktop: 111 },
-  { date: '12/08', logins: 256, mobile: 154, desktop: 102 },
-  { date: '12/09', logins: 301, mobile: 181, desktop: 120 },
-  { date: '12/10', logins: 289, mobile: 173, desktop: 116 },
-  { date: '12/11', logins: 345, mobile: 207, desktop: 138 },
-  { date: '12/12', logins: 367, mobile: 220, desktop: 147 },
-  { date: '12/13', logins: 323, mobile: 194, desktop: 129 },
-  { date: '12/14', logins: 298, mobile: 179, desktop: 119 },
-  { date: '12/15', logins: 312, mobile: 187, desktop: 125 },
-  { date: '12/16', logins: 289, mobile: 173, desktop: 116 },
-  { date: '12/17', logins: 334, mobile: 200, desktop: 134 },
-  { date: '12/18', logins: 356, mobile: 214, desktop: 142 },
-  { date: '12/19', logins: 378, mobile: 227, desktop: 151 },
-  { date: '12/20', logins: 345, mobile: 207, desktop: 138 },
-];
-
-export const featureUsageData = [
-  { feature: 'ID Card', usage: 62, color: '#3B82F6', sessions: 5124 },
-  { feature: 'Chat Support', usage: 45, color: '#10B981', sessions: 3712 },
-  { feature: 'Appointments', usage: 38, color: '#F59E0B', sessions: 3134 },
-  { feature: 'Lab Results', usage: 29, color: '#EF4444', sessions: 2391 },
-  { feature: 'Claims', usage: 24, color: '#8B5CF6', sessions: 1978 },
-  { feature: 'Provider Directory', usage: 19, color: '#EC4899', sessions: 1567 },
-];
+export const memberEngagementKPIs: any[] = [];
+export const dailyLoginsData: any[] = [];
+export const featureUsageData: any[] = [];
 
 // === RETENTION DATA ===
 export const retentionKPIs = [
@@ -131,23 +92,10 @@ export const advisorSkills = [
 ];
 
 // === ANALYTICS DATA (was mockAnalytics) ===
-export const mrrData = [
-  { month: 'May', revenue: 74500, growth: 8.2 },
-  { month: 'June', revenue: 78100, growth: 4.8 },
-  { month: 'July', revenue: 82450, growth: 5.6 },
-  { month: 'August', revenue: 87200, growth: 5.8 },
-  { month: 'September', revenue: 92100, growth: 5.6 },
-];
+export const mrrData: any[] = [];
 
 // === MEMBER ENGAGEMENT DATA (was mockMemberEngagement) ===
-// Note: memberEngagementKPIs already exists above, but adding any missing ones
-export const sessionDurationData = [
-  { date: '07/26', duration: 6.2, bounceRate: 23.4 },
-  { date: '07/27', duration: 6.4, bounceRate: 22.8 },
-  { date: '07/28', duration: 6.1, bounceRate: 24.1 },
-  { date: '07/29', duration: 6.7, bounceRate: 21.9 },
-  { date: '07/30', duration: 6.8, bounceRate: 21.2 },
-];
+export const sessionDurationData: any[] = [];
 
 // === RETENTION DATA EXTENDED (was mockRetention) ===
 // Note: retentionKPIs and retentionTimeline already exist above
@@ -223,115 +171,24 @@ export const uptimeTimeline = [
 // === DEPARTMENT SPECIFIC DATA ===
 export const departmentData = {
   mpb: {
-    kpiMetrics,
-    dailyActiveUsers: [
-      { date: '2024-07-01', users: 4210, mobile: 3150, desktop: 1060 },
-      { date: '2024-07-02', users: 4350, mobile: 3262, desktop: 1088 },
-      { date: '2024-07-03', users: 4280, mobile: 3210, desktop: 1070 },
-      { date: '2024-07-04', users: 4150, mobile: 3112, desktop: 1038 },
-      { date: '2024-07-05', users: 4390, mobile: 3292, desktop: 1098 },
-      { date: '2024-07-06', users: 3920, mobile: 2940, desktop: 980 },
-      { date: '2024-07-07', users: 3850, mobile: 2887, desktop: 963 },
-      { date: '2024-07-08', users: 4450, mobile: 3337, desktop: 1113 },
-      { date: '2024-07-09', users: 4580, mobile: 3435, desktop: 1145 },
-      { date: '2024-07-10', users: 4620, mobile: 3465, desktop: 1155 },
-      { date: '2024-07-11', users: 4690, mobile: 3517, desktop: 1173 },
-      { date: '2024-07-12', users: 4750, mobile: 3562, desktop: 1188 },
-      { date: '2024-07-13', users: 4270, mobile: 3202, desktop: 1068 },
-      { date: '2024-07-14', users: 4120, mobile: 3090, desktop: 1030 },
-      { date: '2024-07-15', users: 4827, mobile: 3620, desktop: 1207 },
-    ],
-    revenueData: [
-      { month: 'Aug', revenue: 425000, newMembers: 142, growth: 8.2 },
-      { month: 'Sep', revenue: 448000, newMembers: 156, growth: 5.4 },
-      { month: 'Oct', revenue: 462000, newMembers: 149, growth: 3.1 },
-      { month: 'Nov', revenue: 479000, newMembers: 167, growth: 3.7 },
-      { month: 'Dec', revenue: 487250, newMembers: 158, growth: 1.7 },
-    ],
-    satisfactionScores: [
-      { month: 'Aug', score: 4.4, responses: 234 },
-      { month: 'Sep', score: 4.5, responses: 267 },
-      { month: 'Oct', score: 4.6, responses: 289 },
-      { month: 'Nov', score: 4.7, responses: 312 },
-      { month: 'Dec', score: 4.7, responses: 298 },
-    ],
-    regionalPerformance: [
-      { region: 'Northeast', users: 1420, revenue: 142000, growth: 12.3 },
-      { region: 'Southeast', users: 1280, revenue: 128000, growth: 8.7 },
-      { region: 'Midwest', users: 980, revenue: 98000, growth: 15.2 },
-      { region: 'West', users: 1147, revenue: 119250, growth: 6.8 },
-    ],
-    insights: [
-      'User engagement increased 8.3% month-over-month with mobile usage driving growth',
-      'Customer satisfaction reached all-time high of 4.7/5 stars',
-      'Northeast region showing strongest growth at 12.3% quarter-over-quarter',
-      'ID Card feature adoption reached 62% of active users'
-    ],
-    recommendations: [
-      'Focus marketing efforts on high-performing Northeast region',
-      'Expand mobile app features to capitalize on 75% mobile usage',
-      'Launch referral program to leverage high satisfaction scores',
-      'Investigate and replicate Midwest growth strategies in other regions'
-    ],
+    kpiMetrics: [],
+    dailyActiveUsers: [],
+    revenueData: [],
+    satisfactionScores: [],
+    regionalPerformance: [],
+    insights: [],
+    recommendations: [],
     currency: '$',
     region: 'North America'
   },
   saudemax: {
-    kpiMetrics: [
-      { title: 'Daily Active Users', value: '3,216', change: '+15.7%', trend: 'up' },
-      { title: 'Monthly Revenue', value: 'R$1.2M', change: '+18.5%', trend: 'up' },
-      { title: 'Customer Satisfaction', value: '4.4/5', change: '+0.5', trend: 'up' },
-      { title: 'User Retention', value: '85.2%', change: '+3.8%', trend: 'up' },
-    ],
-    dailyActiveUsers: [
-      { date: '2024-07-01', users: 2650, mobile: 2120, desktop: 530 },
-      { date: '2024-07-02', users: 2720, mobile: 2176, desktop: 544 },
-      { date: '2024-07-03', users: 2680, mobile: 2144, desktop: 536 },
-      { date: '2024-07-04', users: 2710, mobile: 2168, desktop: 542 },
-      { date: '2024-07-05', users: 2790, mobile: 2232, desktop: 558 },
-      { date: '2024-07-06', users: 2550, mobile: 2040, desktop: 510 },
-      { date: '2024-07-07', users: 2480, mobile: 1984, desktop: 496 },
-      { date: '2024-07-08', users: 2820, mobile: 2256, desktop: 564 },
-      { date: '2024-07-09', users: 2950, mobile: 2360, desktop: 590 },
-      { date: '2024-07-10', users: 3010, mobile: 2408, desktop: 602 },
-      { date: '2024-07-11', users: 3080, mobile: 2464, desktop: 616 },
-      { date: '2024-07-12', users: 3130, mobile: 2504, desktop: 626 },
-      { date: '2024-07-13', users: 2890, mobile: 2312, desktop: 578 },
-      { date: '2024-07-14', users: 2750, mobile: 2200, desktop: 550 },
-      { date: '2024-07-15', users: 3216, mobile: 2573, desktop: 643 },
-    ],
-    revenueData: [
-      { month: 'Aug', revenue: 980000, newMembers: 189, growth: 18.5 },
-      { month: 'Sep', revenue: 1050000, newMembers: 210, growth: 7.1 },
-      { month: 'Oct', revenue: 1120000, newMembers: 198, growth: 6.7 },
-      { month: 'Nov', revenue: 1180000, newMembers: 234, growth: 5.4 },
-      { month: 'Dec', revenue: 1200000, newMembers: 216, growth: 1.7 },
-    ],
-    satisfactionScores: [
-      { month: 'Aug', score: 3.9, responses: 156 },
-      { month: 'Sep', score: 4.1, responses: 178 },
-      { month: 'Oct', score: 4.2, responses: 194 },
-      { month: 'Nov', score: 4.3, responses: 201 },
-      { month: 'Dec', score: 4.4, responses: 187 },
-    ],
-    regionalPerformance: [
-      { region: 'São Paulo', users: 1289, revenue: 480000, growth: 22.1 },
-      { region: 'Rio de Janeiro', users: 854, revenue: 320000, growth: 18.3 },
-      { region: 'Brasília', users: 567, revenue: 210000, growth: 15.7 },
-      { region: 'Outros Estados', users: 506, revenue: 190000, growth: 12.4 },
-    ],
-    insights: [
-      'Brazilian market showing exceptional 15.7% growth with strong regional expansion',
-      'São Paulo leading with 1,289 active users and 22.1% growth rate',
-      'Customer satisfaction improved 0.5 points to 4.4/5 stars', 
-      'Mobile-first strategy successful with 80% mobile app usage'
-    ],
-    recommendations: [
-      'Accelerate expansion in high-growth São Paulo and Rio markets',
-      'Localize more features for Portuguese-speaking audience',
-      'Partner with local healthcare providers for market penetration',
-      'Invest in customer success to maintain satisfaction trajectory'
-    ],
+    kpiMetrics: [],
+    dailyActiveUsers: [],
+    revenueData: [],
+    satisfactionScores: [],
+    regionalPerformance: [],
+    insights: [],
+    recommendations: [],
     currency: 'R$',
     region: 'Brazil'
   }

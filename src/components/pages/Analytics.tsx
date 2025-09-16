@@ -30,8 +30,6 @@ import {
 } from 'recharts';
 import { useEnrollmentData } from '../../hooks/useEnrollmentData';
 import { useMemberStatusData } from '../../hooks/useMemberStatusData';
-import { getDepartmentData } from '../../data/consolidatedMockData';
-
 export default function Analytics() {
   const [timeRange, setTimeRange] = useState('30d');
   const [showImporter, setShowImporter] = useState(false);
@@ -39,8 +37,18 @@ export default function Analytics() {
   const { refetch: refetchEnrollments } = useEnrollmentData();
   const { refetch: refetchStatus } = useMemberStatusData();
 
-  // Get the data for the selected department
-  const currentDepartmentData = getDepartmentData(selectedDepartment);
+  // Empty state - no demo data, ready for file uploads
+  const currentDepartmentData = {
+    kpiMetrics: [],
+    dailyActiveUsers: [],
+    revenueData: [],
+    satisfactionScores: [],
+    regionalPerformance: [],
+    insights: [],
+    recommendations: [],
+    currency: selectedDepartment === 'mpb' ? '$' : 'R$',
+    region: selectedDepartment === 'mpb' ? 'North America' : 'Brazil'
+  };
 
   const timeRanges = [
     { value: '7d', label: 'Last 7 days' },
@@ -187,20 +195,36 @@ export default function Analytics() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        {currentDepartmentData.kpiMetrics.map((metric, index) => (
-          <motion.div
-            key={metric.title}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: index * 0.1 }}
-          >
-            <KPICard data={metric} />
-          </motion.div>
-        ))}
+        {currentDepartmentData.kpiMetrics.length > 0 ? (
+          currentDepartmentData.kpiMetrics.map((metric, index) => (
+            <motion.div
+              key={metric.title}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: index * 0.1 }}
+            >
+              <KPICard data={metric} />
+            </motion.div>
+          ))
+        ) : (
+          <div className="col-span-full bg-slate-50 rounded-xl p-12 text-center border-2 border-dashed border-slate-200">
+            <BarChart3 className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-slate-900 mb-2">No Analytics Data Available</h3>
+            <p className="text-slate-500 mb-4">Upload your analytics data to see KPI metrics, user engagement, and performance insights.</p>
+            <button
+              onClick={toggleImporter}
+              className="inline-flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
+            >
+              <Upload className="h-4 w-4" />
+              <span>Upload Analytics Data</span>
+            </button>
+          </div>
+        )}
       </motion.div>
 
       {/* Main Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {currentDepartmentData.dailyActiveUsers.length > 0 || currentDepartmentData.revenueData.length > 0 ? (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Daily Active Users Chart */}
         <motion.div 
           className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow"
@@ -304,10 +328,9 @@ export default function Analytics() {
             </BarChart>
           </ResponsiveContainer>
         </motion.div>
-      </div>
       
-      {/* Additional Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Additional Charts */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Satisfaction Score Trend */}
         <motion.div 
           className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow"
@@ -410,9 +433,13 @@ export default function Analytics() {
             </table>
           </div>
         </motion.div>
-      </div>
+        </div>
+        </div>
+      ) : null}
 
       {/* Insights and Recommendations */}
+      {(currentDepartmentData.insights && currentDepartmentData.insights.length > 0) || 
+       (currentDepartmentData.recommendations && currentDepartmentData.recommendations.length > 0) ? (
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Insights */}
         <motion.div 
@@ -484,6 +511,7 @@ export default function Analytics() {
           </ul>
         </motion.div>
       </div>
+      ) : null}
     </div>
   );
 }

@@ -477,18 +477,15 @@ export default function Analytics() {
           
           <ul className="space-y-3">
             {(currentDepartmentData.insights || []).map((insight, index) => (
-              <motion.li 
+              <li 
                 key={index} 
                 className="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.4, delay: 0.7 + (index * 0.1) }}
               >
                 <div className="w-6 h-6 bg-blue-200 rounded-full flex items-center justify-center mt-0.5">
                   <span className="text-sm font-bold text-blue-700">{index + 1}</span>
                 </div>
                 <p className="text-sm text-blue-800 flex-1">{insight}</p>
-              </motion.li>
+              </li>
             ))}
           </ul>
         </motion.div>
@@ -512,18 +509,15 @@ export default function Analytics() {
           
           <ul className="space-y-3">
             {(currentDepartmentData.recommendations || []).map((recommendation, index) => (
-              <motion.li 
+              <li 
                 key={index} 
                 className="flex items-start space-x-3 p-3 bg-emerald-50 rounded-lg"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.4, delay: 0.8 + (index * 0.1) }}
               >
                 <div className="w-6 h-6 bg-emerald-200 rounded-full flex items-center justify-center mt-0.5">
                   <span className="text-sm font-bold text-emerald-700">{index + 1}</span>
                 </div>
                 <p className="text-sm text-emerald-800 flex-1">{recommendation}</p>
-              </motion.li>
+              </li>
             ))}
           </ul>
         </motion.div>

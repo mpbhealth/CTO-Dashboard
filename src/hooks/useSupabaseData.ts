@@ -54,6 +54,19 @@ export function useTechStack() {
   const fetchData = async () => {
     try {
       setLoading(true);
+      
+      // If Supabase is not configured, return mock data
+      if (!isSupabaseConfigured) {
+        console.warn('Supabase not configured - returning mock tech stack data');
+        setData([
+          { id: '1', name: 'React', category: 'Frontend', version: '18.3.0', owner: 'CTO Team', status: 'Active', notes: 'UI Library', created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+          { id: '2', name: 'TypeScript', category: 'Language', version: '5.6.3', owner: 'CTO Team', status: 'Active', notes: 'Type-safe JavaScript', created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+          { id: '3', name: 'Vite', category: 'Build Tool', version: '7.1.7', owner: 'CTO Team', status: 'Active', notes: 'Fast build tool', created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+          { id: '4', name: 'Supabase', category: 'Database', version: '2.39.0', owner: 'CTO Team', status: 'Active', notes: 'Backend as a Service', created_at: new Date().toISOString(), updated_at: new Date().toISOString() }
+        ]);
+        return;
+      }
+      
       const { data: techData, error } = await supabase
         .from('tech_stack')
         .select('*')
@@ -83,6 +96,18 @@ export function useRoadmapItems() {
   const fetchData = async () => {
     try {
       setLoading(true);
+      
+      // If Supabase is not configured, return mock data
+      if (!isSupabaseConfigured) {
+        console.warn('Supabase not configured - returning mock roadmap data');
+        setData([
+          { id: '1', title: 'Phase 1: Foundation', quarter: 'Q1 2024', status: 'Complete', priority: 'High', owner: 'CTO Team', department: 'Engineering', dependencies: [], description: 'Set up core infrastructure and security', created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+          { id: '2', title: 'Phase 2: Enhancement', quarter: 'Q2 2024', status: 'In Progress', priority: 'High', owner: 'CTO Team', department: 'Engineering', dependencies: ['1'], description: 'Improve user experience and performance', created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+          { id: '3', title: 'Phase 3: Expansion', quarter: 'Q3 2024', status: 'Backlog', priority: 'Medium', owner: 'CTO Team', department: 'Engineering', dependencies: ['2'], description: 'Add new features and integrations', created_at: new Date().toISOString(), updated_at: new Date().toISOString() }
+        ]);
+        return;
+      }
+      
       const { data: roadmapData, error } = await supabase
         .from('roadmap_items')
         .select('*')
@@ -112,6 +137,18 @@ export function useProjects() {
   const fetchData = async () => {
     try {
       setLoading(true);
+      
+      // If Supabase is not configured, return mock data
+      if (!isSupabaseConfigured) {
+        console.warn('Supabase not configured - returning mock projects data');
+        setData([
+          { id: '1', name: 'CTO Dashboard v2', description: 'Executive dashboard for technology oversight', status: 'Building', start_date: '2024-01-01', end_date: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+          { id: '2', name: 'CSV Enrollment Transformer', description: 'Data transformation utility for MPB Health', status: 'Live', start_date: '2024-09-20', end_date: '2024-09-25', created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+          { id: '3', name: 'Security Audit 2024', description: 'Comprehensive security review and improvements', status: 'Live', start_date: '2024-08-01', end_date: '2024-09-15', created_at: new Date().toISOString(), updated_at: new Date().toISOString() }
+        ]);
+        return;
+      }
+      
       const { data: projectData, error } = await supabase
         .from('projects')
         .select('*')

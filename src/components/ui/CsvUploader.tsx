@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Upload, CheckCircle, AlertCircle, RefreshCw, FileUp } from 'lucide-react';
 import Papa from 'papaparse';
-import { sanitizeObject, sanitizeString } from '../../lib/supabaseUtils';
+import { sanitizeObject } from '../../lib/supabaseUtils';
 
 interface CustomerImportRecord {
   id_customer: string;
@@ -75,9 +75,8 @@ export default function CsvUploader({ onSuccess, onError }: CsvUploaderProps) {
     );
   };
 
-  const validateRow = (row: any): { isValid: boolean; errors: string[]; validTypes: string[] } => {
+  const validateRow = (row: any): { isValid: boolean; errors: string[] } => {
     const errors: string[] = [];
-    const validTypes: string[] = ['customer'];
     
     // Required fields validation
     if (!row['ID Customer'] && !row['id_customer']) {
@@ -117,9 +116,8 @@ export default function CsvUploader({ onSuccess, onError }: CsvUploaderProps) {
     }
 
     return { 
-      isValid: errors.length === 0 && validTypes.length > 0, 
-      errors,
-      validTypes 
+      isValid: errors.length === 0,
+      errors
     };
   };
 
@@ -224,7 +222,7 @@ export default function CsvUploader({ onSuccess, onError }: CsvUploaderProps) {
             return;
           }
 
-          const validRows: UniversalImportRecord[] = [];
+          const validRows: any[] = [];
           const invalidRows: any[] = [];
           
           // Validate all rows
@@ -233,7 +231,7 @@ export default function CsvUploader({ onSuccess, onError }: CsvUploaderProps) {
             const normalizedRow = normalizeRowKeys(row);
             const sanitizedRow = sanitizeObject(normalizedRow);
             
-            const { isValid, errors, validTypes } = validateRow(sanitizedRow);
+            const { isValid, errors } = validateRow(sanitizedRow);
             if (isValid) {
               // Convert the row to customer import format
               validRows.push(sanitizedRow as CustomerImportRecord);
@@ -257,7 +255,10 @@ export default function CsvUploader({ onSuccess, onError }: CsvUploaderProps) {
           const result = await processCustomerImport(validRows);
           
           const totalInserted = result.enrollments.inserted + result.customers.inserted;
-          const totalErrors = result.enrollments.errors + result.customers.errors + invalidRows.length;
+          // Process valid rows
+          if (validRows.length > 0) {
+            console.log(`Processing ${validRows.length} valid rows`);
+          }
 
           setStats({
             enrollments: result.enrollments,
@@ -358,13 +359,13 @@ export default function CsvUploader({ onSuccess, onError }: CsvUploaderProps) {
             <div className="grid grid-cols-3 gap-4 text-center">
               <div>
                 <p className="text-lg font-bold text-blue-700">
-                  {stats.enrollments.inserted + stats.statusUpdates.inserted}
+                  {stats.enrollments.inserted + stats.customers.inserted}
                 </p>
                 <p className="text-xs text-blue-600">Total Inserted</p>
               </div>
               <div>
                 <p className="text-lg font-bold text-amber-700">
-                  {stats.enrollments.errors + stats.statusUpdates.errors}
+                  {stats.enrollments.errors + stats.customers.errors}
                 </p>
                 <p className="text-xs text-amber-600">Errors</p>
               </div>

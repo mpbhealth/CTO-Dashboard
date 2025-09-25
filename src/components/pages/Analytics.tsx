@@ -199,8 +199,8 @@ export default function Analytics() {
         >
           <CsvUploader
             onSuccess={handleImportSuccess}
-            title={`Import ${selectedDepartment.toUpperCase()} Analytics Data`}
-            description="Upload analytics data to track business performance"
+            title={`Import ${selectedDepartment.toUpperCase()} Customer Data`}
+            description="Upload customer enrollment and product data to track business performance"
           />
         </motion.div>
       )}
@@ -227,13 +227,13 @@ export default function Analytics() {
           <div className="col-span-full bg-slate-50 rounded-xl p-12 text-center border-2 border-dashed border-slate-200">
             <BarChart3 className="h-12 w-12 text-slate-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-slate-900 mb-2">No Analytics Data Available</h3>
-            <p className="text-slate-500 mb-4">Upload your analytics data to see KPI metrics, user engagement, and performance insights.</p>
+            <p className="text-slate-500 mb-4">Upload your customer data to see KPI metrics, user engagement, and performance insights.</p>
             <button
               onClick={toggleImporter}
               className="inline-flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
             >
               <Upload className="h-4 w-4" />
-              <span>Upload Analytics Data</span>
+              <span>Upload Customer Data</span>
             </button>
           </div>
         )}

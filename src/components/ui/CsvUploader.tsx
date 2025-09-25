@@ -1,12 +1,32 @@
 import { useState } from 'react';
 import { Upload, CheckCircle, AlertCircle, RefreshCw, FileUp } from 'lucide-react';
 import Papa from 'papaparse';
-import { UniversalImportRecord, processUniversalImport, sanitizeObject, sanitizeString } from '../../lib/supabaseUtils';
+import { sanitizeObject, sanitizeString } from '../../lib/supabaseUtils';
+
+interface CustomerImportRecord {
+  id_customer: string;
+  id_product: string;
+  date_active: string;
+  date_inactive?: string;
+  name_first: string;
+  name_last: string;
+  product_admin_label: string;
+  product_benefit_id: string;
+  product_label: string;
+  date_created_member: string;
+  date_first_billing: string;
+  date_last_payment?: string;
+  date_next_billing?: string;
+  id_agent?: string;
+  last_payment?: string;
+  last_transaction_amount?: string;
+  product_amount: string;
+}
 
 interface CsvUploaderProps {
   onSuccess?: () => void;
   onError?: (error: string) => void;
-  importType?: 'enrollment' | 'status' | 'universal';
+  importType?: 'customer' | 'enrollment' | 'universal';
   title?: string;
   description?: string;
 }
@@ -18,7 +38,7 @@ export default function CsvUploader({ onSuccess, onError }: CsvUploaderProps) {
   const [success, setSuccess] = useState<string | null>(null);
   const [stats, setStats] = useState<{ 
     enrollments: { inserted: number; errors: number }; 
-    statusUpdates: { inserted: number; errors: number };
+    customers: { inserted: number; errors: number };
     total: number 
   } | null>(null);
 
@@ -37,100 +57,63 @@ export default function CsvUploader({ onSuccess, onError }: CsvUploaderProps) {
   };
 
   const validateHeaders = (headers: string[]): boolean => {
-    const universalRequiredHeaders = [
-      'record_type',
-      'member_id'
+    const customerRequiredHeaders = [
+      'ID Customer',
+      'ID Product',
+      'Date Active',
+      'Name First',
+      'Name Last',
+      'Product Amount'
     ];
     
-    const enrollmentHeaders = [
-      'enrollment_id',
-      'enrollment_date',
-      'program_name',
-      'enrollment_status',
-      'premium_amount'
-    ];
+    // Check if customer required headers are present (case-insensitive)
+    const normalizedHeaders = headers.map(h => h.trim().toLowerCase().replace(/\s+/g, ' '));
+    const normalizedRequired = customerRequiredHeaders.map(h => h.toLowerCase());
     
-    const statusHeaders = [
-      'status_date',
-      'new_status'
-    ];
-    
-    // Check if universal required headers are present
-    const hasUniversalHeaders = universalRequiredHeaders.every(header => headers.includes(header));
-    
-    // Ensure we have either enrollment headers or status headers or both
-    const hasEnrollmentHeaders = enrollmentHeaders.every(header => headers.includes(header));
-    const hasStatusHeaders = statusHeaders.every(header => headers.includes(header));
-    
-    return hasUniversalHeaders && (hasEnrollmentHeaders || hasStatusHeaders);
+    return normalizedRequired.every(required => 
+      normalizedHeaders.some(header => header === required)
+    );
   };
 
   const validateRow = (row: any): { isValid: boolean; errors: string[]; validTypes: string[] } => {
     const errors: string[] = [];
-    const validTypes: string[] = [];
+    const validTypes: string[] = ['customer'];
     
-    // Check record_type
-    if (!row.record_type) {
-      errors.push('Missing record_type');
-    } else if (!['enrollment', 'status_update', 'both'].includes(row.record_type)) {
-      errors.push(`Invalid record_type: ${row.record_type}. Must be 'enrollment', 'status_update', or 'both'.`);
+    // Required fields validation
+    if (!row['ID Customer'] && !row['id_customer']) {
+      errors.push('Missing ID Customer');
     }
-
-    // Check member_id (required for all record types)
-    if (!row.member_id) errors.push('Missing member_id');
-
-    // Validate enrollment data if record_type is 'enrollment' or 'both'
-    if (row.record_type === 'enrollment' || row.record_type === 'both') {
-      // Check required enrollment fields
-      if (!row.enrollment_id) {
-        errors.push('Missing enrollment_id for enrollment record');
-      } else if (!row.enrollment_date) {
-        errors.push('Missing enrollment_date for enrollment record');
-      } else if (!row.program_name) {
-        errors.push('Missing program_name for enrollment record');
-      } else if (!row.enrollment_status) {
-        errors.push('Missing enrollment_status for enrollment record');
-      } else if (!row.premium_amount) {
-        errors.push('Missing premium_amount for enrollment record');
-      } else {
-        // All required enrollment fields are present
-        validTypes.push('enrollment');
-        
-        // Check enrollment_status is valid
-        const validEnrollmentStatuses = ['active', 'pending', 'cancelled', 'lapsed', 'completed'];
-        if (!validEnrollmentStatuses.includes(row.enrollment_status.toLowerCase())) {
-          errors.push(`Invalid enrollment_status: ${row.enrollment_status}. Must be one of: ${validEnrollmentStatuses.join(', ')}`);
-        }
-        
-        // Check premium_amount is a valid number
-        if (isNaN(parseFloat(row.premium_amount))) {
-          errors.push(`Invalid premium_amount: ${row.premium_amount}. Must be a number.`);
-        }
-      }
+    
+    if (!row['ID Product'] && !row['id_product']) {
+      errors.push('Missing ID Product');
     }
-
-    // Validate status update data if record_type is 'status_update' or 'both'
-    if (row.record_type === 'status_update' || row.record_type === 'both') {
-      // Check required status update fields
-      if (!row.status_date) {
-        errors.push('Missing status_date for status update record');
-      } else if (!row.new_status) {
-        errors.push('Missing new_status for status update record');
-      } else {
-        // All required status update fields are present
-        validTypes.push('status_update');
-        
-        // Check new_status is valid
-        const validStatusValues = ['active', 'inactive', 'lapsed', 'churned', 'on_hold', 'suspended'];
-        if (!validStatusValues.includes(row.new_status.toLowerCase())) {
-          errors.push(`Invalid new_status: ${row.new_status}. Must be one of: ${validStatusValues.join(', ')}`);
-        }
-      }
+    
+    if (!row['Date Active'] && !row['date_active']) {
+      errors.push('Missing Date Active');
     }
-
-    // For record_type 'both', ensure we have valid data for both tables
-    if (row.record_type === 'both' && validTypes.length !== 2) {
-      errors.push(`Record type is 'both' but data is only valid for: ${validTypes.join(', ')}`);
+    
+    if (!row['Name First'] && !row['name_first']) {
+      errors.push('Missing Name First');
+    }
+    
+    if (!row['Name Last'] && !row['name_last']) {
+      errors.push('Missing Name Last');
+    }
+    
+    if (!row['Product Amount'] && !row['product_amount']) {
+      errors.push('Missing Product Amount');
+    }
+    
+    // Validate dates
+    const dateActive = row['Date Active'] || row['date_active'];
+    if (dateActive && isNaN(Date.parse(dateActive))) {
+      errors.push('Invalid Date Active format. Use YYYY-MM-DD or MM/DD/YYYY');
+    }
+    
+    // Validate product amount is a number
+    const productAmount = row['Product Amount'] || row['product_amount'];
+    if (productAmount && isNaN(parseFloat(String(productAmount).replace(/[$,]/g, '')))) {
+      errors.push('Invalid Product Amount. Must be a valid number');
     }
 
     return { 
@@ -138,6 +121,86 @@ export default function CsvUploader({ onSuccess, onError }: CsvUploaderProps) {
       errors,
       validTypes 
     };
+  };
+
+  const processCustomerImport = async (records: CustomerImportRecord[]) => {
+    const enrollmentRecords: any[] = [];
+    const statusUpdateRecords: any[] = [];
+    
+    records.forEach(record => {
+      // Map customer data to enrollment format
+      const enrollmentId = `${record.id_customer}-${record.id_product}`;
+      const memberId = record.id_customer;
+      const enrollmentDate = record.date_active;
+      const programName = record.product_label || record.product_admin_label;
+      const premiumAmount = parseFloat(String(record.product_amount).replace(/[$,]/g, ''));
+      
+      // Create enrollment record
+      enrollmentRecords.push({
+        enrollment_id: enrollmentId,
+        member_id: memberId,
+        enrollment_date: new Date(enrollmentDate).toISOString(),
+        program_name: programName,
+        enrollment_status: record.date_inactive ? 'cancelled' : 'active',
+        enrollment_source: 'csv_import',
+        premium_amount: premiumAmount,
+        renewal_date: record.date_next_billing ? new Date(record.date_next_billing).toISOString() : null
+      });
+      
+      // Create status update record for active enrollment
+      statusUpdateRecords.push({
+        member_id: memberId,
+        status_date: new Date(enrollmentDate).toISOString(),
+        new_status: record.date_inactive ? 'cancelled' : 'active',
+        reason: record.date_inactive ? 'Customer cancelled' : 'New enrollment',
+        source_system: 'csv_import'
+      });
+      
+      // If there's an inactive date, create another status update
+      if (record.date_inactive) {
+        statusUpdateRecords.push({
+          member_id: memberId,
+          status_date: new Date(record.date_inactive).toISOString(),
+          new_status: 'cancelled',
+          reason: 'Customer cancellation',
+          source_system: 'csv_import'
+        });
+      }
+    });
+    
+    // Import using the existing batch upsert functionality
+    const { batchUpsert } = await import('../../lib/supabaseUtils');
+    
+    const [enrollmentResults, statusUpdateResults] = await Promise.all([
+      enrollmentRecords.length > 0 
+        ? batchUpsert('member_enrollments', enrollmentRecords, 'enrollment_id') 
+        : { inserted: 0, errors: 0 },
+      statusUpdateRecords.length > 0
+        ? batchUpsert('member_status_updates', statusUpdateRecords, 'id')
+        : { inserted: 0, errors: 0 }
+    ]);
+    
+    return {
+      enrollments: enrollmentResults,
+      customers: statusUpdateResults // Rename for display purposes
+    };
+  };
+
+  const normalizeFieldName = (fieldName: string): string => {
+    // Convert "ID Customer" to "id_customer", "Name First" to "name_first", etc.
+    return fieldName
+      .toLowerCase()
+      .replace(/\s+/g, '_')
+      .trim();
+  };
+
+  const normalizeRowKeys = (row: any): any => {
+    const normalizedRow: any = {};
+    Object.keys(row).forEach(key => {
+      const normalizedKey = normalizeFieldName(key);
+      normalizedRow[normalizedKey] = row[key];
+    });
+    return normalizedRow;
   };
 
   const handleUpload = async () => {
@@ -155,7 +218,7 @@ export default function CsvUploader({ onSuccess, onError }: CsvUploaderProps) {
         complete: async (results) => {
           // Check headers
           if (!validateHeaders(results.meta.fields || [])) {
-            setError('Invalid CSV format. Required headers are missing. Make sure your CSV includes at least record_type, member_id, and fields for either enrollment or status updates.');
+            setError('Invalid CSV format. Required headers are missing. Make sure your CSV includes: ID Customer, ID Product, Date Active, Name First, Name Last, Product Amount');
             setIsLoading(false);
             if (onError) onError('Invalid CSV format. Required headers are missing. Check the expected format description.');
             return;
@@ -167,14 +230,19 @@ export default function CsvUploader({ onSuccess, onError }: CsvUploaderProps) {
           // Validate all rows
           results.data.forEach((row: any) => {
             // Sanitize the row data first to prevent XSS
-            const sanitizedRow = sanitizeObject(row);
+            const normalizedRow = normalizeRowKeys(row);
+            const sanitizedRow = sanitizeObject(normalizedRow);
             
-            const { isValid, errors, validTypes } = validateRow(row);
+            const { isValid, errors, validTypes } = validateRow(sanitizedRow);
             if (isValid) {
-              // Convert the row to our universal format
-              validRows.push(sanitizedRow as UniversalImportRecord);
+              // Convert the row to customer import format
+              validRows.push(sanitizedRow as CustomerImportRecord);
             } else {
-              invalidRows.push({ row: sanitizedRow, errors });
+              invalidRows.push({ 
+                row: sanitizedRow, 
+                errors,
+                originalData: row 
+              });
             }
           });
 
@@ -185,20 +253,20 @@ export default function CsvUploader({ onSuccess, onError }: CsvUploaderProps) {
             return;
           }
 
-          // Process the universal import
-          const result = await processUniversalImport(validRows);
+          // Process the customer import
+          const result = await processCustomerImport(validRows);
           
-          const totalInserted = result.enrollments.inserted + result.statusUpdates.inserted;
-          const totalErrors = result.enrollments.errors + result.statusUpdates.errors + invalidRows.length;
+          const totalInserted = result.enrollments.inserted + result.customers.inserted;
+          const totalErrors = result.enrollments.errors + result.customers.errors + invalidRows.length;
 
           setStats({
             enrollments: result.enrollments,
-            statusUpdates: result.statusUpdates,
+            customers: result.customers,
             total: results.data.length
           });
 
           if (totalInserted > 0) {
-            setSuccess(`Successfully imported ${totalInserted} records (${result.enrollments.inserted} enrollments, ${result.statusUpdates.inserted} status updates).`);
+            setSuccess(`Successfully imported ${totalInserted} records (${result.enrollments.inserted} enrollments, ${result.customers.inserted} customer updates).`);
             if (onSuccess) onSuccess();
           } else {
             setError('Failed to import any records.');
@@ -223,7 +291,7 @@ export default function CsvUploader({ onSuccess, onError }: CsvUploaderProps) {
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-      <h3 className="text-lg font-semibold text-slate-900 mb-4">Import Enrollment Data</h3>
+      <h3 className="text-lg font-semibold text-slate-900 mb-4">Import Customer Data</h3>
       
       {/* Format Instructions */}
       <div className="mb-6">
@@ -231,13 +299,12 @@ export default function CsvUploader({ onSuccess, onError }: CsvUploaderProps) {
           <h4 className="text-sm font-semibold text-blue-800 mb-2">CSV Format Instructions</h4>
           <p className="text-xs text-blue-700 mb-2">Your CSV file should contain the following headers:</p>
           <p className="text-xs font-mono bg-white p-2 rounded border border-blue-100 text-blue-800 overflow-x-auto whitespace-nowrap mb-2">
-            record_type,enrollment_id,member_id,enrollment_date,program_name,enrollment_status,enrollment_source,premium_amount,renewal_date,status_date,new_status,reason,source_system
+            ID Customer,ID Product,Date Active,Date Inactive,Name First,Name Last,Product Admin Label,Product Benefit ID,Product Label,Date Created Member,Date First Billing,Date Last Payment,Date Next Billing,ID Agent,Last Payment,Last Transaction Amount,Product Amount
           </p>
           <p className="text-xs text-blue-700">
-            <strong>Required for all records:</strong> record_type, member_id<br/>
-            <strong>For enrollment records:</strong> enrollment_id, enrollment_date, program_name, enrollment_status, premium_amount<br/>
-            <strong>For status updates:</strong> status_date, new_status<br/>
-            <strong>Record types:</strong> 'enrollment', 'status_update', or 'both' (for rows that update both)
+            <strong>Required fields:</strong> ID Customer, ID Product, Date Active, Name First, Name Last, Product Amount<br/>
+            <strong>Optional fields:</strong> Date Inactive, Product Admin Label, Product Benefit ID, Date Created Member, Date First Billing, Date Last Payment, Date Next Billing, ID Agent, Last Payment, Last Transaction Amount<br/>
+            <strong>Date formats:</strong> YYYY-MM-DD or MM/DD/YYYY are supported
           </p>
         </div>
       </div>
@@ -253,7 +320,7 @@ export default function CsvUploader({ onSuccess, onError }: CsvUploaderProps) {
             Drag & drop your CSV file here or click to browse
           </p>
           <p className="text-xs text-slate-500 mb-4">
-            Ensure your file has the required headers: enrollment_id, member_id, enrollment_date, program_name, enrollment_status, premium_amount
+            Ensure your file has the required headers: ID Customer, ID Product, Date Active, Name First, Name Last, Product Amount
           </p>
           <label className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors cursor-pointer">
             <span>{file ? file.name : 'Select CSV File'}</span>
@@ -311,7 +378,7 @@ export default function CsvUploader({ onSuccess, onError }: CsvUploaderProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <div className="p-3 bg-indigo-50 border border-indigo-100 rounded-lg">
-                <h5 className="text-xs font-medium text-indigo-800 mb-1">Enrollment Records</h5>
+                <h5 className="text-xs font-medium text-indigo-800 mb-1">Customer Enrollment Records</h5>
                 <div className="flex justify-between text-sm">
                   <span className="text-indigo-700">Inserted:</span>
                   <span className="font-medium text-indigo-800">{stats.enrollments.inserted}</span>
@@ -325,14 +392,14 @@ export default function CsvUploader({ onSuccess, onError }: CsvUploaderProps) {
             
             <div>
               <div className="p-3 bg-emerald-50 border border-emerald-100 rounded-lg">
-                <h5 className="text-xs font-medium text-emerald-800 mb-1">Status Update Records</h5>
+                <h5 className="text-xs font-medium text-emerald-800 mb-1">Customer Status Records</h5>
                 <div className="flex justify-between text-sm">
                   <span className="text-emerald-700">Inserted:</span>
-                  <span className="font-medium text-emerald-800">{stats.statusUpdates.inserted}</span>
+                  <span className="font-medium text-emerald-800">{stats.customers.inserted}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-emerald-700">Errors:</span>
-                  <span className="font-medium text-emerald-800">{stats.statusUpdates.errors}</span>
+                  <span className="font-medium text-emerald-800">{stats.customers.errors}</span>
                 </div>
               </div>
             </div>
@@ -355,7 +422,7 @@ export default function CsvUploader({ onSuccess, onError }: CsvUploaderProps) {
           ) : (
             <>
               <FileUp className="w-4 h-4" />
-              <span>Upload & Process</span>
+              <span>Upload & Process Customer Data</span>
             </>
           )}
         </button>

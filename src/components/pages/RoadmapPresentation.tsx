@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Presentation, 
@@ -7,18 +7,9 @@ import {
   Edit, 
   Play, 
   Save, 
-  RefreshCw, 
   Plus,
   Trash2,
   Settings,
-  Palette,
-  Layout,
-  Image,
-  Type,
-  Square,
-  Circle,
-  Triangle,
-  Star,
   ArrowRight,
   X
 } from 'lucide-react';
@@ -29,20 +20,8 @@ import {
   GraphicsUtils 
 } from '../../utils/presentationUtils';
 import { 
-  advisorKpis,
-  topAdvisors,
-  salesTrends,
-  planBreakdown,
-  advisorSkills,
-  performanceMetrics,
   kpiMetrics,
-  mrrData,
-  memberEngagementKPIs,
-  dailyLoginsData,
-  retentionKPIs,
-  retentionTimeline,
-  uptimeKPIs,
-  systemComponents
+  topAdvisors
 } from '../../data/consolidatedMockData';
 
 interface PresentationSlide {

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import type { FormEvent, ChangeEvent } from 'react';
 import { useSaaSExpenses } from '../../hooks/useSaaSExpenses';
 import SaaSExpenseUploader from '../ui/SaaSExpenseUploader';
 import { CreditCard, TrendingUp, Calendar, DollarSign, Edit, Trash2, Plus } from 'lucide-react';
@@ -120,7 +121,7 @@ export default function SaaSSpend() {
     });
   };
 
-  const handleAddExpense = async (e: React.FormEvent) => {
+  const handleAddExpense = async (e: FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     
@@ -140,7 +141,7 @@ export default function SaaSSpend() {
     }
   };
 
-  const handleUpdateExpense = async (e: React.FormEvent) => {
+  const handleUpdateExpense = async (e: FormEvent) => {
     e.preventDefault();
     if (!selectedExpense) return;
     
@@ -162,7 +163,7 @@ export default function SaaSSpend() {
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
     setFormData(prev => ({
       ...prev,

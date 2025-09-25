@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { X, FileText, Save, Eye, Calendar, Upload, Share2, AlertCircle, Check, Paperclip, Trash2, RefreshCw } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { Department } from '../../hooks/useOrganizationalData';

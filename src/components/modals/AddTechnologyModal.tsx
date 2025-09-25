@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { X, Server, Plus } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 

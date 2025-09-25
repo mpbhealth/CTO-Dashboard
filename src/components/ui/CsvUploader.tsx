@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Upload, CheckCircle, AlertCircle, RefreshCw, FileUp } from 'lucide-react';
 import Papa from 'papaparse';
 import { UniversalImportRecord, processUniversalImport, sanitizeObject, sanitizeString } from '../../lib/supabaseUtils';

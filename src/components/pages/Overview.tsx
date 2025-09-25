@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import KPICard from '../ui/KPICard';
 import { useKPIData, useTeamMembers } from '../../hooks/useSupabaseData';
 import { Users, Building, Calendar, Plus, Edit, Trash2 } from 'lucide-react';

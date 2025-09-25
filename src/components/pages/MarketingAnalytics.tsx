@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useMarketingProperties, useMarketingMetrics, aggregateMetrics, getTrafficSourceData } from '../../hooks/useMarketingData';
 import {
@@ -102,7 +102,7 @@ export default function MarketingAnalytics() {
   const { data: metrics } = useMarketingMetrics(selectedPropertyId, getDateRange());
 
   // Set default selected property
-  React.useEffect(() => {
+  useEffect(() => {
     if (properties.length > 0 && !selectedPropertyId) {
       setSelectedPropertyId(properties[0].id);
     }

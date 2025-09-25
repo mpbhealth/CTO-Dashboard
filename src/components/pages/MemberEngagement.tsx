@@ -1,4 +1,3 @@
-import React from 'react';
 import KPICard from '../ui/KPICard';
 import {
   LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer,

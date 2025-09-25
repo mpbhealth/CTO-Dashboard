@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { 
   useDepartments, 
   useEmployeeProfiles, 
@@ -300,14 +300,14 @@ export default function OrganizationalStructure() {
         )}
 
         {activeTab === 'employees' && (
-          <React.Suspense fallback={<div className="p-6 text-center">Loading employee management...</div>}>
+          <Suspense fallback={<div className="p-6 text-center">Loading employee management...</div>}>
             <EmployeeManagement
               employees={employees}
               departments={departments}
              onRefresh={() => refetchEmployees()}
               searchTerm={searchTerm}
             />
-          </React.Suspense>
+          </Suspense>
         )}
 
         {activeTab === 'analytics' && (

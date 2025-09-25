@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useProjects } from '../../hooks/useSupabaseData';
 import { FolderOpen, Github, ExternalLink, Users, BarChart3, Plus, Edit, Trash2, Globe } from 'lucide-react';
 import AddProjectModal from '../modals/AddProjectModal';

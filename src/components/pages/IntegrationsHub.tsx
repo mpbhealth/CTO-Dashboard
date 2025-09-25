@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Settings, Database, Webhook, Server, BarChart3, Activity, Zap } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 

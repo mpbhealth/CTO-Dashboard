@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import type { ChangeEvent } from 'react';
 import { motion } from 'framer-motion';
 import { useRoadmapItems, useProjects } from '../../hooks/useSupabaseData';
 import { Calendar, User, AlertCircle, CheckCircle, Clock, Plus, Edit, Trash2, RefreshCw, Search, X } from 'lucide-react';
@@ -252,7 +253,7 @@ export default function Roadmap() {
     setIsEditModalOpen(true);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };

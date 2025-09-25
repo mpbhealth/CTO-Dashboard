@@ -205,7 +205,7 @@ function transformRow(row: ProcessedRow): TargetRow {
 type MergeKey = string; // member_id|program_name
 
 function generateMergeKey(row: TargetRow): MergeKey {
-  return `${row['ID Customer']}|${row['Product Label']}`;
+  return `${row['ID Customer']}|${row['Product Label'] || 'unknown'}`;
 }
 
 function mergeRows(rows: TargetRow[]): TargetRow[] {

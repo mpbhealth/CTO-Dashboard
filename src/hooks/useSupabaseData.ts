@@ -142,9 +142,9 @@ export function useProjects() {
       if (!isSupabaseConfigured) {
         console.warn('Supabase not configured - returning mock projects data');
         setData([
-          { id: '1', name: 'CTO Dashboard v2', description: 'Executive dashboard for technology oversight', status: 'Building', start_date: '2024-01-01', end_date: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-          { id: '2', name: 'CSV Enrollment Transformer', description: 'Data transformation utility for MPB Health', status: 'Live', start_date: '2024-09-20', end_date: '2024-09-25', created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-          { id: '3', name: 'Security Audit 2024', description: 'Comprehensive security review and improvements', status: 'Live', start_date: '2024-08-01', end_date: '2024-09-15', created_at: new Date().toISOString(), updated_at: new Date().toISOString() }
+          { id: '1', name: 'CTO Dashboard v2', description: 'Executive dashboard for technology oversight', status: 'Building', team: ['CTO Team'], github_link: 'https://github.com/omnivurse/CTODashboard_v2', monday_link: '', website_url: 'http://localhost:5173/', progress: 85, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+          { id: '2', name: 'CSV Enrollment Transformer', description: 'Data transformation utility for MPB Health', status: 'Live', team: ['CTO Team'], github_link: 'https://github.com/omnivurse/CTODashboard_v2/tree/main/csv-enrollment-transformer', monday_link: '', website_url: '', progress: 100, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+          { id: '3', name: 'Security Audit 2024', description: 'Comprehensive security review and improvements', status: 'Live', team: ['CTO Team'], github_link: '', monday_link: '', website_url: '', progress: 100, created_at: new Date().toISOString(), updated_at: new Date().toISOString() }
         ]);
         return;
       }
@@ -178,6 +178,15 @@ export function useVendors() {
   const fetchData = async () => {
     try {
       setLoading(true);
+      
+      // If Supabase is not configured, return mock data
+      if (!isSupabaseConfigured) {
+        console.warn('Supabase not configured - returning mock vendors data');
+        // Using minimal mock data to avoid type issues
+        setData([]);
+        return;
+      }
+      
       const { data: vendorData, error } = await supabase
         .from('vendors')
         .select('*')
@@ -207,6 +216,14 @@ export function useAIAgents() {
   const fetchData = async () => {
     try {
       setLoading(true);
+      
+      // If Supabase is not configured, return mock data
+      if (!isSupabaseConfigured) {
+        console.warn('Supabase not configured - returning mock AI agents data');
+        setData([]);
+        return;
+      }
+      
       const { data: agentData, error } = await supabase
         .from('ai_agents')
         .select('*')
@@ -236,6 +253,14 @@ export function useAPIStatuses() {
   const fetchData = async () => {
     try {
       setLoading(true);
+      
+      // If Supabase is not configured, return mock data
+      if (!isSupabaseConfigured) {
+        console.warn('Supabase not configured - returning mock API status data');
+        setData([]);
+        return;
+      }
+      
       const { data: apiData, error } = await supabase
         .from('api_statuses')
         .select('*')
@@ -265,6 +290,14 @@ export function useDeploymentLogs() {
   const fetchData = async () => {
     try {
       setLoading(true);
+      
+      // If Supabase is not configured, return mock data
+      if (!isSupabaseConfigured) {
+        console.warn('Supabase not configured - returning mock deployment logs data');
+        setData([]);
+        return;
+      }
+      
       const { data: deploymentData, error } = await supabase
         .from('deployment_logs')
         .select('*')
@@ -294,6 +327,14 @@ export function useTeamMembers() {
   const fetchData = async () => {
     try {
       setLoading(true);
+      
+      // If Supabase is not configured, return mock data
+      if (!isSupabaseConfigured) {
+        console.warn('Supabase not configured - returning mock team members data');
+        setData([]);
+        return;
+      }
+      
       const { data: teamData, error } = await supabase
         .from('team_members')
         .select('*')

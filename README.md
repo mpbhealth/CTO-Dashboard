@@ -133,19 +133,25 @@ src/
    npm install
    ```
 
-3. **Set up environment variables**
+3. **Set up environment variables (Optional)**
    ```bash
    cp .env.example .env
    ```
-   Add your Supabase credentials:
+   
+   **Development Mode (Recommended for initial setup):**
+   The application works out-of-the-box with mock data when Supabase credentials are not provided. Simply run `npm run dev` to start with demo data.
+   
+   **Production Mode with Supabase:**
+   Add your Supabase credentials to `.env`:
    ```
    VITE_SUPABASE_URL=your_supabase_url
    VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
    ```
 
-4. **Run database migrations**
+4. **Run database migrations (Production only)**
    - Import the SQL files from `supabase/migrations/` into your Supabase project
    - This will create all necessary tables and seed data
+   - Skip this step if using development mode with mock data
 
 5. **Start the development server**
    ```bash
@@ -153,7 +159,7 @@ src/
    ```
 
 6. **Open your browser**
-   Navigate to `http://localhost:5173`
+   Navigate to the URL shown in terminal (usually `http://localhost:5173` or `http://localhost:5174`)
 
 ## 📊 **Dashboard Pages**
 

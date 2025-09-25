@@ -6,7 +6,13 @@ export interface GraphicElement {
   id: string;
   type: 'text' | 'image' | 'shape' | 'icon' | 'chart';
   position: { x: number; y: number; width: number; height: number };
-  content: any;
+  content: string | { 
+    text?: string; 
+    data?: Record<string, unknown>; 
+    url?: string;
+    shape?: string;
+    icon?: string;
+  };
   style: {
     backgroundColor?: string;
     borderColor?: string;
@@ -29,6 +35,24 @@ export interface GraphicElement {
   };
 }
 
+interface TimelineItem {
+  date?: string;
+  quarter?: string;
+  title: string;
+  description?: string;
+  status?: string;
+}
+
+interface ChartData {
+  labels: string[];
+  datasets: Array<{
+    label: string;
+    data: number[];
+    backgroundColor?: string | string[];
+    borderColor?: string | string[];
+  }>;
+}
+
 export interface PresentationSlide {
   id: string;
   title: string;
@@ -40,8 +64,8 @@ export interface PresentationSlide {
     leftColumn?: string[];
     rightColumn?: string[];
     imageUrl?: string;
-    chartData?: any;
-    timelineItems?: any[];
+    chartData?: ChartData;
+    timelineItems?: TimelineItem[];
   };
   graphics: GraphicElement[];
   background: {

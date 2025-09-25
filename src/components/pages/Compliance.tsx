@@ -1,9 +1,22 @@
-// @ts-nocheck
 import { useState } from 'react';
 import { Shield, CheckCircle, AlertTriangle, Clock, FileText, Plus, Edit, Trash2, X, Save } from 'lucide-react';
 
+interface ComplianceVendor {
+  name: string;
+  status: string;
+  certs: string[];
+  lastAudit: string;
+}
+
+interface FormData {
+  name: string;
+  status: string;
+  certs: string;
+  lastAudit: string;
+}
+
 export default function Compliance() {
-  const [complianceVendors, setComplianceVendors] = useState([
+  const [complianceVendors, setComplianceVendors] = useState<ComplianceVendor[]>([
     { name: 'Supabase', status: 'Compliant', certs: ['SOC 2', 'HIPAA'], lastAudit: '2024-11-15' },
     { name: 'GitHub Enterprise', status: 'Compliant', certs: ['SOC 2', 'ISO 27001'], lastAudit: '2024-10-20' },
     { name: 'JotForm Enterprise', status: 'Pending', certs: ['GDPR'], lastAudit: '2024-08-05' },
@@ -11,8 +24,8 @@ export default function Compliance() {
   
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [selectedVendor, setSelectedVendor] = useState(null);
-  const [formData, setFormData] = useState({
+  const [selectedVendor, setSelectedVendor] = useState<ComplianceVendor | null>(null);
+  const [formData, setFormData] = useState<FormData>({
     name: '',
     status: 'Compliant',
     certs: '',
@@ -75,7 +88,7 @@ export default function Compliance() {
     setIsAddModalOpen(true);
   };
   
-  const handleEditVendor = (vendor) => {
+  const handleEditVendor = (vendor: ComplianceVendor) => {
     setSelectedVendor(vendor);
     setFormData({
       name: vendor.name,
@@ -85,19 +98,19 @@ export default function Compliance() {
     });
     setIsEditModalOpen(true);
   };
-  
-  const handleDeleteVendor = (vendor) => {
+
+  const handleDeleteVendor = (vendor: ComplianceVendor) => {
     if (window.confirm(`Are you sure you want to delete ${vendor.name}?`)) {
       setComplianceVendors(complianceVendors.filter(v => v.name !== vendor.name));
     }
   };
   
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
   
-  const handleSubmitAdd = (e) => {
+  const handleSubmitAdd = (e: React.FormEvent) => {
     e.preventDefault();
     const newVendor = {
       name: formData.name,
@@ -110,8 +123,10 @@ export default function Compliance() {
     setIsAddModalOpen(false);
   };
   
-  const handleSubmitEdit = (e) => {
+  const handleSubmitEdit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!selectedVendor) return;
+    
     const updatedVendors = complianceVendors.map(vendor => 
       vendor.name === selectedVendor.name 
         ? {
@@ -304,6 +319,8 @@ export default function Compliance() {
               <button
                 onClick={() => setIsAddModalOpen(false)}
                 className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                aria-label="Close modal"
+                title="Close modal"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -413,6 +430,8 @@ export default function Compliance() {
                   setSelectedVendor(null);
                 }}
                 className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                aria-label="Close modal"
+                title="Close modal"
               >
                 <X className="w-5 h-5" />
               </button>

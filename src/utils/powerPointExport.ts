@@ -1,9 +1,32 @@
 import PptxGenJS from 'pptxgenjs';
 
+export interface PowerPointSlideContent {
+  title?: string;
+  subtitle?: string;
+  bullets?: string[];
+  leftColumn?: string[];
+  rightColumn?: string[];
+  imageUrl?: string;
+  chartData?: {
+    labels: string[];
+    datasets: Array<{
+      label: string;
+      data: number[];
+      backgroundColor?: string | string[];
+    }>;
+  };
+  timelineItems?: Array<{
+    date?: string;
+    quarter?: string;
+    title: string;
+    description?: string;
+  }>;
+}
+
 export interface PowerPointSlide {
   title: string;
   layout: 'title' | 'content' | 'two-column' | 'image-content' | 'chart' | 'timeline';
-  content: any;
+  content: PowerPointSlideContent;
   notes?: string;
 }
 
@@ -102,7 +125,14 @@ export async function exportToPowerPointFile(presentation: PowerPointPresentatio
   await pptx.writeFile({ fileName });
 }
 
-function createTitleSlide(pptx: PptxGenJS, slide: any, slideData: PowerPointSlide, colors: any) {
+interface ThemeColors {
+  primary: string;
+  secondary: string;
+  accent: string;
+  text: string;
+}
+
+function createTitleSlide(pptx: PptxGenJS, slide: PptxGenJS.Slide, slideData: PowerPointSlide, colors: ThemeColors) {
   // Main title
   slide.addText(slideData.content.title || slideData.title, {
     x: 1,
@@ -154,7 +184,7 @@ function createTitleSlide(pptx: PptxGenJS, slide: any, slideData: PowerPointSlid
   });
 }
 
-function createContentSlide(pptx: PptxGenJS, slide: any, slideData: PowerPointSlide, colors: any) {
+function createContentSlide(pptx: PptxGenJS, slide: PptxGenJS.Slide, slideData: PowerPointSlide, colors: ThemeColors) {
   // Title
   slide.addText(slideData.content.title || slideData.title, {
     x: 0.5,
@@ -192,7 +222,7 @@ function createContentSlide(pptx: PptxGenJS, slide: any, slideData: PowerPointSl
   }
 }
 
-function createTwoColumnSlide(pptx: PptxGenJS, slide: any, slideData: PowerPointSlide, colors: any) {
+function createTwoColumnSlide(pptx: PptxGenJS, slide: PptxGenJS.Slide, slideData: PowerPointSlide, colors: ThemeColors) {
   // Title
   slide.addText(slideData.content.title || slideData.title, {
     x: 0.5,

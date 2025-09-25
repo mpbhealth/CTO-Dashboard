@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
@@ -30,6 +29,22 @@ import {
 } from 'recharts';
 import { useEnrollmentData } from '../../hooks/useEnrollmentData';
 import { useMemberStatusData } from '../../hooks/useMemberStatusData';
+
+interface KpiMetric {
+  title: string;
+  value: string;
+  change: string;
+  trend: 'up' | 'down' | 'stable';
+  icon: string;
+}
+
+interface RegionalPerformance {
+  region: string;
+  users: number;
+  revenue: number;
+  growth: number;
+}
+
 export default function Analytics() {
   const [timeRange, setTimeRange] = useState('30d');
   const [showImporter, setShowImporter] = useState(false);
@@ -39,13 +54,13 @@ export default function Analytics() {
 
   // Empty state - no demo data, ready for file uploads
   const currentDepartmentData = {
-    kpiMetrics: [],
-    dailyActiveUsers: [],
-    revenueData: [],
-    satisfactionScores: [],
-    regionalPerformance: [],
-    insights: [],
-    recommendations: [],
+    kpiMetrics: [] as KpiMetric[],
+    dailyActiveUsers: [] as Array<{ date: string; users: number; mobile: number; desktop: number }>,
+    revenueData: [] as Array<{ month: string; revenue: number; newMembers: number; growth: number }>,
+    satisfactionScores: [] as Array<{ month: string; score: number; responses: number }>,
+    regionalPerformance: [] as RegionalPerformance[],
+    insights: [] as string[],
+    recommendations: [] as string[],
     currency: selectedDepartment === 'mpb' ? '$' : 'R$',
     region: selectedDepartment === 'mpb' ? 'North America' : 'Brazil'
   };
@@ -140,6 +155,7 @@ export default function Analytics() {
             value={selectedDepartment}
             onChange={(e) => setSelectedDepartment(e.target.value as 'mpb' | 'saudemax')}
             className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            aria-label="Select department"
           >
             <option value="mpb">MPB Health</option>
             <option value="saudemax">SaudeMAX (Brazil)</option>
@@ -149,6 +165,7 @@ export default function Analytics() {
             value={timeRange}
             onChange={(e) => setTimeRange(e.target.value)}
             className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            aria-label="Select time range"
           >
             {timeRanges.map(range => (
               <option key={range.value} value={range.value}>{range.label}</option>

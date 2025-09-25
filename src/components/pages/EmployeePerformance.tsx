@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
@@ -18,16 +17,14 @@ import {
   FileText,
   RefreshCw,
   Filter,
-  X
+  X,
+  BarChart
 } from 'lucide-react';
 import { useEmployeeProfiles } from "../../hooks/useOrganizationalData";
 import { 
-  usePerformanceReviews, 
-  useFeedbackSystem,
-  useKpiSystem, 
-  useCareerDevelopment,
-  PerformanceReview
-} from '../hooks/usePerformanceSystem';
+  usePerformanceSystem,
+  type PerformanceReview
+} from '../../hooks/usePerformanceSystem';
 
 export default function EmployeePerformance() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -37,10 +34,25 @@ export default function EmployeePerformance() {
   const [reviewCycle, setReviewCycle] = useState('all');
   
   const { data: employees, loading: employeesLoading } = useEmployeeProfiles();
-  const { data: reviews, loading: reviewsLoading } = usePerformanceReviews(selectedEmployee || undefined);
-  const { feedback, loading: feedbackLoading } = useFeedbackSystem();
-  const { definitions: kpiDefinitions, measurements: kpiMeasurements, loading: kpiLoading } = useKpiSystem();
-  const { milestones, goals, loading: careerLoading } = useCareerDevelopment();
+  
+  // Get performance system hooks
+  const {
+    useEmployeeReviews,
+    useEmployeeFeedback,
+    useEmployeeKpis,
+    useCareerDevelopmentPlans
+  } = usePerformanceSystem();
+  
+  // Use the hooks with proper typing
+  const { data: reviews = [], isLoading: reviewsLoading } = useEmployeeReviews(selectedEmployee || undefined);
+  const { data: feedback = [], isLoading: feedbackLoading } = useEmployeeFeedback(selectedEmployee || undefined);
+  const { data: kpiMeasurements = [], isLoading: kpiLoading } = useEmployeeKpis(selectedEmployee || undefined);
+  const { data: careerPlans = [], isLoading: careerLoading } = useCareerDevelopmentPlans(selectedEmployee || undefined);
+  
+  // Create dummy data for missing features
+  const goals: Array<{id: string; employee_id: string; status: string}> = [];
+  const milestones: Array<{id: string; employee_id: string}> = [];
+  const kpiDefinitions: Array<{id: string; name: string}> = [];
   
   const loading = employeesLoading || reviewsLoading || feedbackLoading || kpiLoading || careerLoading;
 

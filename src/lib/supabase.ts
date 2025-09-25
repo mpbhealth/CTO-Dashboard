@@ -12,12 +12,14 @@ const defaultKey = 'demo-key';
 const finalUrl = supabaseUrl || defaultUrl;
 const finalKey = supabaseAnonKey || defaultKey;
 
-// Log configuration status
-console.log('Supabase Configuration:', {
-  hasUrl: !!supabaseUrl,
-  hasKey: !!supabaseAnonKey,
-  usingFallback: !supabaseUrl || !supabaseAnonKey
-});
+// Development-only configuration logging
+if (import.meta.env.DEV) {
+  console.log('Supabase Configuration:', {
+    hasUrl: !!supabaseUrl,
+    hasKey: !!supabaseAnonKey,
+    usingFallback: !supabaseUrl || !supabaseAnonKey
+  });
+}
 
 export const supabase = createClient<Database>(finalUrl, finalKey);
 

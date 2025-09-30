@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Settings, Database, Webhook, Server, BarChart3, Activity, Zap } from 'lucide-react';
+import { Settings, Database, Webhook, Server, BarChart3, Activity, Zap, Trash2, Edit2 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
 interface IntegrationSecret {
@@ -85,6 +85,9 @@ export default function IntegrationsHub() {
   const [isAddingWebhook, setIsAddingWebhook] = useState(false);
   const [isAddingSFTP, setIsAddingSFTP] = useState(false);
   const [isAddingMonday, setIsAddingMonday] = useState(false);
+  const [editingSecretId, setEditingSecretId] = useState<string | null>(null);
+  const [editingWebhookId, setEditingWebhookId] = useState<string | null>(null);
+  const [editingSFTPId, setEditingSFTPId] = useState<string | null>(null);
 
   // Form states
   const [secretForm, setSecretForm] = useState({
@@ -177,6 +180,52 @@ export default function IntegrationsHub() {
     }
   };
 
+  const handleUpdateSecret = async (id: string, e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const { data, error } = await supabase
+        .from('integrations_secrets')
+        .update(secretForm)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setSecrets(secrets.map(s => s.id === id ? data : s));
+      setSecretForm({ service: '', key_name: '', key_value: '' });
+      setEditingSecretId(null);
+    } catch (error) {
+      console.error('Error updating secret:', error);
+    }
+  };
+
+  const handleDeleteSecret = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this credential?')) return;
+    
+    try {
+      const { error } = await supabase
+        .from('integrations_secrets')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setSecrets(secrets.filter(s => s.id !== id));
+    } catch (error) {
+      console.error('Error deleting secret:', error);
+    }
+  };
+
+  const startEditingSecret = (secret: IntegrationSecret) => {
+    setSecretForm({
+      service: secret.service,
+      key_name: secret.key_name,
+      key_value: secret.key_value
+    });
+    setEditingSecretId(secret.id);
+  };
+
   const handleAddWebhook = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -208,6 +257,67 @@ export default function IntegrationsHub() {
     }
   };
 
+  const handleUpdateWebhook = async (id: string, e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const webhookData = {
+        ...webhookForm,
+        headers: JSON.parse(webhookForm.headers)
+      };
+
+      const { data, error } = await supabase
+        .from('webhooks_config')
+        .update(webhookData)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setWebhooks(webhooks.map(w => w.id === id ? data : w));
+      setWebhookForm({
+        event: '',
+        target_url: '',
+        secret_token: '',
+        headers: '{}',
+        retry_count: 3,
+        timeout_seconds: 30
+      });
+      setEditingWebhookId(null);
+    } catch (error) {
+      console.error('Error updating webhook:', error);
+    }
+  };
+
+  const handleDeleteWebhook = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this webhook?')) return;
+    
+    try {
+      const { error } = await supabase
+        .from('webhooks_config')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setWebhooks(webhooks.filter(w => w.id !== id));
+    } catch (error) {
+      console.error('Error deleting webhook:', error);
+    }
+  };
+
+  const startEditingWebhook = (webhook: WebhookConfig) => {
+    setWebhookForm({
+      event: webhook.event,
+      target_url: webhook.target_url,
+      secret_token: webhook.secret_token,
+      headers: JSON.stringify(webhook.headers),
+      retry_count: webhook.retry_count,
+      timeout_seconds: webhook.timeout_seconds
+    });
+    setEditingWebhookId(webhook.id);
+  };
+
   const handleAddSFTP = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -234,6 +344,66 @@ export default function IntegrationsHub() {
     } catch (error) {
       console.error('Error adding SFTP config:', error);
     }
+  };
+
+  const handleUpdateSFTP = async (id: string, e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const { data, error } = await supabase
+        .from('sftp_configs')
+        .update(sftpForm)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setSftpConfigs(sftpConfigs.map(s => s.id === id ? data : s));
+      setSftpForm({
+        name: '',
+        hostname: '',
+        port: 22,
+        username: '',
+        password: '',
+        folder_path: '/',
+        direction: 'import',
+        schedule: '0 0 * * *'
+      });
+      setEditingSFTPId(null);
+    } catch (error) {
+      console.error('Error updating SFTP config:', error);
+    }
+  };
+
+  const handleDeleteSFTP = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this SFTP configuration?')) return;
+    
+    try {
+      const { error } = await supabase
+        .from('sftp_configs')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setSftpConfigs(sftpConfigs.filter(s => s.id !== id));
+    } catch (error) {
+      console.error('Error deleting SFTP config:', error);
+    }
+  };
+
+  const startEditingSFTP = (config: SFTPConfig) => {
+    setSftpForm({
+      name: config.name,
+      hostname: config.hostname,
+      port: config.port,
+      username: config.username,
+      password: config.password,
+      folder_path: config.folder_path,
+      direction: config.direction,
+      schedule: config.schedule
+    });
+    setEditingSFTPId(config.id);
   };
 
   const handleAddMondayConfig = async (e: React.FormEvent) => {
@@ -406,18 +576,89 @@ export default function IntegrationsHub() {
 
             <div className="space-y-4">
               {secrets.map((secret) => (
-                <div key={secret.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
-                  <div>
-                    <h3 className="font-medium text-gray-900">{secret.service}</h3>
-                    <p className="text-sm text-gray-500">{secret.key_name}</p>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <span className={`px-2 py-1 text-xs rounded-full ${
-                      secret.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                    }`}>
-                      {secret.is_active ? 'Active' : 'Inactive'}
-                    </span>
-                  </div>
+                <div key={secret.id}>
+                  {editingSecretId === secret.id ? (
+                    <form onSubmit={(e) => handleUpdateSecret(secret.id, e)} className="p-4 border border-blue-300 rounded-lg bg-blue-50">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Service</label>
+                          <input
+                            type="text"
+                            value={secretForm.service}
+                            onChange={(e) => setSecretForm({ ...secretForm, service: e.target.value })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Key Name</label>
+                          <input
+                            type="text"
+                            value={secretForm.key_name}
+                            onChange={(e) => setSecretForm({ ...secretForm, key_name: e.target.value })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Key Value</label>
+                          <input
+                            type="password"
+                            value={secretForm.key_value}
+                            onChange={(e) => setSecretForm({ ...secretForm, key_value: e.target.value })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required
+                          />
+                        </div>
+                      </div>
+                      <div className="flex justify-end space-x-2 mt-4">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditingSecretId(null);
+                            setSecretForm({ service: '', key_name: '', key_value: '' });
+                          }}
+                          className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                        >
+                          Update
+                        </button>
+                      </div>
+                    </form>
+                  ) : (
+                    <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                      <div>
+                        <h3 className="font-medium text-gray-900">{secret.service}</h3>
+                        <p className="text-sm text-gray-500">{secret.key_name}</p>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <span className={`px-2 py-1 text-xs rounded-full ${
+                          secret.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                        }`}>
+                          {secret.is_active ? 'Active' : 'Inactive'}
+                        </span>
+                        <button
+                          onClick={() => startEditingSecret(secret)}
+                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
+                          title="Edit credential"
+                        >
+                          <Edit2 className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteSecret(secret.id)}
+                          className="p-2 text-red-600 hover:bg-red-50 rounded-md transition-colors"
+                          title="Delete credential"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -501,18 +742,106 @@ export default function IntegrationsHub() {
 
             <div className="space-y-4">
               {webhooks.map((webhook) => (
-                <div key={webhook.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
-                  <div>
-                    <h3 className="font-medium text-gray-900">{webhook.event}</h3>
-                    <p className="text-sm text-gray-500">{webhook.target_url}</p>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <span className={`px-2 py-1 text-xs rounded-full ${
-                      webhook.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                    }`}>
-                      {webhook.is_active ? 'Active' : 'Inactive'}
-                    </span>
-                  </div>
+                <div key={webhook.id}>
+                  {editingWebhookId === webhook.id ? (
+                    <form onSubmit={(e) => handleUpdateWebhook(webhook.id, e)} className="p-4 border border-blue-300 rounded-lg bg-blue-50">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Event</label>
+                          <input
+                            type="text"
+                            value={webhookForm.event}
+                            onChange={(e) => setWebhookForm({ ...webhookForm, event: e.target.value })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Target URL</label>
+                          <input
+                            type="url"
+                            value={webhookForm.target_url}
+                            onChange={(e) => setWebhookForm({ ...webhookForm, target_url: e.target.value })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Secret Token</label>
+                          <input
+                            type="password"
+                            value={webhookForm.secret_token}
+                            onChange={(e) => setWebhookForm({ ...webhookForm, secret_token: e.target.value })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Headers (JSON)</label>
+                          <input
+                            type="text"
+                            value={webhookForm.headers}
+                            onChange={(e) => setWebhookForm({ ...webhookForm, headers: e.target.value })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="{}"
+                          />
+                        </div>
+                      </div>
+                      <div className="flex justify-end space-x-2 mt-4">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditingWebhookId(null);
+                            setWebhookForm({
+                              event: '',
+                              target_url: '',
+                              secret_token: '',
+                              headers: '{}',
+                              retry_count: 3,
+                              timeout_seconds: 30
+                            });
+                          }}
+                          className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                        >
+                          Update
+                        </button>
+                      </div>
+                    </form>
+                  ) : (
+                    <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                      <div>
+                        <h3 className="font-medium text-gray-900">{webhook.event}</h3>
+                        <p className="text-sm text-gray-500">{webhook.target_url}</p>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <span className={`px-2 py-1 text-xs rounded-full ${
+                          webhook.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                        }`}>
+                          {webhook.is_active ? 'Active' : 'Inactive'}
+                        </span>
+                        <button
+                          onClick={() => startEditingWebhook(webhook)}
+                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
+                          title="Edit webhook"
+                        >
+                          <Edit2 className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteWebhook(webhook.id)}
+                          className="p-2 text-red-600 hover:bg-red-50 rounded-md transition-colors"
+                          title="Delete webhook"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -617,19 +946,130 @@ export default function IntegrationsHub() {
 
             <div className="space-y-4">
               {sftpConfigs.map((config) => (
-                <div key={config.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
-                  <div>
-                    <h3 className="font-medium text-gray-900">{config.name}</h3>
-                    <p className="text-sm text-gray-500">{config.hostname}:{config.port} ({config.direction})</p>
-                    <p className="text-xs text-gray-400">Schedule: {config.schedule}</p>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <span className={`px-2 py-1 text-xs rounded-full ${
-                      config.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                    }`}>
-                      {config.is_active ? 'Active' : 'Inactive'}
-                    </span>
-                  </div>
+                <div key={config.id}>
+                  {editingSFTPId === config.id ? (
+                    <form onSubmit={(e) => handleUpdateSFTP(config.id, e)} className="p-4 border border-blue-300 rounded-lg bg-blue-50">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                          <input
+                            type="text"
+                            value={sftpForm.name}
+                            onChange={(e) => setSftpForm({ ...sftpForm, name: e.target.value })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Hostname</label>
+                          <input
+                            type="text"
+                            value={sftpForm.hostname}
+                            onChange={(e) => setSftpForm({ ...sftpForm, hostname: e.target.value })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                          <input
+                            type="text"
+                            value={sftpForm.username}
+                            onChange={(e) => setSftpForm({ ...sftpForm, username: e.target.value })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                          <input
+                            type="password"
+                            value={sftpForm.password}
+                            onChange={(e) => setSftpForm({ ...sftpForm, password: e.target.value })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Direction</label>
+                          <select
+                            value={sftpForm.direction}
+                            onChange={(e) => setSftpForm({ ...sftpForm, direction: e.target.value as 'import' | 'export' })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="import">Import</option>
+                            <option value="export">Export</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Schedule (Cron)</label>
+                          <input
+                            type="text"
+                            value={sftpForm.schedule}
+                            onChange={(e) => setSftpForm({ ...sftpForm, schedule: e.target.value })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="0 0 * * *"
+                          />
+                        </div>
+                      </div>
+                      <div className="flex justify-end space-x-2 mt-4">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditingSFTPId(null);
+                            setSftpForm({
+                              name: '',
+                              hostname: '',
+                              port: 22,
+                              username: '',
+                              password: '',
+                              folder_path: '/',
+                              direction: 'import',
+                              schedule: '0 0 * * *'
+                            });
+                          }}
+                          className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                        >
+                          Update
+                        </button>
+                      </div>
+                    </form>
+                  ) : (
+                    <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                      <div>
+                        <h3 className="font-medium text-gray-900">{config.name}</h3>
+                        <p className="text-sm text-gray-500">{config.hostname}:{config.port} ({config.direction})</p>
+                        <p className="text-xs text-gray-400">Schedule: {config.schedule}</p>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <span className={`px-2 py-1 text-xs rounded-full ${
+                          config.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                        }`}>
+                          {config.is_active ? 'Active' : 'Inactive'}
+                        </span>
+                        <button
+                          onClick={() => startEditingSFTP(config)}
+                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
+                          title="Edit SFTP config"
+                        >
+                          <Edit2 className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteSFTP(config.id)}
+                          className="p-2 text-red-600 hover:bg-red-50 rounded-md transition-colors"
+                          title="Delete SFTP config"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

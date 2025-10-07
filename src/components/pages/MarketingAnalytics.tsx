@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useMarketingProperties, useMarketingMetrics, aggregateMetrics, getTrafficSourceData } from '../../hooks/useMarketingData';
+import { supabase } from '../../lib/supabase';
 import {
   ArrowUpRight,
   BarChart3,

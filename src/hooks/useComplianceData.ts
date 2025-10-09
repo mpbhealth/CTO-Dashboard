@@ -11,6 +11,7 @@ import type {
   HIPAATrainingAttendance,
   HIPAAPHIAccess,
   HIFAAudit,
+  AuditStatus,
   HIFAAuditLog,
   HIPAAContact,
   HIPAAPolicy,

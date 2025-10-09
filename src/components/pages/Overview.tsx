@@ -60,15 +60,15 @@ type TeamMember = Database['public']['Tables']['team_members']['Row'];
 const COLORS = ['#6366F1', '#EC4899', '#10B981', '#F59E0B', '#8B5CF6', '#14B8A6', '#F97316', '#06B6D4'];
 
 export default function Overview() {
-  const { data: kpiData, loading: kpiLoading, error: kpiError } = useKPIData();
-  const { data: teamMembers, loading: teamLoading, error: teamError, refetch: refetchTeam } = useTeamMembers();
-  const { data: departments, loading: deptLoading } = useDepartments();
-  const { data: employees, loading: empLoading } = useEmployeeProfiles();
-  const { data: departmentMetrics, loading: metricsLoading } = useDepartmentMetrics();
-  const { data: projects, loading: projectsLoading } = useProjects();
-  const { data: saasExpenses, metrics: saasMetrics, loading: saasLoading } = useSaaSExpenses();
-  const { data: enrollments, loading: enrollmentsLoading } = useEnrollmentData();
-  const { data: audits, loading: auditsLoading } = useAudits();
+  const { data: kpiData = [], loading: kpiLoading, error: kpiError } = useKPIData();
+  const { data: teamMembers = [], loading: teamLoading, error: teamError, refetch: refetchTeam } = useTeamMembers();
+  const { data: departments = [], loading: deptLoading } = useDepartments();
+  const { data: employees = [], loading: empLoading } = useEmployeeProfiles();
+  const { data: departmentMetrics = [], loading: metricsLoading } = useDepartmentMetrics();
+  const { data: projects = [], loading: projectsLoading } = useProjects();
+  const { data: saasExpenses = [], metrics: saasMetrics, loading: saasLoading } = useSaaSExpenses();
+  const { data: enrollments = [], loading: enrollmentsLoading } = useEnrollmentData();
+  const { data: audits = [], loading: auditsLoading } = useAudits();
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -108,8 +108,8 @@ export default function Overview() {
       activeEnrollments,
       totalRevenue,
       monthlyRevenue: totalRevenue / 12,
-      saasSpend: saasMetrics.totalMonthly,
-      saasTools: saasMetrics.totalTools,
+      saasSpend: (saasMetrics?.totalMonthly ?? 0),
+      saasTools: (saasMetrics?.totalTools ?? 0),
       completedAudits,
       upcomingAudits,
       teamMembers: teamMembers.length,

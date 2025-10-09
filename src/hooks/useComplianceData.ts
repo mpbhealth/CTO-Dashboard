@@ -595,6 +595,67 @@ export const useAudits = () => {
   });
 };
 
+export const useCreateAudit = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (audit: Partial<HIFAAudit>) => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+
+      const payload = {
+        ...audit,
+        owner: audit.owner ?? user.id,
+      };
+
+      const { data, error } = await supabase
+        .from('hipaa_audits')
+        .insert(payload)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      await logAuditEvent('audit_created', 'hipaa_audits', data.id, {
+        title: audit.title,
+        status: audit.status,
+      });
+
+      return data as HIFAAudit;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['compliance', 'audits'] });
+    },
+  });
+};
+
+export const useUpdateAudit = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, updates }: { id: string; updates: Partial<HIFAAudit> }) => {
+      const { data, error } = await supabase
+        .from('hipaa_audits')
+        .update({
+          ...updates,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      await logAuditEvent('audit_updated', 'hipaa_audits', id, updates);
+
+      return data as HIFAAudit;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['compliance', 'audits'] });
+    },
+  });
+};
+
 // =====================================================
 // Audit Log
 // =====================================================

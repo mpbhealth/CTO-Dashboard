@@ -20,7 +20,11 @@ import {
 import { TaskStatusChip, PriorityChip, SeverityChip } from '../compliance/ComplianceChips';
 import type { KPIData } from '../../types/compliance';
 
-const ComplianceCommandCenter: React.FC = () => {
+interface ComplianceCommandCenterProps {
+  onTabChange?: (tab: string) => void;
+}
+
+const ComplianceCommandCenter: React.FC<ComplianceCommandCenterProps> = ({ onTabChange }) => {
   const { data: stats, isLoading: statsLoading } = useComplianceDashboard();
   const { data: myTasks = [] } = useMyTasks();
   const { data: auditLog = [] } = useAuditLog();
@@ -215,7 +219,7 @@ const ComplianceCommandCenter: React.FC = () => {
           {quickActions.map((action, idx) => (
             <button
               key={idx}
-              onClick={() => window.location.hash = action.tab}
+              onClick={() => onTabChange?.(action.tab)}
               className={`${action.color} text-white rounded-lg p-4 flex flex-col items-center justify-center space-y-2 transition-all hover:scale-105`}
             >
               <action.icon className="w-6 h-6" />
@@ -236,7 +240,7 @@ const ComplianceCommandCenter: React.FC = () => {
               <span className="text-sm text-gray-500">({myTasks.length})</span>
             </h2>
             <button
-              onClick={() => window.location.hash = 'compliance/tasks'}
+              onClick={() => onTabChange?.('compliance/tasks')}
               className="text-sm text-blue-600 hover:text-blue-700"
             >
               View All
@@ -352,7 +356,7 @@ const ComplianceCommandCenter: React.FC = () => {
           ].map((section, idx) => (
             <button
               key={idx}
-              onClick={() => window.location.hash = section.tab}
+              onClick={() => onTabChange?.(section.tab)}
               className="p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group text-left"
             >
               <section.icon className="w-8 h-8 text-gray-400 group-hover:text-blue-600 mb-2" />

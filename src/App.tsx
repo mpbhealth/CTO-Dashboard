@@ -17,6 +17,11 @@ import ComplianceCommandCenter from './components/pages/ComplianceCommandCenter'
 import ComplianceIncidents from './components/pages/ComplianceIncidents';
 import ComplianceBAAs from './components/pages/ComplianceBAAs';
 import CompliancePHIAccess from './components/pages/CompliancePHIAccess';
+import ComplianceAdministration from './components/pages/ComplianceAdministration';
+import ComplianceTraining from './components/pages/ComplianceTraining';
+import ComplianceTechnicalSafeguards from './components/pages/ComplianceTechnicalSafeguards';
+import ComplianceAudits from './components/pages/ComplianceAudits';
+import ComplianceTemplatesTools from './components/pages/ComplianceTemplatesTools';
 import SaaSSpend from './components/pages/SaaSSpend';
 import AIAgents from './components/pages/AIAgents';
 import Deployments from './components/pages/Deployments';
@@ -94,7 +99,7 @@ function App() {
       case 'compliance':
         return <Compliance />;
       case 'compliance/command-center':
-        return <ComplianceCommandCenter />;
+        return <ComplianceCommandCenter onTabChange={setActiveTab} />;
       case 'compliance/incidents':
         return <ComplianceIncidents />;
       case 'compliance/baas':
@@ -102,11 +107,15 @@ function App() {
       case 'compliance/phi-minimum':
         return <CompliancePHIAccess />;
       case 'compliance/administration':
+        return <ComplianceAdministration />;
       case 'compliance/training':
+        return <ComplianceTraining />;
       case 'compliance/technical-safeguards':
+        return <ComplianceTechnicalSafeguards />;
       case 'compliance/audits':
+        return <ComplianceAudits />;
       case 'compliance/templates-tools':
-        return <ComplianceCommandCenter />; // Placeholder, will be replaced with actual pages
+        return <ComplianceTemplatesTools />;
       case 'saas':
         return <SaaSSpend />;
       case 'ai-agents':

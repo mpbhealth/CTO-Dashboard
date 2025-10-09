@@ -124,6 +124,7 @@ export const BreachImpactEstimatorModal: React.FC<BreachImpactEstimatorModalProp
           <button
             onClick={onClose}
             className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+            aria-label="Close breach impact estimator"
           >
             <X className="w-5 h-5 text-gray-500" />
           </button>

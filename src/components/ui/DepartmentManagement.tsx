@@ -73,10 +73,11 @@ export default function DepartmentManagement({
   // Sort departments
   const sortedDepartments = [...filteredDepartments].sort((a, b) => {
     switch (sortBy) {
-      case 'employees':
+      case 'employees': {
         const aCount = employees.filter(e => e.primary_department_id === a.id).length;
         const bCount = employees.filter(e => e.primary_department_id === b.id).length;
         return bCount - aCount;
+      }
       case 'budget':
         return (b.budget_allocated || 0) - (a.budget_allocated || 0);
       default:

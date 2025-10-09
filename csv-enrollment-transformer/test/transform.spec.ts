@@ -1,3 +1,4 @@
+import { describe, test, expect, beforeAll, afterEach } from 'vitest';
 import { transformCsv } from '../src/transform';
 import { parseDate, parseCurrency, parseAgentId, isInactiveStatus } from '../src/transform';
 import * as fs from 'fs';
@@ -65,12 +66,69 @@ describe('CSV Enrollment Transformer', () => {
   describe('Full transformation', () => {
     test('should transform enrollment data correctly', async () => {
       // Create test input CSV
-      const inputData = [
-        'record_type,enrollment_id,member_id,enrollment_date,program_name,enrollment_status,enrollment_source,premium_amount,renewal_date,status_date,new_status,reason,source_system',
-        'enrollment,E001,M001,2023-01-15,MPB Essentials,active,agent:1234,$29.99,2024-01-15,,,system1',
-        'status_update,E001,M001,,,,,,,2023-06-15,inactive,non-payment,system1',
-        'both,E002,M002,2023-03-01,MPB Plus,active,direct,$49.99,2024-03-01,2023-12-01,cancelled,voluntary,system2'
-      ].join('\n');
+      const inputRows = [
+        [
+          'record_type',
+          'enrollment_id',
+          'member_id',
+          'enrollment_date',
+          'program_name',
+          'enrollment_status',
+          'enrollment_source',
+          'premium_amount',
+          'renewal_date',
+          'status_date',
+          'new_status',
+          'reason',
+          'source_system',
+        ],
+        [
+          'enrollment',
+          'E001',
+          'M001',
+          '2023-01-15',
+          'MPB Essentials',
+          'active',
+          'agent:1234',
+          '$29.99',
+          '2024-01-15',
+          '',
+          '',
+          '',
+          'system1',
+        ],
+        [
+          'status_update',
+          'E001',
+          'M001',
+          '',
+          '',
+          '',
+          '',
+          '',
+          '',
+          '2023-06-15',
+          'inactive',
+          'non-payment',
+          'system1',
+        ],
+        [
+          'both',
+          'E002',
+          'M002',
+          '2023-03-01',
+          'MPB Plus',
+          'active',
+          'direct',
+          '$49.99',
+          '2024-03-01',
+          '2023-12-01',
+          'cancelled',
+          'voluntary',
+          'system2',
+        ],
+      ];
+      const inputData = inputRows.map(row => row.join(',')).join('\n');
       
       fs.writeFileSync(inputFile, inputData, 'utf8');
 
@@ -97,11 +155,54 @@ describe('CSV Enrollment Transformer', () => {
 
     test('should handle merge logic correctly', async () => {
       // Create test input with duplicate member/program
-      const inputData = [
-        'record_type,enrollment_id,member_id,enrollment_date,program_name,enrollment_status,enrollment_source,premium_amount,renewal_date,status_date,new_status,reason,source_system',
-        'enrollment,E001,M001,2023-01-15,MPB Essentials,active,agent:1234,$29.99,2024-01-15,,,system1',
-        'status_update,E001,M001,,,MPB Essentials,,,,2023-06-15,inactive,non-payment,system1'
-      ].join('\n');
+      const inputRows = [
+        [
+          'record_type',
+          'enrollment_id',
+          'member_id',
+          'enrollment_date',
+          'program_name',
+          'enrollment_status',
+          'enrollment_source',
+          'premium_amount',
+          'renewal_date',
+          'status_date',
+          'new_status',
+          'reason',
+          'source_system',
+        ],
+        [
+          'enrollment',
+          'E001',
+          'M001',
+          '2023-01-15',
+          'MPB Essentials',
+          'active',
+          'agent:1234',
+          '$29.99',
+          '2024-01-15',
+          '',
+          '',
+          '',
+          'system1',
+        ],
+        [
+          'status_update',
+          'E001',
+          'M001',
+          '',
+          'MPB Essentials',
+          '',
+          '',
+          '',
+          '',
+          '2023-06-15',
+          'inactive',
+          'non-payment',
+          'system1',
+        ],
+      ];
+      const inputData = inputRows.map(row => row.join(',')).join('\n');
       
       fs.writeFileSync(inputFile, inputData, 'utf8');
 
@@ -124,10 +225,39 @@ describe('CSV Enrollment Transformer', () => {
 
     test('should validate output correctly', async () => {
       // Create test input with invalid data
-      const inputData = [
-        'record_type,enrollment_id,member_id,enrollment_date,program_name,enrollment_status,enrollment_source,premium_amount,renewal_date,status_date,new_status,reason,source_system',
-        'enrollment,E001,,2023-01-15,MPB Essentials,active,agent:1234,$29.99,2024-01-15,,,system1' // empty member_id
-      ].join('\n');
+      const inputRows = [
+        [
+          'record_type',
+          'enrollment_id',
+          'member_id',
+          'enrollment_date',
+          'program_name',
+          'enrollment_status',
+          'enrollment_source',
+          'premium_amount',
+          'renewal_date',
+          'status_date',
+          'new_status',
+          'reason',
+          'source_system',
+        ],
+        [
+          'enrollment',
+          'E001',
+          '',
+          '2023-01-15',
+          'MPB Essentials',
+          'active',
+          'agent:1234',
+          '$29.99',
+          '2024-01-15',
+          '',
+          '',
+          '',
+          'system1',
+        ], // empty member_id
+      ];
+      const inputData = inputRows.map(row => row.join(',')).join('\n');
       
       fs.writeFileSync(inputFile, inputData, 'utf8');
 

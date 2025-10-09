@@ -158,19 +158,22 @@ export default function QuickLinks() {
     
     // Increment click count
     try {
+      const currentCount = links.find(link => link.id === linkId)?.click_count ?? 0;
       const { error } = await supabase
         .from('quick_links')
-        .update({ click_count: links.find(l => l.id === linkId)?.click_count! + 1 })
+        .update({ click_count: currentCount + 1 })
         .eq('id', linkId);
 
       if (error) throw error;
       
       // Update the link in state to reflect new click count
-        setLinks(links.map(link => 
-          link.id === linkId 
-            ? { ...link, click_count: link.click_count + 1 } 
-            : link
-        ));
+      setLinks(prevLinks =>
+        prevLinks.map(link =>
+          link.id === linkId
+            ? { ...link, click_count: (link.click_count ?? 0) + 1 }
+            : link,
+        ),
+      );
     } catch (err) {
       console.error('Error updating click count:', err);
     }

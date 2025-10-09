@@ -233,6 +233,7 @@ const ComplianceAudits: React.FC = () => {
               onChange={(event) =>
                 setStatusFilter(event.target.value as 'all' | AuditStatus)
               }
+              aria-label="Filter by status"
               className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
               <option value="all">All statuses</option>
@@ -247,6 +248,7 @@ const ComplianceAudits: React.FC = () => {
               onChange={(event) =>
                 setKindFilter(event.target.value as 'all' | AuditKind)
               }
+              aria-label="Filter by audit type"
               className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
               <option value="all">All types</option>
@@ -339,6 +341,7 @@ const ComplianceAudits: React.FC = () => {
                             event.target.value as AuditStatus,
                           )
                         }
+                        aria-label={`Change status for ${audit.title}`}
                         className="rounded-full border border-gray-300 px-3 py-1.5 text-xs font-medium capitalize text-gray-700 hover:border-indigo-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                       >
                         {auditStatusOptions.map((status) => (
@@ -501,6 +504,7 @@ const ComplianceAudits: React.FC = () => {
                         kind: event.target.value as AuditKind,
                       }))
                     }
+                    aria-label="Audit Type"
                     className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   >
                     {auditKindOptions.map((kind) => (
@@ -527,6 +531,7 @@ const ComplianceAudits: React.FC = () => {
                         status: event.target.value as AuditStatus,
                       }))
                     }
+                    aria-label="Audit Status"
                     className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   >
                     {auditStatusOptions.map((status) => (
@@ -551,6 +556,7 @@ const ComplianceAudits: React.FC = () => {
                         period_start: event.target.value,
                       }))
                     }
+                    aria-label="Audit Period Start Date"
                     className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 </div>
@@ -567,6 +573,7 @@ const ComplianceAudits: React.FC = () => {
                         period_end: event.target.value,
                       }))
                     }
+                    aria-label="Audit Period End Date"
                     className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 </div>

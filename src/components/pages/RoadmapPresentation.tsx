@@ -60,6 +60,8 @@ export default function RoadmapPresentation() {
   const [selectedTheme, setSelectedTheme] = useState<'corporate' | 'modern' | 'minimal' | 'dark' | 'creative' | 'tech'>('corporate');
   const [isExporting, setIsExporting] = useState(false);
   const [editingSlide, setEditingSlide] = useState<PresentationSlide | null>(null);
+  const slideTitleId = editingSlide ? `slide-title-${editingSlide.id}` : 'slide-title';
+  const slideBulletsId = editingSlide ? `slide-bullets-${editingSlide.id}` : 'slide-bullets';
 
   // Theme configurations
   const themes = {
@@ -289,6 +291,9 @@ export default function RoadmapPresentation() {
                 handleSlideEdit(index);
               }}
               className="p-1 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
+              type="button"
+              aria-label={`Edit slide ${index + 1}`}
+              title={`Edit slide ${index + 1}`}
             >
               <Edit className="w-3 h-3" />
             </button>
@@ -299,6 +304,9 @@ export default function RoadmapPresentation() {
               }}
               className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
               disabled={presentation!.slides.length <= 1}
+              type="button"
+              aria-label={`Delete slide ${index + 1}`}
+              title={`Delete slide ${index + 1}`}
             >
               <Trash2 className="w-3 h-3" />
             </button>
@@ -561,6 +569,8 @@ export default function RoadmapPresentation() {
               onClick={handleAddSlide}
               className="p-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
               title="Add new slide"
+              type="button"
+              aria-label="Add new slide"
             >
               <Plus className="w-4 h-4" />
             </button>
@@ -580,12 +590,20 @@ export default function RoadmapPresentation() {
                   Slide {selectedSlide + 1}: {presentation.slides[selectedSlide]?.title}
                 </h3>
                 <div className="flex items-center space-x-2">
-                  <button className="p-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg transition-colors">
+                  <button
+                    className="p-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg transition-colors"
+                    type="button"
+                    aria-label="Open slide settings"
+                    title="Slide settings"
+                  >
                     <Settings className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => setIsPreviewMode(false)}
                     className="p-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg transition-colors"
+                    type="button"
+                    aria-label="Close slide preview"
+                    title="Close preview"
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -693,6 +711,9 @@ export default function RoadmapPresentation() {
                   setEditingSlide(null);
                 }}
                 className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                type="button"
+                aria-label="Close edit slide dialog"
+                title="Close"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -700,11 +721,12 @@ export default function RoadmapPresentation() {
 
             <div className="p-6 space-y-6">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">
+                <label className="block text-sm font-medium text-slate-700 mb-2" htmlFor={slideTitleId}>
                   Slide Title
                 </label>
                 <input
                   type="text"
+                  id={slideTitleId}
                   value={editingSlide.content.title || ''}
                   onChange={(e) => setEditingSlide({
                     ...editingSlide,
@@ -716,10 +738,11 @@ export default function RoadmapPresentation() {
 
               {editingSlide.content.bullets && (
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                  <label className="block text-sm font-medium text-slate-700 mb-2" htmlFor={slideBulletsId}>
                     Bullet Points
                   </label>
                   <textarea
+                    id={slideBulletsId}
                     value={editingSlide.content.bullets.join('\n')}
                     onChange={(e) => setEditingSlide({
                       ...editingSlide,

@@ -3,7 +3,7 @@ import { Plus, Shield, Download, Filter } from 'lucide-react';
 import { usePHIAccessLogs, useLogPHIAccess } from '../../hooks/useComplianceData';
 import type { PHIAccessFormData, PurposeCategory } from '../../types/compliance';
 
-export const CompliancePHIAccess: React.FC = () => {
+const CompliancePHIAccess: React.FC = () => {
   const [showLogModal, setShowLogModal] = useState(false);
   const [dateFilter, setDateFilter] = useState({ from: '', to: '' });
   const { data: accessLogs = [], isLoading } = usePHIAccessLogs(dateFilter);
@@ -332,4 +332,6 @@ export const CompliancePHIAccess: React.FC = () => {
     </div>
   );
 };
+
+export default CompliancePHIAccess;
 

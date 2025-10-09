@@ -4,7 +4,7 @@ import { useIncidents, useCreateIncident } from '../../hooks/useComplianceData';
 import { SeverityChip, TaskStatusChip } from '../compliance/ComplianceChips';
 import type { IncidentSeverity, IncidentFormData } from '../../types/compliance';
 
-export const ComplianceIncidents: React.FC = () => {
+const ComplianceIncidents: React.FC = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [severityFilter, setSeverityFilter] = useState<IncidentSeverity | 'all'>('all');
@@ -319,4 +319,6 @@ export const ComplianceIncidents: React.FC = () => {
     </div>
   );
 };
+
+export default ComplianceIncidents;
 

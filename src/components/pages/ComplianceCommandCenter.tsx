@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 import {
   FileText,
   AlertTriangle,
@@ -21,7 +20,7 @@ import {
 import { TaskStatusChip, PriorityChip, SeverityChip } from '../compliance/ComplianceChips';
 import type { KPIData } from '../../types/compliance';
 
-export const ComplianceCommandCenter: React.FC = () => {
+const ComplianceCommandCenter: React.FC = () => {
   const { data: stats, isLoading: statsLoading } = useComplianceDashboard();
   const { data: myTasks = [] } = useMyTasks();
   const { data: auditLog = [] } = useAuditLog();
@@ -108,31 +107,31 @@ export const ComplianceCommandCenter: React.FC = () => {
     {
       label: 'New Incident',
       icon: AlertTriangle,
-      link: '/compliance/incidents/new',
+      tab: 'compliance/incidents',
       color: 'bg-red-600 hover:bg-red-700',
     },
     {
       label: 'Log PHI Access',
       icon: Shield,
-      link: '/compliance/phi-minimum',
+      tab: 'compliance/phi-minimum',
       color: 'bg-blue-600 hover:bg-blue-700',
     },
     {
       label: 'Create Policy',
       icon: FileText,
-      link: '/compliance/administration/new',
+      tab: 'compliance/administration',
       color: 'bg-green-600 hover:bg-green-700',
     },
     {
       label: 'Upload Evidence',
       icon: FileCheck,
-      link: '/compliance/templates-tools',
+      tab: 'compliance/templates-tools',
       color: 'bg-purple-600 hover:bg-purple-700',
     },
     {
       label: 'Record Training',
       icon: Users,
-      link: '/compliance/training',
+      tab: 'compliance/training',
       color: 'bg-indigo-600 hover:bg-indigo-700',
     },
   ];
@@ -214,14 +213,14 @@ export const ComplianceCommandCenter: React.FC = () => {
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
           {quickActions.map((action, idx) => (
-            <Link
+            <button
               key={idx}
-              to={action.link}
+              onClick={() => window.location.hash = action.tab}
               className={`${action.color} text-white rounded-lg p-4 flex flex-col items-center justify-center space-y-2 transition-all hover:scale-105`}
             >
               <action.icon className="w-6 h-6" />
               <span className="text-sm font-medium text-center">{action.label}</span>
-            </Link>
+            </button>
           ))}
         </div>
       </div>
@@ -236,12 +235,12 @@ export const ComplianceCommandCenter: React.FC = () => {
               <span>My Queue</span>
               <span className="text-sm text-gray-500">({myTasks.length})</span>
             </h2>
-            <Link
-              to="/compliance/tasks"
+            <button
+              onClick={() => window.location.hash = 'compliance/tasks'}
               className="text-sm text-blue-600 hover:text-blue-700"
             >
               View All
-            </Link>
+            </button>
           </div>
 
           {myTasks.length === 0 ? (
@@ -342,29 +341,31 @@ export const ComplianceCommandCenter: React.FC = () => {
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { name: 'Administration & Governance', link: '/compliance/administration', icon: FileText },
-            { name: 'Training & Awareness', link: '/compliance/training', icon: Users },
-            { name: 'PHI & Minimum Necessary', link: '/compliance/phi-minimum', icon: Shield },
-            { name: 'Technical Safeguards', link: '/compliance/technical-safeguards', icon: Shield },
-            { name: 'Business Associates', link: '/compliance/baas', icon: FileCheck },
-            { name: 'Incidents & Breaches', link: '/compliance/incidents', icon: AlertTriangle },
-            { name: 'Audits & Monitoring', link: '/compliance/audits', icon: Activity },
-            { name: 'Templates & Tools', link: '/compliance/templates-tools', icon: FileText },
+            { name: 'Administration & Governance', tab: 'compliance/administration', icon: FileText },
+            { name: 'Training & Awareness', tab: 'compliance/training', icon: Users },
+            { name: 'PHI & Minimum Necessary', tab: 'compliance/phi-minimum', icon: Shield },
+            { name: 'Technical Safeguards', tab: 'compliance/technical-safeguards', icon: Shield },
+            { name: 'Business Associates', tab: 'compliance/baas', icon: FileCheck },
+            { name: 'Incidents & Breaches', tab: 'compliance/incidents', icon: AlertTriangle },
+            { name: 'Audits & Monitoring', tab: 'compliance/audits', icon: Activity },
+            { name: 'Templates & Tools', tab: 'compliance/templates-tools', icon: FileText },
           ].map((section, idx) => (
-            <Link
+            <button
               key={idx}
-              to={section.link}
-              className="p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group"
+              onClick={() => window.location.hash = section.tab}
+              className="p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group text-left"
             >
               <section.icon className="w-8 h-8 text-gray-400 group-hover:text-blue-600 mb-2" />
               <h3 className="font-medium text-gray-900 text-sm group-hover:text-blue-600">
                 {section.name}
               </h3>
-            </Link>
+            </button>
           ))}
         </div>
       </div>
     </div>
   );
 };
+
+export default ComplianceCommandCenter;
 

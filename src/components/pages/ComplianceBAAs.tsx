@@ -4,7 +4,7 @@ import { useBAAs, useCreateBAA } from '../../hooks/useComplianceData';
 import { BAAStatusChip } from '../compliance/ComplianceChips';
 import type { BAAFormData } from '../../types/compliance';
 
-export const ComplianceBAAs: React.FC = () => {
+const ComplianceBAAs: React.FC = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const { data: baas = [], isLoading } = useBAAs();
   const createBAA = useCreateBAA();
@@ -395,4 +395,6 @@ export const ComplianceBAAs: React.FC = () => {
     </div>
   );
 };
+
+export default ComplianceBAAs;
 

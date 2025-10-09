@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { FileText, Download, Upload, Wrench, Copy, CheckCircle2 } from 'lucide-react';
 import { EvidenceUploader } from '../compliance/EvidenceUploader';
+import { RiskCalculatorModal } from '../compliance/RiskCalculatorModal';
+import { BreachImpactEstimatorModal } from '../compliance/BreachImpactEstimatorModal';
+import { ComplianceChecklistModal } from '../compliance/ComplianceChecklistModal';
 
 interface Template {
   id: string;
@@ -13,6 +16,9 @@ interface Template {
 const ComplianceTemplatesTools: React.FC = () => {
   const [showUploader, setShowUploader] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [showRiskCalculator, setShowRiskCalculator] = useState(false);
+  const [showBreachEstimator, setShowBreachEstimator] = useState(false);
+  const [showComplianceChecklist, setShowComplianceChecklist] = useState(false);
 
   const templates: Template[] = [
     {
@@ -240,7 +246,10 @@ const ComplianceTemplatesTools: React.FC = () => {
             <p className="text-sm text-gray-600 mb-3">
               Calculate risk scores based on likelihood and impact
             </p>
-            <button className="text-sm text-orange-600 hover:text-orange-700 font-medium">
+            <button 
+              onClick={() => setShowRiskCalculator(true)}
+              className="text-sm text-orange-600 hover:text-orange-700 font-medium"
+            >
               Launch Tool →
             </button>
           </div>
@@ -250,7 +259,10 @@ const ComplianceTemplatesTools: React.FC = () => {
             <p className="text-sm text-gray-600 mb-3">
               Estimate potential impact and notification requirements
             </p>
-            <button className="text-sm text-orange-600 hover:text-orange-700 font-medium">
+            <button 
+              onClick={() => setShowBreachEstimator(true)}
+              className="text-sm text-orange-600 hover:text-orange-700 font-medium"
+            >
               Launch Tool →
             </button>
           </div>
@@ -260,7 +272,10 @@ const ComplianceTemplatesTools: React.FC = () => {
             <p className="text-sm text-gray-600 mb-3">
               Interactive checklist for HIPAA compliance verification
             </p>
-            <button className="text-sm text-orange-600 hover:text-orange-700 font-medium">
+            <button 
+              onClick={() => setShowComplianceChecklist(true)}
+              className="text-sm text-orange-600 hover:text-orange-700 font-medium"
+            >
               Launch Tool →
             </button>
           </div>
@@ -293,6 +308,22 @@ const ComplianceTemplatesTools: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Tool Modals */}
+      <RiskCalculatorModal 
+        isOpen={showRiskCalculator} 
+        onClose={() => setShowRiskCalculator(false)} 
+      />
+      
+      <BreachImpactEstimatorModal 
+        isOpen={showBreachEstimator} 
+        onClose={() => setShowBreachEstimator(false)} 
+      />
+      
+      <ComplianceChecklistModal 
+        isOpen={showComplianceChecklist} 
+        onClose={() => setShowComplianceChecklist(false)} 
+      />
     </div>
   );
 };

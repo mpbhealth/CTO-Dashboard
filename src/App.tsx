@@ -13,6 +13,10 @@ import QuickLinks from './components/pages/QuickLinks';
 import RoadmapPresentation from './components/pages/RoadmapPresentation';
 import Projects from './components/pages/Projects';
 import Compliance from './components/pages/Compliance';
+import ComplianceCommandCenter from './components/pages/ComplianceCommandCenter';
+import ComplianceIncidents from './components/pages/ComplianceIncidents';
+import ComplianceBAAs from './components/pages/ComplianceBAAs';
+import CompliancePHIAccess from './components/pages/CompliancePHIAccess';
 import SaaSSpend from './components/pages/SaaSSpend';
 import AIAgents from './components/pages/AIAgents';
 import Deployments from './components/pages/Deployments';
@@ -89,6 +93,20 @@ function App() {
         return <Assignments />;
       case 'compliance':
         return <Compliance />;
+      case 'compliance/command-center':
+        return <ComplianceCommandCenter />;
+      case 'compliance/incidents':
+        return <ComplianceIncidents />;
+      case 'compliance/baas':
+        return <ComplianceBAAs />;
+      case 'compliance/phi-minimum':
+        return <CompliancePHIAccess />;
+      case 'compliance/administration':
+      case 'compliance/training':
+      case 'compliance/technical-safeguards':
+      case 'compliance/audits':
+      case 'compliance/templates-tools':
+        return <ComplianceCommandCenter />; // Placeholder, will be replaced with actual pages
       case 'saas':
         return <SaaSSpend />;
       case 'ai-agents':

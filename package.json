@@ -8,9 +8,9 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "transform:build": "tsc -p tsconfig.transform.json",
-    "transform:run": "node dist/transform.js --in input.csv --out output.csv",
-    "transform:test": "vitest run"
+    "transform:build": "npm run build --prefix csv-enrollment-transformer",
+    "transform:run": "node csv-enrollment-transformer/dist/transform.js --in input.csv --out output.csv",
+    "transform:test": "npm test --prefix csv-enrollment-transformer"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",

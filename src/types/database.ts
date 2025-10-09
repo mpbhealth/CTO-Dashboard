@@ -437,6 +437,10 @@ export interface Database {
           response_time: number
           created_at: string
           updated_at: string
+          description: string | null
+          uptime: number | null
+          endpoint_count: number | null
+          is_active: boolean | null
         }
         Insert: {
           id?: string
@@ -447,6 +451,10 @@ export interface Database {
           response_time?: number
           created_at?: string
           updated_at?: string
+          description?: string | null
+          uptime?: number | null
+          endpoint_count?: number | null
+          is_active?: boolean | null
         }
         Update: {
           id?: string
@@ -457,6 +465,725 @@ export interface Database {
           response_time?: number
           created_at?: string
           updated_at?: string
+          description?: string | null
+          uptime?: number | null
+          endpoint_count?: number | null
+          is_active?: boolean | null
+        }
+      }
+      api_incidents: {
+        Row: {
+          id: string
+          api_id: string | null
+          title: string
+          description: string
+          severity: 'critical' | 'warning' | 'info'
+          status: 'investigating' | 'identified' | 'monitoring' | 'resolved'
+          started_at: string | null
+          resolved_at: string | null
+          impact: string | null
+          resolution_notes: string | null
+          created_by: string | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          api_id?: string | null
+          title: string
+          description: string
+          severity?: 'critical' | 'warning' | 'info'
+          status?: 'investigating' | 'identified' | 'monitoring' | 'resolved'
+          started_at?: string | null
+          resolved_at?: string | null
+          impact?: string | null
+          resolution_notes?: string | null
+          created_by?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          api_id?: string | null
+          title?: string
+          description?: string
+          severity?: 'critical' | 'warning' | 'info'
+          status?: 'investigating' | 'identified' | 'monitoring' | 'resolved'
+          started_at?: string | null
+          resolved_at?: string | null
+          impact?: string | null
+          resolution_notes?: string | null
+          created_by?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+      }
+      hipaa_audit_log: {
+        Row: {
+          id: string
+          actor: string | null
+          actor_email: string | null
+          action: string
+          object_table: string | null
+          object_id: string | null
+          details: Json | null
+          ip_address: string | null
+          user_agent: string | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          actor?: string | null
+          actor_email?: string | null
+          action: string
+          object_table?: string | null
+          object_id?: string | null
+          details?: Json | null
+          ip_address?: string | null
+          user_agent?: string | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          actor?: string | null
+          actor_email?: string | null
+          action?: string
+          object_table?: string | null
+          object_id?: string | null
+          details?: Json | null
+          ip_address?: string | null
+          user_agent?: string | null
+          created_at?: string | null
+        }
+      }
+      integrations_secrets: {
+        Row: {
+          id: string
+          service: string
+          key_name: string
+          key_value: string
+          is_active: boolean | null
+          created_at: string | null
+          updated_at: string | null
+          created_by: string | null
+        }
+        Insert: {
+          id?: string
+          service: string
+          key_name: string
+          key_value: string
+          is_active?: boolean | null
+          created_at?: string | null
+          updated_at?: string | null
+          created_by?: string | null
+        }
+        Update: {
+          id?: string
+          service?: string
+          key_name?: string
+          key_value?: string
+          is_active?: boolean | null
+          created_at?: string | null
+          updated_at?: string | null
+          created_by?: string | null
+        }
+      }
+      marketing_integrations: {
+        Row: {
+          id: string
+          google_analytics_key: string | null
+          google_analytics_view_id: string | null
+          facebook_pixel_id: string | null
+          gtm_container_id: string | null
+          woocommerce_key: string | null
+          woocommerce_secret: string | null
+          is_active: boolean | null
+          created_at: string | null
+          updated_at: string | null
+          created_by: string | null
+        }
+        Insert: {
+          id?: string
+          google_analytics_key?: string | null
+          google_analytics_view_id?: string | null
+          facebook_pixel_id?: string | null
+          gtm_container_id?: string | null
+          woocommerce_key?: string | null
+          woocommerce_secret?: string | null
+          is_active?: boolean | null
+          created_at?: string | null
+          updated_at?: string | null
+          created_by?: string | null
+        }
+        Update: {
+          id?: string
+          google_analytics_key?: string | null
+          google_analytics_view_id?: string | null
+          facebook_pixel_id?: string | null
+          gtm_container_id?: string | null
+          woocommerce_key?: string | null
+          woocommerce_secret?: string | null
+          is_active?: boolean | null
+          created_at?: string | null
+          updated_at?: string | null
+          created_by?: string | null
+        }
+      }
+      monday_config: {
+        Row: {
+          id: string
+          client_id: string
+          client_secret: string
+          signing_secret: string
+          app_id: string
+          access_token: string | null
+          refresh_token: string | null
+          workspace_id: string | null
+          is_active: boolean | null
+          last_sync: string | null
+          created_at: string | null
+          updated_at: string | null
+          created_by: string | null
+        }
+        Insert: {
+          id?: string
+          client_id: string
+          client_secret: string
+          signing_secret: string
+          app_id: string
+          access_token?: string | null
+          refresh_token?: string | null
+          workspace_id?: string | null
+          is_active?: boolean | null
+          last_sync?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+          created_by?: string | null
+        }
+        Update: {
+          id?: string
+          client_id?: string
+          client_secret?: string
+          signing_secret?: string
+          app_id?: string
+          access_token?: string | null
+          refresh_token?: string | null
+          workspace_id?: string | null
+          is_active?: boolean | null
+          last_sync?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+          created_by?: string | null
+        }
+      }
+      monday_sync_log: {
+        Row: {
+          id: string
+          operation: string
+          status: 'success' | 'failed' | 'in_progress'
+          message: string | null
+          items_processed: number | null
+          errors_count: number | null
+          details: Json | null
+          duration_ms: number | null
+          timestamp: string | null
+          created_by: string | null
+        }
+        Insert: {
+          id?: string
+          operation: string
+          status?: 'success' | 'failed' | 'in_progress'
+          message?: string | null
+          items_processed?: number | null
+          errors_count?: number | null
+          details?: Json | null
+          duration_ms?: number | null
+          timestamp?: string | null
+          created_by?: string | null
+        }
+        Update: {
+          id?: string
+          operation?: string
+          status?: 'success' | 'failed' | 'in_progress'
+          message?: string | null
+          items_processed?: number | null
+          errors_count?: number | null
+          details?: Json | null
+          duration_ms?: number | null
+          timestamp?: string | null
+          created_by?: string | null
+        }
+      }
+      sftp_configs: {
+        Row: {
+          id: string
+          name: string
+          hostname: string
+          port: number | null
+          username: string
+          password: string
+          folder_path: string | null
+          direction: 'import' | 'export'
+          schedule: string | null
+          is_active: boolean | null
+          last_sync: string | null
+          created_at: string | null
+          updated_at: string | null
+          created_by: string | null
+        }
+        Insert: {
+          id?: string
+          name: string
+          hostname: string
+          port?: number | null
+          username: string
+          password: string
+          folder_path?: string | null
+          direction: 'import' | 'export'
+          schedule?: string | null
+          is_active?: boolean | null
+          last_sync?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+          created_by?: string | null
+        }
+        Update: {
+          id?: string
+          name?: string
+          hostname?: string
+          port?: number | null
+          username?: string
+          password?: string
+          folder_path?: string | null
+          direction?: 'import' | 'export'
+          schedule?: string | null
+          is_active?: boolean | null
+          last_sync?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+          created_by?: string | null
+        }
+      }
+      sync_logs: {
+        Row: {
+          id: string
+          service: string
+          operation: string
+          status: 'success' | 'failed' | 'in_progress'
+          message: string | null
+          details: Json | null
+          duration_ms: number | null
+          records_processed: number | null
+          timestamp: string | null
+          created_by: string | null
+        }
+        Insert: {
+          id?: string
+          service: string
+          operation: string
+          status?: 'success' | 'failed' | 'in_progress'
+          message?: string | null
+          details?: Json | null
+          duration_ms?: number | null
+          records_processed?: number | null
+          timestamp?: string | null
+          created_by?: string | null
+        }
+        Update: {
+          id?: string
+          service?: string
+          operation?: string
+          status?: 'success' | 'failed' | 'in_progress'
+          message?: string | null
+          details?: Json | null
+          duration_ms?: number | null
+          records_processed?: number | null
+          timestamp?: string | null
+          created_by?: string | null
+        }
+      }
+      webhooks_config: {
+        Row: {
+          id: string
+          event: string
+          target_url: string
+          secret_token: string
+          headers: Json | null
+          is_active: boolean | null
+          retry_count: number | null
+          timeout_seconds: number | null
+          created_at: string | null
+          updated_at: string | null
+          created_by: string | null
+        }
+        Insert: {
+          id?: string
+          event: string
+          target_url: string
+          secret_token: string
+          headers?: Json | null
+          is_active?: boolean | null
+          retry_count?: number | null
+          timeout_seconds?: number | null
+          created_at?: string | null
+          updated_at?: string | null
+          created_by?: string | null
+        }
+        Update: {
+          id?: string
+          event?: string
+          target_url?: string
+          secret_token?: string
+          headers?: Json | null
+          is_active?: boolean | null
+          retry_count?: number | null
+          timeout_seconds?: number | null
+          created_at?: string | null
+          updated_at?: string | null
+          created_by?: string | null
+        }
+      }
+      performance_reviews: {
+        Row: {
+          id: string
+          employee_id: string
+          reviewer_id: string
+          review_cycle: 'quarterly' | 'annual' | 'mid-year'
+          period_start: string
+          period_end: string
+          status: 'draft' | 'submitted' | 'under_review' | 'approved' | 'acknowledged'
+          overall_score: number | null
+          final_rating: 'exceeds' | 'meets' | 'partially_meets' | 'does_not_meet' | null
+          strengths: string | null
+          areas_for_improvement: string | null
+          goals_assessment: string | null
+          performance_summary: string | null
+          submitted_at: string | null
+          approved_at: string | null
+          acknowledged_at: string | null
+          next_review_date: string | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          employee_id: string
+          reviewer_id: string
+          review_cycle: 'quarterly' | 'annual' | 'mid-year'
+          period_start: string
+          period_end: string
+          status: 'draft' | 'submitted' | 'under_review' | 'approved' | 'acknowledged'
+          overall_score?: number | null
+          final_rating?: 'exceeds' | 'meets' | 'partially_meets' | 'does_not_meet' | null
+          strengths?: string | null
+          areas_for_improvement?: string | null
+          goals_assessment?: string | null
+          performance_summary?: string | null
+          submitted_at?: string | null
+          approved_at?: string | null
+          acknowledged_at?: string | null
+          next_review_date?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          employee_id?: string
+          reviewer_id?: string
+          review_cycle?: 'quarterly' | 'annual' | 'mid-year'
+          period_start?: string
+          period_end?: string
+          status?: 'draft' | 'submitted' | 'under_review' | 'approved' | 'acknowledged'
+          overall_score?: number | null
+          final_rating?: 'exceeds' | 'meets' | 'partially_meets' | 'does_not_meet' | null
+          strengths?: string | null
+          areas_for_improvement?: string | null
+          goals_assessment?: string | null
+          performance_summary?: string | null
+          submitted_at?: string | null
+          approved_at?: string | null
+          acknowledged_at?: string | null
+          next_review_date?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+      }
+      review_criteria: {
+        Row: {
+          id: string
+          name: string
+          category: 'technical' | 'behavioral' | 'leadership' | 'values'
+          description: string | null
+          weight: number
+          max_score: number
+          is_active: boolean | null
+          department_id: string | null
+          applicable_roles: string[] | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          name: string
+          category: 'technical' | 'behavioral' | 'leadership' | 'values'
+          description?: string | null
+          weight?: number
+          max_score?: number
+          is_active?: boolean | null
+          department_id?: string | null
+          applicable_roles?: string[] | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          name?: string
+          category?: 'technical' | 'behavioral' | 'leadership' | 'values'
+          description?: string | null
+          weight?: number
+          max_score?: number
+          is_active?: boolean | null
+          department_id?: string | null
+          applicable_roles?: string[] | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+      }
+      review_scores: {
+        Row: {
+          id: string
+          review_id: string
+          criterion_id: string
+          score: number
+          comments: string | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          review_id: string
+          criterion_id: string
+          score: number
+          comments?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          review_id?: string
+          criterion_id?: string
+          score?: number
+          comments?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+      }
+      kpi_definitions: {
+        Row: {
+          id: string
+          name: string
+          description: string | null
+          category: string
+          unit: string | null
+          target_value: number
+          min_threshold: number | null
+          max_threshold: number | null
+          frequency: 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'annual'
+          applicable_roles: string[] | null
+          department_id: string | null
+          is_active: boolean | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          name: string
+          description?: string | null
+          category: string
+          unit?: string | null
+          target_value: number
+          min_threshold?: number | null
+          max_threshold?: number | null
+          frequency?: 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'annual'
+          applicable_roles?: string[] | null
+          department_id?: string | null
+          is_active?: boolean | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          name?: string
+          description?: string | null
+          category?: string
+          unit?: string | null
+          target_value?: number
+          min_threshold?: number | null
+          max_threshold?: number | null
+          frequency?: 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'annual'
+          applicable_roles?: string[] | null
+          department_id?: string | null
+          is_active?: boolean | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+      }
+      employee_kpis: {
+        Row: {
+          id: string
+          employee_id: string
+          kpi_id: string
+          current_value: number
+          status: 'on_track' | 'at_risk' | 'off_track'
+          last_updated: string | null
+          target_date: string | null
+          notes: string | null
+        }
+        Insert: {
+          id?: string
+          employee_id: string
+          kpi_id: string
+          current_value: number
+          status: 'on_track' | 'at_risk' | 'off_track'
+          last_updated?: string | null
+          target_date?: string | null
+          notes?: string | null
+        }
+        Update: {
+          id?: string
+          employee_id?: string
+          kpi_id?: string
+          current_value?: number
+          status?: 'on_track' | 'at_risk' | 'off_track'
+          last_updated?: string | null
+          target_date?: string | null
+          notes?: string | null
+        }
+      }
+      career_development_plans: {
+        Row: {
+          id: string
+          employee_id: string
+          title: string
+          description: string | null
+          status: 'draft' | 'active' | 'completed'
+          start_date: string
+          target_completion_date: string | null
+          completed_date: string | null
+          mentor_id: string | null
+          skills_to_develop: string[] | null
+          resources_needed: string | null
+          success_criteria: string | null
+          progress: number | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          employee_id: string
+          title: string
+          description?: string | null
+          status?: 'draft' | 'active' | 'completed'
+          start_date: string
+          target_completion_date?: string | null
+          completed_date?: string | null
+          mentor_id?: string | null
+          skills_to_develop?: string[] | null
+          resources_needed?: string | null
+          success_criteria?: string | null
+          progress?: number | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          employee_id?: string
+          title?: string
+          description?: string | null
+          status?: 'draft' | 'active' | 'completed'
+          start_date?: string
+          target_completion_date?: string | null
+          completed_date?: string | null
+          mentor_id?: string | null
+          skills_to_develop?: string[] | null
+          resources_needed?: string | null
+          success_criteria?: string | null
+          progress?: number | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+      }
+      learning_activities: {
+        Row: {
+          id: string
+          plan_id: string
+          title: string
+          description: string | null
+          status: 'not_started' | 'in_progress' | 'completed'
+          due_date: string | null
+          completion_date: string | null
+          activity_type: 'course' | 'certification' | 'workshop' | 'project' | 'mentorship' | 'other' | null
+          url: string | null
+          notes: string | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          plan_id: string
+          title: string
+          description?: string | null
+          status?: 'not_started' | 'in_progress' | 'completed'
+          due_date?: string | null
+          completion_date?: string | null
+          activity_type?: 'course' | 'certification' | 'workshop' | 'project' | 'mentorship' | 'other' | null
+          url?: string | null
+          notes?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          plan_id?: string
+          title?: string
+          description?: string | null
+          status?: 'not_started' | 'in_progress' | 'completed'
+          due_date?: string | null
+          completion_date?: string | null
+          activity_type?: 'course' | 'certification' | 'workshop' | 'project' | 'mentorship' | 'other' | null
+          url?: string | null
+          notes?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+      }
+      feedback_entries: {
+        Row: {
+          id: string
+          recipient_id: string
+          provider_id: string | null
+          feedback_type: 'praise' | 'criticism' | 'suggestion' | 'question'
+          content: string
+          is_anonymous: boolean | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          recipient_id: string
+          provider_id?: string | null
+          feedback_type: 'praise' | 'criticism' | 'suggestion' | 'question'
+          content: string
+          is_anonymous?: boolean | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          recipient_id?: string
+          provider_id?: string | null
+          feedback_type?: 'praise' | 'criticism' | 'suggestion' | 'question'
+          content?: string
+          is_anonymous?: boolean | null
+          created_at?: string | null
         }
       }
       deployment_logs: {

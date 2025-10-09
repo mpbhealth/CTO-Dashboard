@@ -29,7 +29,8 @@ import {
   ChevronsLeft,
   Link2,
   ChevronsRight,
-  CheckSquare
+  CheckSquare,
+  ClipboardCheck
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
@@ -78,6 +79,7 @@ const menuItems = [
   { id: 'integrations', label: 'Integrations Hub', icon: Settings, category: 'operations' },
   { id: 'deployments', label: 'Deployments', icon: UploadCloud, category: 'infrastructure' },
   { id: 'policy-management', label: 'Policy Manager', icon: FileText, category: 'operations' },
+  { id: 'employee-performance', label: 'Employee Performance', icon: ClipboardCheck, category: 'operations' },
   { id: 'api-status', label: 'API Status', icon: Activity, category: 'infrastructure' },
   { id: 'system-uptime', label: 'System Uptime', icon: Server, category: 'infrastructure' },
   { id: 'performance-evaluation', label: 'Performance Evaluation', icon: UserSquare2, category: 'operations' },

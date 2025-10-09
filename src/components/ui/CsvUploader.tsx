@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Upload, CheckCircle, AlertCircle, RefreshCw, FileUp } from 'lucide-react';
 import Papa from 'papaparse';
-import { sanitizeObject } from '../../lib/supabaseUtils';
+import { batchUpsert, sanitizeObject } from '../../lib/supabaseUtils';
 
 interface CustomerImportRecord {
   id_customer: string;
@@ -167,8 +167,6 @@ export default function CsvUploader({ onSuccess, onError }: CsvUploaderProps) {
     });
     
     // Import using the existing batch upsert functionality
-    const { batchUpsert } = await import('../../lib/supabaseUtils');
-    
     const [enrollmentResults, statusUpdateResults] = await Promise.all([
       enrollmentRecords.length > 0 
         ? batchUpsert('member_enrollments', enrollmentRecords, 'enrollment_id') 

@@ -4,8 +4,7 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
-// The passcode is stored here on the server side, not in the client
-const VALID_PASSCODE = '1977';
+const VALID_PASSCODE = Deno.env.get('VERIFY_PASSCODE');
 
 Deno.serve(async (req: Request) => {
   // Handle CORS preflight requests
@@ -27,7 +26,19 @@ Deno.serve(async (req: Request) => {
   try {
     // Get the passcode from the request body
     const { passcode } = await req.json();
-    
+    if (!VALID_PASSCODE) {
+      return new Response(
+        JSON.stringify({
+          valid: false,
+          message: 'Passcode validation is not configured.',
+        }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
     // Validate the passcode
     const isValid = passcode === VALID_PASSCODE;
     

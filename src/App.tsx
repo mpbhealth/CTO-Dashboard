@@ -31,6 +31,7 @@ import IntegrationsHub from './components/pages/IntegrationsHub';
 import AuthWrapper from './components/pages/AuthWrapper';
 import Notepad from './components/pages/Notepad';
 import MondayTasks from './components/pages/MondayTasks';
+import EmployeePerformance from './components/pages/EmployeePerformance';
 import PerformanceEvaluation from './components/pages/PerformanceEvaluation';
 import OrganizationalStructure from './components/pages/OrganizationalStructure';
 import PolicyManagement from './components/pages/PolicyManagement';
@@ -130,6 +131,8 @@ function App() {
         return <IntegrationsHub />;
       case 'marketing-analytics':
         return <MarketingAnalytics />;
+      case 'employee-performance':
+        return <EmployeePerformance />;
       case 'performance-evaluation':
         return <PerformanceEvaluation />;
       case 'notepad':

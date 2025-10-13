@@ -324,7 +324,6 @@ export default function Assignments() {
       <div className="space-y-3">
         {assignments.map((assignment) => {
           const priority = getPriorityFromDueDate(assignment.due_date);
-          const project = projects.find(p => p.id === assignment.project_id);
           
           return (
             <motion.div

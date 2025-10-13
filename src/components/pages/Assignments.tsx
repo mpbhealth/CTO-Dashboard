@@ -16,12 +16,21 @@ import {
   RefreshCw,
   X,
   Save,
-  Zap
+  Zap,
+  Mail,
+  MessageSquare,
+  Send,
+  Copy
 } from 'lucide-react';
 import { useAssignments } from '../../hooks/useAssignments';
 import { useProjects } from '../../hooks/useSupabaseData';
 import AssignmentForm from '../ui/AssignmentForm';
 import { AssignmentCreateData } from '../../types/Assignment';
+import { 
+  sendAssignmentViaTeams, 
+  sendAssignmentViaEmail,
+  copyAssignmentToClipboard 
+} from '../../utils/communicationHelpers';
 
 
 export default function Assignments() {
@@ -39,6 +48,9 @@ export default function Assignments() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const [sendingId, setSendingId] = useState<string | null>(null);
+  const [sendMethod, setSendMethod] = useState<'teams' | 'email' | null>(null);
+  const [sendSuccess, setSendSuccess] = useState<string | null>(null);
   
   const [formData, setFormData] = useState({
     title: '',
@@ -55,6 +67,88 @@ export default function Assignments() {
     }
     return result.data;
   };
+
+  const handleSendViaTeams = async (assignment: any) => {
+    if (!assignment.employee_email) {
+      alert('No employee email found for this assignment.');
+      return;
+    }
+
+    setSendingId(assignment.id);
+    setSendMethod('teams');
+    setSendSuccess(null);
+
+    const project = projects.find(p => p.id === assignment.project_id);
+    
+    const result = await sendAssignmentViaTeams({
+      assignment,
+      employee: {
+        id: assignment.assigned_to,
+        email: assignment.employee_email,
+        full_name: assignment.employee_name,
+        teams_user_id: assignment.teams_user_id,
+      },
+      projectName: project?.name,
+      senderName: 'MPB Health Dashboard',
+    });
+
+    if (result.success) {
+      setSendSuccess(`Assignment sent via Microsoft Teams to ${assignment.employee_name || assignment.employee_email}!`);
+      setTimeout(() => setSendSuccess(null), 5000);
+    } else {
+      alert(`Failed to send via Teams: ${result.error}`);
+    }
+
+    setSendingId(null);
+    setSendMethod(null);
+  };
+
+  const handleSendViaEmail = async (assignment: any) => {
+    if (!assignment.employee_email) {
+      alert('No employee email found for this assignment.');
+      return;
+    }
+
+    setSendingId(assignment.id);
+    setSendMethod('email');
+    setSendSuccess(null);
+
+    const project = projects.find(p => p.id === assignment.project_id);
+    
+    const result = await sendAssignmentViaEmail({
+      assignment,
+      employee: {
+        id: assignment.assigned_to,
+        email: assignment.employee_email,
+        full_name: assignment.employee_name,
+      },
+      projectName: project?.name,
+      senderName: 'MPB Health Dashboard',
+    });
+
+    if (result.success) {
+      setSendSuccess(`Email client opened for ${assignment.employee_name || assignment.employee_email}!`);
+      setTimeout(() => setSendSuccess(null), 5000);
+    } else {
+      alert(`Failed to send via email: ${result.error}`);
+    }
+
+    setSendingId(null);
+    setSendMethod(null);
+  };
+
+  const handleCopyAssignment = async (assignment: any) => {
+    const project = projects.find(p => p.id === assignment.project_id);
+    const success = await copyAssignmentToClipboard(assignment, project?.name);
+    
+    if (success) {
+      setSendSuccess('Assignment details copied to clipboard!');
+      setTimeout(() => setSendSuccess(null), 3000);
+    } else {
+      alert('Failed to copy to clipboard');
+    }
+  };
+
   if (loading || projectsLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -250,8 +344,40 @@ export default function Assignments() {
                 <h4 className="font-medium text-slate-900 text-sm leading-tight">{assignment.title}</h4>
                 <div className="flex items-center space-x-1">
                   <button
+                    onClick={() => handleSendViaTeams(assignment)}
+                    disabled={sendingId === assignment.id && sendMethod === 'teams'}
+                    className="p-1 text-slate-400 hover:text-purple-600 hover:bg-purple-50 rounded transition-colors disabled:opacity-50"
+                    title="Send via Microsoft Teams"
+                  >
+                    {sendingId === assignment.id && sendMethod === 'teams' ? (
+                      <div className="w-4 h-4 border-2 border-purple-600 border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <MessageSquare className="w-4 h-4" />
+                    )}
+                  </button>
+                  <button
+                    onClick={() => handleSendViaEmail(assignment)}
+                    disabled={sendingId === assignment.id && sendMethod === 'email'}
+                    className="p-1 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors disabled:opacity-50"
+                    title="Send via Email"
+                  >
+                    {sendingId === assignment.id && sendMethod === 'email' ? (
+                      <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <Mail className="w-4 h-4" />
+                    )}
+                  </button>
+                  <button
+                    onClick={() => handleCopyAssignment(assignment)}
+                    className="p-1 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded transition-colors"
+                    title="Copy to Clipboard"
+                  >
+                    <Copy className="w-4 h-4" />
+                  </button>
+                  <button
                     onClick={() => openEditModal(assignment)}
                     className="p-1 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
+                    title="Edit Assignment"
                   >
                     <Edit className="w-4 h-4" />
                   </button>
@@ -259,6 +385,7 @@ export default function Assignments() {
                     onClick={() => handleDeleteAssignment(assignment)}
                     disabled={deletingId === assignment.id}
                     className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors disabled:opacity-50"
+                    title="Delete Assignment"
                   >
                     {deletingId === assignment.id ? (
                       <div className="w-4 h-4 border-2 border-red-600 border-t-transparent rounded-full animate-spin" />
@@ -306,6 +433,19 @@ export default function Assignments() {
 
   return (
     <div className="space-y-6">
+      {/* Success Notification */}
+      {sendSuccess && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          className="bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 rounded-lg flex items-center space-x-2"
+        >
+          <CheckCircle className="w-5 h-5" />
+          <span>{sendSuccess}</span>
+        </motion.div>
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -434,6 +574,7 @@ export default function Assignments() {
                   {searchTerm && (
                     <button
                       onClick={() => setSearchTerm('')}
+                      aria-label="Clear search"
                       className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
                     >
                       <X className="w-4 h-4" />
@@ -447,6 +588,7 @@ export default function Assignments() {
                   className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   value={selectedProject}
                   onChange={(e) => setSelectedProject(e.target.value)}
+                  aria-label="Filter assignments by project"
                 >
                   <option value="All">All Projects</option>
                   {projects.map(project => (
@@ -458,6 +600,7 @@ export default function Assignments() {
                   className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   value={selectedStatus}
                   onChange={(e) => setSelectedStatus(e.target.value)}
+                  aria-label="Filter assignments by status"
                 >
                   {statuses.map(status => (
                     <option key={status} value={status}>
@@ -469,6 +612,7 @@ export default function Assignments() {
                 <div className="flex items-center bg-slate-100 rounded-lg p-1">
                   <button
                     onClick={() => setViewMode('kanban')}
+                    aria-label="Switch to Kanban view"
                     className={`px-3 py-1 rounded-lg text-sm font-medium ${
                       viewMode === 'kanban' ? 'bg-white shadow text-slate-800' : 'text-slate-600'
                     }`}
@@ -477,6 +621,7 @@ export default function Assignments() {
                   </button>
                   <button
                     onClick={() => setViewMode('list')}
+                    aria-label="Switch to List view"
                     className={`px-3 py-1 rounded-lg text-sm font-medium ${
                       viewMode === 'list' ? 'bg-white shadow text-slate-800' : 'text-slate-600'
                     }`}
@@ -553,8 +698,40 @@ export default function Assignments() {
                           </span>
                           <div className="flex items-center space-x-1">
                             <button
+                              onClick={() => handleSendViaTeams(assignment)}
+                              disabled={sendingId === assignment.id && sendMethod === 'teams'}
+                              className="p-2 text-slate-400 hover:text-purple-600 hover:bg-purple-50 rounded transition-colors disabled:opacity-50"
+                              title="Send via Microsoft Teams"
+                            >
+                              {sendingId === assignment.id && sendMethod === 'teams' ? (
+                                <div className="w-4 h-4 border-2 border-purple-600 border-t-transparent rounded-full animate-spin" />
+                              ) : (
+                                <MessageSquare className="w-4 h-4" />
+                              )}
+                            </button>
+                            <button
+                              onClick={() => handleSendViaEmail(assignment)}
+                              disabled={sendingId === assignment.id && sendMethod === 'email'}
+                              className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors disabled:opacity-50"
+                              title="Send via Email"
+                            >
+                              {sendingId === assignment.id && sendMethod === 'email' ? (
+                                <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                              ) : (
+                                <Mail className="w-4 h-4" />
+                              )}
+                            </button>
+                            <button
+                              onClick={() => handleCopyAssignment(assignment)}
+                              className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded transition-colors"
+                              title="Copy to Clipboard"
+                            >
+                              <Copy className="w-4 h-4" />
+                            </button>
+                            <button
                               onClick={() => openEditModal(assignment)}
                               className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
+                              title="Edit Assignment"
                             >
                               <Edit className="w-4 h-4" />
                             </button>
@@ -562,6 +739,7 @@ export default function Assignments() {
                               onClick={() => handleDeleteAssignment(assignment)}
                               disabled={deletingId === assignment.id}
                               className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors disabled:opacity-50"
+                              title="Delete Assignment"
                             >
                               {deletingId === assignment.id ? (
                                 <div className="w-4 h-4 border-2 border-red-600 border-t-transparent rounded-full animate-spin" />
@@ -625,6 +803,7 @@ export default function Assignments() {
                   setSelectedAssignment(null);
                   setFormError(null);
                 }}
+                aria-label="Close edit modal"
                 className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
               >
                 <X className="w-5 h-5" />
@@ -676,6 +855,7 @@ export default function Assignments() {
                     name="project_id"
                     value={formData.project_id}
                     onChange={handleInputChange}
+                    aria-label="Select project for assignment"
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   >
                     <option value="">No Project</option>
@@ -694,6 +874,7 @@ export default function Assignments() {
                     required
                     value={formData.status}
                     onChange={handleInputChange}
+                    aria-label="Select assignment status"
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   >
                     <option value="todo">To Do</option>
@@ -711,6 +892,7 @@ export default function Assignments() {
                     name="due_date"
                     value={formData.due_date}
                     onChange={handleInputChange}
+                    aria-label="Select assignment due date"
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   />
                 </div>

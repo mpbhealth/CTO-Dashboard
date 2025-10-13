@@ -10,6 +10,10 @@ export interface Assignment {
   due_date?: string; // ISO date string
   created_at: string;
   updated_at: string;
+  // Employee information (joined from users table)
+  employee_email?: string;
+  employee_name?: string;
+  teams_user_id?: string;
 }
 
 export interface AssignmentCreateData {
@@ -18,6 +22,7 @@ export interface AssignmentCreateData {
   project_id?: string;
   status: AssignmentStatus;
   due_date?: string;
+  assigned_to?: string;
 }
 
 export interface AssignmentUpdateData extends Partial<AssignmentCreateData> {

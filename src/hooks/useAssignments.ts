@@ -50,12 +50,22 @@ export function useAssignments() {
         .from('assignments')
         .select(`
           *,
-          projects(name)
+          projects(name),
+          users!assignments_assigned_to_fkey(email, full_name, teams_user_id)
         `)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setData(assignments || []);
+      
+      // Transform the data to include employee information
+      const transformedAssignments = (assignments || []).map((assignment: any) => ({
+        ...assignment,
+        employee_email: assignment.users?.email,
+        employee_name: assignment.users?.full_name,
+        teams_user_id: assignment.users?.teams_user_id,
+      }));
+      
+      setData(transformedAssignments);
     } catch (err) {
       console.error('Error fetching assignments:', err);
       setError(err instanceof Error ? err.message : 'Failed to load assignments. Please make sure you\'re connected to Supabase.');

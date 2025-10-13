@@ -66,7 +66,11 @@ export default function Overview() {
   const { data: employees = [], loading: empLoading } = useEmployeeProfiles();
   const { data: departmentMetrics = [], loading: metricsLoading } = useDepartmentMetrics();
   const { data: projects = [], loading: projectsLoading } = useProjects();
-  const { data: saasExpenses = [], metrics: saasMetrics, loading: saasLoading } = useSaaSExpenses();
+  const { 
+    data: saasExpenses = [], 
+    metrics: saasMetrics = { totalMonthly: 0, totalAnnual: 0, totalTools: 0, totalDepartments: 0, renewingNext30Days: 0 }, 
+    loading: saasLoading 
+  } = useSaaSExpenses();
   const { data: enrollments = [], loading: enrollmentsLoading } = useEnrollmentData();
   const { data: audits = [], loading: auditsLoading } = useAudits();
 

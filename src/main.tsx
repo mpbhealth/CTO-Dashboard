@@ -1,7 +1,9 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import App from './App.tsx';
+import CEOApp from './CEOApp.tsx';
 import './index.css';
 import './lib/diagnostics';
 import React from 'react';
@@ -126,7 +128,15 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <App />
+        <BrowserRouter>
+          <Routes>
+            {/* CEO Portal Routes */}
+            <Route path="/ceo/*" element={<CEOApp />} />
+            
+            {/* CTO Dashboard Routes (default) */}
+            <Route path="/*" element={<App />} />
+          </Routes>
+        </BrowserRouter>
       </QueryClientProvider>
     </ErrorBoundary>
   </StrictMode>

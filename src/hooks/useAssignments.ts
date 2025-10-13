@@ -46,24 +46,58 @@ export function useAssignments() {
         setCurrentUser(userRecord);
       }
       
+      // First, try to get assignments with user information
       const { data: assignments, error } = await supabase
         .from('assignments')
-        .select(`
-          *,
-          projects(name),
-          users!assignments_assigned_to_fkey(email, full_name, teams_user_id)
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
       
-      // Transform the data to include employee information
-      const transformedAssignments = (assignments || []).map((assignment: any) => ({
-        ...assignment,
-        employee_email: assignment.users?.email,
-        employee_name: assignment.users?.full_name,
-        teams_user_id: assignment.users?.teams_user_id,
-      }));
+      // Then fetch user information separately for each assignment
+      const transformedAssignments = await Promise.all(
+        (assignments || []).map(async (assignment: any) => {
+          // Fetch project name if project_id exists
+          let projectName = null;
+          if (assignment.project_id) {
+            const { data: project } = await supabase
+              .from('projects')
+              .select('name')
+              .eq('id', assignment.project_id)
+              .single();
+            projectName = project?.name;
+          }
+
+          // Fetch user information if assigned_to exists
+          let employeeInfo = {
+            employee_email: null,
+            employee_name: null,
+            teams_user_id: null,
+          };
+          
+          if (assignment.assigned_to) {
+            const { data: user } = await supabase
+              .from('users')
+              .select('email, full_name')
+              .eq('id', assignment.assigned_to)
+              .single();
+            
+            if (user) {
+              employeeInfo = {
+                employee_email: user.email,
+                employee_name: user.full_name,
+                teams_user_id: null, // We'll add this column later
+              };
+            }
+          }
+
+          return {
+            ...assignment,
+            project_name: projectName,
+            ...employeeInfo,
+          };
+        })
+      );
       
       setData(transformedAssignments);
     } catch (err) {

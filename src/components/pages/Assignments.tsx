@@ -77,8 +77,6 @@ export default function Assignments() {
     setSendingId(assignment.id);
     setSendMethod('teams');
     setSendSuccess(null);
-
-    const project = projects.find(p => p.id === assignment.project_id);
     
     const result = await sendAssignmentViaTeams({
       assignment,
@@ -88,7 +86,7 @@ export default function Assignments() {
         full_name: assignment.employee_name,
         teams_user_id: assignment.teams_user_id,
       },
-      projectName: project?.name,
+      projectName: assignment.project_name,
       senderName: 'MPB Health Dashboard',
     });
 
@@ -112,8 +110,6 @@ export default function Assignments() {
     setSendingId(assignment.id);
     setSendMethod('email');
     setSendSuccess(null);
-
-    const project = projects.find(p => p.id === assignment.project_id);
     
     const result = await sendAssignmentViaEmail({
       assignment,
@@ -122,7 +118,7 @@ export default function Assignments() {
         email: assignment.employee_email,
         full_name: assignment.employee_name,
       },
-      projectName: project?.name,
+      projectName: assignment.project_name,
       senderName: 'MPB Health Dashboard',
     });
 
@@ -138,8 +134,7 @@ export default function Assignments() {
   };
 
   const handleCopyAssignment = async (assignment: any) => {
-    const project = projects.find(p => p.id === assignment.project_id);
-    const success = await copyAssignmentToClipboard(assignment, project?.name);
+    const success = await copyAssignmentToClipboard(assignment, assignment.project_name);
     
     if (success) {
       setSendSuccess('Assignment details copied to clipboard!');
@@ -401,10 +396,10 @@ export default function Assignments() {
               )}
               
               <div className="space-y-2">
-                {project && (
+                {assignment.project_name && (
                   <div className="flex items-center space-x-2 text-xs">
                     <Building className="w-3 h-3 text-slate-500" />
-                    <span className="text-slate-600">{project.name}</span>
+                    <span className="text-slate-600">{assignment.project_name}</span>
                   </div>
                 )}
                 
@@ -652,7 +647,6 @@ export default function Assignments() {
               <div className="space-y-3">
                 {filteredAssignments.map((assignment) => {
                   const priority = getPriorityFromDueDate(assignment.due_date);
-                  const project = projects.find(p => p.id === assignment.project_id);
                   
                   return (
                     <motion.div
@@ -672,10 +666,10 @@ export default function Assignments() {
                               <p className="text-sm text-slate-600 mt-1">{assignment.description}</p>
                             )}
                             <div className="flex items-center space-x-4 mt-2 text-xs text-slate-500">
-                              {project && (
+                              {assignment.project_name && (
                                 <div className="flex items-center space-x-1">
                                   <Building className="w-3 h-3" />
-                                  <span>{project.name}</span>
+                                  <span>{assignment.project_name}</span>
                                 </div>
                               )}
                               {assignment.due_date && (
@@ -686,7 +680,7 @@ export default function Assignments() {
                               )}
                               <div className="flex items-center space-x-1">
                                 <User className="w-3 h-3" />
-                                <span>Me</span>
+                                <span>{assignment.employee_name || 'Me'}</span>
                               </div>
                             </div>
                           </div>

@@ -60,16 +60,13 @@ export default function Login({ onLoginSuccess }: LoginProps) {
         throw new Error('Passwords do not match.');
       }
 
-      // First verify passcode with edge function
-      const { data: verifyData, error: verifyError } = await supabase.functions.invoke('verify-passcode', {
-        body: { passcode },
-      });
-      
-      if (verifyError || !verifyData.valid) {
-        throw new Error(verifyError?.message || 'Invalid passcode. Please enter the correct passcode to register.');
+      // Verify passcode locally (temporary solution until Edge Function is configured)
+      const VALID_PASSCODE = '738294';
+      if (passcode !== VALID_PASSCODE) {
+        throw new Error('Invalid passcode. Please enter the correct passcode to register.');
       }
 
-      // Then register with Supabase
+      // Register with Supabase
       const { data, error } = await supabase.auth.signUp({ 
         email, 
         password,

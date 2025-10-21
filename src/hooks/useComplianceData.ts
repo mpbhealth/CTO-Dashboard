@@ -837,45 +837,87 @@ export const useUploadEmployeeDocument = () => {
       file: File;
       formData: Partial<EmployeeComplianceDocument>;
     }) => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Not authenticated');
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
 
-      const timestamp = Date.now();
-      const sanitizedTitle = formData.title?.replace(/[^a-z0-9]/gi, '_').toLowerCase() || 'document';
-      const fileExt = file.name.split('.').pop();
-      const filePath = `${formData.category}/${formData.employee_email}/${timestamp}_${sanitizedTitle}.${fileExt}`;
+        if (!user) {
+          throw new Error('Authentication required. Please log in to upload documents.');
+        }
 
-      const { error: uploadError } = await supabase.storage
-        .from('employee-compliance-documents')
-        .upload(filePath, file);
+        if (file.size > 10485760) {
+          throw new Error('File size exceeds 10MB limit');
+        }
 
-      if (uploadError) throw uploadError;
+        const allowedTypes = [
+          'application/pdf',
+          'application/msword',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+          'image/jpeg',
+          'image/jpg',
+          'image/png'
+        ];
 
-      const { data, error: dbError } = await supabase
-        .from('employee_compliance_documents')
-        .insert({
-          ...formData,
-          file_path: filePath,
-          file_type: file.type,
-          file_size: file.size,
-          uploaded_by: user.id,
-        })
-        .select()
-        .single();
+        if (!allowedTypes.includes(file.type)) {
+          throw new Error('File type not allowed. Please upload PDF, DOC, DOCX, JPG, or PNG files only.');
+        }
 
-      if (dbError) throw dbError;
+        const timestamp = Date.now();
+        const sanitizedTitle = formData.title?.replace(/[^a-z0-9]/gi, '_').toLowerCase() || 'document';
+        const fileExt = file.name.split('.').pop();
+        const filePath = `${formData.category}/${formData.employee_email}/${timestamp}_${sanitizedTitle}.${fileExt}`;
 
-      await logAuditEvent(
-        'employee_document_uploaded',
-        'employee_compliance_documents',
-        data.id,
-        { title: formData.title, employee_email: formData.employee_email }
-      );
+        const { error: uploadError } = await supabase.storage
+          .from('employee-compliance-documents')
+          .upload(filePath, file, {
+            cacheControl: '3600',
+            upsert: false
+          });
 
-      return data as EmployeeComplianceDocument;
+        if (uploadError) {
+          console.error('Storage upload error:', uploadError);
+          throw new Error(`Upload failed: ${uploadError.message}`);
+        }
+
+        const { data, error: dbError } = await supabase
+          .from('employee_compliance_documents')
+          .insert({
+            ...formData,
+            file_path: filePath,
+            file_type: file.type,
+            file_size: file.size,
+            uploaded_by: user.id,
+          })
+          .select()
+          .single();
+
+        if (dbError) {
+          console.error('Database insert error:', dbError);
+          await supabase.storage
+            .from('employee-compliance-documents')
+            .remove([filePath]);
+          throw new Error(`Database error: ${dbError.message}`);
+        }
+
+        try {
+          await logAuditEvent(
+            'employee_document_uploaded',
+            'employee_compliance_documents',
+            data.id,
+            { title: formData.title, employee_email: formData.employee_email }
+          );
+        } catch (auditError) {
+          console.warn('Audit logging failed:', auditError);
+        }
+
+        return data as EmployeeComplianceDocument;
+      } catch (error) {
+        console.error('Upload document error:', error);
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['compliance', 'employee-documents'] });
+      queryClient.invalidateQueries({ queryKey: ['compliance', 'expiring-documents'] });
     },
   });
 };

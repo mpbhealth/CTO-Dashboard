@@ -94,7 +94,10 @@ const EmployeeDocumentStorage: React.FC = () => {
         .from('employee-compliance-documents')
         .download(doc.file_path);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Download error:', error);
+        throw new Error(`Download failed: ${error.message}`);
+      }
 
       const url = window.URL.createObjectURL(data);
       const a = document.createElement('a');
@@ -106,7 +109,8 @@ const EmployeeDocumentStorage: React.FC = () => {
       document.body.removeChild(a);
     } catch (error) {
       console.error('Error downloading file:', error);
-      alert('Failed to download file');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to download file';
+      alert(errorMessage);
     }
   };
 
@@ -115,7 +119,8 @@ const EmployeeDocumentStorage: React.FC = () => {
       await updateStatus.mutateAsync({ id, approval_status: 'approved' });
     } catch (error) {
       console.error('Error approving document:', error);
-      alert('Failed to approve document');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to approve document';
+      alert(errorMessage);
     }
   };
 
@@ -124,7 +129,8 @@ const EmployeeDocumentStorage: React.FC = () => {
       await updateStatus.mutateAsync({ id, approval_status: 'rejected' });
     } catch (error) {
       console.error('Error rejecting document:', error);
-      alert('Failed to reject document');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to reject document';
+      alert(errorMessage);
     }
   };
 
@@ -137,7 +143,8 @@ const EmployeeDocumentStorage: React.FC = () => {
       await deleteDoc.mutateAsync(id);
     } catch (error) {
       console.error('Error deleting document:', error);
-      alert('Failed to delete document');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to delete document';
+      alert(errorMessage);
     }
   };
 
@@ -420,6 +427,7 @@ interface UploadDocumentModalProps {
 
 const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({ onClose, onSuccess }) => {
   const [file, setFile] = useState<File | null>(null);
+  const [fileError, setFileError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     employee_email: '',
     employee_name: '',
@@ -436,7 +444,31 @@ const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({ onClose, onSu
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
+    setFileError(null);
+
     if (selectedFile) {
+      const maxSize = 10485760;
+      if (selectedFile.size > maxSize) {
+        setFileError('File size exceeds 10MB limit');
+        setFile(null);
+        return;
+      }
+
+      const allowedTypes = [
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'image/jpeg',
+        'image/jpg',
+        'image/png'
+      ];
+
+      if (!allowedTypes.includes(selectedFile.type)) {
+        setFileError('File type not allowed. Please upload PDF, DOC, DOCX, JPG, or PNG files only.');
+        setFile(null);
+        return;
+      }
+
       setFile(selectedFile);
       if (!formData.title) {
         setFormData({ ...formData, title: selectedFile.name });
@@ -448,7 +480,17 @@ const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({ onClose, onSu
     e.preventDefault();
 
     if (!file) {
-      alert('Please select a file');
+      setFileError('Please select a file');
+      return;
+    }
+
+    if (!formData.employee_email) {
+      alert('Employee email is required');
+      return;
+    }
+
+    if (!formData.title) {
+      alert('Document title is required');
       return;
     }
 
@@ -457,7 +499,8 @@ const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({ onClose, onSu
       onSuccess();
     } catch (error) {
       console.error('Error uploading document:', error);
-      alert('Failed to upload document');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to upload document';
+      alert(errorMessage);
     }
   };
 
@@ -481,10 +524,18 @@ const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({ onClose, onSu
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
             />
             {file && (
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-green-600 mt-1">
                 Selected: {file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)
               </p>
             )}
+            {fileError && (
+              <p className="text-sm text-red-600 mt-1">
+                {fileError}
+              </p>
+            )}
+            <p className="text-xs text-gray-500 mt-1">
+              Max file size: 10MB. Allowed types: PDF, DOC, DOCX, JPG, PNG
+            </p>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -610,10 +661,13 @@ const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({ onClose, onSu
             </button>
             <button
               type="submit"
-              disabled={uploadMutation.isPending}
-              className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+              disabled={uploadMutation.isPending || !!fileError || !file}
+              className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center space-x-2"
             >
-              {uploadMutation.isPending ? 'Uploading...' : 'Upload Document'}
+              {uploadMutation.isPending && (
+                <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+              )}
+              <span>{uploadMutation.isPending ? 'Uploading...' : 'Upload Document'}</span>
             </button>
           </div>
         </form>

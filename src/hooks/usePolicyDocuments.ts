@@ -32,6 +32,16 @@ export function usePolicyDocuments() {
   const fetchData = async () => {
     try {
       setLoading(true);
+
+      const { data: { session } } = await supabase.auth.getSession();
+
+      if (!session?.user) {
+        setData([]);
+        setError('Please log in to view policies');
+        setLoading(false);
+        return;
+      }
+
       const { data: policies, error } = await supabase
         .from('policy_documents')
         .select('*')
@@ -39,6 +49,7 @@ export function usePolicyDocuments() {
 
       if (error) throw error;
       setData(policies || []);
+      setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {

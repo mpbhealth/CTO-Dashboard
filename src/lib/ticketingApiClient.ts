@@ -6,6 +6,9 @@ import type {
   TicketStats,
   TicketFilters,
   TicketSortOptions,
+  StaffLog,
+  StaffLogFilters,
+  StaffLogStats,
 } from '../types/tickets';
 
 const CHAMPIONSHIP_IT_API_BASE = 'https://hhikjgrttgnvojtunmla.supabase.co/functions/v1';
@@ -378,6 +381,161 @@ class TicketingApiClient {
 
     stats.avg_resolution_time_hours = resolvedCount > 0 ? totalResolutionTime / resolvedCount : 0;
     stats.sla_compliance_percentage = slaTracked > 0 ? (slaCompliant / slaTracked) * 100 : 100;
+
+    return stats;
+  }
+
+  async getStaffLogs(
+    filters?: StaffLogFilters,
+    page = 1,
+    limit = 100
+  ): Promise<ApiResponse<StaffLog[]>> {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+    });
+
+    if (filters) {
+      if (filters.ticket_id) params.append('ticket_id', filters.ticket_id);
+      if (filters.staff_id) params.append('staff_id', filters.staff_id);
+      if (filters.action_type) params.append('action_type', filters.action_type.join(','));
+      if (filters.created_after) params.append('created_after', filters.created_after);
+      if (filters.created_before) params.append('created_before', filters.created_before);
+    }
+
+    return this.fetchWithRetry(`/tickets/staff-logs?${params.toString()}`);
+  }
+
+  async syncStaffLogs(ticketId?: string): Promise<{ success: boolean; error?: string }> {
+    try {
+      const filters: StaffLogFilters = ticketId ? { ticket_id: ticketId } : {};
+      const result = await this.getStaffLogs(filters, 1, 1000);
+
+      if (result.error) {
+        throw new Error(result.error);
+      }
+
+      if (!result.data) {
+        throw new Error('No staff log data received from API');
+      }
+
+      const logs = result.data;
+      let processed = 0;
+      let failed = 0;
+
+      for (const log of logs) {
+        const { data: cachedTicket } = await supabase
+          .from('tickets_cache')
+          .select('id')
+          .eq('external_ticket_id', log.external_ticket_id)
+          .maybeSingle();
+
+        const { error } = await supabase
+          .from('staff_logs_cache')
+          .upsert(
+            {
+              external_log_id: log.external_log_id,
+              ticket_id: cachedTicket?.id || null,
+              external_ticket_id: log.external_ticket_id,
+              staff_id: log.staff_id,
+              staff_name: log.staff_name,
+              staff_email: log.staff_email,
+              action_type: log.action_type,
+              action_details: log.action_details,
+              previous_value: log.previous_value,
+              new_value: log.new_value,
+              comment: log.comment,
+              time_spent_minutes: log.time_spent_minutes,
+              created_at: log.created_at,
+              last_synced_at: new Date().toISOString(),
+            },
+            { onConflict: 'external_log_id' }
+          );
+
+        if (error) {
+          failed++;
+          console.error('Failed to sync staff log:', log.external_log_id, error);
+        } else {
+          processed++;
+        }
+      }
+
+      return { success: true };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
+    }
+  }
+
+  async getLocalStaffLogs(filters?: StaffLogFilters): Promise<StaffLog[]> {
+    let query = supabase.from('staff_logs_cache').select('*');
+
+    if (filters?.ticket_id) {
+      query = query.eq('ticket_id', filters.ticket_id);
+    }
+
+    if (filters?.staff_id) {
+      query = query.eq('staff_id', filters.staff_id);
+    }
+
+    if (filters?.action_type && filters.action_type.length > 0) {
+      query = query.in('action_type', filters.action_type);
+    }
+
+    if (filters?.created_after) {
+      query = query.gte('created_at', filters.created_after);
+    }
+
+    if (filters?.created_before) {
+      query = query.lte('created_at', filters.created_before);
+    }
+
+    query = query.order('created_at', { ascending: false });
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error('Failed to fetch local staff logs:', error);
+      return [];
+    }
+
+    return data || [];
+  }
+
+  async getLocalStaffLogStats(ticketId?: string): Promise<StaffLogStats> {
+    let query = supabase.from('staff_logs_cache').select('*');
+
+    if (ticketId) {
+      query = query.eq('ticket_id', ticketId);
+    }
+
+    const { data: logs } = await query;
+
+    if (!logs || logs.length === 0) {
+      return {
+        total_actions: 0,
+        actions_by_type: {} as Record<string, number>,
+        actions_by_staff: {},
+        total_time_spent_minutes: 0,
+        avg_response_time_minutes: 0,
+      };
+    }
+
+    const stats: StaffLogStats = {
+      total_actions: logs.length,
+      actions_by_type: {} as Record<string, number>,
+      actions_by_staff: {},
+      total_time_spent_minutes: 0,
+      avg_response_time_minutes: 0,
+    };
+
+    logs.forEach(log => {
+      stats.actions_by_type[log.action_type] = (stats.actions_by_type[log.action_type] || 0) + 1;
+      stats.actions_by_staff[log.staff_name] = (stats.actions_by_staff[log.staff_name] || 0) + 1;
+      stats.total_time_spent_minutes += log.time_spent_minutes || 0;
+    });
 
     return stats;
   }

@@ -1487,6 +1487,59 @@ export interface Database {
           created_at?: string
         }
       }
+      staff_logs_cache: {
+        Row: {
+          id: string
+          external_log_id: string
+          ticket_id: string | null
+          external_ticket_id: string
+          staff_id: string
+          staff_name: string
+          staff_email: string | null
+          action_type: string
+          action_details: Json
+          previous_value: string | null
+          new_value: string | null
+          comment: string | null
+          time_spent_minutes: number
+          created_at: string
+          last_synced_at: string
+        }
+        Insert: {
+          id?: string
+          external_log_id: string
+          ticket_id?: string | null
+          external_ticket_id: string
+          staff_id: string
+          staff_name: string
+          staff_email?: string | null
+          action_type: string
+          action_details?: Json
+          previous_value?: string | null
+          new_value?: string | null
+          comment?: string | null
+          time_spent_minutes?: number
+          created_at?: string
+          last_synced_at?: string
+        }
+        Update: {
+          id?: string
+          external_log_id?: string
+          ticket_id?: string | null
+          external_ticket_id?: string
+          staff_id?: string
+          staff_name?: string
+          staff_email?: string | null
+          action_type?: string
+          action_details?: Json
+          previous_value?: string | null
+          new_value?: string | null
+          comment?: string | null
+          time_spent_minutes?: number
+          created_at?: string
+          last_synced_at?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never

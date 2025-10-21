@@ -1,16 +1,19 @@
 import { useState } from 'react';
-import { RefreshCw, Plus, Filter, Search, Ticket, Clock, AlertCircle } from 'lucide-react';
+import { RefreshCw, Plus, Filter, Search, Ticket, Clock, AlertCircle, History, ChevronDown, ChevronUp, User, MessageSquare } from 'lucide-react';
 import { useTickets, useTicketStats } from '../../hooks/useTickets';
-import type { TicketFilters, TicketSortOptions, TicketStatus, TicketPriority } from '../../types/tickets';
+import { useStaffLogs } from '../../hooks/useStaffLogs';
+import type { TicketFilters, TicketSortOptions, TicketStatus, TicketPriority, StaffActionType } from '../../types/tickets';
 
 export default function ITSupport() {
   const [filters, setFilters] = useState<TicketFilters>({});
   const [sort, setSort] = useState<TicketSortOptions>({ field: 'created_at', direction: 'desc' });
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+  const [expandedTicket, setExpandedTicket] = useState<string | null>(null);
 
   const { tickets, loading, syncing, syncTickets, refresh } = useTickets(filters, sort);
   const { stats } = useTicketStats();
+  const { logs, loading: logsLoading, syncLogs } = useStaffLogs();
 
   const handleSearch = (value: string) => {
     setSearchTerm(value);
@@ -85,6 +88,48 @@ export default function ITSupport() {
     } else {
       return date.toLocaleDateString();
     }
+  };
+
+  const getActionTypeColor = (actionType: StaffActionType) => {
+    switch (actionType) {
+      case 'created':
+        return 'bg-blue-100 text-blue-800';
+      case 'assigned':
+        return 'bg-purple-100 text-purple-800';
+      case 'status_changed':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'priority_changed':
+        return 'bg-orange-100 text-orange-800';
+      case 'commented':
+        return 'bg-green-100 text-green-800';
+      case 'resolved':
+      case 'closed':
+        return 'bg-emerald-100 text-emerald-800';
+      case 'reopened':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getActionIcon = (actionType: StaffActionType) => {
+    switch (actionType) {
+      case 'commented':
+        return <MessageSquare className="w-4 h-4" />;
+      case 'assigned':
+      case 'transferred':
+        return <User className="w-4 h-4" />;
+      default:
+        return <History className="w-4 h-4" />;
+    }
+  };
+
+  const getTicketLogs = (ticketId: string) => {
+    return logs.filter(log => log.ticket_id === ticketId);
+  };
+
+  const toggleTicketExpansion = (ticketId: string) => {
+    setExpandedTicket(expandedTicket === ticketId ? null : ticketId);
   };
 
   return (
@@ -273,54 +318,178 @@ export default function ITSupport() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-slate-200">
-                {tickets.map(ticket => (
-                  <tr
-                    key={ticket.id}
-                    className="hover:bg-slate-50 transition-colors cursor-pointer"
-                  >
-                    <td className="px-6 py-4">
-                      <div>
-                        <p className="text-sm font-medium text-slate-900">
-                          {ticket.ticket_number}
-                        </p>
-                        <p className="text-sm text-slate-600 truncate max-w-md">
-                          {ticket.title}
-                        </p>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(
-                          ticket.status
-                        )}`}
+                {tickets.map(ticket => {
+                  const ticketLogs = getTicketLogs(ticket.id);
+                  const isExpanded = expandedTicket === ticket.id;
+
+                  return (
+                    <>
+                      <tr
+                        key={ticket.id}
+                        className="hover:bg-slate-50 transition-colors"
                       >
-                        {ticket.status.replace('_', ' ')}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getPriorityColor(
-                          ticket.priority
-                        )}`}
-                      >
-                        {ticket.priority}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <p className="text-sm text-slate-900">
-                        {ticket.assignee_name || 'Unassigned'}
-                      </p>
-                    </td>
-                    <td className="px-6 py-4">
-                      <p className="text-sm text-slate-600">
-                        {ticket.category || 'Uncategorized'}
-                      </p>
-                    </td>
-                    <td className="px-6 py-4">
-                      <p className="text-sm text-slate-600">{formatDate(ticket.created_at)}</p>
-                    </td>
-                  </tr>
-                ))}
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-3">
+                            <button
+                              onClick={() => toggleTicketExpansion(ticket.id)}
+                              className="text-slate-500 hover:text-slate-700 transition-colors"
+                            >
+                              {isExpanded ? (
+                                <ChevronUp className="w-5 h-5" />
+                              ) : (
+                                <ChevronDown className="w-5 h-5" />
+                              )}
+                            </button>
+                            <div>
+                              <p className="text-sm font-medium text-slate-900">
+                                {ticket.ticket_number}
+                              </p>
+                              <p className="text-sm text-slate-600 truncate max-w-md">
+                                {ticket.title}
+                              </p>
+                              {ticketLogs.length > 0 && (
+                                <p className="text-xs text-slate-500 mt-1 flex items-center gap-1">
+                                  <History className="w-3 h-3" />
+                                  {ticketLogs.length} staff {ticketLogs.length === 1 ? 'action' : 'actions'}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span
+                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(
+                              ticket.status
+                            )}`}
+                          >
+                            {ticket.status.replace('_', ' ')}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span
+                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getPriorityColor(
+                              ticket.priority
+                            )}`}
+                          >
+                            {ticket.priority}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <p className="text-sm text-slate-900">
+                            {ticket.assignee_name || 'Unassigned'}
+                          </p>
+                        </td>
+                        <td className="px-6 py-4">
+                          <p className="text-sm text-slate-600">
+                            {ticket.category || 'Uncategorized'}
+                          </p>
+                        </td>
+                        <td className="px-6 py-4">
+                          <p className="text-sm text-slate-600">{formatDate(ticket.created_at)}</p>
+                        </td>
+                      </tr>
+
+                      {isExpanded && (
+                        <tr key={`${ticket.id}-logs`} className="bg-slate-50">
+                          <td colSpan={6} className="px-6 py-4">
+                            <div className="border-l-4 border-sky-500 pl-4">
+                              <div className="flex items-center justify-between mb-3">
+                                <h4 className="text-sm font-semibold text-slate-900 flex items-center gap-2">
+                                  <History className="w-4 h-4 text-sky-600" />
+                                  Staff Activity Log
+                                </h4>
+                                {ticketLogs.length === 0 && !logsLoading && (
+                                  <button
+                                    onClick={() => syncLogs(ticket.id)}
+                                    className="text-xs text-sky-600 hover:text-sky-700 flex items-center gap-1"
+                                  >
+                                    <RefreshCw className="w-3 h-3" />
+                                    Sync Logs
+                                  </button>
+                                )}
+                              </div>
+
+                              {logsLoading ? (
+                                <div className="text-center py-4">
+                                  <RefreshCw className="w-5 h-5 text-slate-400 animate-spin mx-auto" />
+                                  <p className="text-sm text-slate-600 mt-2">Loading activity...</p>
+                                </div>
+                              ) : ticketLogs.length === 0 ? (
+                                <div className="text-center py-4">
+                                  <History className="w-8 h-8 text-slate-300 mx-auto" />
+                                  <p className="text-sm text-slate-600 mt-2">No staff activity logged yet</p>
+                                </div>
+                              ) : (
+                                <div className="space-y-3">
+                                  {ticketLogs.map(log => (
+                                    <div
+                                      key={log.id}
+                                      className="bg-white rounded-lg p-4 shadow-sm border border-slate-200"
+                                    >
+                                      <div className="flex items-start gap-3">
+                                        <div className={`p-2 rounded-lg ${getActionTypeColor(log.action_type)}`}>
+                                          {getActionIcon(log.action_type)}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                          <div className="flex items-center gap-2 mb-1">
+                                            <span className="text-sm font-medium text-slate-900">
+                                              {log.staff_name}
+                                            </span>
+                                            <span
+                                              className={`text-xs px-2 py-0.5 rounded-full ${getActionTypeColor(
+                                                log.action_type
+                                              )}`}
+                                            >
+                                              {log.action_type.replace('_', ' ')}
+                                            </span>
+                                            <span className="text-xs text-slate-500">
+                                              {formatDate(log.created_at)}
+                                            </span>
+                                          </div>
+
+                                          {(log.previous_value || log.new_value) && (
+                                            <div className="text-xs text-slate-600 mb-2">
+                                              {log.previous_value && (
+                                                <span className="line-through text-slate-500">
+                                                  {log.previous_value}
+                                                </span>
+                                              )}
+                                              {log.previous_value && log.new_value && (
+                                                <span className="mx-2">→</span>
+                                              )}
+                                              {log.new_value && (
+                                                <span className="font-medium text-slate-700">
+                                                  {log.new_value}
+                                                </span>
+                                              )}
+                                            </div>
+                                          )}
+
+                                          {log.comment && (
+                                            <p className="text-sm text-slate-700 bg-slate-50 rounded p-2 mt-2">
+                                              {log.comment}
+                                            </p>
+                                          )}
+
+                                          {log.time_spent_minutes > 0 && (
+                                            <div className="flex items-center gap-1 text-xs text-slate-500 mt-2">
+                                              <Clock className="w-3 h-3" />
+                                              {log.time_spent_minutes} minutes logged
+                                            </div>
+                                          )}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </>
+                  );
+                })}
               </tbody>
             </table>
           )}

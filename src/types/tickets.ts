@@ -172,3 +172,54 @@ export interface TicketSortOptions {
   field: 'created_at' | 'updated_at' | 'priority' | 'status' | 'due_date';
   direction: 'asc' | 'desc';
 }
+
+export interface StaffLog {
+  id: string;
+  external_log_id: string;
+  ticket_id: string | null;
+  external_ticket_id: string;
+  staff_id: string;
+  staff_name: string;
+  staff_email: string | null;
+  action_type: StaffActionType;
+  action_details: Record<string, any>;
+  previous_value: string | null;
+  new_value: string | null;
+  comment: string | null;
+  time_spent_minutes: number;
+  created_at: string;
+  last_synced_at: string;
+}
+
+export type StaffActionType =
+  | 'created'
+  | 'assigned'
+  | 'status_changed'
+  | 'priority_changed'
+  | 'commented'
+  | 'updated'
+  | 'resolved'
+  | 'closed'
+  | 'reopened'
+  | 'tagged'
+  | 'linked'
+  | 'time_logged'
+  | 'file_attached'
+  | 'escalated'
+  | 'transferred';
+
+export interface StaffLogFilters {
+  ticket_id?: string;
+  staff_id?: string;
+  action_type?: StaffActionType[];
+  created_after?: string;
+  created_before?: string;
+}
+
+export interface StaffLogStats {
+  total_actions: number;
+  actions_by_type: Record<StaffActionType, number>;
+  actions_by_staff: Record<string, number>;
+  total_time_spent_minutes: number;
+  avg_response_time_minutes: number;
+}

@@ -32,7 +32,6 @@
     "react-dom": "^18.3.1",
     "react-draggable": "^4.5.0",
     "react-router-dom": "^6.28.0",
-    "react-flow-renderer": "^10.3.17",
     "recharts": "^2.8.0",
     "xlsx": "^0.18.5",
     "zod": "^3.23.8"

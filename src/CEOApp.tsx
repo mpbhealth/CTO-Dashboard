@@ -1,11 +1,10 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import CEOSidebar from './components/CEOSidebar';
 import CEOOverview from './components/pages/ceo/CEOOverview';
+import CEOSales from './components/pages/ceo/CEOSales';
+import CEOMarketing from './components/pages/ceo/CEOMarketing';
 import AuthWrapper from './components/pages/AuthWrapper';
 
-// Placeholder components for CEO routes (we'll build these next)
-const CEOSales = () => <div className="p-8"><h1 className="text-2xl font-bold">Sales Performance - Coming Soon</h1></div>;
-const CEOMarketing = () => <div className="p-8"><h1 className="text-2xl font-bold">Marketing Analytics - Coming Soon</h1></div>;
 const CEOEnrollments = () => <div className="p-8"><h1 className="text-2xl font-bold">Enrollment Insights - Coming Soon</h1></div>;
 const CEOAgents = () => <div className="p-8"><h1 className="text-2xl font-bold">Agent Performance - Coming Soon</h1></div>;
 const CEOOperations = () => <div className="p-8"><h1 className="text-2xl font-bold">Operations Dashboard - Coming Soon</h1></div>;

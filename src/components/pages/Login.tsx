@@ -103,7 +103,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-sky-900 flex items-center justify-center p-4">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-20" style={{
         backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
@@ -123,7 +123,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="w-16 h-16 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg"
+              className="w-16 h-16 bg-gradient-to-br from-sky-600 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg"
             >
               <Building2 className="w-8 h-8 text-white" />
             </motion.div>
@@ -176,7 +176,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
-                    className="block w-full pl-10 pr-3 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                    className="block w-full pl-10 pr-3 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors"
                     placeholder="Enter your full name"
                   />
                 </div>
@@ -198,7 +198,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="block w-full pl-10 pr-3 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                  className="block w-full pl-10 pr-3 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors"
                   placeholder="Enter your email"
                 />
               </div>
@@ -275,7 +275,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
                     value={passcode}
                     onChange={(e) => setPasscode(e.target.value)}
                     required
-                    className="block w-full pl-10 pr-3 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                    className="block w-full pl-10 pr-3 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors"
                     placeholder="Enter registration passcode"
                   />
                 </div>
@@ -298,7 +298,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
                 </div>
                 <button
                   type="button"
-                  className="text-sm text-indigo-600 hover:text-indigo-500 font-medium"
+                  className="text-sm text-sky-600 hover:text-sky-500 font-medium"
                 >
                   Forgot password?
                 </button>
@@ -311,7 +311,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
               disabled={isLoading}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
             >
               {isLoading ? (
                 <div className="flex items-center space-x-2">
@@ -328,7 +328,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
               <button
                 type="button"
                 onClick={toggleAuthMode}
-                className="text-indigo-600 hover:text-indigo-800 text-sm font-medium"
+                className="text-sky-600 hover:text-sky-800 text-sm font-medium"
               >
                 {isSignUp 
                   ? 'Already have an account? Sign In' 
@@ -346,8 +346,8 @@ export default function Login({ onLoginSuccess }: LoginProps) {
         </div>
 
         {/* Floating Elements */}
-        <div className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full opacity-20 blur-xl"></div>
-        <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full opacity-20 blur-xl"></div>
+        <div className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-sky-400 to-blue-500 rounded-full opacity-20 blur-xl"></div>
+        <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-full opacity-20 blur-xl"></div>
       </motion.div>
     </div>
   );

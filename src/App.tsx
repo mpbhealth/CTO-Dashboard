@@ -158,8 +158,8 @@ function App() {
 
         {/* Hamburger menu for mobile - only visible when sidebar is closed */}
         {isMobile && !isSidebarExpanded && (
-         <button 
-           className="fixed top-4 left-4 p-3 rounded-md bg-indigo-600 text-white shadow-lg md:hidden z-50 mobile-hamburger"
+         <button
+           className="fixed top-4 left-4 p-3 rounded-md bg-sky-600 text-white shadow-lg md:hidden z-50 mobile-hamburger"
            onClick={toggleSidebar}
            aria-label="Open menu"
          >

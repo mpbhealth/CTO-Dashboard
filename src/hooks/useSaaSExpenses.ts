@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
+import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 export interface SaaSExpense {
   id: string;
@@ -41,6 +41,14 @@ export function useSaaSExpenses() {
   const fetchData = async () => {
     try {
       setLoading(true);
+
+      if (!isSupabaseConfigured) {
+        setData([]);
+        setError(null);
+        setLoading(false);
+        return;
+      }
+
       const { data: expenses, error } = await supabase
         .from('saas_expenses')
         .select('*')
@@ -48,8 +56,10 @@ export function useSaaSExpenses() {
 
       if (error) throw error;
       setData(expenses || []);
+      setError(null);
     } catch (err) {
-      console.error('Error fetching SaaS expenses:', err);
+      console.warn('Error fetching SaaS expenses:', err);
+      setData([]);
       setError(err instanceof Error ? err.message : 'Failed to load SaaS expenses');
     } finally {
       setLoading(false);

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
+import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 export interface EnrollmentData {
   id: string;
@@ -23,6 +23,14 @@ export function useEnrollmentData() {
   const fetchData = async () => {
     try {
       setLoading(true);
+
+      if (!isSupabaseConfigured) {
+        setData([]);
+        setError(null);
+        setLoading(false);
+        return;
+      }
+
       const { data: enrollmentData, error } = await supabase
         .from('member_enrollments')
         .select('*')
@@ -30,7 +38,10 @@ export function useEnrollmentData() {
 
       if (error) throw error;
       setData(enrollmentData || []);
+      setError(null);
     } catch (err) {
+      console.warn('Error fetching enrollment data:', err);
+      setData([]);
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);

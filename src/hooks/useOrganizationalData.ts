@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
+import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 // Interfaces are exported where they are declared below; redundant re-export removed.
 
@@ -280,6 +280,14 @@ export function useDepartments() {
   const fetchData = async () => {
     try {
       setLoading(true);
+
+      if (!isSupabaseConfigured) {
+        setData([]);
+        setError(null);
+        setLoading(false);
+        return;
+      }
+
       const { data: departments, error } = await supabase
         .from('departments')
         .select('*')
@@ -287,7 +295,10 @@ export function useDepartments() {
 
       if (error) throw error;
       setData(departments || []);
+      setError(null);
     } catch (err) {
+      console.warn('Error fetching departments:', err);
+      setData([]);
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);
@@ -310,6 +321,14 @@ export function useEmployeeProfiles() {
   const fetchData = async () => {
     try {
       setLoading(true);
+
+      if (!isSupabaseConfigured) {
+        setData([]);
+        setError(null);
+        setLoading(false);
+        return;
+      }
+
       const { data: employees, error } = await supabase
         .from('employee_profiles')
         .select('*')
@@ -317,7 +336,10 @@ export function useEmployeeProfiles() {
 
       if (error) throw error;
       setData(employees || []);
+      setError(null);
     } catch (err) {
+      console.warn('Error fetching employee profiles:', err);
+      setData([]);
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);

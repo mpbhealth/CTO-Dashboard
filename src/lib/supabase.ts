@@ -4,24 +4,34 @@ import { Database } from '../types/database';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// Fallback values for development/demo mode
-const defaultUrl = 'https://demo.supabase.co';
-const defaultKey = 'demo-key';
+// Validate that environment variables are properly configured
+const isValidUrl = supabaseUrl &&
+  supabaseUrl.startsWith('https://') &&
+  !supabaseUrl.includes('demo.supabase.co') &&
+  supabaseUrl.includes('supabase.co');
 
-// Use environment variables if available, otherwise use demo values
-const finalUrl = supabaseUrl || defaultUrl;
-const finalKey = supabaseAnonKey || defaultKey;
+const isValidKey = supabaseAnonKey &&
+  supabaseAnonKey.length > 20 &&
+  supabaseAnonKey !== 'demo-key';
 
-// Development-only configuration logging
-if (import.meta.env.DEV) {
+// Export configuration status for components to use
+export const isSupabaseConfigured = !!(isValidUrl && isValidKey);
+
+// Use dummy values if not configured to prevent API calls
+const finalUrl = isSupabaseConfigured ? supabaseUrl : 'https://placeholder.supabase.co';
+const finalKey = isSupabaseConfigured ? supabaseAnonKey : 'placeholder-key';
+
+// Log configuration status
+if (import.meta.env.DEV || !isSupabaseConfigured) {
   console.log('Supabase Configuration:', {
+    configured: isSupabaseConfigured,
     hasUrl: !!supabaseUrl,
+    hasValidUrl: isValidUrl,
     hasKey: !!supabaseAnonKey,
-    usingFallback: !supabaseUrl || !supabaseAnonKey
+    hasValidKey: isValidKey,
+    mode: isSupabaseConfigured ? 'production' : 'demo'
   });
 }
 
+// Only create client if properly configured
 export const supabase = createClient<Database>(finalUrl, finalKey);
-
-// Export configuration status for components to use
-export const isSupabaseConfigured = !!(supabaseUrl && supabaseAnonKey);

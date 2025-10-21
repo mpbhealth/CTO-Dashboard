@@ -5,8 +5,10 @@ export interface Assignment {
   title: string;
   description?: string;
   assigned_to: string;
+  assigned_by?: string;
   project_id?: string;
   status: AssignmentStatus;
+  priority?: string;
   due_date?: string; // ISO date string
   created_at: string;
   updated_at: string;
@@ -14,6 +16,7 @@ export interface Assignment {
   employee_email?: string;
   employee_name?: string;
   teams_user_id?: string;
+  project_name?: string;
 }
 
 export interface AssignmentCreateData {
@@ -21,8 +24,10 @@ export interface AssignmentCreateData {
   description?: string;
   project_id?: string;
   status: AssignmentStatus;
+  priority?: string;
   due_date?: string;
   assigned_to?: string;
+  assigned_by?: string;
 }
 
 export interface AssignmentUpdateData extends Partial<AssignmentCreateData> {

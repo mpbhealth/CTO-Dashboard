@@ -38,6 +38,7 @@ import PolicyManagement from './components/pages/PolicyManagement';
 import MarketingAnalytics from './components/pages/MarketingAnalytics';
 import Assignments from './components/pages/Assignments';
 import EmployeeDocumentStorage from './components/pages/EmployeeDocumentStorage';
+import ITSupport from './components/pages/ITSupport';
 
 function App() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -144,6 +145,8 @@ function App() {
         return <OrganizationalStructure />;
       case 'policy-management':
         return <PolicyManagement />;
+      case 'it-support':
+        return <ITSupport />;
       default:
         return <Overview />;
     }

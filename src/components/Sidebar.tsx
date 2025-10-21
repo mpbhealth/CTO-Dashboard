@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
-import { 
-  Code2, 
+import {
+  Code2,
   UserSquare2,
-  Calendar, 
-  FolderKanban, 
-  ShieldCheck, 
-  Database, 
-  Cpu, 
-  UploadCloud, 
+  Calendar,
+  FolderKanban,
+  ShieldCheck,
+  Database,
+  Cpu,
+  UploadCloud,
   Activity,
   Building2,
   BarChart3,
@@ -30,7 +30,8 @@ import {
   Link2,
   ChevronsRight,
   CheckSquare,
-  ClipboardCheck
+  ClipboardCheck,
+  Ticket
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
@@ -77,6 +78,7 @@ const menuItems = [
   },
   { id: 'saas', label: 'SaaS Spend', icon: Database, category: 'operations' },
   { id: 'ai-agents', label: 'AI Agents', icon: Cpu, category: 'operations' },
+  { id: 'it-support', label: 'IT Support Tickets', icon: Ticket, category: 'operations' },
   { id: 'integrations', label: 'Integrations Hub', icon: Settings, category: 'operations' },
   { id: 'deployments', label: 'Deployments', icon: UploadCloud, category: 'infrastructure' },
   { id: 'policy-management', label: 'Policy Manager', icon: FileText, category: 'operations' },

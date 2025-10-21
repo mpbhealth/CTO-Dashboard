@@ -1256,6 +1256,237 @@ export interface Database {
           updated_at?: string
         }
       }
+      tickets_cache: {
+        Row: {
+          id: string
+          external_ticket_id: string
+          ticket_number: string
+          title: string
+          description: string | null
+          status: string
+          priority: string
+          category: string | null
+          requester_id: string | null
+          requester_name: string | null
+          requester_email: string | null
+          assignee_id: string | null
+          assignee_name: string | null
+          department: string | null
+          created_at: string
+          updated_at: string
+          resolved_at: string | null
+          due_date: string | null
+          tags: string[]
+          custom_fields: Json
+          last_synced_at: string
+        }
+        Insert: {
+          id?: string
+          external_ticket_id: string
+          ticket_number: string
+          title: string
+          description?: string | null
+          status?: string
+          priority?: string
+          category?: string | null
+          requester_id?: string | null
+          requester_name?: string | null
+          requester_email?: string | null
+          assignee_id?: string | null
+          assignee_name?: string | null
+          department?: string | null
+          created_at?: string
+          updated_at?: string
+          resolved_at?: string | null
+          due_date?: string | null
+          tags?: string[]
+          custom_fields?: Json
+          last_synced_at?: string
+        }
+        Update: {
+          id?: string
+          external_ticket_id?: string
+          ticket_number?: string
+          title?: string
+          description?: string | null
+          status?: string
+          priority?: string
+          category?: string | null
+          requester_id?: string | null
+          requester_name?: string | null
+          requester_email?: string | null
+          assignee_id?: string | null
+          assignee_name?: string | null
+          department?: string | null
+          created_at?: string
+          updated_at?: string
+          resolved_at?: string | null
+          due_date?: string | null
+          tags?: string[]
+          custom_fields?: Json
+          last_synced_at?: string
+        }
+      }
+      ticket_project_links: {
+        Row: {
+          id: string
+          ticket_id: string
+          project_id: string
+          link_type: string
+          created_by: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          ticket_id: string
+          project_id: string
+          link_type?: string
+          created_by?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          ticket_id?: string
+          project_id?: string
+          link_type?: string
+          created_by?: string | null
+          created_at?: string
+        }
+      }
+      ticket_assignment_links: {
+        Row: {
+          id: string
+          ticket_id: string
+          assignment_id: string
+          link_type: string
+          created_by: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          ticket_id: string
+          assignment_id: string
+          link_type?: string
+          created_by?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          ticket_id?: string
+          assignment_id?: string
+          link_type?: string
+          created_by?: string | null
+          created_at?: string
+        }
+      }
+      ticket_sync_log: {
+        Row: {
+          id: string
+          sync_type: string
+          status: string
+          records_processed: number
+          records_failed: number
+          started_at: string
+          completed_at: string | null
+          error_message: string | null
+          details: Json
+        }
+        Insert: {
+          id?: string
+          sync_type: string
+          status?: string
+          records_processed?: number
+          records_failed?: number
+          started_at?: string
+          completed_at?: string | null
+          error_message?: string | null
+          details?: Json
+        }
+        Update: {
+          id?: string
+          sync_type?: string
+          status?: string
+          records_processed?: number
+          records_failed?: number
+          started_at?: string
+          completed_at?: string | null
+          error_message?: string | null
+          details?: Json
+        }
+      }
+      ticketing_system_config: {
+        Row: {
+          id: string
+          api_base_url: string
+          api_key_encrypted: string | null
+          sync_enabled: boolean
+          sync_interval_minutes: number
+          last_successful_sync: string | null
+          webhook_secret: string | null
+          is_active: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          api_base_url: string
+          api_key_encrypted?: string | null
+          sync_enabled?: boolean
+          sync_interval_minutes?: number
+          last_successful_sync?: string | null
+          webhook_secret?: string | null
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          api_base_url?: string
+          api_key_encrypted?: string | null
+          sync_enabled?: boolean
+          sync_interval_minutes?: number
+          last_successful_sync?: string | null
+          webhook_secret?: string | null
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      ticket_notifications: {
+        Row: {
+          id: string
+          ticket_id: string | null
+          user_id: string | null
+          notification_type: string
+          title: string
+          message: string
+          is_read: boolean
+          read_at: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          ticket_id?: string | null
+          user_id?: string | null
+          notification_type: string
+          title: string
+          message: string
+          is_read?: boolean
+          read_at?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          ticket_id?: string | null
+          user_id?: string | null
+          notification_type?: string
+          title?: string
+          message?: string
+          is_read?: boolean
+          read_at?: string | null
+          created_at?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never

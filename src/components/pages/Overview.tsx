@@ -25,6 +25,7 @@ import {
   Zap,
   Package,
   GitBranch,
+  Ticket,
 } from 'lucide-react';
 import {
   LineChart,
@@ -48,6 +49,7 @@ import KPICard from '../ui/KPICard';
 import { useKPIData, useTeamMembers, useProjects } from '../../hooks/useSupabaseData';
 import { useDepartments, useEmployeeProfiles, useDepartmentMetrics } from '../../hooks/useOrganizationalData';
 import { useSaaSExpenses } from '../../hooks/useSaaSExpenses';
+import { useTicketStats } from '../../hooks/useTickets';
 import { useEnrollmentData } from '../../hooks/useEnrollmentData';
 import { useAudits } from '../../hooks/useComplianceData';
 import AddTeamMemberModal from '../modals/AddTeamMemberModal';
@@ -73,6 +75,7 @@ export default function Overview() {
   } = useSaaSExpenses();
   const { data: enrollments = [], loading: enrollmentsLoading } = useEnrollmentData();
   const { data: audits = [], loading: auditsLoading } = useAudits();
+  const { stats: ticketStats, loading: ticketStatsLoading } = useTicketStats();
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -349,6 +352,82 @@ export default function Overview() {
           ))}
         </div>
       </motion.div>
+
+      {/* IT Support Tickets Section */}
+      {ticketStats && !ticketStatsLoading && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="mt-8"
+        >
+          <h2 className="text-2xl font-bold text-slate-900 mb-4 flex items-center">
+            <Ticket className="w-6 h-6 mr-2 text-sky-600" />
+            IT Support Tickets
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-slate-600">Open Tickets</p>
+                  <p className="text-2xl font-bold text-sky-600 mt-1">
+                    {ticketStats.open_tickets}
+                  </p>
+                </div>
+                <Ticket className="w-8 h-8 text-sky-400" />
+              </div>
+              <p className="text-xs text-slate-500 mt-2">
+                {ticketStats.in_progress_tickets} in progress
+              </p>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-slate-600">Avg Resolution</p>
+                  <p className="text-2xl font-bold text-green-600 mt-1">
+                    {ticketStats.avg_resolution_time_hours.toFixed(1)}h
+                  </p>
+                </div>
+                <Clock className="w-8 h-8 text-green-400" />
+              </div>
+              <p className="text-xs text-slate-500 mt-2">
+                {ticketStats.resolved_tickets} resolved
+              </p>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-slate-600">SLA Compliance</p>
+                  <p className="text-2xl font-bold text-purple-600 mt-1">
+                    {ticketStats.sla_compliance_percentage.toFixed(0)}%
+                  </p>
+                </div>
+                <CheckCircle2 className="w-8 h-8 text-purple-400" />
+              </div>
+              <p className="text-xs text-slate-500 mt-2">
+                Meeting service levels
+              </p>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-slate-600">Critical Tickets</p>
+                  <p className="text-2xl font-bold text-red-600 mt-1">
+                    {ticketStats.tickets_by_priority.critical + ticketStats.tickets_by_priority.urgent}
+                  </p>
+                </div>
+                <AlertTriangle className="w-8 h-8 text-red-400" />
+              </div>
+              <p className="text-xs text-slate-500 mt-2">
+                Requires immediate attention
+              </p>
+            </div>
+          </div>
+        </motion.div>
+      )}
 
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

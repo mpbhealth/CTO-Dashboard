@@ -443,6 +443,70 @@ export interface BAAFormData {
   notes?: string;
 }
 
+export type DocumentType =
+  | 'hipaa_training_certificate'
+  | 'security_awareness_certificate'
+  | 'privacy_policy_acknowledgment'
+  | 'confidentiality_agreement'
+  | 'background_check'
+  | 'professional_license'
+  | 'continuing_education'
+  | 'other';
+
+export type ApprovalStatus = 'pending' | 'approved' | 'rejected' | 'expired';
+
+export interface EmployeeComplianceDocument {
+  id: string;
+  employee_id: string | null;
+  employee_email: string;
+  employee_name: string | null;
+  document_type: DocumentType;
+  title: string;
+  description: string | null;
+  file_path: string;
+  file_type: string | null;
+  file_size: number | null;
+  category: string;
+  upload_date: string;
+  expiration_date: string | null;
+  approval_status: ApprovalStatus;
+  approved_by: string | null;
+  approved_at: string | null;
+  uploaded_by: string;
+  department: string | null;
+  tags: string[];
+  metadata: Record<string, any>;
+  notes: string | null;
+  version: number;
+  is_archived: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface EmployeeDocumentNotification {
+  id: string;
+  document_id: string;
+  notification_type: string;
+  notification_date: string;
+  sent_at: string | null;
+  recipient_email: string;
+  message: string | null;
+  created_at: string;
+}
+
+export interface EmployeeDocumentFormData {
+  employee_email: string;
+  employee_name?: string;
+  document_type: DocumentType;
+  title: string;
+  description?: string;
+  category: string;
+  expiration_date?: string;
+  department?: string;
+  tags?: string[];
+  notes?: string;
+}
+
 // =====================================================
 // API Response Types
 // =====================================================

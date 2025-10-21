@@ -130,13 +130,19 @@ const ComplianceCommandCenter: React.FC<ComplianceCommandCenterProps> = ({ onTab
       label: 'Upload Evidence',
       icon: FileCheck,
       tab: 'compliance/templates-tools',
-      color: 'bg-purple-600 hover:bg-purple-700',
+      color: 'bg-orange-600 hover:bg-orange-700',
+    },
+    {
+      label: 'Employee Documents',
+      icon: FileText,
+      tab: 'compliance/employee-documents',
+      color: 'bg-orange-600 hover:bg-orange-700',
     },
     {
       label: 'Record Training',
       icon: Users,
       tab: 'compliance/training',
-      color: 'bg-indigo-600 hover:bg-indigo-700',
+      color: 'bg-teal-600 hover:bg-teal-700',
     },
   ];
 
@@ -215,7 +221,7 @@ const ComplianceCommandCenter: React.FC<ComplianceCommandCenterProps> = ({ onTab
           <Activity className="w-5 h-5" />
           <span>Quick Actions</span>
         </h2>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
           {quickActions.map((action, idx) => (
             <button
               key={idx}
@@ -343,7 +349,7 @@ const ComplianceCommandCenter: React.FC<ComplianceCommandCenterProps> = ({ onTab
         <h2 className="text-lg font-semibold text-gray-900 mb-4">
           Compliance Sections
         </h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {[
             { name: 'Administration & Governance', tab: 'compliance/administration', icon: FileText },
             { name: 'Training & Awareness', tab: 'compliance/training', icon: Users },
@@ -353,6 +359,7 @@ const ComplianceCommandCenter: React.FC<ComplianceCommandCenterProps> = ({ onTab
             { name: 'Incidents & Breaches', tab: 'compliance/incidents', icon: AlertTriangle },
             { name: 'Audits & Monitoring', tab: 'compliance/audits', icon: Activity },
             { name: 'Templates & Tools', tab: 'compliance/templates-tools', icon: FileText },
+            { name: 'Employee Documents', tab: 'compliance/employee-documents', icon: FileText },
           ].map((section, idx) => (
             <button
               key={idx}

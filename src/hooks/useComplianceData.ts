@@ -17,6 +17,9 @@ import type {
   HIPAAPolicy,
   DashboardStats,
   FilterOptions,
+  EmployeeComplianceDocument,
+  EmployeeDocumentNotification,
+  ApprovalStatus,
 } from '../types/compliance';
 
 // =====================================================
@@ -720,6 +723,243 @@ export const useContacts = () => {
 
       if (error) throw error;
       return data as HIPAAContact[];
+    },
+  });
+};
+
+// =====================================================
+// Employee Compliance Documents
+// =====================================================
+
+export const useEmployeeDocuments = (filters?: {
+  employeeEmail?: string;
+  documentType?: string;
+  approvalStatus?: ApprovalStatus;
+  isArchived?: boolean;
+}) => {
+  return useQuery({
+    queryKey: ['compliance', 'employee-documents', filters],
+    queryFn: async () => {
+      let query = supabase
+        .from('employee_compliance_documents')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (filters?.employeeEmail) {
+        query = query.eq('employee_email', filters.employeeEmail);
+      }
+      if (filters?.documentType) {
+        query = query.eq('document_type', filters.documentType);
+      }
+      if (filters?.approvalStatus) {
+        query = query.eq('approval_status', filters.approvalStatus);
+      }
+      if (filters?.isArchived !== undefined) {
+        query = query.eq('is_archived', filters.isArchived);
+      } else {
+        query = query.eq('is_archived', false);
+      }
+
+      const { data, error } = await query;
+      if (error) throw error;
+      return data as EmployeeComplianceDocument[];
+    },
+  });
+};
+
+export const useEmployeeDocument = (id: string) => {
+  return useQuery({
+    queryKey: ['compliance', 'employee-document', id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('employee_compliance_documents')
+        .select('*')
+        .eq('id', id)
+        .maybeSingle();
+
+      if (error) throw error;
+      return data as EmployeeComplianceDocument | null;
+    },
+    enabled: !!id,
+  });
+};
+
+export const useExpiringDocuments = (daysAhead: number = 90) => {
+  return useQuery({
+    queryKey: ['compliance', 'expiring-documents', daysAhead],
+    queryFn: async () => {
+      const futureDate = new Date();
+      futureDate.setDate(futureDate.getDate() + daysAhead);
+
+      const { data, error } = await supabase
+        .from('employee_compliance_documents')
+        .select('*')
+        .not('expiration_date', 'is', null)
+        .lte('expiration_date', futureDate.toISOString().split('T')[0])
+        .gte('expiration_date', new Date().toISOString().split('T')[0])
+        .eq('is_archived', false)
+        .order('expiration_date', { ascending: true });
+
+      if (error) throw error;
+      return data as EmployeeComplianceDocument[];
+    },
+  });
+};
+
+export const useDocumentNotifications = (documentId?: string) => {
+  return useQuery({
+    queryKey: ['compliance', 'document-notifications', documentId],
+    queryFn: async () => {
+      let query = supabase
+        .from('employee_document_notifications')
+        .select('*')
+        .order('notification_date', { ascending: false });
+
+      if (documentId) {
+        query = query.eq('document_id', documentId);
+      }
+
+      const { data, error } = await query;
+      if (error) throw error;
+      return data as EmployeeDocumentNotification[];
+    },
+  });
+};
+
+export const useUploadEmployeeDocument = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      file,
+      formData,
+    }: {
+      file: File;
+      formData: Partial<EmployeeComplianceDocument>;
+    }) => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+
+      const timestamp = Date.now();
+      const sanitizedTitle = formData.title?.replace(/[^a-z0-9]/gi, '_').toLowerCase() || 'document';
+      const fileExt = file.name.split('.').pop();
+      const filePath = `${formData.category}/${formData.employee_email}/${timestamp}_${sanitizedTitle}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('employee-compliance-documents')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data, error: dbError } = await supabase
+        .from('employee_compliance_documents')
+        .insert({
+          ...formData,
+          file_path: filePath,
+          file_type: file.type,
+          file_size: file.size,
+          uploaded_by: user.id,
+        })
+        .select()
+        .single();
+
+      if (dbError) throw dbError;
+
+      await logAuditEvent(
+        'employee_document_uploaded',
+        'employee_compliance_documents',
+        data.id,
+        { title: formData.title, employee_email: formData.employee_email }
+      );
+
+      return data as EmployeeComplianceDocument;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['compliance', 'employee-documents'] });
+    },
+  });
+};
+
+export const useUpdateDocumentStatus = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      id,
+      approval_status,
+    }: {
+      id: string;
+      approval_status: ApprovalStatus;
+    }) => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+
+      const updateData: any = {
+        approval_status,
+      };
+
+      if (approval_status === 'approved') {
+        updateData.approved_by = user.id;
+        updateData.approved_at = new Date().toISOString();
+      }
+
+      const { data, error } = await supabase
+        .from('employee_compliance_documents')
+        .update(updateData)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      await logAuditEvent(
+        'document_status_updated',
+        'employee_compliance_documents',
+        id,
+        { approval_status }
+      );
+
+      return data as EmployeeComplianceDocument;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['compliance', 'employee-documents'] });
+      queryClient.invalidateQueries({ queryKey: ['compliance', 'employee-document'] });
+    },
+  });
+};
+
+export const useDeleteEmployeeDocument = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { data: doc } = await supabase
+        .from('employee_compliance_documents')
+        .select('file_path')
+        .eq('id', id)
+        .single();
+
+      if (doc?.file_path) {
+        await supabase.storage
+          .from('employee-compliance-documents')
+          .remove([doc.file_path]);
+      }
+
+      const { error } = await supabase
+        .from('employee_compliance_documents')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      await logAuditEvent(
+        'employee_document_deleted',
+        'employee_compliance_documents',
+        id
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['compliance', 'employee-documents'] });
     },
   });
 };

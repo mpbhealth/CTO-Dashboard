@@ -37,6 +37,7 @@ import OrganizationalStructure from './components/pages/OrganizationalStructure'
 import PolicyManagement from './components/pages/PolicyManagement';
 import MarketingAnalytics from './components/pages/MarketingAnalytics';
 import Assignments from './components/pages/Assignments';
+import EmployeeDocumentStorage from './components/pages/EmployeeDocumentStorage';
 
 function App() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -117,6 +118,8 @@ function App() {
         return <ComplianceAudits />;
       case 'compliance/templates-tools':
         return <ComplianceTemplatesTools />;
+      case 'compliance/employee-documents':
+        return <EmployeeDocumentStorage />;
       case 'saas':
         return <SaaSSpend />;
       case 'ai-agents':

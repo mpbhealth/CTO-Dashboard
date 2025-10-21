@@ -57,10 +57,10 @@ const menuItems = [
   { id: 'monday-tasks', label: 'Monday Tasks', icon: Zap, category: 'development' },
   { id: 'assignments', label: 'Assignments', icon: CheckSquare, category: 'development' },
   { id: 'notepad', label: 'Notepad', icon: StickyNote, category: 'development' },
-  { 
-    id: 'compliance', 
-    label: 'Compliance Command Center', 
-    icon: ShieldCheck, 
+  {
+    id: 'compliance',
+    label: 'Compliance Command Center',
+    icon: ShieldCheck,
     category: 'operations',
     submenu: [
       { id: 'compliance/command-center', label: 'Dashboard' },
@@ -72,6 +72,7 @@ const menuItems = [
       { id: 'compliance/incidents', label: 'Incidents & Breaches' },
       { id: 'compliance/audits', label: 'Audits & Monitoring' },
       { id: 'compliance/templates-tools', label: 'Templates & Tools' },
+      { id: 'compliance/employee-documents', label: 'Employee Documents' },
     ]
   },
   { id: 'saas', label: 'SaaS Spend', icon: Database, category: 'operations' },

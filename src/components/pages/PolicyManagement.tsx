@@ -1,22 +1,23 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  FileText, 
-  Plus, 
-  Search, 
+import {
+  FileText,
+  Plus,
+  Search,
   Filter,
-  Download, 
+  Download,
   Edit,
-  Trash2, 
+  Trash2,
   Calendar,
   Tag,
   CheckCircle,
   Clock,
-  AlertCircle, 
+  AlertCircle,
   User,
   X,
   History,
-  Eye
+  Eye,
+  Building2
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { usePolicyDocuments } from '../../hooks/useOrganizationalData';

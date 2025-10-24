@@ -1,0 +1,9 @@
+:root[data-role="ceo"] {
+  --brand: #7B5CF0;
+  --brand-contrast: #0B0B0B;
+}
+:root[data-role="cto"] {
+  --brand: #00A2AE;
+  --brand-contrast: #0B0B0B;
+}
+.header, .btn-brand { background: var(--brand); color: white; }

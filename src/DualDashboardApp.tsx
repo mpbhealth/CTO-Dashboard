@@ -7,6 +7,10 @@ import { useRoleBasedRedirect } from './hooks/useDualDashboard';
 const CTOHome = lazy(() => import('./components/pages/ctod/CTOHome').then(m => ({ default: m.CTOHome })));
 const CEOHome = lazy(() => import('./components/pages/ceod/CEOHome').then(m => ({ default: m.CEOHome })));
 const CEOMarketingDashboard = lazy(() => import('./components/pages/ceod/CEOMarketingDashboard').then(m => ({ default: m.CEOMarketingDashboard })));
+const CEOMarketingPlanner = lazy(() => import('./components/pages/ceod/CEOMarketingPlanner').then(m => ({ default: m.CEOMarketingPlanner })));
+const CEOContentCalendar = lazy(() => import('./components/pages/ceod/CEOContentCalendar').then(m => ({ default: m.CEOContentCalendar })));
+const CEOMarketingBudget = lazy(() => import('./components/pages/ceod/CEOMarketingBudget').then(m => ({ default: m.CEOMarketingBudget })));
+const CEOBoardPacket = lazy(() => import('./components/pages/ceod/CEOBoardPacket').then(m => ({ default: m.CEOBoardPacket })));
 const SharedOverview = lazy(() => import('./components/pages/shared/SharedOverview').then(m => ({ default: m.SharedOverview })));
 const AuditLogViewer = lazy(() => import('./components/pages/shared/AuditLogViewer').then(m => ({ default: m.AuditLogViewer })));
 
@@ -56,8 +60,11 @@ function DualDashboardApp() {
 
               <Route path="/ceod/home" element={<CEOHome />} />
               <Route path="/ceod/marketing" element={<CEOMarketingDashboard />} />
+              <Route path="/ceod/marketing/planner" element={<CEOMarketingPlanner />} />
+              <Route path="/ceod/marketing/calendar" element={<CEOContentCalendar />} />
+              <Route path="/ceod/marketing/budget" element={<CEOMarketingBudget />} />
               <Route path="/ceod/files" element={<CEOHome />} />
-              <Route path="/ceod/board" element={<CEOHome />} />
+              <Route path="/ceod/board" element={<CEOBoardPacket />} />
               <Route path="/ceod/initiatives" element={<CEOHome />} />
               <Route path="/ceod/approvals" element={<CEOHome />} />
 

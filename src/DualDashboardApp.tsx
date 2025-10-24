@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import AuthWrapper from './components/pages/AuthWrapper';
 import { useRoleBasedRedirect } from './hooks/useDualDashboard';
@@ -52,41 +52,39 @@ function RoleBasedRedirect() {
 function DualDashboardApp() {
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <AuthWrapper>
-          <Suspense fallback={<LoadingFallback />}>
-            <Routes>
-              <Route path="/" element={<RoleBasedRedirect />} />
+      <AuthWrapper>
+        <Suspense fallback={<LoadingFallback />}>
+          <Routes>
+            <Route path="/" element={<RoleBasedRedirect />} />
 
-              <Route path="/ctod/home" element={<CTOHome />} />
-              <Route path="/ctod/files" element={<CTOHome />} />
-              <Route path="/ctod/kpis" element={<CTOHome />} />
-              <Route path="/ctod/engineering" element={<CTOHome />} />
-              <Route path="/ctod/compliance" element={<CTOHome />} />
+            <Route path="/ctod/home" element={<CTOHome />} />
+            <Route path="/ctod/files" element={<CTOHome />} />
+            <Route path="/ctod/kpis" element={<CTOHome />} />
+            <Route path="/ctod/engineering" element={<CTOHome />} />
+            <Route path="/ctod/compliance" element={<CTOHome />} />
 
-              <Route path="/ceod/home" element={<CEOHome />} />
-              <Route path="/ceod/marketing" element={<CEOMarketingDashboard />} />
-              <Route path="/ceod/marketing/planner" element={<CEOMarketingPlanner />} />
-              <Route path="/ceod/marketing/calendar" element={<CEOContentCalendar />} />
-              <Route path="/ceod/marketing/budget" element={<CEOMarketingBudget />} />
-              <Route path="/ceod/concierge/tracking" element={<CEOConciergeTracking />} />
-              <Route path="/ceod/concierge/notes" element={<CEOConciergeNotes />} />
-              <Route path="/ceod/sales/reports" element={<CEOSalesReports />} />
-              <Route path="/ceod/operations/overview" element={<CEOOperations />} />
-              <Route path="/ceod/files" element={<CEOFiles />} />
-              <Route path="/ceod/data" element={<CEODataManagement />} />
-              <Route path="/ceod/board" element={<CEOBoardPacket />} />
-              <Route path="/ceod/initiatives" element={<CEOHome />} />
-              <Route path="/ceod/approvals" element={<CEOHome />} />
+            <Route path="/ceod/home" element={<CEOHome />} />
+            <Route path="/ceod/marketing" element={<CEOMarketingDashboard />} />
+            <Route path="/ceod/marketing/planner" element={<CEOMarketingPlanner />} />
+            <Route path="/ceod/marketing/calendar" element={<CEOContentCalendar />} />
+            <Route path="/ceod/marketing/budget" element={<CEOMarketingBudget />} />
+            <Route path="/ceod/concierge/tracking" element={<CEOConciergeTracking />} />
+            <Route path="/ceod/concierge/notes" element={<CEOConciergeNotes />} />
+            <Route path="/ceod/sales/reports" element={<CEOSalesReports />} />
+            <Route path="/ceod/operations/overview" element={<CEOOperations />} />
+            <Route path="/ceod/files" element={<CEOFiles />} />
+            <Route path="/ceod/data" element={<CEODataManagement />} />
+            <Route path="/ceod/board" element={<CEOBoardPacket />} />
+            <Route path="/ceod/initiatives" element={<CEOHome />} />
+            <Route path="/ceod/approvals" element={<CEOHome />} />
 
-              <Route path="/shared/overview" element={<SharedOverview />} />
-              <Route path="/shared/audit" element={<AuditLogViewer />} />
+            <Route path="/shared/overview" element={<SharedOverview />} />
+            <Route path="/shared/audit" element={<AuditLogViewer />} />
 
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </Suspense>
-        </AuthWrapper>
-      </BrowserRouter>
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Suspense>
+      </AuthWrapper>
     </QueryClientProvider>
   );
 }

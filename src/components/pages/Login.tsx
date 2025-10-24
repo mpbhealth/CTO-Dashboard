@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Eye, EyeOff, Mail, Lock, Building2, AlertCircle, CheckCircle, User, KeyRound, Briefcase, Code2 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
-import { getCurrentProfile } from '../../lib/dualDashboard';
 
 interface LoginProps {
   onLoginSuccess: () => void;
@@ -40,30 +39,13 @@ export default function Login({ onLoginSuccess }: LoginProps) {
       }
 
       if (data.user) {
-        const profile = await getCurrentProfile();
-
-        if (!profile) {
-          setError('Profile not found. Please contact your administrator.');
-          await supabase.auth.signOut();
-          setIsLoading(false);
-          return;
-        }
-
-        if (selectedRole && profile.role !== selectedRole) {
-          setError(`This account is registered as ${profile.role.toUpperCase()}, not ${selectedRole.toUpperCase()}. Please select the correct role.`);
-          await supabase.auth.signOut();
-          setIsLoading(false);
-          return;
-        }
-
         setSuccess('Login successful! Redirecting...');
         setTimeout(() => {
           onLoginSuccess();
-        }, 1000);
+        }, 500);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred during login');
-    } finally {
       setIsLoading(false);
     }
   };

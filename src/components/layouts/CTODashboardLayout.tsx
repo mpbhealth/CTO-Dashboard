@@ -30,8 +30,16 @@ export function CTODashboardLayout({ children }: CTODashboardLayoutProps) {
   ];
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    window.location.href = '/login';
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      // Force reload to reset app state and redirect to login
+      window.location.reload();
+    } catch (error) {
+      console.error('Error signing out:', error);
+      // Force reload anyway to reset state
+      window.location.reload();
+    }
   };
 
   return (

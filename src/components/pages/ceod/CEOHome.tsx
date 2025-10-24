@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import {
   TrendingUp,
   DollarSign,
@@ -229,18 +230,18 @@ export function CEOHome() {
                 Quick Actions
               </h2>
               <div className="space-y-2">
-                <a href="/ceod/marketing" className="block w-full text-left px-4 py-3 bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity font-medium">
+                <Link to="/ceod/marketing" className="block w-full text-left px-4 py-3 bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity font-medium">
                   View Marketing
-                </a>
-                <a href="/ceod/sales/reports" className="block w-full text-left px-4 py-3 bg-blue-50 text-[#1a3d97] rounded-lg hover:bg-blue-100 transition-colors font-medium">
+                </Link>
+                <Link to="/ceod/sales/reports" className="block w-full text-left px-4 py-3 bg-blue-50 text-[#1a3d97] rounded-lg hover:bg-blue-100 transition-colors font-medium">
                   Sales Reports
-                </a>
-                <a href="/ceod/board" className="block w-full text-left px-4 py-3 bg-blue-50 text-[#1a3d97] rounded-lg hover:bg-blue-100 transition-colors font-medium">
+                </Link>
+                <Link to="/ceod/board" className="block w-full text-left px-4 py-3 bg-blue-50 text-[#1a3d97] rounded-lg hover:bg-blue-100 transition-colors font-medium">
                   Board Packet
-                </a>
-                <a href="/ceod/operations/overview" className="block w-full text-left px-4 py-3 bg-blue-50 text-[#1a3d97] rounded-lg hover:bg-blue-100 transition-colors font-medium">
+                </Link>
+                <Link to="/ceod/operations/overview" className="block w-full text-left px-4 py-3 bg-blue-50 text-[#1a3d97] rounded-lg hover:bg-blue-100 transition-colors font-medium">
                   Operations
-                </a>
+                </Link>
               </div>
             </div>
 

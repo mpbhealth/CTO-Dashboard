@@ -55,8 +55,6 @@ function DualDashboardApp() {
       <AuthWrapper>
         <Suspense fallback={<LoadingFallback />}>
           <Routes>
-            <Route path="/" element={<RoleBasedRedirect />} />
-
             <Route path="/ctod/home" element={<CTOHome />} />
             <Route path="/ctod/files" element={<CTOHome />} />
             <Route path="/ctod/kpis" element={<CTOHome />} />
@@ -81,7 +79,7 @@ function DualDashboardApp() {
             <Route path="/shared/overview" element={<SharedOverview />} />
             <Route path="/shared/audit" element={<AuditLogViewer />} />
 
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<RoleBasedRedirect />} />
           </Routes>
         </Suspense>
       </AuthWrapper>

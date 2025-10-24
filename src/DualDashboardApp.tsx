@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import AuthWrapper from './components/pages/AuthWrapper';
 import { useRoleBasedRedirect } from './hooks/useDualDashboard';
+import { CEOOnly, CTOOnly } from './components/guards/RoleGuard';
 
 const CTOHome = lazy(() => import('./components/pages/ctod/CTOHome').then(m => ({ default: m.CTOHome })));
 const CEOHome = lazy(() => import('./components/pages/ceod/CEOHome').then(m => ({ default: m.CEOHome })));
@@ -55,26 +56,26 @@ function DualDashboardApp() {
       <AuthWrapper>
         <Suspense fallback={<LoadingFallback />}>
           <Routes>
-            <Route path="/ctod/home" element={<CTOHome />} />
-            <Route path="/ctod/files" element={<CTOHome />} />
-            <Route path="/ctod/kpis" element={<CTOHome />} />
-            <Route path="/ctod/engineering" element={<CTOHome />} />
-            <Route path="/ctod/compliance" element={<CTOHome />} />
+            <Route path="/ctod/home" element={<CTOOnly><CTOHome /></CTOOnly>} />
+            <Route path="/ctod/files" element={<CTOOnly><CTOHome /></CTOOnly>} />
+            <Route path="/ctod/kpis" element={<CTOOnly><CTOHome /></CTOOnly>} />
+            <Route path="/ctod/engineering" element={<CTOOnly><CTOHome /></CTOOnly>} />
+            <Route path="/ctod/compliance" element={<CTOOnly><CTOHome /></CTOOnly>} />
 
-            <Route path="/ceod/home" element={<CEOHome />} />
-            <Route path="/ceod/marketing" element={<CEOMarketingDashboard />} />
-            <Route path="/ceod/marketing/planner" element={<CEOMarketingPlanner />} />
-            <Route path="/ceod/marketing/calendar" element={<CEOContentCalendar />} />
-            <Route path="/ceod/marketing/budget" element={<CEOMarketingBudget />} />
-            <Route path="/ceod/concierge/tracking" element={<CEOConciergeTracking />} />
-            <Route path="/ceod/concierge/notes" element={<CEOConciergeNotes />} />
-            <Route path="/ceod/sales/reports" element={<CEOSalesReports />} />
-            <Route path="/ceod/operations/overview" element={<CEOOperations />} />
-            <Route path="/ceod/files" element={<CEOFiles />} />
-            <Route path="/ceod/data" element={<CEODataManagement />} />
-            <Route path="/ceod/board" element={<CEOBoardPacket />} />
-            <Route path="/ceod/initiatives" element={<CEOHome />} />
-            <Route path="/ceod/approvals" element={<CEOHome />} />
+            <Route path="/ceod/home" element={<CEOOnly><CEOHome /></CEOOnly>} />
+            <Route path="/ceod/marketing" element={<CEOOnly><CEOMarketingDashboard /></CEOOnly>} />
+            <Route path="/ceod/marketing/planner" element={<CEOOnly><CEOMarketingPlanner /></CEOOnly>} />
+            <Route path="/ceod/marketing/calendar" element={<CEOOnly><CEOContentCalendar /></CEOOnly>} />
+            <Route path="/ceod/marketing/budget" element={<CEOOnly><CEOMarketingBudget /></CEOOnly>} />
+            <Route path="/ceod/concierge/tracking" element={<CEOOnly><CEOConciergeTracking /></CEOOnly>} />
+            <Route path="/ceod/concierge/notes" element={<CEOOnly><CEOConciergeNotes /></CEOOnly>} />
+            <Route path="/ceod/sales/reports" element={<CEOOnly><CEOSalesReports /></CEOOnly>} />
+            <Route path="/ceod/operations/overview" element={<CEOOnly><CEOOperations /></CEOOnly>} />
+            <Route path="/ceod/files" element={<CEOOnly><CEOFiles /></CEOOnly>} />
+            <Route path="/ceod/data" element={<CEOOnly><CEODataManagement /></CEOOnly>} />
+            <Route path="/ceod/board" element={<CEOOnly><CEOBoardPacket /></CEOOnly>} />
+            <Route path="/ceod/initiatives" element={<CEOOnly><CEOHome /></CEOOnly>} />
+            <Route path="/ceod/approvals" element={<CEOOnly><CEOHome /></CEOOnly>} />
 
             <Route path="/shared/overview" element={<SharedOverview />} />
             <Route path="/shared/audit" element={<AuditLogViewer />} />

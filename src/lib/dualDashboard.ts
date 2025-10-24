@@ -78,28 +78,73 @@ export async function getCurrentProfile(): Promise<Profile | null> {
       return null;
     }
 
-    const { data, error } = await supabase
+    // First try with maybeSingle (expected path)
+    let { data, error } = await supabase
       .from('profiles')
-      .select('*')
+      .select('user_id, email, full_name, display_name, role, org_id')
       .eq('user_id', user.id)
       .maybeSingle();
 
     if (error) {
-      console.error('Error fetching profile:', {
+      console.error('Error fetching profile with maybeSingle:', {
         message: error.message,
         details: error.details,
         hint: error.hint,
         code: error.code,
         userId: user.id
       });
-      return null;
+
+      // Fallback: try with direct query in case RLS policies are complex
+      console.log('Attempting direct query as fallback...');
+      const fallbackResult = await supabase
+        .from('profiles')
+        .select('user_id, email, full_name, display_name, role, org_id')
+        .eq('user_id', user.id)
+        .limit(1);
+
+      if (fallbackResult.error) {
+        console.error('Fallback query also failed:', fallbackResult.error);
+        return null;
+      }
+
+      data = fallbackResult.data?.[0] || null;
     }
 
     if (!data) {
       console.warn('No profile found for user:', user.id);
+      console.log('Attempting to create profile from auth metadata...');
+
+      // Try to create profile from auth user metadata
+      const role = (user.user_metadata?.role || 'staff') as 'cto' | 'ceo' | 'admin' | 'staff';
+      const displayName = user.user_metadata?.full_name || user.email || 'User';
+
+      const { data: newProfile, error: insertError } = await supabase
+        .from('profiles')
+        .insert({
+          user_id: user.id,
+          email: user.email,
+          full_name: displayName,
+          display_name: displayName,
+          role: role,
+          org_id: '00000000-0000-0000-0000-000000000000'
+        })
+        .select('user_id, email, full_name, display_name, role, org_id')
+        .maybeSingle();
+
+      if (insertError) {
+        console.error('Failed to create profile:', insertError);
+        return null;
+      }
+
+      if (newProfile) {
+        console.log('Profile created successfully:', newProfile);
+        return newProfile;
+      }
+
       return null;
     }
 
+    console.log('Profile loaded successfully:', { role: data.role, email: data.email });
     return data;
   } catch (err) {
     console.error('Unexpected error in getCurrentProfile:', err);

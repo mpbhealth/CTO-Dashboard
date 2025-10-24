@@ -113,7 +113,11 @@ function ErrorBoundary({ children }: { children: React.ReactNode }) {
 }
 
 // Service Worker Registration for PWA
-if ('serviceWorker' in navigator) {
+// Skip SW registration on StackBlitz since it's not supported
+const isStackBlitz = window.location.hostname.includes('stackblitz') ||
+                     window.location.hostname.includes('webcontainer');
+
+if ('serviceWorker' in navigator && !isStackBlitz) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js')
       .then((registration) => {
@@ -123,13 +127,20 @@ if ('serviceWorker' in navigator) {
         console.log('SW registration failed: ', registrationError);
       });
   });
+} else if (isStackBlitz) {
+  console.log('Service Worker registration skipped: running on StackBlitz/WebContainer');
 }
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
+        <BrowserRouter
+          future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true
+          }}
+        >
           <Routes>
             {/* Dual Dashboard Routes (New System) */}
             <Route path="/ctod/*" element={<DualDashboardApp />} />

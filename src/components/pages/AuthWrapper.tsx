@@ -110,19 +110,34 @@ export default function AuthWrapper({ children }: AuthWrapperProps) {
 
       const currentPath = location.pathname;
       const isCEOPath = currentPath.startsWith('/ceod') || currentPath.startsWith('/ceo/');
-      const isCTOPath = currentPath.startsWith('/ctod') || currentPath.startsWith('/');
+      const isCTOPath = currentPath.startsWith('/ctod');
       const isSharedPath = currentPath.startsWith('/shared');
+      const isRootPath = currentPath === '/' || currentPath === '';
+
+      console.log('Route check:', { currentPath, role: profile.role, isCEOPath, isCTOPath, isSharedPath, isRootPath });
 
       if (profile.role === 'ceo') {
+        // CEO should only access /ceod/* and /shared/* routes
         if (!isCEOPath && !isSharedPath) {
+          console.log('Redirecting CEO to /ceod/home from:', currentPath);
           navigate('/ceod/home', { replace: true });
         }
       } else if (profile.role === 'cto' || profile.role === 'admin') {
+        // CTO/Admin should access /ctod/* and /shared/* routes, not /ceod/*
         if (isCEOPath && !isSharedPath) {
+          console.log('Redirecting CTO/Admin to /ctod/home from:', currentPath);
+          navigate('/ctod/home', { replace: true });
+        } else if (isRootPath) {
+          console.log('Redirecting CTO/Admin to /ctod/home from root');
           navigate('/ctod/home', { replace: true });
         }
       } else {
+        // Staff and other roles default to CTO dashboard
         if (isCEOPath && !isSharedPath) {
+          console.log('Redirecting staff to /ctod/home from:', currentPath);
+          navigate('/ctod/home', { replace: true });
+        } else if (isRootPath) {
+          console.log('Redirecting staff to /ctod/home from root');
           navigate('/ctod/home', { replace: true });
         }
       }

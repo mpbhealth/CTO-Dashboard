@@ -334,7 +334,15 @@ export function useEmployeeProfiles() {
         .select('*')
         .order('last_name', { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        console.warn('Error fetching employee profiles:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        });
+        throw error;
+      }
       setData(employees || []);
       setError(null);
     } catch (err) {
@@ -612,14 +620,33 @@ export function useDepartmentMetrics() {
   const fetchData = async () => {
     try {
       setLoading(true);
+
+      if (!isSupabaseConfigured) {
+        setData([]);
+        setError(null);
+        setLoading(false);
+        return;
+      }
+
       const { data: metrics, error } = await supabase
         .from('department_metrics')
         .select('*')
         .order('measurement_date', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.warn('Error fetching department metrics:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        });
+        throw error;
+      }
       setData(metrics || []);
+      setError(null);
     } catch (err) {
+      console.warn('Error fetching department metrics:', err);
+      setData([]);
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);

@@ -65,21 +65,46 @@ export interface AuditLog {
 }
 
 export async function getCurrentProfile(): Promise<Profile | null> {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return null;
+  try {
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
 
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('user_id', user.id)
-    .maybeSingle();
+    if (authError) {
+      console.error('Auth error:', authError);
+      return null;
+    }
 
-  if (error) {
-    console.error('Error fetching profile:', error);
+    if (!user) {
+      console.warn('No authenticated user found');
+      return null;
+    }
+
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    if (error) {
+      console.error('Error fetching profile:', {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code,
+        userId: user.id
+      });
+      return null;
+    }
+
+    if (!data) {
+      console.warn('No profile found for user:', user.id);
+      return null;
+    }
+
+    return data;
+  } catch (err) {
+    console.error('Unexpected error in getCurrentProfile:', err);
     return null;
   }
-
-  return data;
 }
 
 export async function getOrCreateWorkspace(

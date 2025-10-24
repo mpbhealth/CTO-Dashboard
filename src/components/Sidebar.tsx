@@ -34,6 +34,7 @@ import {
   Ticket
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { useDashboardContext } from '../hooks/useDashboardContext';
 
 interface SidebarProps {
   activeTab: string;
@@ -97,14 +98,15 @@ const categories = {
   infrastructure: 'Infrastructure & Monitoring'
 };
 
-export default function Sidebar({ 
-  activeTab, 
+export default function Sidebar({
+  activeTab,
   onTabChange,
   isSidebarExpanded = true,
   onSidebarToggle
 }: SidebarProps) {
   const [isMobile, setIsMobile] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState<string[]>(['compliance']);
+  const { dashboardType, isCEO } = useDashboardContext();
   
   // Detect if we're on mobile
   useEffect(() => {
@@ -183,13 +185,17 @@ export default function Sidebar({
         {/* Header */}
        <div className="mb-8 sidebar-section bg-slate-900" style={{pointerEvents: 'auto'}}>
          <div className={`flex items-center ${isSidebarExpanded ? 'space-x-3' : 'justify-center'}`} style={{pointerEvents: 'auto'}}>
-           <div className="w-12 h-12 bg-sky-600 rounded-xl flex items-center justify-center shadow-lg cursor-pointer" style={{pointerEvents: 'auto'}}>
+           <div className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-lg cursor-pointer ${
+             isCEO ? 'bg-amber-500' : 'bg-sky-600'
+           }`} style={{pointerEvents: 'auto'}}>
              <Building2 className="w-7 h-7 text-white" />
             </div>
             {isSidebarExpanded && (
               <div>
                 <h1 className="text-xl font-bold text-white">MPB Health</h1>
-                <p className="text-slate-300 text-sm font-medium">CTO Dashboard</p>
+                <p className="text-slate-300 text-sm font-medium">
+                  {isCEO ? 'CEO Dashboard' : 'CTO Dashboard'}
+                </p>
               </div>
             )}
           </div>
@@ -296,13 +302,17 @@ export default function Sidebar({
         {/* User Profile */}
        <div className="mt-auto pt-6 bg-slate-900" style={{pointerEvents: 'auto', zIndex: 50}}>
          <div className={`flex items-center ${isSidebarExpanded ? 'space-x-3 p-3' : 'justify-center p-2'} rounded-lg hover:bg-slate-800 transition-colors cursor-pointer mb-3 bg-slate-900`} style={{pointerEvents: 'auto'}}>
-            <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center shadow-lg">
-              <span className="text-sm font-bold text-white">VT</span>
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center shadow-lg ${
+              isCEO ? 'bg-gradient-to-br from-amber-500 to-amber-600' : 'bg-gradient-to-br from-emerald-500 to-emerald-600'
+            }`}>
+              <span className="text-sm font-bold text-white">{isCEO ? 'CEO' : 'VT'}</span>
             </div>
             {isSidebarExpanded && (
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-white truncate">Vinnie R. Tannous</p>
-                <p className="text-xs text-slate-300 truncate">Chief Technology Officer</p>
+                <p className="text-xs text-slate-300 truncate">
+                  {isCEO ? 'Chief Executive Officer' : 'Chief Technology Officer'}
+                </p>
               </div>
             )}
           </div>

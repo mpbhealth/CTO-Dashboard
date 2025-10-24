@@ -158,8 +158,8 @@ export default function CEOSidebar() {
               CEO
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-white truncate">CEO Portal</p>
-              <p className="text-xs text-blue-300 truncate">Executive Access</p>
+              <p className="text-sm font-semibold text-white truncate">Vinnie R. Tannous</p>
+              <p className="text-xs text-blue-300 truncate">Chief Executive Officer</p>
             </div>
           </div>
         </div>

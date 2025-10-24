@@ -11,6 +11,11 @@ const CEOMarketingPlanner = lazy(() => import('./components/pages/ceod/CEOMarket
 const CEOContentCalendar = lazy(() => import('./components/pages/ceod/CEOContentCalendar').then(m => ({ default: m.CEOContentCalendar })));
 const CEOMarketingBudget = lazy(() => import('./components/pages/ceod/CEOMarketingBudget').then(m => ({ default: m.CEOMarketingBudget })));
 const CEOBoardPacket = lazy(() => import('./components/pages/ceod/CEOBoardPacket').then(m => ({ default: m.CEOBoardPacket })));
+const CEOConciergeTracking = lazy(() => import('./components/pages/ceod/CEOConciergeTracking').then(m => ({ default: m.CEOConciergeTracking })));
+const CEOConciergeNotes = lazy(() => import('./components/pages/ceod/CEOConciergeNotes').then(m => ({ default: m.CEOConciergeNotes })));
+const CEOSalesReports = lazy(() => import('./components/pages/ceod/CEOSalesReports').then(m => ({ default: m.CEOSalesReports })));
+const CEOOperations = lazy(() => import('./components/pages/ceod/CEOOperations').then(m => ({ default: m.CEOOperations })));
+const CEOFiles = lazy(() => import('./components/pages/ceod/CEOFiles').then(m => ({ default: m.CEOFiles })));
 const SharedOverview = lazy(() => import('./components/pages/shared/SharedOverview').then(m => ({ default: m.SharedOverview })));
 const AuditLogViewer = lazy(() => import('./components/pages/shared/AuditLogViewer').then(m => ({ default: m.AuditLogViewer })));
 
@@ -63,7 +68,11 @@ function DualDashboardApp() {
               <Route path="/ceod/marketing/planner" element={<CEOMarketingPlanner />} />
               <Route path="/ceod/marketing/calendar" element={<CEOContentCalendar />} />
               <Route path="/ceod/marketing/budget" element={<CEOMarketingBudget />} />
-              <Route path="/ceod/files" element={<CEOHome />} />
+              <Route path="/ceod/concierge/tracking" element={<CEOConciergeTracking />} />
+              <Route path="/ceod/concierge/notes" element={<CEOConciergeNotes />} />
+              <Route path="/ceod/sales/reports" element={<CEOSalesReports />} />
+              <Route path="/ceod/operations/overview" element={<CEOOperations />} />
+              <Route path="/ceod/files" element={<CEOFiles />} />
               <Route path="/ceod/board" element={<CEOBoardPacket />} />
               <Route path="/ceod/initiatives" element={<CEOHome />} />
               <Route path="/ceod/approvals" element={<CEOHome />} />

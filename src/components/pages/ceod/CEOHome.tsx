@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   TrendingUp,
   DollarSign,
@@ -27,6 +27,10 @@ export function CEOHome() {
   });
 
   const [shareModalResource, setShareModalResource] = useState<Resource | null>(null);
+
+  useEffect(() => {
+    document.documentElement.dataset.role = 'ceo';
+  }, []);
 
   const kpis = [
     {
@@ -106,10 +110,12 @@ export function CEOHome() {
             return (
               <div
                 key={kpi.label}
-                className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
+                className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:border-[#1a3d97] transition-colors"
               >
                 <div className="flex items-center justify-between mb-3">
-                  <Icon size={20} className="text-gray-600" />
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-[#1a3d97] to-[#00A896] flex items-center justify-center">
+                    <Icon size={20} className="text-white" />
+                  </div>
                   <span
                     className={`text-xs font-medium px-2 py-1 rounded-full ${
                       statusColors[kpi.status as keyof typeof statusColors]
@@ -173,36 +179,47 @@ export function CEOHome() {
               </div>
             </div>
 
-            {sharedFromCTO.length > 0 && (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-                <div className="p-6 border-b border-gray-200">
-                  <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                    <Share2 size={20} />
-                    Shared from CTO
-                  </h2>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+              <div className="p-6 border-b border-gray-200">
+                <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                  <Share2 size={20} className="text-[#1a3d97]" />
+                  Shared from CTO
+                </h2>
+                <p className="text-sm text-gray-500 mt-1">Resources shared with you by the CTO team</p>
+              </div>
+              {sharedFromCTO.length === 0 ? (
+                <div className="p-8 text-center">
+                  <Share2 className="mx-auto text-gray-300 mb-3" size={48} />
+                  <p className="text-gray-500">No resources shared yet</p>
+                  <p className="text-xs text-gray-400 mt-1">CTO can share files and reports with you</p>
                 </div>
+              ) : (
                 <div className="divide-y divide-gray-200">
                   {sharedFromCTO.map((resource) => (
-                    <div key={resource.id} className="p-4 hover:bg-gray-50 transition-colors">
+                    <div key={resource.id} className="p-4 hover:bg-blue-50 transition-colors group">
                       <div className="flex items-center justify-between">
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
-                            <FileText size={16} className="text-gray-400" />
-                            <h3 className="font-medium text-gray-900">{resource.title}</h3>
+                            <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-[#1a3d97] to-[#00A896] flex items-center justify-center">
+                              <FileText size={16} className="text-white" />
+                            </div>
+                            <div>
+                              <h3 className="font-medium text-gray-900">{resource.title}</h3>
+                              <span className="text-xs text-gray-500 capitalize">
+                                {resource.type} • Shared on {new Date(resource.created_at).toLocaleDateString()}
+                              </span>
+                            </div>
                           </div>
-                          <span className="text-xs text-gray-500 capitalize mt-1 inline-block">
-                            {resource.type}
-                          </span>
                         </div>
-                        <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                        <button className="px-3 py-1.5 bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white rounded-lg text-sm font-medium opacity-90 group-hover:opacity-100 transition-opacity">
                           View
                         </button>
                       </div>
                     </div>
                   ))}
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
 
           <div className="space-y-6">
@@ -212,22 +229,25 @@ export function CEOHome() {
                 Quick Actions
               </h2>
               <div className="space-y-2">
-                <button className="w-full text-left px-4 py-3 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition-colors font-medium">
+                <a href="/ceod/marketing" className="block w-full text-left px-4 py-3 bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity font-medium">
                   View Marketing
-                </button>
-                <button className="w-full text-left px-4 py-3 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors font-medium">
+                </a>
+                <a href="/ceod/sales/reports" className="block w-full text-left px-4 py-3 bg-blue-50 text-[#1a3d97] rounded-lg hover:bg-blue-100 transition-colors font-medium">
+                  Sales Reports
+                </a>
+                <a href="/ceod/board" className="block w-full text-left px-4 py-3 bg-blue-50 text-[#1a3d97] rounded-lg hover:bg-blue-100 transition-colors font-medium">
                   Board Packet
-                </button>
-                <button className="w-full text-left px-4 py-3 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors font-medium">
-                  Initiatives
-                </button>
+                </a>
+                <a href="/ceod/operations/overview" className="block w-full text-left px-4 py-3 bg-blue-50 text-[#1a3d97] rounded-lg hover:bg-blue-100 transition-colors font-medium">
+                  Operations
+                </a>
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl shadow-sm p-6 text-white">
+            <div className="bg-gradient-to-br from-[#1a3d97] to-[#00A896] rounded-xl shadow-sm p-6 text-white">
               <CheckCircle size={32} className="mb-3" />
               <h3 className="font-semibold text-lg mb-2">Company Health</h3>
-              <p className="text-green-100 text-sm mb-4">Strong performance across all metrics</p>
+              <p className="text-white/80 text-sm mb-4">Strong performance across all metrics</p>
               <div className="space-y-2 text-sm">
                 <div className="flex items-center justify-between">
                   <span>Revenue Growth</span>

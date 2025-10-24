@@ -41,7 +41,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
       if (data.user) {
         setSuccess('Login successful! Redirecting...');
         setTimeout(() => {
-          onLoginSuccess();
+          window.location.href = '/api/auth/callback';
         }, 500);
       }
     } catch (err) {

@@ -1,14 +1,22 @@
-'use client';
 import * as React from "react";
+import { supabase } from "../lib/supabase";
+import { Upload } from "lucide-react";
 
 type Props = {
-  action?: string; // defaults to /api/upload
   pathPrefix?: string;
+  bucket?: string;
   accept?: string;
+  label?: string;
   onUploaded?: (payload: { key: string; publicUrl?: string; path?: string }) => void;
 };
 
-export default function FileUpload({ action="/api/upload", pathPrefix, accept, onUploaded }: Props) {
+export default function FileUpload({
+  pathPrefix = "general",
+  bucket = "uploads",
+  accept,
+  label = "Upload a file",
+  onUploaded
+}: Props) {
   const [busy, setBusy] = React.useState(false);
   const [err, setErr] = React.useState<string | null>(null);
   const [progress, setProgress] = React.useState<number>(0);
@@ -16,38 +24,115 @@ export default function FileUpload({ action="/api/upload", pathPrefix, accept, o
   async function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+
     setBusy(true);
     setErr(null);
     setProgress(0);
 
+    const maxSize = 50 * 1024 * 1024;
+    if (file.size > maxSize) {
+      setErr(`File size exceeds maximum of ${maxSize / 1024 / 1024}MB`);
+      setBusy(false);
+      return;
+    }
+
     const form = new FormData();
     form.append("file", file);
-    if (pathPrefix) form.append("pathPrefix", pathPrefix);
+    form.append("pathPrefix", pathPrefix);
+    form.append("bucket", bucket);
 
-    // Use fetch with no explicit progress; a real app could use XHR for progress events
-    try {
-      const res = await fetch(action, { method: "POST", body: form });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data?.error || `Upload failed (${res.status})`);
+    const xhr = new XMLHttpRequest();
+
+    xhr.upload.addEventListener("progress", (event) => {
+      if (event.lengthComputable) {
+        const percentComplete = (event.loaded / event.total) * 100;
+        setProgress(Math.round(percentComplete));
       }
-      const payload = await res.json();
-      onUploaded?.(payload);
+    });
+
+    xhr.addEventListener("load", async () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        try {
+          const payload = JSON.parse(xhr.responseText);
+          onUploaded?.(payload);
+        } catch (e) {
+          setErr("Failed to parse upload response");
+        }
+      } else {
+        try {
+          const data = JSON.parse(xhr.responseText);
+          setErr(data?.error || `Upload failed (${xhr.status})`);
+        } catch {
+          setErr(`Upload failed (${xhr.status})`);
+        }
+      }
+      setBusy(false);
+      setTimeout(() => setProgress(0), 1000);
+    });
+
+    xhr.addEventListener("error", () => {
+      setErr("Network error during upload");
+      setBusy(false);
+      setProgress(0);
+    });
+
+    xhr.addEventListener("abort", () => {
+      setErr("Upload cancelled");
+      setBusy(false);
+      setProgress(0);
+    });
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        setErr("You must be logged in to upload files");
+        setBusy(false);
+        return;
+      }
+
+      const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/file-upload`;
+
+      xhr.open("POST", apiUrl);
+      xhr.setRequestHeader("Authorization", `Bearer ${session.access_token}`);
+      xhr.send(form);
     } catch (e: any) {
       setErr(e.message || "Upload failed");
-    } finally {
       setBusy(false);
-      setProgress(100);
-      setTimeout(() => setProgress(0), 800);
     }
   }
 
   return (
-    <div className="space-y-2">
-      <label className="block text-sm font-medium">Upload a file</label>
-      <input disabled={busy} type="file" accept={accept} onChange={handleChange} className="block" />
-      {busy && <div className="text-sm">Uploading… {progress}%</div>}
-      {err && <div className="text-sm text-red-600">{err}</div>}
+    <div className="space-y-3">
+      <label className="block text-sm font-medium text-gray-700">{label}</label>
+      <div className="flex items-center gap-3">
+        <label className="flex items-center gap-2 px-4 py-2 bg-sky-600 text-white rounded-lg cursor-pointer hover:bg-sky-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+          <Upload className="w-4 h-4" />
+          <span className="text-sm font-medium">Choose File</span>
+          <input
+            disabled={busy}
+            type="file"
+            accept={accept}
+            onChange={handleChange}
+            className="hidden"
+          />
+        </label>
+        {busy && (
+          <div className="flex items-center gap-2">
+            <div className="text-sm text-gray-600">Uploading... {progress}%</div>
+            <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-sky-600 transition-all duration-300"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+          </div>
+        )}
+      </div>
+      {err && (
+        <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-sm text-red-600">{err}</p>
+        </div>
+      )}
     </div>
   );
 }

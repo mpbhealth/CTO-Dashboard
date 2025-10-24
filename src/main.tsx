@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import App from './App.tsx';
 import CEOApp from './CEOApp.tsx';
+import DualDashboardApp from './DualDashboardApp.tsx';
 import './index.css';
 import './lib/diagnostics';
 import React from 'react';
@@ -130,10 +131,15 @@ createRoot(document.getElementById('root')!).render(
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <Routes>
-            {/* CEO Portal Routes */}
+            {/* Dual Dashboard Routes (New System) */}
+            <Route path="/ctod/*" element={<DualDashboardApp />} />
+            <Route path="/ceod/*" element={<DualDashboardApp />} />
+            <Route path="/shared/*" element={<DualDashboardApp />} />
+
+            {/* CEO Portal Routes (Legacy) */}
             <Route path="/ceo/*" element={<CEOApp />} />
-            
-            {/* CTO Dashboard Routes (default) */}
+
+            {/* CTO Dashboard Routes (Legacy - default) */}
             <Route path="/*" element={<App />} />
           </Routes>
         </BrowserRouter>

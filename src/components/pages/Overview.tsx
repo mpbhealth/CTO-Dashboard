@@ -49,7 +49,7 @@ import KPICard from '../ui/KPICard';
 import { useKPIData, useTeamMembers, useProjects } from '../../hooks/useSupabaseData';
 import { useDepartments, useEmployeeProfiles, useDepartmentMetrics } from '../../hooks/useOrganizationalData';
 import { useSaaSExpenses } from '../../hooks/useSaaSExpenses';
-import { useTicketStats } from '../../hooks/useTickets';
+import { useTicketStats, useTicketTrends } from '../../hooks/useTickets';
 import { useEnrollmentData } from '../../hooks/useEnrollmentData';
 import { useAudits } from '../../hooks/useComplianceData';
 import AddTeamMemberModal from '../modals/AddTeamMemberModal';
@@ -76,6 +76,7 @@ export default function Overview() {
   const { data: enrollments = [], loading: enrollmentsLoading } = useEnrollmentData();
   const { data: audits = [], loading: auditsLoading } = useAudits();
   const { stats: ticketStats, loading: ticketStatsLoading } = useTicketStats();
+  const { trends: ticketTrends, loading: ticketTrendsLoading } = useTicketTrends(10);
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -426,6 +427,54 @@ export default function Overview() {
               </p>
             </div>
           </div>
+
+          {/* IT Support Growth Trends */}
+          {!ticketTrendsLoading && ticketTrends.length > 0 && (
+            <div className="mt-6">
+              <h3 className="text-lg font-semibold text-slate-900 mb-4">Growth Trends</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={ticketTrends}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
+                  <XAxis
+                    dataKey="month"
+                    stroke="#64748B"
+                    style={{ fontSize: '12px' }}
+                  />
+                  <YAxis
+                    stroke="#64748B"
+                    style={{ fontSize: '12px' }}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: 'white',
+                      border: '1px solid #E2E8F0',
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                    }}
+                  />
+                  <Legend />
+                  <Line
+                    type="monotone"
+                    dataKey="total"
+                    stroke="#6366F1"
+                    strokeWidth={2}
+                    dot={{ fill: '#6366F1', strokeWidth: 2, r: 4 }}
+                    activeDot={{ r: 6 }}
+                    name="Projects"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="resolved"
+                    stroke="#10B981"
+                    strokeWidth={2}
+                    dot={{ fill: '#10B981', strokeWidth: 2, r: 4 }}
+                    activeDot={{ r: 6 }}
+                    name="Employees"
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          )}
         </motion.div>
       )}
 

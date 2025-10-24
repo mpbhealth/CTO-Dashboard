@@ -163,3 +163,33 @@ export function useTicketActions() {
     error,
   };
 }
+
+export function useTicketTrends(months: number = 10) {
+  const [trends, setTrends] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchTrends = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const trendData = await ticketingApiClient.getTicketTrends(months);
+      setTrends(trendData);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch trends');
+    } finally {
+      setLoading(false);
+    }
+  }, [months]);
+
+  useEffect(() => {
+    fetchTrends();
+  }, [fetchTrends]);
+
+  return {
+    trends,
+    loading,
+    error,
+    refresh: fetchTrends,
+  };
+}

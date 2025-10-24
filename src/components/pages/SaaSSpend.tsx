@@ -42,7 +42,7 @@ export default function SaaSSpend() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-sky-600"></div>
       </div>
     );
   }
@@ -219,7 +219,7 @@ export default function SaaSSpend() {
               resetFormData();
               setIsAddModalOpen(true);
             }}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+            className="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
             title="Add new expense"
           >
             <Plus className="w-4 h-4" />
@@ -248,8 +248,8 @@ export default function SaaSSpend() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
-              <DollarSign className="w-6 h-6 text-indigo-600" />
+            <div className="w-12 h-12 bg-sky-100 rounded-lg flex items-center justify-center">
+              <DollarSign className="w-6 h-6 text-sky-600" />
             </div>
             <div>
               <p className="text-sm font-medium text-slate-600">Monthly Spend</p>
@@ -299,7 +299,7 @@ export default function SaaSSpend() {
       <div className="flex items-center space-x-4">
         <label className="text-sm font-medium text-slate-700">Filter by department:</label>
         <select
-          className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+          className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
         >
@@ -363,7 +363,7 @@ export default function SaaSSpend() {
                             href={expense.url} 
                             target="_blank" 
                             rel="noopener noreferrer"
-                            className="text-xs text-indigo-600 hover:text-indigo-800"
+                            className="text-xs text-sky-600 hover:text-sky-800"
                           >
                             Visit →
                           </a>
@@ -374,7 +374,7 @@ export default function SaaSSpend() {
                       <div className="flex items-center space-x-2">
                         <button 
                           onClick={() => handleEditExpense(expense)}
-                          className="p-2 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                          className="p-2 text-slate-600 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition-colors"
                           title="Edit expense"
                         >
                           <Edit className="w-4 h-4" />
@@ -409,7 +409,7 @@ export default function SaaSSpend() {
                 resetFormData();
                 setIsAddModalOpen(true);
               }}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors mx-auto"
+              className="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors mx-auto"
             >
               <Plus className="w-4 h-4" />
               <span>Add Your First SaaS Expense</span>
@@ -449,7 +449,7 @@ export default function SaaSSpend() {
                     required
                     value={formData.application}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                   />
                 </div>
 
@@ -463,7 +463,7 @@ export default function SaaSSpend() {
                     required
                     value={formData.department}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                   />
                 </div>
 
@@ -479,7 +479,7 @@ export default function SaaSSpend() {
                     min="0"
                     value={formData.cost_monthly}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                   />
                 </div>
 
@@ -495,7 +495,7 @@ export default function SaaSSpend() {
                     min="0"
                     value={formData.cost_annual}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                   />
                 </div>
 
@@ -508,7 +508,7 @@ export default function SaaSSpend() {
                     name="platform"
                     value={formData.platform}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                   />
                 </div>
 
@@ -521,7 +521,7 @@ export default function SaaSSpend() {
                     name="renewal_date"
                     value={formData.renewal_date}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                   />
                 </div>
 
@@ -534,7 +534,7 @@ export default function SaaSSpend() {
                     name="url"
                     value={formData.url}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                   />
                 </div>
 
@@ -547,7 +547,7 @@ export default function SaaSSpend() {
                     rows={2}
                     value={formData.description}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                   ></textarea>
                 </div>
 
@@ -560,7 +560,7 @@ export default function SaaSSpend() {
                     rows={2}
                     value={formData.notes}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                   ></textarea>
                 </div>
               </div>
@@ -579,7 +579,7 @@ export default function SaaSSpend() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors"
+                  className="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg transition-colors"
                 >
                   {isSubmitting ? 'Updating...' : 'Update Expense'}
                 </button>
@@ -620,7 +620,7 @@ export default function SaaSSpend() {
                     required
                     value={formData.application}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                     placeholder="e.g., Supabase, GitHub, etc."
                   />
                 </div>
@@ -635,7 +635,7 @@ export default function SaaSSpend() {
                     required
                     value={formData.department}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                     placeholder="e.g., Engineering, Marketing, etc."
                   />
                 </div>
@@ -652,7 +652,7 @@ export default function SaaSSpend() {
                     step="0.01"
                     value={formData.cost_monthly}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                     placeholder="49.99"
                   />
                 </div>
@@ -669,7 +669,7 @@ export default function SaaSSpend() {
                     step="0.01"
                     value={formData.cost_annual}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                     placeholder="599.88"
                   />
                 </div>
@@ -683,7 +683,7 @@ export default function SaaSSpend() {
                     name="platform"
                     value={formData.platform}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                     placeholder="e.g., Cloud Platform, SaaS Tool"
                   />
                 </div>
@@ -697,7 +697,7 @@ export default function SaaSSpend() {
                     name="renewal_date"
                     value={formData.renewal_date}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                   />
                 </div>
 
@@ -710,7 +710,7 @@ export default function SaaSSpend() {
                     name="url"
                     value={formData.url}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                     placeholder="https://example.com"
                   />
                 </div>
@@ -724,7 +724,7 @@ export default function SaaSSpend() {
                     rows={2}
                     value={formData.description}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                     placeholder="Brief description of the tool's purpose"
                   ></textarea>
                 </div>
@@ -738,7 +738,7 @@ export default function SaaSSpend() {
                     rows={2}
                     value={formData.notes}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                     placeholder="Additional notes or comments"
                   ></textarea>
                 </div>
@@ -758,7 +758,7 @@ export default function SaaSSpend() {
                 </button>
                 <button
                   type="submit"
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2"
+                  className="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? (

@@ -157,7 +157,7 @@ export default function Sidebar({
       
       {/* Menu toggle button - only visible on mobile */}
      <button 
-       className="absolute top-4 -right-12 p-2 rounded-full bg-indigo-600 text-white md:hidden z-50 cursor-pointer"
+       className="absolute top-4 -right-12 p-2 rounded-full bg-sky-600 text-white md:hidden z-50 cursor-pointer"
        style={{pointerEvents: 'auto', zIndex: 60}}
         onClick={onSidebarToggle}
       >

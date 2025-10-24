@@ -20,7 +20,7 @@ export default function Projects() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-sky-600"></div>
       </div>
     );
   }
@@ -116,7 +116,7 @@ export default function Projects() {
           }} />
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+            className="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
             title="Add new project"
           >
             <Plus className="w-4 h-4" />
@@ -173,7 +173,7 @@ export default function Projects() {
         {projects.map((project) => (
           <div 
             key={project.id} 
-            className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-all duration-200 cursor-pointer group hover:border-indigo-200"
+            className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-all duration-200 cursor-pointer group hover:border-sky-200"
             onClick={() => setSelectedProject(selectedProject === project.id ? null : project.id)}
           >
             <div className="flex items-start justify-between mb-4">
@@ -191,7 +191,7 @@ export default function Projects() {
                       e.stopPropagation();
                       handleEditProject(project);
                     }}
-                    className="p-1 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
+                    className="p-1 text-slate-400 hover:text-sky-600 hover:bg-sky-50 rounded transition-colors"
                     title="Edit project"
                   >
                     <Edit className="w-4 h-4" />
@@ -216,7 +216,7 @@ export default function Projects() {
             </div>
 
             {/* Progress Bar */}
-            <div className={`mb-4 transition-all duration-200 ${selectedProject === project.id ? 'bg-indigo-50 p-3 rounded-lg' : ''}`}>
+            <div className={`mb-4 transition-all duration-200 ${selectedProject === project.id ? 'bg-sky-50 p-3 rounded-lg' : ''}`}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-slate-700">Progress</span>
                 <span className="text-sm font-medium text-slate-900">{project.progress}%</span>
@@ -254,7 +254,7 @@ export default function Projects() {
                         e.stopPropagation();
                         handleEditProject(project);
                       }}
-                      className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-3 rounded-lg text-sm font-medium transition-colors"
+                      className="flex-1 bg-sky-600 hover:bg-sky-700 text-white py-2 px-3 rounded-lg text-sm font-medium transition-colors"
                       title="Edit project"
                     >
                       Edit Project
@@ -291,7 +291,7 @@ export default function Projects() {
               {project.github_link && (
                 <a 
                   href={project.github_link}
-                  className="flex items-center space-x-1 text-slate-600 hover:text-indigo-600 transition-colors"
+                  className="flex items-center space-x-1 text-slate-600 hover:text-sky-600 transition-colors"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -302,7 +302,7 @@ export default function Projects() {
               {project.monday_link && (
                 <a 
                   href={project.monday_link}
-                  className="flex items-center space-x-1 text-slate-600 hover:text-indigo-600 transition-colors"
+                  className="flex items-center space-x-1 text-slate-600 hover:text-sky-600 transition-colors"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -332,7 +332,7 @@ export default function Projects() {
           <p className="text-slate-600 mb-4">No projects found. Get started by adding your first project.</p>
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors mx-auto"
+            className="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors mx-auto"
           >
             <Plus className="w-4 h-4" />
             <span>Add Your First Project</span>

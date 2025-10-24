@@ -75,7 +75,7 @@ function ErrorBoundary({ children }: { children: React.ReactNode }) {
                 }
                 window.location.reload();
               }}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors"
+              className="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg transition-colors"
             >
               Clear Cache & Reload
             </button>

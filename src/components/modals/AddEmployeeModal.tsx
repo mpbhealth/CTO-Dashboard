@@ -108,8 +108,8 @@ export default function AddEmployeeModal({ isOpen, onClose, onSuccess, departmen
       <div className="bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-slate-200">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-              <UserPlus className="w-5 h-5 text-indigo-600" />
+            <div className="w-10 h-10 bg-sky-100 rounded-lg flex items-center justify-center">
+              <UserPlus className="w-5 h-5 text-sky-600" />
             </div>
             <h2 className="text-xl font-semibold text-slate-900">Add New Employee</h2>
           </div>
@@ -144,7 +144,7 @@ export default function AddEmployeeModal({ isOpen, onClose, onSuccess, departmen
                     required
                     value={formData.first_name}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                     placeholder="John"
                   />
                 </div>
@@ -160,7 +160,7 @@ export default function AddEmployeeModal({ isOpen, onClose, onSuccess, departmen
                     required
                     value={formData.last_name}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                     placeholder="Doe"
                   />
                 </div>
@@ -176,7 +176,7 @@ export default function AddEmployeeModal({ isOpen, onClose, onSuccess, departmen
                     required
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                     placeholder="john@example.com"
                   />
                 </div>
@@ -191,7 +191,7 @@ export default function AddEmployeeModal({ isOpen, onClose, onSuccess, departmen
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                     placeholder="+1 (555) 123-4567"
                   />
                 </div>
@@ -206,7 +206,7 @@ export default function AddEmployeeModal({ isOpen, onClose, onSuccess, departmen
                     name="employee_id"
                     value={formData.employee_id}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                     placeholder="EMP12345"
                   />
                 </div>
@@ -221,7 +221,7 @@ export default function AddEmployeeModal({ isOpen, onClose, onSuccess, departmen
                     name="location"
                     value={formData.location}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                     placeholder="New York, NY"
                   />
                 </div>
@@ -243,7 +243,7 @@ export default function AddEmployeeModal({ isOpen, onClose, onSuccess, departmen
                     required
                     value={formData.title}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                     placeholder="Software Engineer"
                   />
                 </div>
@@ -257,7 +257,7 @@ export default function AddEmployeeModal({ isOpen, onClose, onSuccess, departmen
                     name="primary_department_id"
                     value={formData.primary_department_id}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                   >
                     <option value="">Select Department</option>
                     {departments.map(dept => (
@@ -275,7 +275,7 @@ export default function AddEmployeeModal({ isOpen, onClose, onSuccess, departmen
                     name="reports_to_id"
                     value={formData.reports_to_id}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                   >
                     <option value="">Select Manager</option>
                     {managers.map(manager => (
@@ -294,7 +294,7 @@ export default function AddEmployeeModal({ isOpen, onClose, onSuccess, departmen
                     name="start_date"
                     value={formData.start_date}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                   />
                 </div>
 
@@ -307,7 +307,7 @@ export default function AddEmployeeModal({ isOpen, onClose, onSuccess, departmen
                     name="employment_status"
                     value={formData.employment_status}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                   >
                     <option value="active">Active</option>
                     <option value="inactive">Inactive</option>
@@ -325,7 +325,7 @@ export default function AddEmployeeModal({ isOpen, onClose, onSuccess, departmen
                     name="employment_type"
                     value={formData.employment_type}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                   >
                     <option value="full_time">Full Time</option>
                     <option value="part_time">Part Time</option>
@@ -350,7 +350,7 @@ export default function AddEmployeeModal({ isOpen, onClose, onSuccess, departmen
                     rows={2}
                     value={formData.skills}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                     placeholder="Enter skills separated by commas (e.g., JavaScript, React, Project Management)"
                   />
                   <p className="text-xs text-slate-500 mt-1">Separate multiple skills with commas</p>
@@ -366,7 +366,7 @@ export default function AddEmployeeModal({ isOpen, onClose, onSuccess, departmen
                     rows={2}
                     value={formData.certifications}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                     placeholder="Enter certifications separated by commas (e.g., AWS Certified, PMP, CISSP)"
                   />
                   <p className="text-xs text-slate-500 mt-1">Separate multiple certifications with commas</p>
@@ -387,7 +387,7 @@ export default function AddEmployeeModal({ isOpen, onClose, onSuccess, departmen
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg flex items-center space-x-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-sky-600 hover:bg-sky-700 text-white px-6 py-2 rounded-lg flex items-center space-x-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <UserPlus className="w-4 h-4" />
               <span>{isSubmitting ? 'Adding...' : 'Add Employee'}</span>

@@ -1,44 +1,53 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { Menu } from 'lucide-react';
 import Sidebar from './components/Sidebar';
-import Overview from './components/pages/Overview';
-import Analytics from './components/pages/Analytics';
-import MemberEngagement from './components/pages/MemberEngagement';
-import MemberRetention from './components/pages/MemberRetention';
-import AdvisorPerformance from './components/pages/AdvisorPerformance';
-import TechStack from './components/pages/TechStack';
-import Roadmap from './components/pages/Roadmap';
-import RoadVisualizerWithFilters from './components/pages/RoadVisualizerWithFilters';
-import QuickLinks from './components/pages/QuickLinks';
-import RoadmapPresentation from './components/pages/RoadmapPresentation';
-import Projects from './components/pages/Projects';
-import Compliance from './components/pages/Compliance';
-import ComplianceCommandCenter from './components/pages/ComplianceCommandCenter';
-import ComplianceIncidents from './components/pages/ComplianceIncidents';
-import ComplianceBAAs from './components/pages/ComplianceBAAs';
-import CompliancePHIAccess from './components/pages/CompliancePHIAccess';
-import ComplianceAdministration from './components/pages/ComplianceAdministration';
-import ComplianceTraining from './components/pages/ComplianceTraining';
-import ComplianceTechnicalSafeguards from './components/pages/ComplianceTechnicalSafeguards';
-import ComplianceAudits from './components/pages/ComplianceAudits';
-import ComplianceTemplatesTools from './components/pages/ComplianceTemplatesTools';
-import SaaSSpend from './components/pages/SaaSSpend';
-import AIAgents from './components/pages/AIAgents';
-import Deployments from './components/pages/Deployments';
-import APIStatus from './components/pages/APIStatus';
-import SystemUptime from './components/pages/SystemUptime';
-import IntegrationsHub from './components/pages/IntegrationsHub';
 import AuthWrapper from './components/pages/AuthWrapper';
-import Notepad from './components/pages/Notepad';
-import MondayTasks from './components/pages/MondayTasks';
-import EmployeePerformance from './components/pages/EmployeePerformance';
-import PerformanceEvaluation from './components/pages/PerformanceEvaluation';
-import OrganizationalStructure from './components/pages/OrganizationalStructure';
-import PolicyManagement from './components/pages/PolicyManagement';
-import MarketingAnalytics from './components/pages/MarketingAnalytics';
-import Assignments from './components/pages/Assignments';
-import EmployeeDocumentStorage from './components/pages/EmployeeDocumentStorage';
-import ITSupport from './components/pages/ITSupport';
+import Overview from './components/pages/Overview';
+
+// Lazy load all page components for code splitting
+const Analytics = lazy(() => import('./components/pages/Analytics'));
+const MemberEngagement = lazy(() => import('./components/pages/MemberEngagement'));
+const MemberRetention = lazy(() => import('./components/pages/MemberRetention'));
+const AdvisorPerformance = lazy(() => import('./components/pages/AdvisorPerformance'));
+const TechStack = lazy(() => import('./components/pages/TechStack'));
+const Roadmap = lazy(() => import('./components/pages/Roadmap'));
+const RoadVisualizerWithFilters = lazy(() => import('./components/pages/RoadVisualizerWithFilters'));
+const QuickLinks = lazy(() => import('./components/pages/QuickLinks'));
+const RoadmapPresentation = lazy(() => import('./components/pages/RoadmapPresentation'));
+const Projects = lazy(() => import('./components/pages/Projects'));
+const Compliance = lazy(() => import('./components/pages/Compliance'));
+const ComplianceCommandCenter = lazy(() => import('./components/pages/ComplianceCommandCenter'));
+const ComplianceIncidents = lazy(() => import('./components/pages/ComplianceIncidents'));
+const ComplianceBAAs = lazy(() => import('./components/pages/ComplianceBAAs'));
+const CompliancePHIAccess = lazy(() => import('./components/pages/CompliancePHIAccess'));
+const ComplianceAdministration = lazy(() => import('./components/pages/ComplianceAdministration'));
+const ComplianceTraining = lazy(() => import('./components/pages/ComplianceTraining'));
+const ComplianceTechnicalSafeguards = lazy(() => import('./components/pages/ComplianceTechnicalSafeguards'));
+const ComplianceAudits = lazy(() => import('./components/pages/ComplianceAudits'));
+const ComplianceTemplatesTools = lazy(() => import('./components/pages/ComplianceTemplatesTools'));
+const SaaSSpend = lazy(() => import('./components/pages/SaaSSpend'));
+const AIAgents = lazy(() => import('./components/pages/AIAgents'));
+const Deployments = lazy(() => import('./components/pages/Deployments'));
+const APIStatus = lazy(() => import('./components/pages/APIStatus'));
+const SystemUptime = lazy(() => import('./components/pages/SystemUptime'));
+const IntegrationsHub = lazy(() => import('./components/pages/IntegrationsHub'));
+const Notepad = lazy(() => import('./components/pages/Notepad'));
+const MondayTasks = lazy(() => import('./components/pages/MondayTasks'));
+const EmployeePerformance = lazy(() => import('./components/pages/EmployeePerformance'));
+const PerformanceEvaluation = lazy(() => import('./components/pages/PerformanceEvaluation'));
+const OrganizationalStructure = lazy(() => import('./components/pages/OrganizationalStructure'));
+const PolicyManagement = lazy(() => import('./components/pages/PolicyManagement'));
+const MarketingAnalytics = lazy(() => import('./components/pages/MarketingAnalytics'));
+const Assignments = lazy(() => import('./components/pages/Assignments'));
+const EmployeeDocumentStorage = lazy(() => import('./components/pages/EmployeeDocumentStorage'));
+const ITSupport = lazy(() => import('./components/pages/ITSupport'));
+
+// Loading component
+const LoadingFallback = () => (
+  <div className="flex items-center justify-center min-h-screen">
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-600"></div>
+  </div>
+);
 
 function App() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -54,13 +63,13 @@ function App() {
         setIsSidebarExpanded(false);
       }
     }
-    
+
     // Initial check
     checkIfMobile();
-    
+
     // Add event listener for window resize
     window.addEventListener('resize', checkIfMobile);
-    
+
     // Cleanup
     return () => {
       window.removeEventListener('resize', checkIfMobile);
@@ -72,6 +81,14 @@ function App() {
   };
 
   const renderContent = () => {
+    return (
+      <Suspense fallback={<LoadingFallback />}>
+        {renderContentInner()}
+      </Suspense>
+    );
+  };
+
+  const renderContentInner = () => {
     switch (activeTab) {
       case 'overview':
         return <Overview />;
@@ -155,9 +172,9 @@ function App() {
   return (
     <AuthWrapper>
      <div className="flex min-h-screen bg-slate-50 overflow-x-hidden">
-        <Sidebar 
-          activeTab={activeTab} 
-          onTabChange={setActiveTab} 
+        <Sidebar
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
           isSidebarExpanded={isSidebarExpanded}
           onSidebarToggle={toggleSidebar}
         />

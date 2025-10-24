@@ -198,7 +198,7 @@ Last Updated: ${new Date(policy.updated_at).toLocaleDateString()}
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-sky-600"></div>
       </div>
     );
   }
@@ -224,7 +224,7 @@ Last Updated: ${new Date(policy.updated_at).toLocaleDateString()}
         </div>
         <button
           onClick={() => setIsAddModalOpen(true)}
-          className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
+          className="flex items-center space-x-2 px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-lg transition-colors"
         >
           <Plus className="w-4 h-4" />
           <span>Add Policy</span>
@@ -240,7 +240,7 @@ Last Updated: ${new Date(policy.updated_at).toLocaleDateString()}
             placeholder="Search policies by title, content, or tags..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
           />
           {searchTerm && (
             <button 
@@ -256,7 +256,7 @@ Last Updated: ${new Date(policy.updated_at).toLocaleDateString()}
           <select
             value={selectedType}
             onChange={(e) => setSelectedType(e.target.value)}
-            className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
           >
             <option value="all">All Categories</option>
             <option value="policy">HR Policies</option>
@@ -269,7 +269,7 @@ Last Updated: ${new Date(policy.updated_at).toLocaleDateString()}
           <select
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
-            className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
           >
             <option value="all">All Statuses</option>
             <option value="draft">Draft</option>
@@ -281,7 +281,7 @@ Last Updated: ${new Date(policy.updated_at).toLocaleDateString()}
           <select
             value={selectedDepartment}
             onChange={(e) => setSelectedDepartment(e.target.value)}
-            className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
           >
             <option value="all">All Departments</option>
             {departments?.map(dept => (
@@ -331,7 +331,7 @@ Last Updated: ${new Date(policy.updated_at).toLocaleDateString()}
                 <div className="flex items-center space-x-3">
                   <button
                     onClick={() => setExpandedPolicy(expandedPolicy === policy.id ? null : policy.id)}
-                    className="px-3 py-1.5 text-indigo-600 hover:bg-indigo-50 rounded-lg text-sm transition-colors"
+                    className="px-3 py-1.5 text-sky-600 hover:bg-sky-50 rounded-lg text-sm transition-colors"
                   >
                     {expandedPolicy === policy.id ? 'Collapse' : 'View Details'}
                   </button>
@@ -357,7 +357,7 @@ Last Updated: ${new Date(policy.updated_at).toLocaleDateString()}
                       <History className="w-4 h-4" />
                     </button>
                     <button
-                      className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                      className="p-2 text-slate-400 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition-colors"
                       title="Edit policy"
                     >
                       <Edit className="w-4 h-4" />
@@ -455,7 +455,7 @@ Last Updated: ${new Date(policy.updated_at).toLocaleDateString()}
           </p>
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg inline-flex items-center space-x-2 transition-colors"
+            className="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg inline-flex items-center space-x-2 transition-colors"
           >
             <Plus className="w-4 h-4" />
             <span>Create New Policy</span>
@@ -519,7 +519,7 @@ Last Updated: ${new Date(policy.updated_at).toLocaleDateString()}
                     <div className="flex items-center space-x-2">
                       <button
                         onClick={() => alert(`Viewing version ${version.version}`)}
-                        className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                        className="p-2 text-slate-400 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition-colors"
                         title="View this version"
                       >
                         <Eye className="w-4 h-4" />

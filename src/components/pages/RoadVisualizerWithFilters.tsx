@@ -51,7 +51,7 @@ export default function RoadVisualizerWithFilters() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-sky-600"></div>
       </div>
     );
   }
@@ -125,7 +125,7 @@ export default function RoadVisualizerWithFilters() {
           <button
             onClick={() => setShowFilters(!showFilters)}
             className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
-              showFilters ? 'bg-indigo-600 text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+              showFilters ? 'bg-sky-600 text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
             }`}
           >
             {showFilters ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -145,7 +145,7 @@ export default function RoadVisualizerWithFilters() {
             <span>Refresh</span>
           </button>
           
-          <button className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors">
+          <button className="flex items-center space-x-2 px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-lg transition-colors">
             <Download className="w-4 h-4" />
             <span>Export</span>
           </button>
@@ -183,7 +183,7 @@ export default function RoadVisualizerWithFilters() {
               <input
                 type="text"
                 placeholder="Search roadmap items..."
-                className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -203,7 +203,7 @@ export default function RoadVisualizerWithFilters() {
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Department</label>
               <select
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                 value={filters.department}
                 onChange={(e) => setFilters({ ...filters, department: e.target.value })}
               >
@@ -216,7 +216,7 @@ export default function RoadVisualizerWithFilters() {
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Status</label>
               <select
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                 value={filters.status}
                 onChange={(e) => setFilters({ ...filters, status: e.target.value })}
               >
@@ -229,7 +229,7 @@ export default function RoadVisualizerWithFilters() {
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Priority</label>
               <select
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                 value={filters.priority}
                 onChange={(e) => setFilters({ ...filters, priority: e.target.value })}
               >
@@ -242,7 +242,7 @@ export default function RoadVisualizerWithFilters() {
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Quarter</label>
               <select
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                 value={filters.quarter}
                 onChange={(e) => setFilters({ ...filters, quarter: e.target.value })}
               >
@@ -255,7 +255,7 @@ export default function RoadVisualizerWithFilters() {
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Owner</label>
               <select
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                 value={filters.owner}
                 onChange={(e) => setFilters({ ...filters, owner: e.target.value })}
               >
@@ -284,11 +284,11 @@ export default function RoadVisualizerWithFilters() {
                 )}
                 {Object.entries(filters).map(([key, value]) => 
                   value !== 'All' && (
-                    <span key={key} className="inline-flex items-center px-2 py-1 bg-indigo-100 text-indigo-800 text-xs rounded-full">
+                    <span key={key} className="inline-flex items-center px-2 py-1 bg-sky-100 text-sky-800 text-xs rounded-full">
                       {key}: {value}
                       <button
                         onClick={() => setFilters({ ...filters, [key]: 'All' })}
-                        className="ml-1 text-indigo-600 hover:text-indigo-800"
+                        className="ml-1 text-sky-600 hover:text-sky-800"
                       >
                         <X className="w-3 h-3" />
                       </button>
@@ -315,7 +315,7 @@ export default function RoadVisualizerWithFilters() {
             onClick={() => setSelectedView(view.value)}
             className={`px-3 py-1 text-sm rounded-lg transition-colors ${
               selectedView === view.value
-                ? 'bg-indigo-600 text-white'
+                ? 'bg-sky-600 text-white'
                 : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
             }`}
           >
@@ -328,8 +328,8 @@ export default function RoadVisualizerWithFilters() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
-              <Calendar className="w-6 h-6 text-indigo-600" />
+            <div className="w-12 h-12 bg-sky-100 rounded-lg flex items-center justify-center">
+              <Calendar className="w-6 h-6 text-sky-600" />
             </div>
             <div>
               <p className="text-sm font-medium text-slate-600">Filtered Items</p>
@@ -393,7 +393,7 @@ export default function RoadVisualizerWithFilters() {
                   return (
                     <div key={quarter} className="space-y-4">
                       <div className="flex items-center space-x-2 pb-4 border-b border-slate-200">
-                        <Calendar className="w-5 h-5 text-indigo-600" />
+                        <Calendar className="w-5 h-5 text-sky-600" />
                         <h2 className="text-lg font-semibold text-slate-900">{quarter}</h2>
                         <span className="text-sm text-slate-600">({quarterItems.length})</span>
                       </div>
@@ -460,7 +460,7 @@ export default function RoadVisualizerWithFilters() {
                   return (
                     <div key={department} className="border border-slate-200 rounded-lg p-4">
                       <div className="flex items-center space-x-3 mb-4">
-                        <Building className="w-5 h-5 text-indigo-600" />
+                        <Building className="w-5 h-5 text-sky-600" />
                         <h3 className="text-lg font-semibold text-slate-900">{department}</h3>
                         <span className="text-sm text-slate-600">({deptItems.length} items)</span>
                       </div>
@@ -571,7 +571,7 @@ export default function RoadVisualizerWithFilters() {
           <p className="text-slate-600 mb-2">No roadmap items match the selected filters.</p>
           <button
             onClick={clearAllFilters}
-            className="text-indigo-600 hover:text-indigo-800 font-medium"
+            className="text-sky-600 hover:text-sky-800 font-medium"
           >
             Clear all filters to see all items
           </button>

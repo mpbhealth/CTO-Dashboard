@@ -211,7 +211,7 @@ export default function Compliance() {
           </div>
           <button
             onClick={handleAddVendor}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+            className="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
           >
             <Plus className="w-4 h-4" />
             <span>Add Vendor</span>
@@ -258,7 +258,7 @@ export default function Compliance() {
                     <div className="flex items-center space-x-2">
                       <button
                         onClick={() => handleEditVendor(vendor)}
-                        className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                        className="p-2 text-slate-400 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition-colors"
                         title="Edit vendor"
                       >
                         <Edit className="w-4 h-4" />
@@ -311,8 +311,8 @@ export default function Compliance() {
           <div className="bg-white rounded-xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-6 border-b border-slate-200">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-                  <Shield className="w-5 h-5 text-indigo-600" />
+                <div className="w-10 h-10 bg-sky-100 rounded-lg flex items-center justify-center">
+                  <Shield className="w-5 h-5 text-sky-600" />
                 </div>
                 <h2 className="text-xl font-semibold text-slate-900">Add Vendor</h2>
               </div>
@@ -338,7 +338,7 @@ export default function Compliance() {
                   required
                   value={formData.name}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                   placeholder="e.g., Supabase"
                 />
               </div>
@@ -353,7 +353,7 @@ export default function Compliance() {
                   required
                   value={formData.status}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                 >
                   <option value="Compliant">Compliant</option>
                   <option value="Review">Review</option>
@@ -371,7 +371,7 @@ export default function Compliance() {
                   name="certs"
                   value={formData.certs}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                   placeholder="e.g., SOC 2, HIPAA (comma separated)"
                 />
                 <p className="text-xs text-slate-500 mt-1">Separate multiple certifications with commas</p>
@@ -388,7 +388,7 @@ export default function Compliance() {
                   required
                   value={formData.lastAudit}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                 />
               </div>
 
@@ -402,7 +402,7 @@ export default function Compliance() {
                 </button>
                 <button
                   type="submit"
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+                  className="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Add Vendor</span>
@@ -419,8 +419,8 @@ export default function Compliance() {
           <div className="bg-white rounded-xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-6 border-b border-slate-200">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-                  <Shield className="w-5 h-5 text-indigo-600" />
+                <div className="w-10 h-10 bg-sky-100 rounded-lg flex items-center justify-center">
+                  <Shield className="w-5 h-5 text-sky-600" />
                 </div>
                 <h2 className="text-xl font-semibold text-slate-900">Edit Vendor</h2>
               </div>
@@ -449,7 +449,7 @@ export default function Compliance() {
                   required
                   value={formData.name}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                 />
               </div>
 
@@ -463,7 +463,7 @@ export default function Compliance() {
                   required
                   value={formData.status}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                 >
                   <option value="Compliant">Compliant</option>
                   <option value="Review">Review</option>
@@ -481,7 +481,7 @@ export default function Compliance() {
                   name="certs"
                   value={formData.certs}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                   placeholder="e.g., SOC 2, HIPAA (comma separated)"
                 />
                 <p className="text-xs text-slate-500 mt-1">Separate multiple certifications with commas</p>
@@ -498,7 +498,7 @@ export default function Compliance() {
                   required
                   value={formData.lastAudit}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                 />
               </div>
 
@@ -515,7 +515,7 @@ export default function Compliance() {
                 </button>
                 <button
                   type="submit"
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+                  className="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
                 >
                   <Save className="w-4 h-4" />
                   <span>Save Changes</span>

@@ -64,7 +64,7 @@ export default function AuthWrapper({ children }: AuthWrapperProps) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-sky-600 mx-auto mb-4"></div>
           <p className="text-slate-600">Loading...</p>
         </div>
       </div>
@@ -83,7 +83,7 @@ export default function AuthWrapper({ children }: AuthWrapperProps) {
               setError(null);
               setUser({ id: 'demo-user', email: 'demo@example.com' } as User);
             }}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors"
+            className="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg transition-colors"
           >
             Continue in Demo Mode
           </button>

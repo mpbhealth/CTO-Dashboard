@@ -219,7 +219,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="block w-full pl-10 pr-12 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                  className="block w-full pl-10 pr-12 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors"
                   placeholder="Enter your password"
                 />
                 <button
@@ -252,7 +252,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
-                    className="block w-full pl-10 pr-12 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                    className="block w-full pl-10 pr-12 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors"
                     placeholder="Confirm your password"
                   />
                 </div>
@@ -290,7 +290,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
                     id="remember-me"
                     name="remember-me"
                     type="checkbox"
-                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-slate-300 rounded"
+                    className="h-4 w-4 text-sky-600 focus:ring-sky-500 border-slate-300 rounded"
                   />
                   <label htmlFor="remember-me" className="ml-2 block text-sm text-slate-700">
                     Remember me

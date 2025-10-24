@@ -154,7 +154,7 @@ export default function Analytics() {
           <select
             value={selectedDepartment}
             onChange={(e) => setSelectedDepartment(e.target.value as 'mpb' | 'saudemax')}
-            className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
             aria-label="Select department"
           >
             <option value="mpb">MPB Health</option>
@@ -164,7 +164,7 @@ export default function Analytics() {
           <select
             value={timeRange}
             onChange={(e) => setTimeRange(e.target.value)}
-            className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
             aria-label="Select time range"
           >
             {timeRanges.map(range => (
@@ -230,7 +230,7 @@ export default function Analytics() {
             <p className="text-slate-500 mb-4">Upload your customer data to see KPI metrics, user engagement, and performance insights.</p>
             <button
               onClick={toggleImporter}
-              className="inline-flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
+              className="inline-flex items-center space-x-2 bg-sky-600 text-white px-4 py-2 rounded-lg hover:bg-sky-700 transition-colors"
             >
               <Upload className="h-4 w-4" />
               <span>Upload Customer Data</span>

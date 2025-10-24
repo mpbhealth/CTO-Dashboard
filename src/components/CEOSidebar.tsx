@@ -6,7 +6,6 @@ import {
   Target,
   Award,
   Briefcase,
-  BarChart3,
   FileText,
   Settings,
   Bell,

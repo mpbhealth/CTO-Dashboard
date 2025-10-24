@@ -373,7 +373,7 @@ export default function MondayTasks() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-sky-600"></div>
       </div>
     );
   }
@@ -400,7 +400,7 @@ export default function MondayTasks() {
           {selectedTasks.size > 0 && (
             <button
               onClick={importSelectedTasks}
-              className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
+              className="flex items-center space-x-2 px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-lg transition-colors"
             >
               <FolderPlus className="w-4 h-4" />
               <span>Import Selected ({selectedTasks.size})</span>
@@ -445,7 +445,7 @@ export default function MondayTasks() {
               <input
                 type="text"
                 placeholder="Search tasks, creators..."
-                className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -463,7 +463,7 @@ export default function MondayTasks() {
           {/* Filter Dropdowns */}
           <div className="flex flex-col sm:flex-row gap-3">
             <select
-              className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
               value={selectedBoard}
               onChange={(e) => setSelectedBoard(e.target.value)}
             >
@@ -472,7 +472,7 @@ export default function MondayTasks() {
               ))}
             </select>
             <select
-              className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
             >
@@ -527,7 +527,7 @@ export default function MondayTasks() {
                     }
                     setSelectedTasks(newSelected);
                   }}
-                  className="mt-1 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                  className="mt-1 rounded border-slate-300 text-sky-600 focus:ring-sky-500"
                 />
 
                 {/* Task Content */}
@@ -592,14 +592,14 @@ export default function MondayTasks() {
             {tasks.length === 0 ? (
               <button
                 onClick={syncMondayTasks}
-                className="text-indigo-600 hover:text-indigo-800 font-medium"
+                className="text-sky-600 hover:text-sky-800 font-medium"
               >
                 Sync tasks from Monday.com to get started
               </button>
             ) : (
               <button
                 onClick={clearFilters}
-                className="text-indigo-600 hover:text-indigo-800 font-medium"
+                className="text-sky-600 hover:text-sky-800 font-medium"
               >
                 Clear all filters
               </button>

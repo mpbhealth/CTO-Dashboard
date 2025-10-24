@@ -141,8 +141,8 @@ export default function AddTeamMemberModal({ isOpen, onClose, onSuccess }: AddTe
       <div className="bg-white rounded-xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-slate-200">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-              <Users className="w-5 h-5 text-indigo-600" />
+            <div className="w-10 h-10 bg-sky-100 rounded-lg flex items-center justify-center">
+              <Users className="w-5 h-5 text-sky-600" />
             </div>
             <h2 className="text-xl font-semibold text-slate-900">Add Team Member</h2>
           </div>
@@ -172,7 +172,7 @@ export default function AddTeamMemberModal({ isOpen, onClose, onSuccess }: AddTe
               required
               value={formData.name}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base md:text-sm"
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-base md:text-sm"
               placeholder="e.g., John Smith"
             />
           </div>
@@ -188,7 +188,7 @@ export default function AddTeamMemberModal({ isOpen, onClose, onSuccess }: AddTe
               required
               value={formData.role}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base md:text-sm"
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-base md:text-sm"
               placeholder="e.g., Senior Software Engineer"
             />
           </div>
@@ -203,7 +203,7 @@ export default function AddTeamMemberModal({ isOpen, onClose, onSuccess }: AddTe
               required
               value={formData.team}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base md:text-sm"
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-base md:text-sm"
             >
               <option value="">Select a team</option>
               {teams.map(team => (
@@ -222,7 +222,7 @@ export default function AddTeamMemberModal({ isOpen, onClose, onSuccess }: AddTe
               required
               value={formData.department}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
             >
               <option value="">Select a department</option>
               {departments.map(dept => (
@@ -244,7 +244,7 @@ export default function AddTeamMemberModal({ isOpen, onClose, onSuccess }: AddTe
                 required={showCustomDepartment}
                 value={formData.customDepartment}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                 placeholder="Enter custom department name"
               />
             </div>
@@ -260,7 +260,7 @@ export default function AddTeamMemberModal({ isOpen, onClose, onSuccess }: AddTe
               required
               value={formData.status}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
             >
               <option value="Available">Available</option>
               <option value="In Meeting">In Meeting</option>
@@ -279,7 +279,7 @@ export default function AddTeamMemberModal({ isOpen, onClose, onSuccess }: AddTe
               name="email"
               value={formData.email}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
               placeholder="john@mpbhealth.com"
             />
           </div>
@@ -294,7 +294,7 @@ export default function AddTeamMemberModal({ isOpen, onClose, onSuccess }: AddTe
               name="hire_date"
               value={formData.hire_date}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
             />
           </div>
 
@@ -310,7 +310,7 @@ export default function AddTeamMemberModal({ isOpen, onClose, onSuccess }: AddTe
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <UserPlus className="w-4 h-4" />
               <span>{isSubmitting ? 'Adding...' : 'Add Member'}</span>

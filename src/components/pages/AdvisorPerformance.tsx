@@ -138,7 +138,7 @@ export default function AdvisorPerformance() {
           <select
             value={timeRange}
             onChange={(e) => setTimeRange(e.target.value)}
-            className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
           >
             {timeRanges.map(range => (
               <option key={range.value} value={range.value}>{range.label}</option>
@@ -152,7 +152,7 @@ export default function AdvisorPerformance() {
           
           <button
             onClick={toggleImporter}
-            className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
+            className="flex items-center space-x-2 px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-lg transition-colors"
           >
             <Upload className="w-4 h-4" />
             <span>Import Data</span>
@@ -208,7 +208,7 @@ export default function AdvisorPerformance() {
             <p className="text-slate-500 mb-4">Upload advisor sales data, activity metrics, and performance KPIs to track team productivity.</p>
             <button
               onClick={toggleImporter}
-              className="inline-flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
+              className="inline-flex items-center space-x-2 bg-sky-600 text-white px-4 py-2 rounded-lg hover:bg-sky-700 transition-colors"
             >
               <Upload className="h-4 w-4" />
               <span>Upload Advisor Data</span>
@@ -229,8 +229,8 @@ export default function AdvisorPerformance() {
         >
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-                <TrendingUp className="w-5 h-5 text-indigo-600" />
+              <div className="w-10 h-10 bg-sky-100 rounded-lg flex items-center justify-center">
+                <TrendingUp className="w-5 h-5 text-sky-600" />
               </div>
               <div>
                 <h2 className="text-lg font-semibold text-slate-900">Top Advisors by Sales</h2>
@@ -281,7 +281,7 @@ export default function AdvisorPerformance() {
               <select
                 value={selectedAdvisor}
                 onChange={(e) => setSelectedAdvisor(e.target.value)}
-                className="px-3 py-1 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="px-3 py-1 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
               >
                 {topAdvisors.map(advisor => (
                   <option key={advisor.name} value={advisor.name}>{advisor.name}</option>
@@ -446,7 +446,7 @@ export default function AdvisorPerformance() {
           <div className="space-y-4">
             {[
               { stage: 'Calls Made', value: 174, icon: Phone, color: 'bg-blue-500' },
-              { stage: 'Meetings Set', value: 68, icon: Calendar, color: 'bg-indigo-500' },
+              { stage: 'Meetings Set', value: 68, icon: Calendar, color: 'bg-sky-500' },
               { stage: 'Proposals Sent', value: 45, icon: FileText, color: 'bg-purple-500' },
               { stage: 'Deals Closed', value: 42, icon: CheckCircle, color: 'bg-emerald-500' },
             ].map((stage, index) => {
@@ -515,8 +515,8 @@ export default function AdvisorPerformance() {
                   <tr key={advisor.name} className="hover:bg-slate-50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
-                          <span className="text-sm font-medium text-indigo-600">
+                        <div className="w-8 h-8 bg-sky-100 rounded-full flex items-center justify-center">
+                          <span className="text-sm font-medium text-sky-600">
                             {advisor.name.split(' ').map(n => n[0]).join('')}
                           </span>
                         </div>

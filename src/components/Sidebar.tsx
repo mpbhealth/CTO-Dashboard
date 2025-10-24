@@ -135,11 +135,14 @@ export default function Sidebar({
   const handleLogout = async () => {
     try {
       const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      // Force reload to reset app state
-      window.location.reload();
+      if (error) {
+        console.error('Error logging out:', error);
+        throw error;
+      }
     } catch (error) {
       console.error('Error logging out:', error);
+      // Force reload on error
+      window.location.reload();
     }
   };
 

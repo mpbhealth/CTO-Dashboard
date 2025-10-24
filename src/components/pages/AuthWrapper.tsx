@@ -30,8 +30,7 @@ export default function AuthWrapper({ children }: AuthWrapperProps) {
       } catch (err) {
         console.error('Auth error:', err);
         setError(err instanceof Error ? err.message : 'Authentication failed');
-        // In case of auth error, continue in demo mode
-        setUser({ id: 'demo-user', email: 'demo@example.com' } as User);
+        setUser(null);
       } finally {
         setLoading(false);
       }
@@ -42,11 +41,19 @@ export default function AuthWrapper({ children }: AuthWrapperProps) {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log('Auth state change:', event, session?.user?.email);
+
+        if (event === 'SIGNED_OUT') {
+          setUser(null);
+          setLoading(false);
+          return;
+        }
+
         try {
           setUser(session?.user ?? null);
         } catch (err) {
           console.error('Auth state change error:', err);
-          setUser({ id: 'demo-user', email: 'demo@example.com' } as User);
+          setUser(null);
         } finally {
           setLoading(false);
         }

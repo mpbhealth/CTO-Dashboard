@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, Navigate } from 'react-router-dom';
 import {
   Home,
   FileText,
@@ -18,7 +18,19 @@ interface CTODashboardLayoutProps {
 
 export function CTODashboardLayout({ children }: CTODashboardLayoutProps) {
   const location = useLocation();
-  const { data: profile } = useCurrentProfile();
+  const { data: profile, isLoading } = useCurrentProfile();
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  if (profile && profile.role !== 'cto' && profile.role !== 'admin') {
+    return <Navigate to="/ceod/home" replace />;
+  }
 
   const navItems = [
     { path: '/ctod/home', label: 'Home', icon: Home },

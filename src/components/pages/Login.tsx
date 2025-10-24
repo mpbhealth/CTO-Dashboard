@@ -42,13 +42,18 @@ export default function Login({ onLoginSuccess }: LoginProps) {
       if (data.user) {
         const profile = await getCurrentProfile();
 
-        if (profile && selectedRole) {
-          if (profile.role !== selectedRole) {
-            setError(`This account is not registered as a ${selectedRole.toUpperCase()}. Please select the correct role or contact your administrator.`);
-            await supabase.auth.signOut();
-            setIsLoading(false);
-            return;
-          }
+        if (!profile) {
+          setError('Profile not found. Please contact your administrator.');
+          await supabase.auth.signOut();
+          setIsLoading(false);
+          return;
+        }
+
+        if (selectedRole && profile.role !== selectedRole) {
+          setError(`This account is registered as ${profile.role.toUpperCase()}, not ${selectedRole.toUpperCase()}. Please select the correct role.`);
+          await supabase.auth.signOut();
+          setIsLoading(false);
+          return;
         }
 
         setSuccess('Login successful! Redirecting...');
@@ -99,20 +104,24 @@ export default function Login({ onLoginSuccess }: LoginProps) {
       }
 
       if (data.user) {
-        const orgId = crypto.randomUUID();
+        const orgId = '00000000-0000-0000-0000-000000000000';
+
         const { error: profileError } = await supabase
           .from('profiles')
-          .insert({
+          .upsert({
             user_id: data.user.id,
             email: email,
             full_name: name,
             role: selectedRole,
             org_id: orgId,
             display_name: name
+          }, {
+            onConflict: 'user_id'
           });
 
         if (profileError) {
           console.error('Error creating profile:', profileError);
+          throw new Error(`Failed to create profile: ${profileError.message}`);
         }
 
         setSuccess(`Registration successful as ${selectedRole.toUpperCase()}! You can now log in with your credentials.`);
@@ -120,6 +129,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
         setPassword('');
         setConfirmPassword('');
         setPasscode('');
+        setName('');
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred during registration');

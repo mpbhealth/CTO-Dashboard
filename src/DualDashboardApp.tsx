@@ -16,6 +16,7 @@ const CEOConciergeNotes = lazy(() => import('./components/pages/ceod/CEOConcierg
 const CEOSalesReports = lazy(() => import('./components/pages/ceod/CEOSalesReports').then(m => ({ default: m.CEOSalesReports })));
 const CEOOperations = lazy(() => import('./components/pages/ceod/CEOOperations').then(m => ({ default: m.CEOOperations })));
 const CEOFiles = lazy(() => import('./components/pages/ceod/CEOFiles').then(m => ({ default: m.CEOFiles })));
+const CEODataManagement = lazy(() => import('./components/pages/ceod/CEODataManagement').then(m => ({ default: m.CEODataManagement })));
 const SharedOverview = lazy(() => import('./components/pages/shared/SharedOverview').then(m => ({ default: m.SharedOverview })));
 const AuditLogViewer = lazy(() => import('./components/pages/shared/AuditLogViewer').then(m => ({ default: m.AuditLogViewer })));
 
@@ -73,6 +74,7 @@ function DualDashboardApp() {
               <Route path="/ceod/sales/reports" element={<CEOSalesReports />} />
               <Route path="/ceod/operations/overview" element={<CEOOperations />} />
               <Route path="/ceod/files" element={<CEOFiles />} />
+              <Route path="/ceod/data" element={<CEODataManagement />} />
               <Route path="/ceod/board" element={<CEOBoardPacket />} />
               <Route path="/ceod/initiatives" element={<CEOHome />} />
               <Route path="/ceod/approvals" element={<CEOHome />} />

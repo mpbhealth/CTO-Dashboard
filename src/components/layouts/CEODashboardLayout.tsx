@@ -12,7 +12,8 @@ import {
   LogOut,
   MessageSquare,
   ShoppingCart,
-  Activity
+  Activity,
+  Database
 } from 'lucide-react';
 import { useCurrentProfile } from '../../hooks/useDualDashboard';
 import { supabase } from '../../lib/supabase';
@@ -43,6 +44,7 @@ export function CEODashboardLayout({ children }: CEODashboardLayoutProps) {
     { path: '/ceod/concierge/tracking', label: 'Concierge', icon: MessageSquare },
     { path: '/ceod/sales/reports', label: 'Sales', icon: ShoppingCart },
     { path: '/ceod/operations/overview', label: 'Operations', icon: Activity },
+    { path: '/ceod/data', label: 'Data Import', icon: Database },
     { path: '/ceod/files', label: 'Files', icon: FileText },
     { path: '/ceod/board', label: 'Board Packet', icon: TrendingUp },
     { path: '/shared/overview', label: 'Shared from CTO', icon: Share2 },

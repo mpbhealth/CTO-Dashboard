@@ -40,7 +40,8 @@ export default function Login({ onLoginSuccess }: LoginProps) {
 
       if (data.user) {
         setSuccess('Login successful! Redirecting...');
-        onLoginSuccess();
+
+        window.location.href = '/api/auth/callback';
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred during login');

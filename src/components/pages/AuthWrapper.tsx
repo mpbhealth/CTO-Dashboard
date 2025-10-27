@@ -83,63 +83,48 @@ export default function AuthWrapper({ children }: AuthWrapperProps) {
     try {
       setLoadingMessage('Loading your profile...');
 
-      let retries = 3;
-      let profile = null;
-
-      while (retries > 0 && !profile) {
-        profile = await getCurrentProfile();
-        if (!profile) {
-          console.log(`Profile not found, retrying... (${retries} attempts left)`);
-          await new Promise(resolve => setTimeout(resolve, 1000));
-          retries--;
-        }
-      }
+      const profile = await getCurrentProfile();
 
       if (!profile) {
-        console.error('Profile not found after retries');
+        console.error('Profile not found');
         setError('Profile not found. Please contact your administrator or try logging in again.');
         await supabase.auth.signOut();
         setProfileChecked(true);
         return;
       }
 
-      console.log('Profile loaded:', profile.role, profile.email);
+      console.log('Profile loaded:', { role: profile.role, email: profile.email });
       setProfileChecked(true);
 
       setLoadingMessage('Redirecting to your dashboard...');
 
       const currentPath = location.pathname;
-      const isCEOPath = currentPath.startsWith('/ceod') || currentPath.startsWith('/ceo/');
+      const isCEOPath = currentPath.startsWith('/ceod');
       const isCTOPath = currentPath.startsWith('/ctod');
       const isSharedPath = currentPath.startsWith('/shared');
       const isRootPath = currentPath === '/' || currentPath === '';
+      const isLoginPath = currentPath.startsWith('/login');
 
       console.log('Route check:', { currentPath, role: profile.role, isCEOPath, isCTOPath, isSharedPath, isRootPath });
 
+      // CEO users should be redirected to CEO dashboard
       if (profile.role === 'ceo') {
-        // CEO should only access /ceod/* and /shared/* routes
-        if (!isCEOPath && !isSharedPath) {
+        if (isCTOPath || isRootPath || isLoginPath) {
           console.log('Redirecting CEO to /ceod/home from:', currentPath);
           navigate('/ceod/home', { replace: true });
         }
-      } else if (profile.role === 'cto' || profile.role === 'admin') {
-        // CTO/Admin should access /ctod/* and /shared/* routes, not /ceod/*
-        if (isCEOPath && !isSharedPath) {
-          console.log('Redirecting CTO/Admin to /ctod/home from:', currentPath);
+        // Allow CEO to stay on /ceod/* and /shared/* routes
+      }
+      // CTO/Admin/Staff users should use CTO dashboard
+      else {
+        if (isCEOPath) {
+          console.log(`Redirecting ${profile.role} to /ctod/home from:`, currentPath);
           navigate('/ctod/home', { replace: true });
-        } else if (isRootPath) {
-          console.log('Redirecting CTO/Admin to /ctod/home from root');
-          navigate('/ctod/home', { replace: true });
-        }
-      } else {
-        // Staff and other roles default to CTO dashboard
-        if (isCEOPath && !isSharedPath) {
-          console.log('Redirecting staff to /ctod/home from:', currentPath);
-          navigate('/ctod/home', { replace: true });
-        } else if (isRootPath) {
-          console.log('Redirecting staff to /ctod/home from root');
+        } else if (isRootPath || isLoginPath) {
+          console.log(`Redirecting ${profile.role} to /ctod/home from root/login`);
           navigate('/ctod/home', { replace: true });
         }
+        // Allow access to /ctod/* and /shared/* routes
       }
     } catch (err) {
       console.error('Error checking profile:', err);

@@ -23,6 +23,16 @@ const SharedOverview = lazy(() => import('./components/pages/shared/SharedOvervi
 const AuditLogViewer = lazy(() => import('./components/pages/shared/AuditLogViewer').then(m => ({ default: m.AuditLogViewer })));
 const AuthDiagnostics = lazy(() => import('./components/pages/AuthDiagnostics'));
 
+const TechStack = lazy(() => import('./components/pages/TechStack'));
+const QuickLinks = lazy(() => import('./components/pages/QuickLinks'));
+const Roadmap = lazy(() => import('./components/pages/Roadmap'));
+const RoadmapPresentation = lazy(() => import('./components/pages/RoadmapPresentation'));
+const RoadVisualizerWithFilters = lazy(() => import('./components/pages/RoadVisualizerWithFilters'));
+const Projects = lazy(() => import('./components/pages/Projects'));
+const MondayTasks = lazy(() => import('./components/pages/MondayTasks'));
+const Assignments = lazy(() => import('./components/pages/Assignments'));
+const Notepad = lazy(() => import('./components/pages/Notepad'));
+
 const LoadingFallback = () => (
   <div className="flex items-center justify-center min-h-screen">
     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -75,6 +85,15 @@ const routeToTabMap: Record<string, string> = {
   '/shared/overview': 'overview',
   '/shared/audit': 'overview',
   '/diagnostics': 'overview',
+  '/tech-stack': 'tech-stack',
+  '/quick-links': 'quick-links',
+  '/roadmap': 'roadmap',
+  '/road-visualizer': 'road-visualizer',
+  '/roadmap-presentation': 'roadmap-presentation',
+  '/projects': 'projects',
+  '/monday-tasks': 'monday-tasks',
+  '/assignments': 'assignments',
+  '/notepad': 'notepad',
 };
 
 const tabToRouteMap: Record<string, string> = {
@@ -84,15 +103,15 @@ const tabToRouteMap: Record<string, string> = {
   'member-retention': '/ctod/home',
   'advisor-performance': '/ctod/home',
   'marketing-analytics': '/ceod/marketing',
-  'tech-stack': '/ctod/home',
-  'quick-links': '/ctod/home',
-  'roadmap': '/ctod/home',
-  'road-visualizer': '/ctod/home',
-  'roadmap-presentation': '/ctod/home',
-  'projects': '/ctod/home',
-  'monday-tasks': '/ctod/home',
-  'assignments': '/ctod/home',
-  'notepad': '/ctod/home',
+  'tech-stack': '/tech-stack',
+  'quick-links': '/quick-links',
+  'roadmap': '/roadmap',
+  'road-visualizer': '/road-visualizer',
+  'roadmap-presentation': '/roadmap-presentation',
+  'projects': '/projects',
+  'monday-tasks': '/monday-tasks',
+  'assignments': '/assignments',
+  'notepad': '/notepad',
   'compliance': '/ctod/compliance',
   'compliance/command-center': '/ctod/compliance',
   'compliance/administration': '/ctod/compliance',
@@ -218,6 +237,16 @@ function DualDashboardContent() {
             <Route path="/shared/overview" element={<SharedOverview />} />
             <Route path="/shared/audit" element={<AuditLogViewer />} />
             <Route path="/diagnostics" element={<AuthDiagnostics />} />
+
+            <Route path="/tech-stack" element={<TechStack />} />
+            <Route path="/quick-links" element={<QuickLinks />} />
+            <Route path="/roadmap" element={<Roadmap />} />
+            <Route path="/road-visualizer" element={<RoadVisualizerWithFilters />} />
+            <Route path="/roadmap-presentation" element={<RoadmapPresentation />} />
+            <Route path="/projects" element={<Projects />} />
+            <Route path="/monday-tasks" element={<MondayTasks />} />
+            <Route path="/assignments" element={<Assignments />} />
+            <Route path="/notepad" element={<Notepad />} />
 
             <Route path="*" element={<RoleBasedRedirect />} />
           </Routes>

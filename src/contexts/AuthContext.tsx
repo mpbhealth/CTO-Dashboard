@@ -46,17 +46,40 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const MAX_PROFILE_FETCH_ATTEMPTS = 3;
+const PROFILE_FETCH_TIMEOUT = 8000;
+const CIRCUIT_BREAKER_RESET_TIME = 30000;
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const fetchingProfile = useRef(false);
   const profileCache = useRef<{ userId: string; profile: Profile; timestamp: number } | null>(null);
+  const profileFetchAttempts = useRef(0);
+  const circuitBreakerOpen = useRef(false);
+  const circuitBreakerTimer = useRef<NodeJS.Timeout | null>(null);
   const CACHE_TTL = 5 * 60 * 1000;
 
   const fetchProfile = useCallback(async (userId: string): Promise<Profile | null> => {
+    if (circuitBreakerOpen.current) {
+      console.warn('[AuthContext] Circuit breaker open, skipping profile fetch');
+      return null;
+    }
+
     if (fetchingProfile.current) {
       console.log('[AuthContext] Profile fetch already in progress, skipping');
+      return null;
+    }
+
+    if (profileFetchAttempts.current >= MAX_PROFILE_FETCH_ATTEMPTS) {
+      console.error('[AuthContext] Max profile fetch attempts exceeded');
+      circuitBreakerOpen.current = true;
+      circuitBreakerTimer.current = setTimeout(() => {
+        console.log('[AuthContext] Resetting circuit breaker');
+        circuitBreakerOpen.current = false;
+        profileFetchAttempts.current = 0;
+      }, CIRCUIT_BREAKER_RESET_TIME);
       return null;
     }
 
@@ -69,26 +92,49 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     fetchingProfile.current = true;
+    profileFetchAttempts.current++;
+
     try {
-      console.log('[AuthContext] Fetching profile for user:', userId);
-      const { data, error } = await supabase
+      console.log(`[AuthContext] Fetching profile for user (attempt ${profileFetchAttempts.current}/${MAX_PROFILE_FETCH_ATTEMPTS}):`, userId);
+
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => reject(new Error('Profile fetch timeout')), PROFILE_FETCH_TIMEOUT);
+      });
+
+      const fetchPromise = supabase
         .from('profiles')
         .select('*')
         .eq('user_id', userId)
         .maybeSingle();
 
+      const { data, error } = await Promise.race([fetchPromise, timeoutPromise]);
+
       if (error) {
         console.error('[AuthContext] Error fetching profile:', error);
+        console.error('[AuthContext] Error details:', {
+          message: error.message,
+          code: (error as any).code,
+          details: (error as any).details,
+          hint: (error as any).hint
+        });
         return null;
       }
 
       if (data) {
         profileCache.current = { userId, profile: data as Profile, timestamp: now };
+        profileFetchAttempts.current = 0;
+        console.log('[AuthContext] Profile fetched successfully:', data);
+      } else {
+        console.warn('[AuthContext] No profile found for user:', userId);
       }
 
       return data as Profile | null;
     } catch (error) {
-      console.error('[AuthContext] Error fetching profile:', error);
+      console.error('[AuthContext] Exception during profile fetch:', error);
+      if (error instanceof Error) {
+        console.error('[AuthContext] Error message:', error.message);
+        console.error('[AuthContext] Error stack:', error.stack);
+      }
       return null;
     } finally {
       fetchingProfile.current = false;
@@ -231,6 +277,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => {
       mounted = false;
       subscription.unsubscribe();
+      if (circuitBreakerTimer.current) {
+        clearTimeout(circuitBreakerTimer.current);
+      }
     };
   }, [fetchProfile, setProfileCookies, clearProfileCookies]);
 

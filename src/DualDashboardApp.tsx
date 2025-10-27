@@ -20,6 +20,7 @@ const CEOFiles = lazy(() => import('./components/pages/ceod/CEOFiles').then(m =>
 const CEODataManagement = lazy(() => import('./components/pages/ceod/CEODataManagement').then(m => ({ default: m.CEODataManagement })));
 const SharedOverview = lazy(() => import('./components/pages/shared/SharedOverview').then(m => ({ default: m.SharedOverview })));
 const AuditLogViewer = lazy(() => import('./components/pages/shared/AuditLogViewer').then(m => ({ default: m.AuditLogViewer })));
+const AuthDiagnostics = lazy(() => import('./components/pages/AuthDiagnostics'));
 
 const LoadingFallback = () => (
   <div className="flex items-center justify-center min-h-screen">
@@ -79,6 +80,7 @@ function DualDashboardApp() {
 
             <Route path="/shared/overview" element={<SharedOverview />} />
             <Route path="/shared/audit" element={<AuditLogViewer />} />
+            <Route path="/diagnostics" element={<AuthDiagnostics />} />
 
             <Route path="*" element={<RoleBasedRedirect />} />
           </Routes>

@@ -26,7 +26,8 @@ export function RoleGuard({ children, allowedRoles, redirectTo }: RoleGuardProps
   const role = profile?.role;
 
   if (!role || !allowedRoles.includes(role)) {
-    const defaultRedirect = role === 'ceo' ? '/ceod/home' : '/ctod/home';
+    console.log(`[RoleGuard] Role ${role} not in allowed roles [${allowedRoles.join(', ')}], redirecting`);
+    const defaultRedirect = role === 'ceo' || role === 'admin' ? '/ceod/home' : '/ctod/home';
     return <Navigate to={redirectTo || defaultRedirect} replace state={{ from: location }} />;
   }
 

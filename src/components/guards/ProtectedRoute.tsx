@@ -2,6 +2,16 @@ import { ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 
+function getCookie(name: string): string | null {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) {
+    const cookieValue = parts.pop()?.split(';').shift();
+    return cookieValue || null;
+  }
+  return null;
+}
+
 interface ProtectedRouteProps {
   children: ReactNode;
   allowedRoles?: ('ceo' | 'cto' | 'admin' | 'staff')[];
@@ -15,6 +25,9 @@ export function ProtectedRoute({
 }: ProtectedRouteProps) {
   const { user, role, loading } = useAuth();
   const location = useLocation();
+  const cookieRole = getCookie('role') as 'ceo' | 'cto' | 'admin' | 'staff' | null;
+
+  const effectiveRole = role || cookieRole;
 
   if (loading) {
     return (
@@ -31,8 +44,9 @@ export function ProtectedRoute({
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  if (allowedRoles && role && !allowedRoles.includes(role)) {
-    const defaultPath = role === 'ceo' ? '/ceod/home' : role === 'cto' ? '/ctod/home' : '/staff/home';
+  if (allowedRoles && effectiveRole && !allowedRoles.includes(effectiveRole)) {
+    console.log(`[ProtectedRoute] Role ${effectiveRole} not allowed for ${location.pathname}, redirecting`);
+    const defaultPath = effectiveRole === 'ceo' || effectiveRole === 'admin' ? '/ceod/home' : '/ctod/home';
     return <Navigate to={defaultPath} replace />;
   }
 

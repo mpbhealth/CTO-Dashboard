@@ -4,6 +4,24 @@ import { supabase } from '@/lib/supabase';
 
 type UserRole = 'ceo' | 'cto' | 'admin' | 'staff';
 
+function getCookie(name: string): string | null {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) {
+    const cookieValue = parts.pop()?.split(';').shift();
+    return cookieValue || null;
+  }
+  return null;
+}
+
+function setCookie(name: string, value: string, maxAge: number = 86400): void {
+  document.cookie = `${name}=${value}; path=/; max-age=${maxAge}; samesite=lax`;
+}
+
+function deleteCookie(name: string): void {
+  document.cookie = `${name}=; path=/; max-age=0`;
+}
+
 interface Profile {
   id: string;
   user_id: string;
@@ -48,19 +66,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const setProfileCookies = (profileData: Profile | null) => {
+    if (profileData?.role) {
+      setCookie('role', profileData.role);
+      if (profileData.display_name) {
+        setCookie('display_name', profileData.display_name);
+      }
+    }
+  };
+
+  const clearProfileCookies = () => {
+    deleteCookie('role');
+    deleteCookie('display_name');
+  };
+
   const refreshRole = async () => {
     const { data: { user: currentUser } } = await supabase.auth.getUser();
 
     if (currentUser) {
       const profileData = await fetchProfile(currentUser.id);
       setProfile(profileData);
-
-      if (profileData?.role) {
-        document.cookie = `role=${profileData.role}; path=/; max-age=86400; samesite=lax`;
-        if (profileData.display_name) {
-          document.cookie = `display_name=${profileData.display_name}; path=/; max-age=86400; samesite=lax`;
-        }
-      }
+      setProfileCookies(profileData);
+    } else {
+      setProfile(null);
+      clearProfileCookies();
     }
   };
 
@@ -68,24 +97,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await supabase.auth.signOut();
     setUser(null);
     setProfile(null);
-    document.cookie = 'role=; path=/; max-age=0';
-    document.cookie = 'display_name=; path=/; max-age=0';
+    clearProfileCookies();
   };
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const initAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
       const currentUser = session?.user ?? null;
       setUser(currentUser);
 
       if (currentUser) {
-        fetchProfile(currentUser.id).then((profileData) => {
-          setProfile(profileData);
-          setLoading(false);
-        });
+        const cachedRole = getCookie('role');
+        if (cachedRole) {
+          const cachedDisplayName = getCookie('display_name');
+          setProfile({
+            id: '',
+            user_id: currentUser.id,
+            role: cachedRole as UserRole,
+            display_name: cachedDisplayName,
+            org_id: null,
+          });
+        }
+
+        const profileData = await fetchProfile(currentUser.id);
+        setProfile(profileData);
+        setProfileCookies(profileData);
+        setLoading(false);
       } else {
         setLoading(false);
       }
-    });
+    };
+
+    initAuth();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       const currentUser = session?.user ?? null;
@@ -94,18 +137,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (currentUser) {
         fetchProfile(currentUser.id).then((profileData) => {
           setProfile(profileData);
-
-          if (profileData?.role) {
-            document.cookie = `role=${profileData.role}; path=/; max-age=86400; samesite=lax`;
-            if (profileData.display_name) {
-              document.cookie = `display_name=${profileData.display_name}; path=/; max-age=86400; samesite=lax`;
-            }
-          }
+          setProfileCookies(profileData);
         });
       } else {
         setProfile(null);
-        document.cookie = 'role=; path=/; max-age=0';
-        document.cookie = 'display_name=; path=/; max-age=0';
+        clearProfileCookies();
       }
     });
 

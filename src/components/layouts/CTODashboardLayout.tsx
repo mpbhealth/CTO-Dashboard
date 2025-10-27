@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { Link, useLocation, Navigate } from 'react-router-dom';
 import {
   Home,
@@ -31,6 +31,13 @@ export function CTODashboardLayout({ children }: CTODashboardLayoutProps) {
   if (profile && profile.role !== 'cto' && profile.role !== 'admin') {
     return <Navigate to="/ceod/home" replace />;
   }
+
+  useEffect(() => {
+    document.documentElement.dataset.role = 'cto';
+    return () => {
+      delete document.documentElement.dataset.role;
+    };
+  }, []);
 
   const navItems = [
     { path: '/ctod/home', label: 'Home', icon: Home },

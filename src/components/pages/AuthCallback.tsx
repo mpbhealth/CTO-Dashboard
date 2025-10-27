@@ -42,12 +42,15 @@ export function AuthCallback() {
         }
 
         let redirectPath = '/ctod/home';
-        if (role === 'ceo') {
+        if (role === 'ceo' || role === 'admin') {
           redirectPath = '/ceod/home';
-        } else if (role === 'staff') {
-          redirectPath = '/staff/home';
+        } else if (role === 'cto') {
+          redirectPath = '/ctod/home';
+        } else {
+          redirectPath = '/ctod/home';
         }
 
+        console.log(`[AuthCallback] Redirecting ${role} to ${redirectPath}`);
         navigate(redirectPath, { replace: true });
       } catch (err) {
         console.error('Auth callback error:', err);

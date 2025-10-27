@@ -81,19 +81,21 @@ export default function AuthWrapper({ children }: AuthWrapperProps) {
 
   const checkProfileAndRedirect = async (authUser: User) => {
     try {
+      console.log('[AuthWrapper] Starting checkProfileAndRedirect for user:', authUser.email);
       setLoadingMessage('Loading your profile...');
 
       const profile = await getCurrentProfile();
+      console.log('[AuthWrapper] getCurrentProfile returned:', profile);
 
       if (!profile) {
-        console.error('Profile not found');
+        console.error('[AuthWrapper] Profile not found - showing error');
         setError('Profile not found. Please contact your administrator or try logging in again.');
         await supabase.auth.signOut();
         setProfileChecked(true);
         return;
       }
 
-      console.log('Profile loaded:', { role: profile.role, email: profile.email });
+      console.log('[AuthWrapper] Profile loaded successfully:', { role: profile.role, email: profile.email });
       setProfileChecked(true);
 
       setLoadingMessage('Redirecting to your dashboard...');

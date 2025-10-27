@@ -66,67 +66,75 @@ export interface AuditLog {
 
 export async function getCurrentProfile(): Promise<Profile | null> {
   try {
+    console.log('[getCurrentProfile] Starting profile fetch...');
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
     if (authError) {
-      console.error('Auth error:', authError);
+      console.error('[getCurrentProfile] Auth error:', authError);
       return null;
     }
 
     if (!user) {
-      console.warn('No authenticated user found');
+      console.warn('[getCurrentProfile] No authenticated user found');
       return null;
     }
+
+    console.log('[getCurrentProfile] Authenticated user:', { id: user.id, email: user.email });
 
     // Query with simplified field selection
     const { data, error } = await supabase
       .from('profiles')
       .select('user_id, email, full_name, display_name, role, org_id')
       .eq('user_id', user.id)
-      .single();
+      .maybeSingle();
+
+    console.log('[getCurrentProfile] Query result:', { data, error, hasData: !!data, hasError: !!error });
 
     if (error) {
-      // If profile doesn't exist, try to create it
-      if (error.code === 'PGRST116') {
-        console.log('No profile found, creating from auth metadata...');
-
-        const role = (user.user_metadata?.role || 'staff') as 'cto' | 'ceo' | 'admin' | 'staff';
-        const displayName = user.user_metadata?.full_name || user.email?.split('@')[0] || 'User';
-
-        const { data: newProfile, error: insertError } = await supabase
-          .from('profiles')
-          .insert({
-            user_id: user.id,
-            email: user.email,
-            full_name: displayName,
-            display_name: displayName,
-            role: role,
-            org_id: '00000000-0000-0000-0000-000000000000'
-          })
-          .select('user_id, email, full_name, display_name, role, org_id')
-          .single();
-
-        if (insertError) {
-          console.error('Failed to create profile:', insertError);
-          return null;
-        }
-
-        console.log('Profile created successfully:', { role: newProfile.role, email: newProfile.email });
-        return newProfile;
-      }
-
-      console.error('Error fetching profile:', error);
+      console.error('[getCurrentProfile] Error fetching profile:', error);
       return null;
     }
 
     if (!data) {
-      console.warn('No profile data returned for user:', user.id);
-      return null;
+      // If profile doesn't exist, try to create it
+      console.log('[getCurrentProfile] No profile found, creating from auth metadata...');
+
+      const role = (user.user_metadata?.role || 'staff') as 'cto' | 'ceo' | 'admin' | 'staff';
+      const displayName = user.user_metadata?.full_name || user.email?.split('@')[0] || 'User';
+
+      console.log('[getCurrentProfile] Creating profile with:', { role, displayName, user_id: user.id });
+
+      const { data: newProfile, error: insertError } = await supabase
+        .from('profiles')
+        .insert({
+          user_id: user.id,
+          email: user.email,
+          full_name: displayName,
+          display_name: displayName,
+          role: role,
+          org_id: '00000000-0000-0000-0000-000000000000'
+        })
+        .select('user_id, email, full_name, display_name, role, org_id')
+        .maybeSingle();
+
+      if (insertError) {
+        console.error('[getCurrentProfile] Failed to create profile:', insertError);
+        return null;
+      }
+
+      if (!newProfile) {
+        console.error('[getCurrentProfile] No profile returned after insert');
+        return null;
+      }
+
+      console.log('[getCurrentProfile] Profile created successfully:', { role: newProfile.role, email: newProfile.email });
+      return newProfile;
     }
 
+    console.log('[getCurrentProfile] Profile found successfully:', { role: data.role, email: data.email, display_name: data.display_name });
     return data;
   } catch (err) {
-    console.error('Unexpected error in getCurrentProfile:', err);
+    console.error('[getCurrentProfile] Unexpected error:', err);
     return null;
   }
 }

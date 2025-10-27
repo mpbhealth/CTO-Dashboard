@@ -15,7 +15,12 @@ function getCookie(name: string): string | null {
 }
 
 function setCookie(name: string, value: string, maxAge: number = 86400): void {
-  document.cookie = `${name}=${value}; path=/; max-age=${maxAge}; samesite=lax`;
+  try {
+    document.cookie = `${name}=${value}; path=/; max-age=${maxAge}; samesite=lax`;
+    console.log(`[AuthContext] Cookie set: ${name}=${value}`);
+  } catch (error) {
+    console.error('[AuthContext] Failed to set cookie:', error);
+  }
 }
 
 function deleteCookie(name: string): void {
@@ -47,7 +52,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const MAX_PROFILE_FETCH_ATTEMPTS = 3;
-const PROFILE_FETCH_TIMEOUT = 8000;
+const PROFILE_FETCH_TIMEOUT = 15000;
 const CIRCUIT_BREAKER_RESET_TIME = 30000;
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -97,15 +102,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       console.log(`[AuthContext] Fetching profile for user (attempt ${profileFetchAttempts.current}/${MAX_PROFILE_FETCH_ATTEMPTS}):`, userId);
 
-      const timeoutPromise = new Promise<never>((_, reject) => {
-        setTimeout(() => reject(new Error('Profile fetch timeout')), PROFILE_FETCH_TIMEOUT);
+      const timeoutPromise = new Promise<{ data: any; error: any }>((resolve) => {
+        setTimeout(() => {
+          console.warn('[AuthContext] Profile fetch timeout, attempting fallback...');
+          resolve({ data: null, error: { message: 'Timeout' } });
+        }, PROFILE_FETCH_TIMEOUT);
       });
 
       const fetchPromise = supabase
         .from('profiles')
         .select('*')
         .eq('user_id', userId)
-        .maybeSingle();
+        .maybeSingle()
+        .then(result => result);
 
       const { data, error } = await Promise.race([fetchPromise, timeoutPromise]);
 
@@ -144,17 +153,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const setProfileCookies = useCallback((profileData: Profile | null) => {
     if (profileData?.role) {
       setCookie('role', profileData.role);
-      const roleVerified = verifyCookie('role', profileData.role);
 
       if (profileData.display_name) {
         setCookie('display_name', profileData.display_name);
       }
 
-      if (!roleVerified) {
-        console.warn('[AuthContext] Cookie verification failed for role');
-      } else {
-        console.log('[AuthContext] Role cookie set and verified:', profileData.role);
-      }
+      setTimeout(() => {
+        const roleVerified = verifyCookie('role', profileData.role);
+        const isWebContainer = window.location.hostname.includes('webcontainer') ||
+                               window.location.hostname.includes('stackblitz');
+
+        if (!roleVerified && !isWebContainer) {
+          console.warn('[AuthContext] Cookie verification failed for role, retrying...');
+          setCookie('role', profileData.role);
+        } else if (roleVerified) {
+          console.log('[AuthContext] Role cookie set and verified:', profileData.role);
+        }
+      }, 100);
     }
   }, []);
 

@@ -17,13 +17,13 @@ import { ShareModal } from '../../modals/ShareModal';
 import type { Resource } from '../../../lib/dualDashboard';
 
 export function CEOHome() {
-  const { data: profile } = useCurrentProfile();
-  const { data: workspace } = useWorkspace(
+  const { data: profile, isLoading: profileLoading, error: profileError } = useCurrentProfile();
+  const { data: workspace, isLoading: workspaceLoading, error: workspaceError } = useWorkspace(
     profile?.org_id || '',
     'CEO',
     'CEO Workspace'
   );
-  const { data: resources = [] } = useResources({
+  const { data: resources = [], isLoading: resourcesLoading, error: resourcesError } = useResources({
     workspaceId: workspace?.id,
   });
 
@@ -31,7 +31,57 @@ export function CEOHome() {
 
   useEffect(() => {
     document.documentElement.dataset.role = 'ceo';
+    console.log('CEOHome mounted');
   }, []);
+
+  useEffect(() => {
+    console.log('CEOHome data state:', {
+      profile: profile?.display_name,
+      profileLoading,
+      profileError,
+      workspace: workspace?.name,
+      workspaceLoading,
+      workspaceError,
+      resourcesCount: resources.length,
+      resourcesLoading,
+      resourcesError
+    });
+  }, [profile, profileLoading, profileError, workspace, workspaceLoading, workspaceError, resources, resourcesLoading, resourcesError]);
+
+  if (profileLoading) {
+    return (
+      <CEODashboardLayout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading your dashboard...</p>
+          </div>
+        </div>
+      </CEODashboardLayout>
+    );
+  }
+
+  if (profileError) {
+    return (
+      <CEODashboardLayout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center max-w-md">
+            <div className="text-red-600 mb-4">
+              <AlertTriangle size={48} className="mx-auto" />
+            </div>
+            <h2 className="text-xl font-bold text-gray-900 mb-2">Unable to Load Profile</h2>
+            <p className="text-gray-600 mb-4">There was an error loading your profile data.</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Reload Page
+            </button>
+          </div>
+        </div>
+      </CEODashboardLayout>
+    );
+  }
 
   const kpis = [
     {

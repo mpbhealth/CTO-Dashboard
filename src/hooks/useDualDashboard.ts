@@ -25,7 +25,19 @@ import {
 export function useCurrentProfile() {
   return useQuery({
     queryKey: ['profile', 'current'],
-    queryFn: getCurrentProfile,
+    queryFn: async () => {
+      console.log('useCurrentProfile: Starting profile fetch...');
+      try {
+        const profile = await getCurrentProfile();
+        console.log('useCurrentProfile: Profile fetched:', profile);
+        return profile;
+      } catch (error) {
+        console.error('useCurrentProfile: Error fetching profile:', error);
+        throw error;
+      }
+    },
+    retry: 1,
+    staleTime: 5 * 60 * 1000,
   });
 }
 

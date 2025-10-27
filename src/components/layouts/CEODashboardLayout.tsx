@@ -24,69 +24,7 @@ interface CEODashboardLayoutProps {
 
 export function CEODashboardLayout({ children }: CEODashboardLayoutProps) {
   const location = useLocation();
-  const { data: profile, isLoading, error } = useCurrentProfile();
-
-  useEffect(() => {
-    console.log('CEODashboardLayout state:', {
-      profile: profile?.display_name,
-      role: profile?.role,
-      isLoading,
-      error,
-      pathname: location.pathname
-    });
-  }, [profile, isLoading, error, location.pathname]);
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading CEO dashboard...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    console.error('CEODashboardLayout error:', error);
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center max-w-md p-6 bg-white rounded-xl shadow-lg">
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Dashboard Error</h2>
-          <p className="text-gray-600 mb-4">Unable to load the CEO dashboard layout.</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-          >
-            Reload Page
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  if (profile && profile.role !== 'ceo' && profile.role !== 'admin') {
-    console.log('Redirecting non-CEO user:', profile.role);
-    return <Navigate to="/ctod/home" replace />;
-  }
-
-  if (!profile) {
-    console.warn('No profile found in CEODashboardLayout');
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center max-w-md p-6 bg-white rounded-xl shadow-lg">
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Profile Not Found</h2>
-          <p className="text-gray-600 mb-4">Unable to load your profile. Please try logging in again.</p>
-          <button
-            onClick={() => window.location.href = '/'}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-          >
-            Back to Login
-          </button>
-        </div>
-      </div>
-    );
-  }
+  const { data: profile } = useCurrentProfile();
 
   const navItems = [
     { path: '/ceod/home', label: 'Home', icon: Home },

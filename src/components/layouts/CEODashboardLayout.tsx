@@ -13,7 +13,10 @@ import {
   MessageSquare,
   ShoppingCart,
   Activity,
-  Database
+  Database,
+  Code,
+  BarChart3,
+  Shield
 } from 'lucide-react';
 import { useCurrentProfile } from '../../hooks/useDualDashboard';
 import { supabase } from '../../lib/supabase';
@@ -27,15 +30,20 @@ export function CEODashboardLayout({ children }: CEODashboardLayoutProps) {
   const { data: profile } = useCurrentProfile();
 
   const navItems = [
-    { path: '/ceod/home', label: 'Home', icon: Home },
-    { path: '/ceod/marketing', label: 'Marketing', icon: Megaphone },
-    { path: '/ceod/concierge/tracking', label: 'Concierge', icon: MessageSquare },
-    { path: '/ceod/sales/reports', label: 'Sales', icon: ShoppingCart },
-    { path: '/ceod/operations/overview', label: 'Operations', icon: Activity },
-    { path: '/ceod/data', label: 'Data Import', icon: Database },
-    { path: '/ceod/files', label: 'Files', icon: FileText },
-    { path: '/ceod/board', label: 'Board Packet', icon: TrendingUp },
-    { path: '/shared/overview', label: 'Shared from CTO', icon: Share2 },
+    { path: '/ceod/home', label: 'CEO Home', icon: Home, section: 'ceo' },
+    { path: '/ceod/marketing', label: 'Marketing', icon: Megaphone, section: 'ceo' },
+    { path: '/ceod/concierge/tracking', label: 'Concierge', icon: MessageSquare, section: 'ceo' },
+    { path: '/ceod/sales/reports', label: 'Sales', icon: ShoppingCart, section: 'ceo' },
+    { path: '/ceod/operations/overview', label: 'Operations', icon: Activity, section: 'ceo' },
+    { path: '/ceod/data', label: 'Data Import', icon: Database, section: 'ceo' },
+    { path: '/ceod/files', label: 'CEO Files', icon: FileText, section: 'ceo' },
+    { path: '/ceod/board', label: 'Board Packet', icon: TrendingUp, section: 'ceo' },
+    { path: '/ctod/home', label: 'CTO Home', icon: Code, section: 'cto' },
+    { path: '/ctod/files', label: 'CTO Files', icon: FileText, section: 'cto' },
+    { path: '/ctod/kpis', label: 'Tech KPIs', icon: BarChart3, section: 'cto' },
+    { path: '/ctod/engineering', label: 'Engineering', icon: Code, section: 'cto' },
+    { path: '/ctod/compliance', label: 'Compliance', icon: Shield, section: 'cto' },
+    { path: '/shared/overview', label: 'Shared View', icon: Share2, section: 'shared' },
   ];
 
   useEffect(() => {
@@ -52,10 +60,10 @@ export function CEODashboardLayout({ children }: CEODashboardLayoutProps) {
         console.error('Error signing out:', error);
         throw error;
       }
+      window.location.href = '/login';
     } catch (error) {
       console.error('Error signing out:', error);
-      // Force reload on error
-      window.location.reload();
+      window.location.href = '/login';
     }
   };
 
@@ -74,19 +82,25 @@ export function CEODashboardLayout({ children }: CEODashboardLayoutProps) {
                   <p className="text-xs text-gray-500">MPB Health Executive Portal</p>
                 </div>
               </div>
-              <div className="hidden md:flex items-center gap-1">
+              <div className="hidden lg:flex items-center gap-1 overflow-x-auto max-w-4xl">
                 {navItems.map((item) => {
                   const Icon = item.icon;
                   const isActive = location.pathname.startsWith(item.path);
+                  const isCTOSection = item.section === 'cto';
                   return (
                     <Link
                       key={item.path}
                       to={item.path}
-                      className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
                         isActive
-                          ? 'bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white'
-                          : 'text-gray-600 hover:bg-blue-50 hover:text-[#1a3d97]'
+                          ? isCTOSection
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white'
+                          : isCTOSection
+                            ? 'text-gray-500 hover:bg-blue-50 hover:text-blue-600 border border-gray-300'
+                            : 'text-gray-600 hover:bg-blue-50 hover:text-[#1a3d97]'
                       }`}
+                      title={isCTOSection ? `CTO Dashboard: ${item.label}` : item.label}
                     >
                       <Icon size={16} />
                       {item.label}

@@ -211,6 +211,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setProfile(null);
     clearProfileCookies();
     profileCache.current = null;
+    window.location.href = '/login';
   }, [clearProfileCookies]);
 
   useEffect(() => {

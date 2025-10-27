@@ -28,7 +28,7 @@ export function CTODashboardLayout({ children }: CTODashboardLayoutProps) {
     );
   }
 
-  if (profile && profile.role !== 'cto' && profile.role !== 'admin') {
+  if (profile && profile.role !== 'cto' && profile.role !== 'admin' && profile.role !== 'ceo') {
     return <Navigate to="/ceod/home" replace />;
   }
 
@@ -55,10 +55,10 @@ export function CTODashboardLayout({ children }: CTODashboardLayoutProps) {
         console.error('Error signing out:', error);
         throw error;
       }
+      window.location.href = '/login';
     } catch (error) {
       console.error('Error signing out:', error);
-      // Force reload on error
-      window.location.reload();
+      window.location.href = '/login';
     }
   };
 
@@ -99,8 +99,12 @@ export function CTODashboardLayout({ children }: CTODashboardLayoutProps) {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <div className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
-                CTO
+              <div className={`px-3 py-1 rounded-full text-xs font-medium ${
+                profile?.role === 'ceo'
+                  ? 'bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white'
+                  : 'bg-blue-100 text-blue-700'
+              }`}>
+                {profile?.role === 'ceo' ? 'CEO (Viewing CTO)' : 'CTO'}
               </div>
               <button
                 onClick={handleSignOut}

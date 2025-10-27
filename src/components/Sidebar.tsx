@@ -141,10 +141,10 @@ export default function Sidebar({
         console.error('Error logging out:', error);
         throw error;
       }
+      window.location.href = '/login';
     } catch (error) {
       console.error('Error logging out:', error);
-      // Force reload on error
-      window.location.reload();
+      window.location.href = '/login';
     }
   };
 

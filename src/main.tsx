@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './contexts/AuthContext.tsx';
 import { ProtectedRoute } from './components/guards/ProtectedRoute.tsx';
 import { AuthCallback } from './components/pages/AuthCallback.tsx';
+import Login from './components/pages/Login.tsx';
 import App from './App.tsx';
 import CEOApp from './CEOApp.tsx';
 import DualDashboardApp from './DualDashboardApp.tsx';
@@ -146,6 +147,9 @@ createRoot(document.getElementById('root')!).render(
         >
           <AuthProvider>
             <Routes>
+              {/* Login Route */}
+              <Route path="/login" element={<Login onLoginSuccess={() => {}} />} />
+
               {/* Auth Callback Route */}
               <Route path="/auth/callback" element={<AuthCallback />} />
 

@@ -2,6 +2,9 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { AuthProvider } from './contexts/AuthContext.tsx';
+import { ProtectedRoute } from './components/guards/ProtectedRoute.tsx';
+import { AuthCallback } from './components/pages/AuthCallback.tsx';
 import App from './App.tsx';
 import CEOApp from './CEOApp.tsx';
 import DualDashboardApp from './DualDashboardApp.tsx';
@@ -141,18 +144,51 @@ createRoot(document.getElementById('root')!).render(
             v7_relativeSplatPath: true
           }}
         >
-          <Routes>
-            {/* Dual Dashboard Routes (New System) */}
-            <Route path="/ctod/*" element={<DualDashboardApp />} />
-            <Route path="/ceod/*" element={<DualDashboardApp />} />
-            <Route path="/shared/*" element={<DualDashboardApp />} />
+          <AuthProvider>
+            <Routes>
+              {/* Auth Callback Route */}
+              <Route path="/auth/callback" element={<AuthCallback />} />
 
-            {/* CEO Portal Routes (Legacy) */}
-            <Route path="/ceo/*" element={<CEOApp />} />
+              {/* Dual Dashboard Routes (New System) - Protected */}
+              <Route
+                path="/ctod/*"
+                element={
+                  <ProtectedRoute allowedRoles={['cto', 'admin']}>
+                    <DualDashboardApp />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/ceod/*"
+                element={
+                  <ProtectedRoute allowedRoles={['ceo', 'admin']}>
+                    <DualDashboardApp />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/shared/*"
+                element={
+                  <ProtectedRoute>
+                    <DualDashboardApp />
+                  </ProtectedRoute>
+                }
+              />
 
-            {/* CTO Dashboard Routes (Legacy - default) */}
-            <Route path="/*" element={<App />} />
-          </Routes>
+              {/* CEO Portal Routes (Legacy) - Protected */}
+              <Route
+                path="/ceo/*"
+                element={
+                  <ProtectedRoute allowedRoles={['ceo', 'admin']}>
+                    <CEOApp />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* CTO Dashboard Routes (Legacy - default) - Protected */}
+              <Route path="/*" element={<App />} />
+            </Routes>
+          </AuthProvider>
         </BrowserRouter>
       </QueryClientProvider>
     </ErrorBoundary>

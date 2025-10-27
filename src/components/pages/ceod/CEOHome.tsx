@@ -1,19 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import {
   TrendingUp,
-  DollarSign,
-  Users,
   Target,
-  AlertTriangle,
   CheckCircle,
   Share2,
   FileText,
 } from 'lucide-react';
 import { CEODashboardLayout } from '../../layouts/CEODashboardLayout';
 import { useCurrentProfile, useResources, useWorkspace } from '../../../hooks/useDualDashboard';
-import { VisibilityBadge } from '../../ui/VisibilityBadge';
 import { ShareModal } from '../../modals/ShareModal';
+import { CEOErrorBoundary } from '../../ceo/ErrorBoundary';
+import { ExecutiveOverviewPanel } from '../../ceo/panels/ExecutiveOverviewPanel';
+import { ConciergePanel } from '../../ceo/panels/ConciergePanel';
+import { SalesPanel } from '../../ceo/panels/SalesPanel';
+import { OperationsPanel } from '../../ceo/panels/OperationsPanel';
+import { FinancePanel } from '../../ceo/panels/FinancePanel';
+import { CompliancePanel } from '../../ceo/panels/CompliancePanel';
 import type { Resource } from '../../../lib/dualDashboard';
 
 export function CEOHome() {
@@ -34,36 +37,14 @@ export function CEOHome() {
     console.log('CEOHome mounted - Profile:', profile?.display_name);
   }, [profile]);
 
-  const kpis = [
-    {
-      label: 'MRR',
-      value: '$847K',
-      trend: '+12%',
-      status: 'success',
-      icon: DollarSign,
-    },
-    {
-      label: 'Active Members',
-      value: '3,247',
-      trend: '+8%',
-      status: 'success',
-      icon: Users,
-    },
-    {
-      label: 'CAC',
-      value: '$124',
-      trend: '-6%',
-      status: 'success',
-      icon: Target,
-    },
-    {
-      label: 'Churn Rate',
-      value: '2.1%',
-      trend: '+0.3%',
-      status: 'warning',
-      icon: AlertTriangle,
-    },
-  ];
+  const LoadingFallback = () => (
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <div className="animate-pulse space-y-3">
+        <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+        <div className="h-20 bg-gray-200 rounded"></div>
+      </div>
+    </div>
+  );
 
   const priorities = [
     {
@@ -101,37 +82,45 @@ export function CEOHome() {
           <p className="text-gray-600 mt-1">Here's your executive overview</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {kpis.map((kpi) => {
-            const Icon = kpi.icon;
-            const statusColors = {
-              success: 'bg-green-100 text-green-700',
-              warning: 'bg-yellow-100 text-yellow-700',
-              neutral: 'bg-blue-100 text-blue-700',
-            };
-            return (
-              <div
-                key={kpi.label}
-                className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:border-[#1a3d97] transition-colors"
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-[#1a3d97] to-[#00A896] flex items-center justify-center">
-                    <Icon size={20} className="text-white" />
-                  </div>
-                  <span
-                    className={`text-xs font-medium px-2 py-1 rounded-full ${
-                      statusColors[kpi.status as keyof typeof statusColors]
-                    }`}
-                  >
-                    {kpi.trend}
-                  </span>
-                </div>
-                <div className="text-3xl font-bold text-gray-900 mb-1">{kpi.value}</div>
-                <div className="text-sm text-gray-500">{kpi.label}</div>
-              </div>
-            );
-          })}
+        <CEOErrorBoundary>
+          <Suspense fallback={<LoadingFallback />}>
+            <ExecutiveOverviewPanel />
+          </Suspense>
+        </CEOErrorBoundary>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <CEOErrorBoundary>
+            <Suspense fallback={<LoadingFallback />}>
+              <ConciergePanel />
+            </Suspense>
+          </CEOErrorBoundary>
+
+          <CEOErrorBoundary>
+            <Suspense fallback={<LoadingFallback />}>
+              <SalesPanel />
+            </Suspense>
+          </CEOErrorBoundary>
         </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <CEOErrorBoundary>
+            <Suspense fallback={<LoadingFallback />}>
+              <OperationsPanel />
+            </Suspense>
+          </CEOErrorBoundary>
+
+          <CEOErrorBoundary>
+            <Suspense fallback={<LoadingFallback />}>
+              <FinancePanel />
+            </Suspense>
+          </CEOErrorBoundary>
+        </div>
+
+        <CEOErrorBoundary>
+          <Suspense fallback={<LoadingFallback />}>
+            <CompliancePanel />
+          </Suspense>
+        </CEOErrorBoundary>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">

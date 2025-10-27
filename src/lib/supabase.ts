@@ -1,5 +1,4 @@
 import { createClient } from '@supabase/supabase-js';
-import { Database } from '../types/database';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -33,5 +32,5 @@ if (import.meta.env.DEV || !isSupabaseConfigured) {
   });
 }
 
-// Only create client if properly configured
-export const supabase = createClient<Database>(finalUrl, finalKey);
+// Create client without type parameter to avoid import errors
+export const supabase = createClient(finalUrl, finalKey);

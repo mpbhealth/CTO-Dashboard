@@ -1,6 +1,6 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { type UserRole } from '../../lib/dualDashboard';
-import { useCurrentProfile } from '../../hooks/useDualDashboard';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface RoleGuardProps {
   children: React.ReactNode;
@@ -10,9 +10,9 @@ interface RoleGuardProps {
 
 export function RoleGuard({ children, allowedRoles, redirectTo }: RoleGuardProps) {
   const location = useLocation();
-  const { data: profile, isLoading } = useCurrentProfile();
+  const { profile, loading } = useAuth();
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">

@@ -186,7 +186,14 @@ createRoot(document.getElementById('root')!).render(
               />
 
               {/* CTO Dashboard Routes (Legacy - default) - Protected */}
-              <Route path="/*" element={<App />} />
+              <Route
+                path="/*"
+                element={
+                  <ProtectedRoute>
+                    <App />
+                  </ProtectedRoute>
+                }
+              />
             </Routes>
           </AuthProvider>
         </BrowserRouter>

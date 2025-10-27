@@ -57,7 +57,7 @@ export function CEODataManagement() {
   };
 
   return (
-    <CEODashboardLayout>
+    
       <div className="p-6 space-y-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center space-x-2">
@@ -225,6 +225,6 @@ export function CEODataManagement() {
           </div>
         )}
       </div>
-    </CEODashboardLayout>
+    
   );
 }

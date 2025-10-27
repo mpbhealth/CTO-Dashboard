@@ -62,16 +62,16 @@ export function CEOConciergeNotes() {
 
   if (isLoading) {
     return (
-      <CEODashboardLayout>
+      
         <div className="flex items-center justify-center min-h-96">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1a3d97]"></div>
         </div>
-      </CEODashboardLayout>
+      
     );
   }
 
   return (
-    <CEODashboardLayout>
+    
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
@@ -231,7 +231,6 @@ export function CEOConciergeNotes() {
             Showing {filteredNotes.length} of {notes.length} notes
           </div>
         )}
-      </div>
 
       {showExportModal && (
         <ExportModal
@@ -240,6 +239,6 @@ export function CEOConciergeNotes() {
           onClose={() => setShowExportModal(false)}
         />
       )}
-    </CEODashboardLayout>
+    </div>
   );
 }

@@ -73,8 +73,7 @@ export function CEOHome() {
   const sharedFromCTO = resources.filter((r) => r.visibility === 'shared_to_ceo').slice(0, 3);
 
   return (
-    <CEODashboardLayout>
-      <div className="space-y-8">
+    <div className="space-y-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">
             Good morning, {profile?.display_name || 'Catherine'}
@@ -272,7 +271,6 @@ export function CEOHome() {
             </div>
           </div>
         </div>
-      </div>
 
       {shareModalResource && (
         <ShareModal
@@ -280,6 +278,6 @@ export function CEOHome() {
           onClose={() => setShareModalResource(null)}
         />
       )}
-    </CEODashboardLayout>
+    </div>
   );
 }

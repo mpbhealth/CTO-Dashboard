@@ -96,17 +96,16 @@ export function CEOOperations() {
 
   if (isLoading) {
     return (
-      <CEODashboardLayout>
+      <div className="space-y-6">
         <div className="flex items-center justify-center min-h-96">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1a3d97]"></div>
         </div>
-      </CEODashboardLayout>
+      </div>
     );
   }
 
   return (
-    <CEODashboardLayout>
-      <div className="space-y-6">
+    <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
@@ -297,9 +296,7 @@ export function CEOOperations() {
               </ResponsiveContainer>
             </div>
           </div>
-        </div>
-      </div>
-
+  
       {showExportModal && (
         <ExportModal
           data={filteredCancellations}
@@ -307,6 +304,7 @@ export function CEOOperations() {
           onClose={() => setShowExportModal(false)}
         />
       )}
-    </CEODashboardLayout>
+      </div>
+    </div>
   );
 }

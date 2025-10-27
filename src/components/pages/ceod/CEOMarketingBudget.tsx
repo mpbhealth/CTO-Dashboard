@@ -17,7 +17,7 @@ export function CEOMarketingBudget() {
   const avgROI = (budgetData.reduce((sum, item) => sum + item.roi, 0) / budgetData.length).toFixed(1);
 
   return (
-    <CEODashboardLayout>
+    
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
@@ -109,6 +109,6 @@ export function CEOMarketingBudget() {
           })}
         </div>
       </div>
-    </CEODashboardLayout>
+    
   );
 }

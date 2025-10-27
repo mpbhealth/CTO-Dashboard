@@ -89,7 +89,7 @@ export function CEOFiles() {
   };
 
   return (
-    <CEODashboardLayout>
+    
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
@@ -191,7 +191,6 @@ export function CEOFiles() {
             ))}
           </div>
         )}
-      </div>
 
       {shareModalResource && (
         <ShareModal
@@ -199,6 +198,6 @@ export function CEOFiles() {
           onClose={() => setShareModalResource(null)}
         />
       )}
-    </CEODashboardLayout>
+    </div>
   );
 }

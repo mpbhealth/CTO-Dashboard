@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
 import { User } from '@supabase/supabase-js';
-import { supabase } from '@/lib/supabase';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 
 type UserRole = 'ceo' | 'cto' | 'admin' | 'staff';
 
@@ -204,6 +204,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const initAuth = async () => {
       try {
         console.log('[AuthContext] Initializing authentication');
+
+        // If Supabase is not configured, set loading to false immediately
+        if (!isSupabaseConfigured) {
+          console.warn('[AuthContext] Supabase not configured - skipping authentication');
+          if (mounted) {
+            setUser(null);
+            setProfile(null);
+            setLoading(false);
+          }
+          return;
+        }
+
         const { data: { session } } = await supabase.auth.getSession();
         const currentUser = session?.user ?? null;
 
@@ -246,6 +258,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     initAuth();
+
+    // Skip auth listener if Supabase is not configured
+    if (!isSupabaseConfigured) {
+      return () => {
+        mounted = false;
+        if (circuitBreakerTimer.current) {
+          clearTimeout(circuitBreakerTimer.current);
+        }
+      };
+    }
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('[AuthContext] Auth state changed:', event);

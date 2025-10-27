@@ -24,7 +24,8 @@ export default function AuthWrapper({ children }: AuthWrapperProps) {
 
   useEffect(() => {
     if (!isSupabaseConfigured) {
-      console.warn('[AuthWrapper] Supabase not configured - running in demo mode');
+      console.warn('[AuthWrapper] Supabase not configured');
+      setError('Supabase is not configured. Please add your VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to the .env file.');
       setTimedOut(false);
       return;
     }
@@ -189,12 +190,33 @@ export default function AuthWrapper({ children }: AuthWrapperProps) {
   }
 
   if (error && !user) {
+    const isConfigError = error.includes('Supabase is not configured');
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="text-center max-w-md p-6 bg-white rounded-xl shadow-lg border border-red-200">
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+        <div className="text-center max-w-2xl p-6 bg-white rounded-xl shadow-lg border border-red-200">
           <div className="text-red-600 mb-4 text-4xl">⚠️</div>
-          <h2 className="text-xl font-bold text-slate-900 mb-2">Authentication Error</h2>
+          <h2 className="text-xl font-bold text-slate-900 mb-2">
+            {isConfigError ? 'Configuration Required' : 'Authentication Error'}
+          </h2>
           <p className="text-slate-600 mb-6">{error}</p>
+
+          {isConfigError && (
+            <div className="mb-6 p-4 bg-slate-50 rounded-lg text-left">
+              <p className="text-sm font-semibold text-slate-700 mb-2">To configure Supabase:</p>
+              <ol className="text-xs text-slate-600 space-y-2 list-decimal list-inside">
+                <li>Create a Supabase project at <a href="https://supabase.com" target="_blank" rel="noopener noreferrer" className="text-sky-600 hover:underline">supabase.com</a></li>
+                <li>Copy your project URL and anon key</li>
+                <li>Edit the <code className="bg-slate-200 px-1 rounded">.env</code> file in the project root</li>
+                <li>Replace the placeholder values with your actual credentials:</li>
+              </ol>
+              <pre className="mt-2 p-2 bg-slate-800 text-slate-100 rounded text-xs overflow-auto">
+{`VITE_SUPABASE_URL=your_project_url
+VITE_SUPABASE_ANON_KEY=your_anon_key`}
+              </pre>
+              <p className="text-xs text-slate-600 mt-2">5. Restart the development server</p>
+            </div>
+          )}
+
           <div className="space-y-3">
             <button
               onClick={() => {
@@ -203,7 +225,7 @@ export default function AuthWrapper({ children }: AuthWrapperProps) {
               }}
               className="w-full bg-sky-600 hover:bg-sky-700 text-white px-4 py-3 rounded-lg transition-colors font-medium"
             >
-              Try Again
+              Reload Page
             </button>
           </div>
         </div>

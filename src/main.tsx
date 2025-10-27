@@ -149,32 +149,6 @@ createRoot(document.getElementById('root')!).render(
               {/* Auth Callback Route */}
               <Route path="/auth/callback" element={<AuthCallback />} />
 
-              {/* Dual Dashboard Routes (New System) - Protected */}
-              <Route
-                path="/ctod/*"
-                element={
-                  <ProtectedRoute allowedRoles={['cto', 'admin']}>
-                    <DualDashboardApp />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/ceod/*"
-                element={
-                  <ProtectedRoute allowedRoles={['ceo', 'admin']}>
-                    <DualDashboardApp />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/shared/*"
-                element={
-                  <ProtectedRoute>
-                    <DualDashboardApp />
-                  </ProtectedRoute>
-                }
-              />
-
               {/* CEO Portal Routes (Legacy) - Protected */}
               <Route
                 path="/ceo/*"
@@ -185,12 +159,30 @@ createRoot(document.getElementById('root')!).render(
                 }
               />
 
-              {/* CTO Dashboard Routes (Legacy - default) - Protected */}
+              {/* CTO Dashboard Routes (Legacy - for backward compatibility) */}
+              <Route
+                path="/overview"
+                element={
+                  <ProtectedRoute>
+                    <App />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/assignments"
+                element={
+                  <ProtectedRoute>
+                    <App />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Dual Dashboard Routes (New System) - Handles all /ceod, /ctod, /shared routes */}
               <Route
                 path="/*"
                 element={
                   <ProtectedRoute>
-                    <App />
+                    <DualDashboardApp />
                   </ProtectedRoute>
                 }
               />

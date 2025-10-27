@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
 import { User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 
@@ -20,6 +20,11 @@ function setCookie(name: string, value: string, maxAge: number = 86400): void {
 
 function deleteCookie(name: string): void {
   document.cookie = `${name}=; path=/; max-age=0`;
+}
+
+function verifyCookie(name: string, expectedValue: string): boolean {
+  const actual = getCookie(name);
+  return actual === expectedValue;
 }
 
 interface Profile {
@@ -45,9 +50,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const fetchingProfile = useRef(false);
+  const profileCache = useRef<{ userId: string; profile: Profile; timestamp: number } | null>(null);
+  const CACHE_TTL = 5 * 60 * 1000;
 
-  const fetchProfile = async (userId: string) => {
+  const fetchProfile = useCallback(async (userId: string): Promise<Profile | null> => {
+    if (fetchingProfile.current) {
+      console.log('[AuthContext] Profile fetch already in progress, skipping');
+      return null;
+    }
+
+    const now = Date.now();
+    if (profileCache.current &&
+        profileCache.current.userId === userId &&
+        now - profileCache.current.timestamp < CACHE_TTL) {
+      console.log('[AuthContext] Returning cached profile');
+      return profileCache.current.profile;
+    }
+
+    fetchingProfile.current = true;
     try {
+      console.log('[AuthContext] Fetching profile for user:', userId);
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -55,98 +78,161 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .maybeSingle();
 
       if (error) {
-        console.error('Error fetching profile:', error);
+        console.error('[AuthContext] Error fetching profile:', error);
         return null;
+      }
+
+      if (data) {
+        profileCache.current = { userId, profile: data as Profile, timestamp: now };
       }
 
       return data as Profile | null;
     } catch (error) {
-      console.error('Error fetching profile:', error);
+      console.error('[AuthContext] Error fetching profile:', error);
       return null;
+    } finally {
+      fetchingProfile.current = false;
     }
-  };
+  }, []);
 
-  const setProfileCookies = (profileData: Profile | null) => {
+  const setProfileCookies = useCallback((profileData: Profile | null) => {
     if (profileData?.role) {
       setCookie('role', profileData.role);
+      const roleVerified = verifyCookie('role', profileData.role);
+
       if (profileData.display_name) {
         setCookie('display_name', profileData.display_name);
       }
-    }
-  };
 
-  const clearProfileCookies = () => {
+      if (!roleVerified) {
+        console.warn('[AuthContext] Cookie verification failed for role');
+      } else {
+        console.log('[AuthContext] Role cookie set and verified:', profileData.role);
+      }
+    }
+  }, []);
+
+  const clearProfileCookies = useCallback(() => {
     deleteCookie('role');
     deleteCookie('display_name');
-  };
+    console.log('[AuthContext] Profile cookies cleared');
+  }, []);
 
-  const refreshRole = async () => {
-    const { data: { user: currentUser } } = await supabase.auth.getUser();
-
-    if (currentUser) {
-      const profileData = await fetchProfile(currentUser.id);
-      setProfile(profileData);
-      setProfileCookies(profileData);
-    } else {
-      setProfile(null);
-      clearProfileCookies();
+  const refreshRole = useCallback(async () => {
+    if (fetchingProfile.current) {
+      console.log('[AuthContext] Refresh already in progress, skipping');
+      return;
     }
-  };
 
-  const signOut = async () => {
+    try {
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+
+      if (currentUser) {
+        const profileData = await fetchProfile(currentUser.id);
+        if (profileData) {
+          setProfile(profileData);
+          setProfileCookies(profileData);
+          console.log('[AuthContext] Role refreshed successfully');
+        }
+      } else {
+        setProfile(null);
+        clearProfileCookies();
+      }
+    } catch (error) {
+      console.error('[AuthContext] Error refreshing role:', error);
+    }
+  }, [fetchProfile, setProfileCookies, clearProfileCookies]);
+
+  const signOut = useCallback(async () => {
+    console.log('[AuthContext] Signing out user');
     await supabase.auth.signOut();
     setUser(null);
     setProfile(null);
     clearProfileCookies();
-  };
+    profileCache.current = null;
+  }, [clearProfileCookies]);
 
   useEffect(() => {
-    const initAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      const currentUser = session?.user ?? null;
-      setUser(currentUser);
+    let mounted = true;
 
-      if (currentUser) {
-        const cachedRole = getCookie('role');
-        if (cachedRole) {
-          const cachedDisplayName = getCookie('display_name');
-          setProfile({
-            id: '',
-            user_id: currentUser.id,
-            role: cachedRole as UserRole,
-            display_name: cachedDisplayName,
-            org_id: null,
-          });
+    const initAuth = async () => {
+      try {
+        console.log('[AuthContext] Initializing authentication');
+        const { data: { session } } = await supabase.auth.getSession();
+        const currentUser = session?.user ?? null;
+
+        if (!mounted) return;
+
+        setUser(currentUser);
+
+        if (currentUser) {
+          const cachedRole = getCookie('role');
+          if (cachedRole) {
+            const cachedDisplayName = getCookie('display_name');
+            console.log('[AuthContext] Found cached role in cookie:', cachedRole);
+            setProfile({
+              id: '',
+              user_id: currentUser.id,
+              role: cachedRole as UserRole,
+              display_name: cachedDisplayName,
+              org_id: null,
+            });
+          }
+
+          const profileData = await fetchProfile(currentUser.id);
+          if (!mounted) return;
+
+          if (profileData) {
+            setProfile(profileData);
+            setProfileCookies(profileData);
+          }
         }
 
-        const profileData = await fetchProfile(currentUser.id);
-        setProfile(profileData);
-        setProfileCookies(profileData);
-        setLoading(false);
-      } else {
-        setLoading(false);
+        if (mounted) {
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error('[AuthContext] Error during initialization:', error);
+        if (mounted) {
+          setLoading(false);
+        }
       }
     };
 
     initAuth();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('[AuthContext] Auth state changed:', event);
+
+      if (!mounted) return;
+
       const currentUser = session?.user ?? null;
       setUser(currentUser);
 
-      if (currentUser) {
-        fetchProfile(currentUser.id).then((profileData) => {
+      if (event === 'SIGNED_OUT') {
+        setProfile(null);
+        clearProfileCookies();
+        profileCache.current = null;
+        return;
+      }
+
+      if (currentUser && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
+        const profileData = await fetchProfile(currentUser.id);
+        if (mounted && profileData) {
           setProfile(profileData);
           setProfileCookies(profileData);
-        });
-      } else {
+        }
+      } else if (!currentUser) {
         setProfile(null);
         clearProfileCookies();
       }
     });
 
-    return () => subscription.unsubscribe();
-  }, []);
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, [fetchProfile, setProfileCookies, clearProfileCookies]);
 
   return (
     <AuthContext.Provider

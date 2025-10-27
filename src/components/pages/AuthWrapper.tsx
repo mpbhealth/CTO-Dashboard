@@ -1,103 +1,37 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { supabase, isSupabaseConfigured } from '../../lib/supabase';
-import { getCurrentProfile } from '../../lib/dualDashboard';
+import { isSupabaseConfigured } from '../../lib/supabase';
+import { useAuth } from '../../contexts/AuthContext';
 import Login from './Login';
-import { User } from '@supabase/supabase-js';
 
 interface AuthWrapperProps {
   children: React.ReactNode;
 }
 
 export default function AuthWrapper({ children }: AuthWrapperProps) {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { user, profile, loading: authLoading } = useAuth();
   const [loadingMessage, setLoadingMessage] = useState('Checking authentication...');
   const [error, setError] = useState<string | null>(null);
-  const [profileChecked, setProfileChecked] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
     if (!isSupabaseConfigured) {
-      console.warn('Supabase not configured - running in demo mode');
-      setUser({ id: 'demo-user', email: 'demo@example.com' } as User);
-      setLoading(false);
-      setProfileChecked(true);
+      console.warn('[AuthWrapper] Supabase not configured - running in demo mode');
       return;
     }
 
-    const getSession = async () => {
-      try {
-        setLoadingMessage('Checking authentication...');
-        const { data: { session }, error } = await supabase.auth.getSession();
-        if (error) throw error;
+    if (authLoading) {
+      setLoadingMessage('Checking authentication...');
+      return;
+    }
 
-        if (session?.user) {
-          setUser(session.user);
-          await checkProfileAndRedirect(session.user);
-        } else {
-          setUser(null);
-          setProfileChecked(true);
-        }
-      } catch (err) {
-        console.error('Auth error:', err);
-        setError(err instanceof Error ? err.message : 'Authentication failed');
-        setUser(null);
-        setProfileChecked(true);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getSession();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log('Auth state change:', event, session?.user?.email);
-
-        if (event === 'SIGNED_OUT') {
-          setUser(null);
-          setProfileChecked(false);
-          setLoading(false);
-          return;
-        }
-
-        if (event === 'SIGNED_IN' && session?.user) {
-          setUser(session.user);
-          setLoading(true);
-          await checkProfileAndRedirect(session.user);
-          setLoading(false);
-        }
-
-        if (session?.user && !profileChecked) {
-          setUser(session.user);
-        }
-      }
-    );
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  const checkProfileAndRedirect = async (authUser: User) => {
-    try {
-      console.log('[AuthWrapper] Starting checkProfileAndRedirect for user:', authUser.email);
+    if (user && !profile) {
       setLoadingMessage('Loading your profile...');
+      return;
+    }
 
-      const profile = await getCurrentProfile();
-      console.log('[AuthWrapper] getCurrentProfile returned:', profile);
-
-      if (!profile) {
-        console.error('[AuthWrapper] Profile not found - showing error');
-        setError('Profile not found. Please contact your administrator or try logging in again.');
-        await supabase.auth.signOut();
-        setProfileChecked(true);
-        return;
-      }
-
-      console.log('[AuthWrapper] Profile loaded successfully:', { role: profile.role, email: profile.email });
-      setProfileChecked(true);
-
+    if (user && profile) {
       setLoadingMessage('Redirecting to your dashboard...');
 
       const currentPath = location.pathname;
@@ -107,39 +41,26 @@ export default function AuthWrapper({ children }: AuthWrapperProps) {
       const isRootPath = currentPath === '/' || currentPath === '';
       const isLoginPath = currentPath.startsWith('/login');
 
-      console.log('Route check:', { currentPath, role: profile.role, isCEOPath, isCTOPath, isSharedPath, isRootPath });
+      console.log('[AuthWrapper] Route check:', { currentPath, role: profile.role, isCEOPath, isCTOPath, isSharedPath, isRootPath });
 
-      // CEO users should be redirected to CEO dashboard
       if (profile.role === 'ceo') {
         if (isCTOPath || isRootPath || isLoginPath) {
-          console.log('Redirecting CEO to /ceod/home from:', currentPath);
+          console.log('[AuthWrapper] Redirecting CEO to /ceod/home from:', currentPath);
           navigate('/ceod/home', { replace: true });
         }
-        // Allow CEO to stay on /ceod/* and /shared/* routes
-      }
-      // CTO/Admin/Staff users should use CTO dashboard
-      else {
+      } else {
         if (isCEOPath) {
-          console.log(`Redirecting ${profile.role} to /ctod/home from:`, currentPath);
+          console.log(`[AuthWrapper] Redirecting ${profile.role} to /ctod/home from:`, currentPath);
           navigate('/ctod/home', { replace: true });
         } else if (isRootPath || isLoginPath) {
-          console.log(`Redirecting ${profile.role} to /ctod/home from root/login`);
+          console.log(`[AuthWrapper] Redirecting ${profile.role} to /ctod/home from root/login`);
           navigate('/ctod/home', { replace: true });
         }
-        // Allow access to /ctod/* and /shared/* routes
       }
-    } catch (err) {
-      console.error('Error checking profile:', err);
-      setError('Failed to load profile. Please try again.');
-      setProfileChecked(true);
     }
-  };
+  }, [user, profile, authLoading, location.pathname, navigate]);
 
-  const handleLoginSuccess = () => {
-    console.log('Login success callback triggered');
-  };
-
-  if (loading) {
+  if (authLoading) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="text-center">
@@ -162,22 +83,11 @@ export default function AuthWrapper({ children }: AuthWrapperProps) {
             <button
               onClick={() => {
                 setError(null);
-                setLoading(true);
                 window.location.reload();
               }}
               className="w-full bg-sky-600 hover:bg-sky-700 text-white px-4 py-3 rounded-lg transition-colors font-medium"
             >
               Try Again
-            </button>
-            <button
-              onClick={() => {
-                setError(null);
-                setUser({ id: 'demo-user', email: 'demo@example.com' } as User);
-                setProfileChecked(true);
-              }}
-              className="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-3 rounded-lg transition-colors font-medium"
-            >
-              Continue in Demo Mode
             </button>
           </div>
         </div>
@@ -185,8 +95,8 @@ export default function AuthWrapper({ children }: AuthWrapperProps) {
     );
   }
 
-  if (!user || !profileChecked) {
-    return <Login onLoginSuccess={handleLoginSuccess} />;
+  if (!user) {
+    return <Login onLoginSuccess={() => console.log('[AuthWrapper] Login success')} />;
   }
 
   return <>{children}</>;

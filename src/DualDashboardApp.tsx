@@ -1,8 +1,10 @@
-import { lazy, Suspense } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { lazy, Suspense, useState, useEffect } from 'react';
+import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Menu } from 'lucide-react';
 import { useRoleBasedRedirect } from './hooks/useDualDashboard';
 import { CEOOnly, CTOOnly } from './components/guards/RoleGuard';
+import Sidebar from './components/Sidebar';
 
 const CTOHome = lazy(() => import('./components/pages/ctod/CTOHome').then(m => ({ default: m.CTOHome })));
 const CEOHome = lazy(() => import('./components/pages/ceod/CEOHome').then(m => ({ default: m.CEOHome })));
@@ -50,39 +52,185 @@ function RoleBasedRedirect() {
   return <Navigate to="/ctod/home" replace />;
 }
 
+const routeToTabMap: Record<string, string> = {
+  '/ctod/home': 'overview',
+  '/ctod/files': 'overview',
+  '/ctod/kpis': 'overview',
+  '/ctod/engineering': 'tech-stack',
+  '/ctod/compliance': 'compliance',
+  '/ceod/home': 'overview',
+  '/ceod/marketing': 'marketing-analytics',
+  '/ceod/marketing/planner': 'marketing-analytics',
+  '/ceod/marketing/calendar': 'marketing-analytics',
+  '/ceod/marketing/budget': 'marketing-analytics',
+  '/ceod/concierge/tracking': 'overview',
+  '/ceod/concierge/notes': 'overview',
+  '/ceod/sales/reports': 'overview',
+  '/ceod/operations/overview': 'overview',
+  '/ceod/files': 'overview',
+  '/ceod/data': 'overview',
+  '/ceod/board': 'overview',
+  '/ceod/initiatives': 'overview',
+  '/ceod/approvals': 'overview',
+  '/shared/overview': 'overview',
+  '/shared/audit': 'overview',
+  '/diagnostics': 'overview',
+};
+
+const tabToRouteMap: Record<string, string> = {
+  'overview': '/ctod/home',
+  'analytics': '/ctod/home',
+  'member-engagement': '/ctod/home',
+  'member-retention': '/ctod/home',
+  'advisor-performance': '/ctod/home',
+  'marketing-analytics': '/ceod/marketing',
+  'tech-stack': '/ctod/home',
+  'quick-links': '/ctod/home',
+  'roadmap': '/ctod/home',
+  'road-visualizer': '/ctod/home',
+  'roadmap-presentation': '/ctod/home',
+  'projects': '/ctod/home',
+  'monday-tasks': '/ctod/home',
+  'assignments': '/ctod/home',
+  'notepad': '/ctod/home',
+  'compliance': '/ctod/compliance',
+  'compliance/command-center': '/ctod/compliance',
+  'compliance/administration': '/ctod/compliance',
+  'compliance/training': '/ctod/compliance',
+  'compliance/phi-minimum': '/ctod/compliance',
+  'compliance/technical-safeguards': '/ctod/compliance',
+  'compliance/baas': '/ctod/compliance',
+  'compliance/incidents': '/ctod/compliance',
+  'compliance/audits': '/ctod/compliance',
+  'compliance/templates-tools': '/ctod/compliance',
+  'compliance/employee-documents': '/ctod/compliance',
+  'saas': '/ctod/home',
+  'ai-agents': '/ctod/home',
+  'it-support': '/ctod/home',
+  'integrations': '/ctod/home',
+  'deployments': '/ctod/home',
+  'policy-management': '/ctod/home',
+  'employee-performance': '/ctod/home',
+  'api-status': '/ctod/home',
+  'system-uptime': '/ctod/home',
+  'performance-evaluation': '/ctod/home',
+  'organizational-structure': '/ctod/home',
+};
+
+function DualDashboardContent() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState('overview');
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    function checkIfMobile() {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      if (mobile) {
+        setIsSidebarExpanded(false);
+      }
+    }
+
+    checkIfMobile();
+    window.addEventListener('resize', checkIfMobile);
+
+    return () => {
+      window.removeEventListener('resize', checkIfMobile);
+    };
+  }, []);
+
+  useEffect(() => {
+    const currentPath = location.pathname;
+    const matchedTab = routeToTabMap[currentPath];
+    if (matchedTab) {
+      setActiveTab(matchedTab);
+    } else {
+      for (const [route, tab] of Object.entries(routeToTabMap)) {
+        if (currentPath.startsWith(route)) {
+          setActiveTab(tab);
+          break;
+        }
+      }
+    }
+  }, [location.pathname]);
+
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    const route = tabToRouteMap[tab];
+    if (route) {
+      navigate(route);
+    }
+  };
+
+  const toggleSidebar = () => {
+    setIsSidebarExpanded(!isSidebarExpanded);
+  };
+
+  return (
+    <div className="flex min-h-screen bg-slate-50 overflow-x-hidden">
+      <Sidebar
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+        isSidebarExpanded={isSidebarExpanded}
+        onSidebarToggle={toggleSidebar}
+      />
+
+      {isMobile && !isSidebarExpanded && (
+        <button
+          className="fixed top-4 left-4 p-3 rounded-md bg-sky-600 text-white shadow-lg md:hidden z-50 mobile-hamburger"
+          onClick={toggleSidebar}
+          aria-label="Open menu"
+        >
+          <Menu className="w-5 h-5" />
+        </button>
+      )}
+
+      <main className={`flex-1 overflow-y-auto transition-all duration-300 ${
+        isMobile ? 'p-3' : 'p-8 pl-12'
+      } ${
+        isSidebarExpanded ? 'md:pl-96' : isMobile ? 'ml-0 pt-16' : 'md:pl-32'
+      }`}>
+        <Suspense fallback={<LoadingFallback />}>
+          <Routes>
+            <Route path="/ctod/home" element={<CTOOnly><CTOHome /></CTOOnly>} />
+            <Route path="/ctod/files" element={<CTOOnly><CTOHome /></CTOOnly>} />
+            <Route path="/ctod/kpis" element={<CTOOnly><CTOHome /></CTOOnly>} />
+            <Route path="/ctod/engineering" element={<CTOOnly><CTOHome /></CTOOnly>} />
+            <Route path="/ctod/compliance" element={<CTOOnly><CTOHome /></CTOOnly>} />
+
+            <Route path="/ceod/home" element={<CEOOnly><CEOHome /></CEOOnly>} />
+            <Route path="/ceod/marketing" element={<CEOOnly><CEOMarketingDashboard /></CEOOnly>} />
+            <Route path="/ceod/marketing/planner" element={<CEOOnly><CEOMarketingPlanner /></CEOOnly>} />
+            <Route path="/ceod/marketing/calendar" element={<CEOOnly><CEOContentCalendar /></CEOOnly>} />
+            <Route path="/ceod/marketing/budget" element={<CEOOnly><CEOMarketingBudget /></CEOOnly>} />
+            <Route path="/ceod/concierge/tracking" element={<CEOOnly><CEOConciergeTracking /></CEOOnly>} />
+            <Route path="/ceod/concierge/notes" element={<CEOOnly><CEOConciergeNotes /></CEOOnly>} />
+            <Route path="/ceod/sales/reports" element={<CEOOnly><CEOSalesReports /></CEOOnly>} />
+            <Route path="/ceod/operations/overview" element={<CEOOnly><CEOOperations /></CEOOnly>} />
+            <Route path="/ceod/files" element={<CEOOnly><CEOFiles /></CEOOnly>} />
+            <Route path="/ceod/data" element={<CEOOnly><CEODataManagement /></CEOOnly>} />
+            <Route path="/ceod/board" element={<CEOOnly><CEOBoardPacket /></CEOOnly>} />
+            <Route path="/ceod/initiatives" element={<CEOOnly><CEOHome /></CEOOnly>} />
+            <Route path="/ceod/approvals" element={<CEOOnly><CEOHome /></CEOOnly>} />
+
+            <Route path="/shared/overview" element={<SharedOverview />} />
+            <Route path="/shared/audit" element={<AuditLogViewer />} />
+            <Route path="/diagnostics" element={<AuthDiagnostics />} />
+
+            <Route path="*" element={<RoleBasedRedirect />} />
+          </Routes>
+        </Suspense>
+      </main>
+    </div>
+  );
+}
+
 function DualDashboardApp() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Suspense fallback={<LoadingFallback />}>
-        <Routes>
-          <Route path="/ctod/home" element={<CTOOnly><CTOHome /></CTOOnly>} />
-          <Route path="/ctod/files" element={<CTOOnly><CTOHome /></CTOOnly>} />
-          <Route path="/ctod/kpis" element={<CTOOnly><CTOHome /></CTOOnly>} />
-          <Route path="/ctod/engineering" element={<CTOOnly><CTOHome /></CTOOnly>} />
-          <Route path="/ctod/compliance" element={<CTOOnly><CTOHome /></CTOOnly>} />
-
-          <Route path="/ceod/home" element={<CEOOnly><CEOHome /></CEOOnly>} />
-          <Route path="/ceod/marketing" element={<CEOOnly><CEOMarketingDashboard /></CEOOnly>} />
-          <Route path="/ceod/marketing/planner" element={<CEOOnly><CEOMarketingPlanner /></CEOOnly>} />
-          <Route path="/ceod/marketing/calendar" element={<CEOOnly><CEOContentCalendar /></CEOOnly>} />
-          <Route path="/ceod/marketing/budget" element={<CEOOnly><CEOMarketingBudget /></CEOOnly>} />
-          <Route path="/ceod/concierge/tracking" element={<CEOOnly><CEOConciergeTracking /></CEOOnly>} />
-          <Route path="/ceod/concierge/notes" element={<CEOOnly><CEOConciergeNotes /></CEOOnly>} />
-          <Route path="/ceod/sales/reports" element={<CEOOnly><CEOSalesReports /></CEOOnly>} />
-          <Route path="/ceod/operations/overview" element={<CEOOnly><CEOOperations /></CEOOnly>} />
-          <Route path="/ceod/files" element={<CEOOnly><CEOFiles /></CEOOnly>} />
-          <Route path="/ceod/data" element={<CEOOnly><CEODataManagement /></CEOOnly>} />
-          <Route path="/ceod/board" element={<CEOOnly><CEOBoardPacket /></CEOOnly>} />
-          <Route path="/ceod/initiatives" element={<CEOOnly><CEOHome /></CEOOnly>} />
-          <Route path="/ceod/approvals" element={<CEOOnly><CEOHome /></CEOOnly>} />
-
-          <Route path="/shared/overview" element={<SharedOverview />} />
-          <Route path="/shared/audit" element={<AuditLogViewer />} />
-          <Route path="/diagnostics" element={<AuthDiagnostics />} />
-
-          <Route path="*" element={<RoleBasedRedirect />} />
-        </Routes>
-      </Suspense>
+      <DualDashboardContent />
     </QueryClientProvider>
   );
 }

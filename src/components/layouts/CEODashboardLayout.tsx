@@ -74,9 +74,11 @@ export function CEODashboardLayout({ children }: CEODashboardLayoutProps) {
           <div className="flex justify-between h-16">
             <div className="flex items-center gap-8">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-gradient-to-br from-[#1a3d97] to-[#00A896] rounded-lg flex items-center justify-center">
-                  <TrendingUp size={20} className="text-white" />
-                </div>
+                <img
+                  src="/MPB-Health-No-background.png"
+                  alt="MPB Health Logo"
+                  className="h-10 w-auto object-contain"
+                />
                 <div>
                   <h1 className="text-lg font-bold text-gray-900">CEO Dashboard — {profile?.display_name || 'Catherine Okubo'}</h1>
                   <p className="text-xs text-gray-500">MPB Health Executive Portal</p>
@@ -95,10 +97,10 @@ export function CEODashboardLayout({ children }: CEODashboardLayoutProps) {
                         isActive
                           ? isCTOSection
                             ? 'bg-blue-600 text-white'
-                            : 'bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white'
+                            : 'bg-gradient-to-r from-pink-500 to-pink-600 text-white'
                           : isCTOSection
                             ? 'text-gray-500 hover:bg-blue-50 hover:text-blue-600 border border-gray-300'
-                            : 'text-gray-600 hover:bg-blue-50 hover:text-[#1a3d97]'
+                            : 'text-gray-600 hover:bg-pink-50 hover:text-pink-700'
                       }`}
                       title={isCTOSection ? `CTO Dashboard: ${item.label}` : item.label}
                     >
@@ -110,7 +112,7 @@ export function CEODashboardLayout({ children }: CEODashboardLayoutProps) {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <div className="px-3 py-1 bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white rounded-full text-xs font-medium">
+              <div className="px-3 py-1 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-full text-xs font-medium">
                 CEO
               </div>
               <button

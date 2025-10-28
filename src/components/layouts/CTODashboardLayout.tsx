@@ -69,9 +69,11 @@ export function CTODashboardLayout({ children }: CTODashboardLayoutProps) {
           <div className="flex justify-between h-16">
             <div className="flex items-center gap-8">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                  <Code size={20} className="text-white" />
-                </div>
+                <img
+                  src="/MPB-Health-No-background.png"
+                  alt="MPB Health Logo"
+                  className="h-10 w-auto object-contain"
+                />
                 <div>
                   <h1 className="text-lg font-bold text-gray-900">CTO Dashboard</h1>
                   <p className="text-xs text-gray-500">{profile?.display_name || profile?.email}</p>

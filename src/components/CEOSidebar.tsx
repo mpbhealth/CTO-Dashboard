@@ -49,22 +49,22 @@ export default function CEOSidebar() {
 
   return (
     <div
-      className={`bg-gradient-to-b from-blue-900 to-blue-800 text-white transition-all duration-300 ${
+      className={`bg-gradient-to-b from-pink-600 to-pink-700 text-white transition-all duration-300 ${
         isCollapsed ? 'w-20' : 'w-64'
       } min-h-screen flex flex-col shadow-2xl`}
     >
       {/* Header */}
-      <div className="p-6 border-b border-blue-700">
+      <div className="p-6 border-b border-pink-800">
         <div className="flex items-center justify-between">
           {!isCollapsed && (
             <div>
-              <h1 className="text-xl font-bold text-amber-400">MPB Health</h1>
-              <p className="text-xs text-blue-200 mt-1">Executive Portal</p>
+              <h1 className="text-xl font-bold text-white">MPB Health</h1>
+              <p className="text-xs text-pink-100 mt-1">Executive Portal</p>
             </div>
           )}
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="p-2 rounded-lg hover:bg-blue-700 transition-colors"
+            className="p-2 rounded-lg hover:bg-pink-800 transition-colors"
             aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             {isCollapsed ? (
@@ -88,8 +88,8 @@ export default function CEOSidebar() {
               to={item.path}
               className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all ${
                 active
-                  ? 'bg-amber-500 text-white shadow-lg'
-                  : 'hover:bg-blue-700 text-blue-100'
+                  ? 'bg-pink-900 text-white shadow-lg'
+                  : 'hover:bg-pink-800 text-pink-50'
               } ${isCollapsed ? 'justify-center' : ''}`}
               title={isCollapsed ? item.name : undefined}
             >
@@ -108,10 +108,10 @@ export default function CEOSidebar() {
       </nav>
 
       {/* Bottom Section */}
-      <div className="p-4 border-t border-blue-700 space-y-2">
+      <div className="p-4 border-t border-pink-800 space-y-2">
         <Link
           to="/ceo/notifications"
-          className={`flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors ${
+          className={`flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-pink-800 transition-colors ${
             isCollapsed ? 'justify-center' : ''
           }`}
           title={isCollapsed ? 'Notifications' : undefined}
@@ -127,7 +127,7 @@ export default function CEOSidebar() {
 
         <Link
           to="/ceo/settings"
-          className={`flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors ${
+          className={`flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-pink-800 transition-colors ${
             isCollapsed ? 'justify-center' : ''
           }`}
           title={isCollapsed ? 'Settings' : undefined}
@@ -138,10 +138,10 @@ export default function CEOSidebar() {
 
         {/* Role Switcher */}
         {!isCollapsed && (
-          <div className="pt-4 mt-4 border-t border-blue-700">
+          <div className="pt-4 mt-4 border-t border-pink-800">
             <Link
               to="/"
-              className="flex items-center space-x-2 text-xs text-blue-200 hover:text-white transition-colors"
+              className="flex items-center space-x-2 text-xs text-pink-100 hover:text-white transition-colors"
             >
               <Globe className="w-4 h-4" />
               <span>Switch to CTO Dashboard</span>
@@ -152,14 +152,14 @@ export default function CEOSidebar() {
 
       {/* User Info */}
       {!isCollapsed && (
-        <div className="p-4 bg-blue-950">
+        <div className="p-4 bg-pink-900">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-amber-500 rounded-full flex items-center justify-center font-bold text-white">
+            <div className="w-10 h-10 bg-pink-300 rounded-full flex items-center justify-center font-bold text-pink-900">
               CEO
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-white truncate">Vinnie R. Tannous</p>
-              <p className="text-xs text-blue-300 truncate">Chief Executive Officer</p>
+              <p className="text-sm font-semibold text-white truncate">Catherine Okubo</p>
+              <p className="text-xs text-pink-200 truncate">Chief Executive Officer</p>
             </div>
           </div>
         </div>

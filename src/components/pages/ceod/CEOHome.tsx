@@ -72,13 +72,20 @@ export function CEOHome() {
 
   const sharedFromCTO = resources.filter((r) => r.visibility === 'shared_to_ceo').slice(0, 3);
 
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good morning';
+    if (hour < 18) return 'Good afternoon';
+    return 'Good evening';
+  };
+
   return (
     <div className="space-y-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">
-            Good morning, {profile?.display_name || 'Catherine'}
+            {getGreeting()}, {profile?.display_name || 'Catherine'}!
           </h1>
-          <p className="text-gray-600 mt-1">Here's your executive overview</p>
+          <p className="text-gray-600 mt-1">Welcome to your executive command center. Here's what's happening across MPB Health today.</p>
         </div>
 
         <CEOErrorBoundary>
@@ -172,7 +179,7 @@ export function CEOHome() {
             <div className="bg-white rounded-xl shadow-sm border border-gray-200">
               <div className="p-6 border-b border-gray-200">
                 <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                  <Share2 size={20} className="text-[#1a3d97]" />
+                  <Share2 size={20} className="text-pink-600" />
                   Shared from CTO
                 </h2>
                 <p className="text-sm text-gray-500 mt-1">Resources shared with you by the CTO team</p>
@@ -186,11 +193,11 @@ export function CEOHome() {
               ) : (
                 <div className="divide-y divide-gray-200">
                   {sharedFromCTO.map((resource) => (
-                    <div key={resource.id} className="p-4 hover:bg-blue-50 transition-colors group">
+                    <div key={resource.id} className="p-4 hover:bg-pink-50 transition-colors group">
                       <div className="flex items-center justify-between">
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-[#1a3d97] to-[#00A896] flex items-center justify-center">
+                            <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-pink-500 to-pink-600 flex items-center justify-center">
                               <FileText size={16} className="text-white" />
                             </div>
                             <div>
@@ -201,7 +208,7 @@ export function CEOHome() {
                             </div>
                           </div>
                         </div>
-                        <button className="px-3 py-1.5 bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white rounded-lg text-sm font-medium opacity-90 group-hover:opacity-100 transition-opacity">
+                        <button className="px-3 py-1.5 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-lg text-sm font-medium opacity-90 group-hover:opacity-100 transition-opacity">
                           View
                         </button>
                       </div>
@@ -219,25 +226,25 @@ export function CEOHome() {
                 Quick Actions
               </h2>
               <div className="space-y-2">
-                <Link to="/ceod/marketing" className="block w-full text-left px-4 py-3 bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity font-medium">
+                <Link to="/ceod/marketing" className="block w-full text-left px-4 py-3 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-lg hover:opacity-90 transition-opacity font-medium">
                   View Marketing
                 </Link>
-                <Link to="/ceod/sales/reports" className="block w-full text-left px-4 py-3 bg-blue-50 text-[#1a3d97] rounded-lg hover:bg-blue-100 transition-colors font-medium">
+                <Link to="/ceod/sales/reports" className="block w-full text-left px-4 py-3 bg-pink-50 text-pink-700 rounded-lg hover:bg-pink-100 transition-colors font-medium">
                   Sales Reports
                 </Link>
-                <Link to="/ceod/board" className="block w-full text-left px-4 py-3 bg-blue-50 text-[#1a3d97] rounded-lg hover:bg-blue-100 transition-colors font-medium">
+                <Link to="/ceod/board" className="block w-full text-left px-4 py-3 bg-pink-50 text-pink-700 rounded-lg hover:bg-pink-100 transition-colors font-medium">
                   Board Packet
                 </Link>
-                <Link to="/ceod/operations/overview" className="block w-full text-left px-4 py-3 bg-blue-50 text-[#1a3d97] rounded-lg hover:bg-blue-100 transition-colors font-medium">
+                <Link to="/ceod/operations/overview" className="block w-full text-left px-4 py-3 bg-pink-50 text-pink-700 rounded-lg hover:bg-pink-100 transition-colors font-medium">
                   Operations
                 </Link>
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-[#1a3d97] to-[#00A896] rounded-xl shadow-sm p-6 text-white">
+            <div className="bg-gradient-to-br from-pink-500 to-pink-600 rounded-xl shadow-sm p-6 text-white">
               <CheckCircle size={32} className="mb-3" />
               <h3 className="font-semibold text-lg mb-2">Company Health</h3>
-              <p className="text-white/80 text-sm mb-4">Strong performance across all metrics</p>
+              <p className="text-pink-50 text-sm mb-4">Strong performance across all metrics</p>
               <div className="space-y-2 text-sm">
                 <div className="flex items-center justify-between">
                   <span>Revenue Growth</span>

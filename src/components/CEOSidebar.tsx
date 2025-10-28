@@ -186,8 +186,9 @@ export default function CEOSidebar() {
 
       {/* Bottom Section */}
       <div className="p-4 border-t border-pink-800 space-y-2">
+        {/* TODO: Implement notifications and settings pages - routes commented out until pages are created
         <Link
-          to="/ceo/notifications"
+          to="/ceod/notifications"
           className={`flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-pink-800 transition-colors ${
             isCollapsed ? 'justify-center' : ''
           }`}
@@ -203,7 +204,7 @@ export default function CEOSidebar() {
         </Link>
 
         <Link
-          to="/ceo/settings"
+          to="/ceod/settings"
           className={`flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-pink-800 transition-colors ${
             isCollapsed ? 'justify-center' : ''
           }`}
@@ -212,12 +213,13 @@ export default function CEOSidebar() {
           <Settings className={`${isCollapsed ? 'w-6 h-6' : 'w-5 h-5'} flex-shrink-0`} />
           {!isCollapsed && <span className="font-medium text-sm">Settings</span>}
         </Link>
+        */}
 
         {/* Role Switcher */}
         {!isCollapsed && (
           <div className="pt-4 mt-4 border-t border-pink-800">
             <Link
-              to="/"
+              to="/ctod/home"
               className="flex items-center space-x-2 text-xs text-pink-100 hover:text-white transition-colors"
             >
               <Globe className="w-4 h-4" />

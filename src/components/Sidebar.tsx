@@ -187,10 +187,12 @@ export default function Sidebar({
         {/* Header */}
        <div className="mb-8 sidebar-section bg-slate-900" style={{pointerEvents: 'auto'}}>
          <div className={`flex items-center ${isSidebarExpanded ? 'space-x-3' : 'justify-center'}`} style={{pointerEvents: 'auto'}}>
-           <div className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-lg cursor-pointer ${
-             isCEO ? 'bg-amber-500' : 'bg-sky-600'
-           }`} style={{pointerEvents: 'auto'}}>
-             <Building2 className="w-7 h-7 text-white" />
+           <div className={`${isSidebarExpanded ? 'w-12 h-12' : 'w-10 h-10'} rounded-xl flex items-center justify-center shadow-lg cursor-pointer bg-white p-1.5`} style={{pointerEvents: 'auto'}}>
+             <img
+               src="/MPB-Health-No-background.png"
+               alt="MPB Health Logo"
+               className="w-full h-full object-contain"
+             />
             </div>
             {isSidebarExpanded && (
               <div>

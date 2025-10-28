@@ -56,12 +56,21 @@ export default function CEOSidebar() {
       {/* Header */}
       <div className="p-6 border-b border-pink-800">
         <div className="flex items-center justify-between">
-          {!isCollapsed && (
-            <div>
-              <h1 className="text-xl font-bold text-white">MPB Health</h1>
-              <p className="text-xs text-pink-100 mt-1">Executive Portal</p>
+          <div className="flex items-center space-x-3">
+            <div className={`${isCollapsed ? 'w-10 h-10' : 'w-12 h-12'} rounded-xl flex items-center justify-center shadow-lg bg-white p-1.5`}>
+              <img
+                src="/MPB-Health-No-background.png"
+                alt="MPB Health Logo"
+                className="w-full h-full object-contain"
+              />
             </div>
-          )}
+            {!isCollapsed && (
+              <div>
+                <h1 className="text-xl font-bold text-white">MPB Health</h1>
+                <p className="text-xs text-pink-100 mt-1">Executive Portal</p>
+              </div>
+            )}
+          </div>
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
             className="p-2 rounded-lg hover:bg-pink-800 transition-colors"

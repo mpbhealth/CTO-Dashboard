@@ -5,6 +5,7 @@ import { Menu } from 'lucide-react';
 import { useRoleBasedRedirect } from './hooks/useDualDashboard';
 import { CEOOnly, CTOOnly } from './components/guards/RoleGuard';
 import Sidebar from './components/Sidebar';
+import CEOSidebar from './components/CEOSidebar';
 
 const CTOHome = lazy(() => import('./components/pages/ctod/CTOHome').then(m => ({ default: m.CTOHome })));
 const CTOOperations = lazy(() => import('./components/pages/ctod/CTOOperations').then(m => ({ default: m.CTOOperations })));
@@ -227,6 +228,11 @@ function DualDashboardContent() {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
 
+  // Determine if we're on CEO routes (which use CEOSidebar, not the CTO Sidebar)
+  const isCEORoute = location.pathname.startsWith('/ceod/');
+  const isCTORoute = location.pathname.startsWith('/ctod/');
+  const isSharedRoute = location.pathname.startsWith('/shared/');
+
   useEffect(() => {
     function checkIfMobile() {
       const mobile = window.innerWidth < 768;
@@ -244,7 +250,12 @@ function DualDashboardContent() {
     };
   }, []);
 
+  // Only sync tab state for CTO and shared routes, not CEO routes
   useEffect(() => {
+    if (isCEORoute) {
+      return; // CEO routes use CEODashboardLayout navigation, not tab-based
+    }
+
     const currentPath = location.pathname;
     const matchedTab = routeToTabMap[currentPath];
     if (matchedTab) {
@@ -257,7 +268,7 @@ function DualDashboardContent() {
         }
       }
     }
-  }, [location.pathname]);
+  }, [location.pathname, isCEORoute]);
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
@@ -273,14 +284,20 @@ function DualDashboardContent() {
 
   return (
     <div className="flex min-h-screen bg-slate-50 overflow-x-hidden">
-      <Sidebar
-        activeTab={activeTab}
-        onTabChange={handleTabChange}
-        isSidebarExpanded={isSidebarExpanded}
-        onSidebarToggle={toggleSidebar}
-      />
+      {/* Show CEO Sidebar for CEO routes */}
+      {isCEORoute && <CEOSidebar />}
 
-      {isMobile && !isSidebarExpanded && (
+      {/* Only show CTO Sidebar for CTO and shared routes, not CEO routes */}
+      {!isCEORoute && (
+        <Sidebar
+          activeTab={activeTab}
+          onTabChange={handleTabChange}
+          isSidebarExpanded={isSidebarExpanded}
+          onSidebarToggle={toggleSidebar}
+        />
+      )}
+
+      {!isCEORoute && isMobile && !isSidebarExpanded && (
         <button
           className="fixed top-4 left-4 p-3 rounded-md bg-pink-600 text-white shadow-lg md:hidden z-50 mobile-hamburger"
           onClick={toggleSidebar}
@@ -290,10 +307,10 @@ function DualDashboardContent() {
         </button>
       )}
 
-      <main className={`flex-1 overflow-y-auto transition-all duration-300 ${
-        isMobile ? 'p-3' : 'p-8 pl-12'
-      } ${
-        isSidebarExpanded ? 'md:pl-96' : isMobile ? 'ml-0 pt-16' : 'md:pl-32'
+      <main className={`flex-1 overflow-y-auto ${
+        isCEORoute
+          ? 'p-6 md:p-8'
+          : `transition-all duration-300 ${isMobile ? 'p-3' : 'p-8 pl-12'} ${isSidebarExpanded ? 'md:pl-96' : isMobile ? 'ml-0 pt-16' : 'md:pl-32'}`
       }`}>
         <Suspense fallback={<LoadingFallback />}>
           <Routes>

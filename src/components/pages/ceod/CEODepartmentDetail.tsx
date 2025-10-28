@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { CEODashboardLayout } from '../../layouts/CEODashboardLayout';
 import { Filter, RefreshCw, Mail, MessageSquare, Download, CheckCircle, AlertCircle, Calendar, TrendingUp } from 'lucide-react';
 import { useDepartmentData } from '../../../hooks/useDepartmentData';
+import { useDepartmentNotes } from '../../../hooks/useDepartmentNotes';
 import { NotesPanel } from '../../ui/NotesPanel';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
@@ -23,6 +24,7 @@ export function CEODepartmentDetail({
   gradient,
 }: DepartmentDetailProps) {
   const { uploads, stats, isLoading, refetch, approveUpload } = useDepartmentData(department);
+  const { notes, createNote, updateNote, deleteNote } = useDepartmentNotes(department);
   const [filterStatus, setFilterStatus] = useState('');
   const [dateRange, setDateRange] = useState<'7d' | '30d' | '90d' | 'all'>('30d');
 
@@ -105,6 +107,33 @@ View detailed report: ${window.location.href}
     if (bytes < 1024) return bytes + ' B';
     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
     return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  };
+
+  const transformedNotes = useMemo(() => {
+    return notes.map(note => ({
+      id: note.id,
+      content: note.note_content,
+      created_at: note.created_at,
+      updated_at: note.updated_at,
+    }));
+  }, [notes]);
+
+  const handleAddNote = async (content: string) => {
+    await createNote.mutateAsync({
+      department,
+      note_content: content,
+    });
+  };
+
+  const handleUpdateNote = async (id: string, content: string) => {
+    await updateNote.mutateAsync({
+      id,
+      note_content: content,
+    });
+  };
+
+  const handleDeleteNote = async (id: string) => {
+    await deleteNote.mutateAsync(id);
   };
 
   return (
@@ -333,7 +362,13 @@ View detailed report: ${window.location.href}
           </div>
 
           <div>
-            <NotesPanel department={department} title={`${title} Notes`} />
+            <NotesPanel
+              notes={transformedNotes}
+              onAddNote={handleAddNote}
+              onUpdateNote={handleUpdateNote}
+              onDeleteNote={handleDeleteNote}
+              title={`${title} Notes`}
+            />
           </div>
         </div>
       </div>

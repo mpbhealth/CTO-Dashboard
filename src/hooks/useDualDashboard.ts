@@ -114,3 +114,109 @@ export function useSharedContent(filters?: { visibility?: string; role?: string 
 
   return { content, loading };
 }
+
+export function useGrantAccess() {
+  return async (resourceId: string, userId: string, accessLevel: string) => {
+    try {
+      const { error } = await supabase
+        .from('resource_access')
+        .insert([{
+          resource_id: resourceId,
+          user_id: userId,
+          access_level: accessLevel,
+          granted_at: new Date().toISOString()
+        }]);
+
+      if (error) throw error;
+      return { success: true, message: 'Access granted successfully' };
+    } catch (error: any) {
+      console.error('Error granting access:', error);
+      return { success: false, message: error.message };
+    }
+  };
+}
+
+export function useRevokeAccess() {
+  return async (resourceId: string, userId: string) => {
+    try {
+      const { error } = await supabase
+        .from('resource_access')
+        .delete()
+        .eq('resource_id', resourceId)
+        .eq('user_id', userId);
+
+      if (error) throw error;
+      return { success: true, message: 'Access revoked successfully' };
+    } catch (error: any) {
+      console.error('Error revoking access:', error);
+      return { success: false, message: error.message };
+    }
+  };
+}
+
+export function useResourceACL(resourceId: string) {
+  const [acl, setAcl] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchACL() {
+      if (!resourceId) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('resource_access')
+          .select(`
+            *,
+            profiles:user_id (
+              id,
+              email,
+              full_name,
+              role
+            )
+          `)
+          .eq('resource_id', resourceId)
+          .order('granted_at', { ascending: false});
+
+        if (error) throw error;
+        setAcl(data || []);
+      } catch (error) {
+        console.error('Error fetching resource ACL:', error);
+        setAcl([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchACL();
+  }, [resourceId]);
+
+  return { acl, loading };
+}
+
+export function useUpdateVisibility() {
+  return async (resourceId: string, visibility: string, targetRole?: string) => {
+    try {
+      const updates: any = {
+        visibility,
+        updated_at: new Date().toISOString()
+      };
+
+      if (targetRole) {
+        updates.target_role = targetRole;
+      }
+
+      const { error } = await supabase
+        .from('shared_content')
+        .update(updates)
+        .eq('id', resourceId);
+
+      if (error) throw error;
+      return { success: true, message: 'Visibility updated successfully' };
+    } catch (error: any) {
+      console.error('Error updating visibility:', error);
+      return { success: false, message: error.message };
+    }
+  };
+}

@@ -438,3 +438,44 @@ export function useDeleteAudit() {
     if (error) throw error;
   };
 }
+
+export function useExpiringDocuments(daysUntilExpiry: number = 90) {
+  const [data, setData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchExpiringDocs() {
+      try {
+        const targetDate = new Date();
+        targetDate.setDate(targetDate.getDate() + daysUntilExpiry);
+
+        const { data: docs, error } = await supabase
+          .from('employee_documents')
+          .select('*')
+          .lte('expiration_date', targetDate.toISOString())
+          .order('expiration_date', { ascending: true });
+
+        if (error) throw error;
+        setData(docs || []);
+      } catch (error) {
+        console.error('Error fetching expiring documents:', error);
+        setData([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchExpiringDocs();
+  }, [daysUntilExpiry]);
+
+  return { data, loading };
+}
+
+export function useUpdateDocumentStatus() {
+  return async (id: string, status: string) => {
+    const { error } = await supabase
+      .from('employee_documents')
+      .update({ status, updated_at: new Date().toISOString() })
+      .eq('id', id);
+    if (error) throw error;
+  };
+}

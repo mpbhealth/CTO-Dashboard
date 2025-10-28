@@ -25,7 +25,7 @@ import {
   Users,
   LineChart
 } from 'lucide-react';
-import AddPropertyForm from '../ui/AddPropertyForm';
+import AddMarketingPropertyModal from '../modals/AddMarketingPropertyModal';
 import ExportDropdown from '../ui/ExportDropdown';
 import { 
   LineChart as RechartsLineChart, 
@@ -1682,7 +1682,7 @@ export default function MarketingAnalytics() {
       )}
 
       {/* Add Property Modal */}
-      <AddPropertyForm
+      <AddMarketingPropertyModal
         isOpen={isAddPropertyModalOpen}
         onClose={() => setIsAddPropertyModalOpen(false)}
         onSuccess={handleAddPropertySuccess}

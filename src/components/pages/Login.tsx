@@ -188,12 +188,8 @@ export default function Login({ onLoginSuccess }: LoginProps) {
               <div className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-pink-400 to-rose-500 rounded-full opacity-20 blur-xl group-hover:opacity-30 transition-opacity"></div>
 
               <div className="relative">
-                <div className="w-20 h-20 bg-gradient-to-br from-slate-600 to-slate-700 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-2xl">
-                  <img
-                    src="/MPB-Health-No-background.png"
-                    alt="MPB Health Logo"
-                    className="w-12 h-12 object-contain"
-                  />
+                <div className="w-16 h-16 bg-gradient-to-br from-pink-600 to-rose-600 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:shadow-pink-500/50 transition-shadow">
+                  <Briefcase className="w-8 h-8 text-white" />
                 </div>
                 <h2 className="text-2xl font-bold text-slate-900 mb-2">CEO Portal</h2>
                 <p className="text-slate-600 mb-6">

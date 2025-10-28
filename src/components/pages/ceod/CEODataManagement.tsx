@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { CEODashboardLayout } from '../../layouts/CEODashboardLayout';
-import { Database, Upload, FileSpreadsheet, RefreshCw, History, CheckCircle, AlertCircle, Link as LinkIcon, Copy, Filter, Calendar } from 'lucide-react';
+import { Database, Upload, FileSpreadsheet, RefreshCw, History, CheckCircle, AlertCircle, Link as LinkIcon, Copy, Filter, Calendar, Share2 } from 'lucide-react';
 import { CEODataImporter } from '../../ui/CEODataImporter';
 import { useCEODataImport } from '../../../hooks/useCEODataImport';
 import { useQuery } from '@tanstack/react-query';
@@ -143,13 +143,28 @@ export function CEODataManagement() {
             </h1>
             <p className="text-gray-600 mt-1">Import, manage, and monitor all department data uploads</p>
           </div>
-          <button
-            onClick={handleCopyUploadLink}
-            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity"
-          >
-            {uploadLinkCopied ? <CheckCircle size={18} /> : <Copy size={18} />}
-            {uploadLinkCopied ? 'Copied!' : 'Copy Upload Link'}
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => {
+                const shareUrl = `${window.location.origin}/public/upload`;
+                navigator.clipboard.writeText(shareUrl);
+                const originalText = uploadLinkCopied;
+                setUploadLinkCopied(true);
+                setTimeout(() => setUploadLinkCopied(false), 2000);
+              }}
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-600 to-teal-700 text-white rounded-lg hover:opacity-90 transition-opacity shadow-md"
+            >
+              {uploadLinkCopied ? <CheckCircle size={18} /> : <Share2 size={18} />}
+              {uploadLinkCopied ? 'Copied!' : 'Share Upload Portal'}
+            </button>
+            <button
+              onClick={handleCopyUploadLink}
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity"
+            >
+              {uploadLinkCopied ? <CheckCircle size={18} /> : <Copy size={18} />}
+              {uploadLinkCopied ? 'Copied!' : 'Upload Department Data'}
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

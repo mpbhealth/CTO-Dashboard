@@ -31,7 +31,8 @@ import {
   ChevronsRight,
   CheckSquare,
   ClipboardCheck,
-  Ticket
+  Ticket,
+  FolderUp
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useDashboardContext } from '../hooks/useDashboardContext';
@@ -51,6 +52,7 @@ const menuItems = [
   { id: 'member-retention', label: 'Member Retention', icon: TrendingDown, category: 'analytics' },
   { id: 'advisor-performance', label: 'Advisor Performance', icon: Award, category: 'analytics' },
   { id: 'marketing-analytics', label: 'Marketing Analytics', icon: LineChart, category: 'analytics' },
+  { id: 'department-reporting', label: 'Department Reporting', icon: FolderUp, category: 'reporting' },
   { id: 'tech-stack', label: 'Tech Stack', icon: Code2, category: 'development' },
   { id: 'quick-links', label: 'QuickLinks Directory', icon: Link2, category: 'development' },
   { id: 'roadmap', label: 'Roadmap', icon: Calendar, category: 'development' },
@@ -94,6 +96,7 @@ const menuItems = [
 const categories = {
   main: 'Dashboard',
   analytics: 'Analytics & Insights',
+  reporting: 'Department Reporting',
   development: 'Development & Planning',
   operations: 'Operations & Management',
   infrastructure: 'Infrastructure & Monitoring'

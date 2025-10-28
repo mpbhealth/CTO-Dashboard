@@ -9,6 +9,8 @@ import Login from './components/pages/Login.tsx';
 import App from './App.tsx';
 import CEOApp from './CEOApp.tsx';
 import DualDashboardApp from './DualDashboardApp.tsx';
+import { PublicDepartmentUploadLanding } from './components/pages/public/PublicDepartmentUploadLanding.tsx';
+import { PublicDepartmentUpload } from './components/pages/public/PublicDepartmentUpload.tsx';
 import './index.css';
 import './lib/diagnostics';
 import React from 'react';
@@ -152,6 +154,10 @@ createRoot(document.getElementById('root')!).render(
 
               {/* Auth Callback Route */}
               <Route path="/auth/callback" element={<AuthCallback />} />
+
+              {/* Public Department Upload Routes - No Auth Required */}
+              <Route path="/public/upload" element={<PublicDepartmentUploadLanding />} />
+              <Route path="/public/upload/:department" element={<PublicDepartmentUpload />} />
 
               {/* CEO Portal Routes (Legacy) - Protected */}
               <Route

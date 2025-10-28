@@ -26,8 +26,8 @@ const DEPARTMENTS: DepartmentCard[] = [
     name: 'Sales',
     description: 'Upload sales orders and pipeline data',
     icon: ShoppingCart,
-    color: 'text-blue-600',
-    bgColor: 'bg-blue-500',
+    color: 'text-pink-600',
+    bgColor: 'bg-pink-500',
     gradient: 'from-blue-500 to-blue-600',
   },
   {
@@ -112,7 +112,7 @@ export function PublicDepartmentUploadLanding() {
               <button
                 key={dept.id}
                 onClick={() => handleDepartmentSelect(dept.id)}
-                className="group relative bg-white rounded-2xl p-8 hover:shadow-2xl transition-all duration-300 border-2 border-gray-100 hover:border-blue-200 hover:scale-105"
+                className="group relative bg-white rounded-2xl p-8 hover:shadow-2xl transition-all duration-300 border-2 border-gray-100 hover:border-pink-200 hover:scale-105"
               >
                 <div className="flex flex-col items-center text-center space-y-4">
                   <div className={`w-20 h-20 bg-gradient-to-br ${dept.gradient} rounded-2xl flex items-center justify-center shadow-xl group-hover:shadow-2xl transition-shadow`}>
@@ -124,7 +124,7 @@ export function PublicDepartmentUploadLanding() {
                   <p className="text-gray-600 text-sm leading-relaxed">
                     {dept.description}
                   </p>
-                  <div className="flex items-center gap-2 text-blue-600 font-medium pt-2 group-hover:gap-4 transition-all">
+                  <div className="flex items-center gap-2 text-pink-600 font-medium pt-2 group-hover:gap-4 transition-all">
                     <span>Upload Data</span>
                     <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
                   </div>
@@ -163,13 +163,13 @@ export function PublicDepartmentUploadLanding() {
           <h3 className="text-2xl font-bold mb-3">
             Need Help?
           </h3>
-          <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
+          <p className="text-pink-100 mb-6 max-w-2xl mx-auto">
             If you have questions about uploading data or need assistance, please contact your department administrator or the MPB Health support team.
           </p>
           <div className="flex justify-center gap-4">
             <a
               href="mailto:support@mpbhealth.com"
-              className="px-6 py-3 bg-white text-blue-600 rounded-lg font-medium hover:bg-blue-50 transition-colors shadow-lg"
+              className="px-6 py-3 bg-white text-pink-600 rounded-lg font-medium hover:bg-pink-50 transition-colors shadow-lg"
             >
               Contact Support
             </a>

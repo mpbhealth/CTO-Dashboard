@@ -26,8 +26,8 @@ const DEPARTMENTS: DepartmentCard[] = [
     name: 'Sales Portal',
     description: 'Upload sales orders and pipeline data',
     icon: ShoppingCart,
-    color: 'text-blue-400',
-    bgColor: 'bg-blue-500',
+    color: 'text-pink-400',
+    bgColor: 'bg-pink-500',
     route: '/ceod/upload',
   },
   {
@@ -74,7 +74,7 @@ export function CEODepartmentUploadPortal() {
           <h1 className="text-5xl font-bold text-white mb-4">
             Department Data Upload Portal
           </h1>
-          <p className="text-xl text-blue-100">
+          <p className="text-xl text-pink-100">
             Select your department to upload data
           </p>
         </div>
@@ -96,7 +96,7 @@ export function CEODepartmentUploadPortal() {
                   <h3 className="text-2xl font-bold text-white">
                     {dept.name}
                   </h3>
-                  <p className="text-blue-100 text-sm leading-relaxed">
+                  <p className="text-pink-100 text-sm leading-relaxed">
                     {dept.description}
                   </p>
                   <div className="flex items-center gap-2 text-white font-medium pt-2 group-hover:gap-4 transition-all">

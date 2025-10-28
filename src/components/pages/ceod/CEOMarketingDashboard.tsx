@@ -138,8 +138,8 @@ export function CEOMarketingDashboard() {
                   <div className="text-3xl font-bold text-purple-600">{campaigns.filter(c => c.status === 'Active').length}</div>
                   <div className="text-sm text-gray-600 mt-1">Active Campaigns</div>
                 </div>
-                <div className="text-center p-4 bg-blue-50 rounded-lg">
-                  <div className="text-3xl font-bold text-blue-600">
+                <div className="text-center p-4 bg-pink-50 rounded-lg">
+                  <div className="text-3xl font-bold text-pink-600">
                     {campaigns.reduce((sum, c) => sum + c.leads, 0).toLocaleString()}
                   </div>
                   <div className="text-sm text-gray-600 mt-1">Total Leads</div>
@@ -168,7 +168,7 @@ export function CEOMarketingDashboard() {
                 const progress = parseInt(campaign.spent.replace(/[$,]/g, '')) / parseInt(campaign.budget.replace(/[$,]/g, '')) * 100;
                 const statusColors = {
                   Active: 'bg-green-100 text-green-700',
-                  Planning: 'bg-blue-100 text-blue-700',
+                  Planning: 'bg-pink-100 text-pink-700',
                   Completed: 'bg-gray-100 text-gray-700',
                 };
                 return (
@@ -238,7 +238,7 @@ export function CEOMarketingDashboard() {
                     {contentCalendar.map((item, index) => {
                       const statusColors = {
                         Published: 'bg-green-100 text-green-700',
-                        Scheduled: 'bg-blue-100 text-blue-700',
+                        Scheduled: 'bg-pink-100 text-pink-700',
                         Draft: 'bg-gray-100 text-gray-700',
                         'In Review': 'bg-yellow-100 text-yellow-700',
                       };

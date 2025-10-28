@@ -25,7 +25,7 @@ export function CTODashboardLayout({ children }: CTODashboardLayoutProps) {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600"></div>
       </div>
     );
   }
@@ -103,7 +103,7 @@ export function CTODashboardLayout({ children }: CTODashboardLayoutProps) {
                             ? 'bg-gradient-to-r from-pink-50 to-rose-50 text-pink-700'
                             : 'text-gray-600 hover:bg-pink-50 hover:text-pink-700'
                           : isActive
-                            ? 'bg-blue-50 text-blue-700'
+                            ? 'bg-pink-50 text-pink-700'
                             : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                       }`}
                     >

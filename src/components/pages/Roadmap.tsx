@@ -50,7 +50,7 @@ export default function Roadmap() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-sky-600"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-pink-600"></div>
       </div>
     );
   }
@@ -283,7 +283,7 @@ export default function Roadmap() {
           </button>
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="flex items-center space-x-2 px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-lg transition-colors"
+            className="flex items-center space-x-2 px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg transition-colors"
           >
             <Plus className="w-4 h-4" />
             <span>Add Initiative</span>
@@ -334,7 +334,7 @@ export default function Roadmap() {
               <input
                 type="text"
                 placeholder="Search roadmap items..."
-                className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+                className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -352,7 +352,7 @@ export default function Roadmap() {
           {/* Filter Dropdowns */}
           <div className="flex flex-col sm:flex-row gap-3">
             <select
-              className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+              className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
               value={selectedQuarter}
               onChange={(e) => setSelectedQuarter(e.target.value)}
             >
@@ -362,7 +362,7 @@ export default function Roadmap() {
               ))}
             </select>
             <select
-              className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+              className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
             >
@@ -371,7 +371,7 @@ export default function Roadmap() {
               ))}
             </select>
             <select
-              className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+              className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
               value={selectedDepartment}
               onChange={(e) => setSelectedDepartment(e.target.value)}
             >
@@ -410,7 +410,7 @@ export default function Roadmap() {
                     {item.priority} Priority
                   </span>
                   {isInProjects(item.title) && (
-                    <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
+                    <span className="px-2 py-1 bg-pink-100 text-pink-800 rounded-full text-xs font-medium">
                       Active Project
                     </span>
                   )}
@@ -453,7 +453,7 @@ export default function Roadmap() {
                 </span>
                 <button
                   onClick={() => openEditModal(item)}
-                  className="p-2 text-slate-600 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition-colors"
+                  className="p-2 text-slate-600 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition-colors"
                   title="Edit initiative"
                 >
                   <Edit className="w-4 h-4" />
@@ -481,7 +481,7 @@ export default function Roadmap() {
             <p className="text-slate-600 mb-2">No roadmap items match the selected filters.</p>
             <button
               onClick={clearFilters}
-              className="text-sky-600 hover:text-sky-800 font-medium"
+              className="text-pink-600 hover:text-pink-800 font-medium"
             >
               Clear all filters to see all items
             </button>
@@ -528,7 +528,7 @@ export default function Roadmap() {
                     required
                     value={formData.title}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
                     placeholder="e.g., MPB Health APP Suite"
                   />
                 </div>
@@ -542,7 +542,7 @@ export default function Roadmap() {
                     required
                     value={formData.quarter}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
                   >
                     <option value="">Select Quarter</option>
                     <option value="Q1 2025">Q1 2025</option>
@@ -564,7 +564,7 @@ export default function Roadmap() {
                     required
                     value={formData.status}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
                   >
                     <option value="Backlog">Backlog</option>
                     <option value="In Progress">In Progress</option>
@@ -581,7 +581,7 @@ export default function Roadmap() {
                     required
                     value={formData.priority}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
                   >
                     <option value="Low">Low</option>
                     <option value="Medium">Medium</option>
@@ -599,7 +599,7 @@ export default function Roadmap() {
                     required
                     value={formData.owner}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
                     placeholder="e.g., Development Team"
                   />
                 </div>
@@ -614,7 +614,7 @@ export default function Roadmap() {
                     required
                     value={formData.department}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
                     placeholder="e.g., Product Engineering"
                   />
                 </div>
@@ -628,7 +628,7 @@ export default function Roadmap() {
                     name="dependencies"
                     value={formData.dependencies}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
                     placeholder="Enter dependencies separated by commas"
                   />
                   <p className="text-xs text-slate-500 mt-1">
@@ -646,7 +646,7 @@ export default function Roadmap() {
                     rows={3}
                     value={formData.description}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
                     placeholder="Detailed description of the initiative"
                   />
                 </div>
@@ -668,7 +668,7 @@ export default function Roadmap() {
                 <button
                   onClick={isAddModalOpen ? handleAddItem : handleEditItem}
                   disabled={isSubmitting}
-                  className="bg-sky-600 hover:bg-sky-700 text-white px-6 py-2 rounded-lg flex items-center space-x-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-pink-600 hover:bg-pink-700 text-white px-6 py-2 rounded-lg flex items-center space-x-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <span>{isSubmitting ? (isAddModalOpen ? 'Adding...' : 'Updating...') : (isAddModalOpen ? 'Add Initiative' : 'Update Initiative')}</span>
                 </button>

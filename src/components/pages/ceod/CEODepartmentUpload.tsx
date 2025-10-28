@@ -233,10 +233,10 @@ export function CEODepartmentUpload() {
           </p>
         </div>
 
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div className="bg-pink-50 border border-pink-200 rounded-lg p-4">
           <div className="flex items-start gap-3">
-            <Info className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
-            <div className="text-sm text-blue-800">
+            <Info className="w-5 h-5 text-pink-600 mt-0.5 flex-shrink-0" />
+            <div className="text-sm text-pink-800">
               <p className="font-medium mb-2">How to use this portal:</p>
               <ol className="list-decimal list-inside space-y-1 text-xs">
                 <li>Select your department from the options below</li>
@@ -258,7 +258,7 @@ export function CEODepartmentUpload() {
                 onClick={() => setSelectedDepartment(dept.value)}
                 className={`p-4 border-2 rounded-lg text-left transition-all ${
                   selectedDepartment === dept.value
-                    ? 'border-[#1a3d97] bg-blue-50'
+                    ? 'border-[#1a3d97] bg-pink-50'
                     : 'border-gray-200 hover:border-gray-300'
                 }`}
               >
@@ -297,7 +297,7 @@ export function CEODepartmentUpload() {
               onDrop={handleDrop}
               className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
                 dragActive
-                  ? 'border-blue-500 bg-blue-50'
+                  ? 'border-pink-500 bg-pink-50'
                   : 'border-gray-300 hover:border-gray-400'
               } ${uploading ? 'opacity-50 pointer-events-none' : ''}`}
             >
@@ -412,14 +412,14 @@ export function CEODepartmentUpload() {
 
         <div className="bg-gradient-to-br from-[#1a3d97] to-[#00A896] rounded-lg p-6 text-white">
           <h3 className="font-semibold text-lg mb-2">Need Help?</h3>
-          <p className="text-blue-50 text-sm mb-4">
+          <p className="text-pink-50 text-sm mb-4">
             If you encounter any issues with uploading data or need assistance with the template format,
             please contact your system administrator or the CEO office.
           </p>
           <div className="flex gap-3">
             <a
               href="/ceod/data"
-              className="px-4 py-2 bg-white text-[#1a3d97] rounded-lg hover:bg-blue-50 transition-colors text-sm font-medium"
+              className="px-4 py-2 bg-white text-[#1a3d97] rounded-lg hover:bg-pink-50 transition-colors text-sm font-medium"
             >
               View Upload History
             </a>

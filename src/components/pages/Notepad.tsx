@@ -172,8 +172,8 @@ export default function Notepad() {
       {/* Add Note */}
       <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
         <div className="flex items-center space-x-3 mb-4">
-          <div className="w-10 h-10 bg-sky-100 rounded-lg flex items-center justify-center">
-            <StickyNote className="w-5 h-5 text-sky-600" />
+          <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center">
+            <StickyNote className="w-5 h-5 text-pink-600" />
           </div>
           <h2 className="text-lg font-semibold text-slate-900">Add New Note</h2>
         </div>
@@ -182,13 +182,13 @@ export default function Notepad() {
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder="Write your note here..."
-            className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 min-h-24"
+            className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500 min-h-24"
           />
           <div className="flex justify-end">
             <button
               onClick={addNote}
               disabled={saving || !content.trim()}
-              className="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors disabled:opacity-50"
+              className="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors disabled:opacity-50"
             >
               {saving ? (
                 <>
@@ -214,7 +214,7 @@ export default function Notepad() {
           placeholder="Search notes..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+          className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
         />
         {searchTerm && (
           <button
@@ -273,7 +273,7 @@ export default function Notepad() {
             {searchTerm && (
               <button
                 onClick={() => setSearchTerm('')}
-                className="text-sky-600 hover:text-sky-800 font-medium"
+                className="text-pink-600 hover:text-pink-800 font-medium"
               >
                 Clear search
               </button>

@@ -44,7 +44,7 @@ export default function ErrorPage() {
 
           <Link
             to="/"
-            className="flex items-center justify-center space-x-2 px-6 py-3 bg-sky-600 hover:bg-sky-700 text-white rounded-lg transition-colors"
+            className="flex items-center justify-center space-x-2 px-6 py-3 bg-pink-600 hover:bg-pink-700 text-white rounded-lg transition-colors"
           >
             <Home className="w-5 h-5" />
             <span>Go Home</span>

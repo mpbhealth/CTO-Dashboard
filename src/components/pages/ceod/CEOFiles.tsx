@@ -165,7 +165,7 @@ export function CEOFiles() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleDownload(resource)}
-                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors text-sm"
+                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-pink-50 text-pink-700 rounded-lg hover:bg-pink-100 transition-colors text-sm"
                   >
                     <Download size={16} />
                     Download

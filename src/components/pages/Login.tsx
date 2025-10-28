@@ -138,13 +138,13 @@ export default function Login({ onLoginSuccess }: LoginProps) {
 
   const getRoleBorderColor = (role: UserRole) => {
     if (role === 'ceo') return 'border-emerald-500';
-    if (role === 'cto') return 'border-sky-500';
+    if (role === 'cto') return 'border-pink-500';
     return 'border-slate-500';
   };
 
   const getRoleTextColor = (role: UserRole) => {
     if (role === 'ceo') return 'text-emerald-600';
-    if (role === 'cto') return 'text-sky-600';
+    if (role === 'cto') return 'text-pink-600';
     return 'text-slate-600';
   };
 
@@ -208,7 +208,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
               onClick={() => handleRoleSelect('cto')}
               whileHover={{ scale: 1.02, y: -5 }}
               whileTap={{ scale: 0.98 }}
-              className="group relative bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border-2 border-transparent hover:border-sky-500 transition-all duration-300"
+              className="group relative bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border-2 border-transparent hover:border-pink-500 transition-all duration-300"
             >
               <div className="absolute -top-4 -left-4 w-24 h-24 bg-gradient-to-br from-sky-400 to-blue-500 rounded-full opacity-20 blur-xl group-hover:opacity-30 transition-opacity"></div>
 
@@ -220,7 +220,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
                 <p className="text-slate-600 mb-6">
                   Technical dashboard with engineering metrics, system monitoring, and operational insights
                 </p>
-                <div className="flex items-center justify-center text-sky-600 font-medium group-hover:text-sky-700">
+                <div className="flex items-center justify-center text-pink-600 font-medium group-hover:text-pink-700">
                   Continue as CTO
                   <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -331,7 +331,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
-                    className="block w-full pl-10 pr-3 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors"
+                    className="block w-full pl-10 pr-3 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500 transition-colors"
                     placeholder="Enter your full name"
                   />
                 </div>
@@ -353,7 +353,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="block w-full pl-10 pr-3 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors"
+                  className="block w-full pl-10 pr-3 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500 transition-colors"
                   placeholder="Enter your email"
                 />
               </div>
@@ -374,7 +374,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="block w-full pl-10 pr-12 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors"
+                  className="block w-full pl-10 pr-12 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500 transition-colors"
                   placeholder="Enter your password"
                 />
                 <button
@@ -407,7 +407,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
-                    className="block w-full pl-10 pr-12 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors"
+                    className="block w-full pl-10 pr-12 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500 transition-colors"
                     placeholder="Confirm your password"
                   />
                 </div>
@@ -430,7 +430,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
                     value={passcode}
                     onChange={(e) => setPasscode(e.target.value)}
                     required
-                    className="block w-full pl-10 pr-3 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors"
+                    className="block w-full pl-10 pr-3 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500 transition-colors"
                     placeholder="Enter registration passcode"
                   />
                 </div>
@@ -445,7 +445,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
                     id="remember-me"
                     name="remember-me"
                     type="checkbox"
-                    className="h-4 w-4 text-sky-600 focus:ring-sky-500 border-slate-300 rounded"
+                    className="h-4 w-4 text-pink-600 focus:ring-sky-500 border-slate-300 rounded"
                   />
                   <label htmlFor="remember-me" className="ml-2 block text-sm text-slate-700">
                     Remember me
@@ -453,7 +453,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
                 </div>
                 <button
                   type="button"
-                  className="text-sm text-sky-600 hover:text-sky-500 font-medium"
+                  className="text-sm text-pink-600 hover:text-pink-500 font-medium"
                 >
                   Forgot password?
                 </button>

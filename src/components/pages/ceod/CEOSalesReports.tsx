@@ -168,7 +168,7 @@ export function CEOSalesReports() {
 
           <div className="bg-white rounded-lg border border-gray-200 p-4">
             <div className="flex items-center justify-between mb-2">
-              <Target className="text-blue-600" size={20} />
+              <Target className="text-pink-600" size={20} />
               <span className="text-xs font-medium text-gray-500">AVG DEAL</span>
             </div>
             <div className="text-2xl font-bold text-gray-900">${metrics.avgDealSize.toFixed(0)}</div>

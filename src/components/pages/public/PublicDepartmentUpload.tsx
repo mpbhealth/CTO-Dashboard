@@ -104,7 +104,7 @@ export function PublicDepartmentUpload() {
           <p className="text-gray-600 mb-6">The specified department was not found.</p>
           <button
             onClick={() => navigate('/public/upload')}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="px-6 py-3 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors"
           >
             Return to Department Selection
           </button>
@@ -238,14 +238,14 @@ export function PublicDepartmentUpload() {
             </div>
           </div>
 
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-            <h3 className="font-semibold text-blue-900 mb-2">Required Fields</h3>
+          <div className="bg-pink-50 border border-pink-200 rounded-lg p-4 mb-6">
+            <h3 className="font-semibold text-pink-900 mb-2">Required Fields</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               {config.fields.map((field) => (
-                <div key={field.key} className="text-sm text-blue-800">
+                <div key={field.key} className="text-sm text-pink-800">
                   <span className="font-medium">{field.label}</span>
                   {field.required && <span className="text-red-500 ml-1">*</span>}
-                  <span className="text-blue-600 ml-2">({field.type})</span>
+                  <span className="text-pink-600 ml-2">({field.type})</span>
                 </div>
               ))}
             </div>
@@ -261,7 +261,7 @@ export function PublicDepartmentUpload() {
             </button>
           </div>
 
-          <div className="border-2 border-dashed border-gray-300 rounded-xl p-12 text-center mb-6 hover:border-blue-400 transition-colors">
+          <div className="border-2 border-dashed border-gray-300 rounded-xl p-12 text-center mb-6 hover:border-pink-400 transition-colors">
             <input
               type="file"
               accept=".csv"
@@ -282,7 +282,7 @@ export function PublicDepartmentUpload() {
             <div className={`rounded-lg p-4 mb-6 ${
               progress.status === 'success' ? 'bg-green-50 border border-green-200' :
               progress.status === 'error' ? 'bg-red-50 border border-red-200' :
-              'bg-blue-50 border border-blue-200'
+              'bg-pink-50 border border-pink-200'
             }`}>
               <div className="flex items-start gap-3">
                 {progress.status === 'success' && <CheckCircle className="text-green-600 mt-1" size={20} />}
@@ -291,7 +291,7 @@ export function PublicDepartmentUpload() {
                   <p className={`font-medium ${
                     progress.status === 'success' ? 'text-green-900' :
                     progress.status === 'error' ? 'text-red-900' :
-                    'text-blue-900'
+                    'text-pink-900'
                   }`}>
                     {progress.message}
                   </p>
@@ -368,7 +368,7 @@ export function PublicDepartmentUpload() {
                   setProgress({ status: 'idle', message: '' });
                   setShowPreview(false);
                 }}
-                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="px-6 py-3 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors"
               >
                 Upload Another File
               </button>

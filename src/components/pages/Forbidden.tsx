@@ -25,12 +25,12 @@ export default function Forbidden() {
         </p>
 
         {user && role && (
-          <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg text-left">
-            <p className="text-sm text-blue-900 mb-1">
+          <div className="mb-6 p-4 bg-pink-50 border border-pink-200 rounded-lg text-left">
+            <p className="text-sm text-pink-900 mb-1">
               <span className="font-semibold">Current Role:</span>{' '}
               <span className="capitalize">{role}</span>
             </p>
-            <p className="text-xs text-blue-700 mt-2">
+            <p className="text-xs text-pink-700 mt-2">
               You are trying to access a page that requires different permissions.
             </p>
           </div>

@@ -108,7 +108,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
             onClick={() => setMode('write')}
             className={`px-3 py-1 rounded flex items-center space-x-1 ${
               mode === 'write'
-                ? 'bg-blue-600 text-white'
+                ? 'bg-pink-600 text-white'
                 : 'bg-white text-gray-700 hover:bg-gray-100'
             }`}
           >
@@ -120,7 +120,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
             onClick={() => setMode('preview')}
             className={`px-3 py-1 rounded flex items-center space-x-1 ${
               mode === 'preview'
-                ? 'bg-blue-600 text-white'
+                ? 'bg-pink-600 text-white'
                 : 'bg-white text-gray-700 hover:bg-gray-100'
             }`}
           >

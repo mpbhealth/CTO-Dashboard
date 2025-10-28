@@ -70,7 +70,7 @@ const CompliancePHIAccess: React.FC = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent" />
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-pink-600 border-t-transparent" />
       </div>
     );
   }
@@ -112,9 +112,9 @@ const CompliancePHIAccess: React.FC = () => {
           <p className="text-sm text-gray-600">Total Access Logs</p>
           <p className="text-2xl font-bold text-gray-900">{accessLogs.length}</p>
         </div>
-        <div className="bg-blue-50 rounded-lg border-2 border-blue-200 p-4">
+        <div className="bg-pink-50 rounded-lg border-2 border-pink-200 p-4">
           <p className="text-sm text-gray-600">Treatment</p>
-          <p className="text-2xl font-bold text-blue-800">{categoryCounts.Treatment}</p>
+          <p className="text-2xl font-bold text-pink-800">{categoryCounts.Treatment}</p>
         </div>
         <div className="bg-green-50 rounded-lg border-2 border-green-200 p-4">
           <p className="text-sm text-gray-600">Payment</p>
@@ -205,7 +205,7 @@ const CompliancePHIAccess: React.FC = () => {
                     </td>
                     <td className="px-6 py-4">
                       <span className={`px-2 py-1 text-xs rounded-full ${
-                        log.purpose_category === 'Treatment' ? 'bg-blue-100 text-blue-800' :
+                        log.purpose_category === 'Treatment' ? 'bg-pink-100 text-pink-800' :
                         log.purpose_category === 'Payment' ? 'bg-green-100 text-green-800' :
                         log.purpose_category === 'Operations' ? 'bg-purple-100 text-purple-800' :
                         'bg-gray-100 text-gray-800'
@@ -232,8 +232,8 @@ const CompliancePHIAccess: React.FC = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-4">
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <p className="text-sm text-blue-800">
+              <div className="bg-pink-50 border border-pink-200 rounded-lg p-4">
+                <p className="text-sm text-pink-800">
                   Log all access to Protected Health Information (PHI) to maintain compliance with HIPAA minimum necessary standards.
                 </p>
               </div>

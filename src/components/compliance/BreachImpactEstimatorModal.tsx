@@ -235,12 +235,12 @@ export const BreachImpactEstimatorModal: React.FC<BreachImpactEstimatorModalProp
           {individualsAffected > 0 && (
             <div className="bg-white border-2 border-gray-200 rounded-lg p-4">
               <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center space-x-2">
-                <Mail className="w-5 h-5 text-blue-600" />
+                <Mail className="w-5 h-5 text-pink-600" />
                 <span>Required Notifications</span>
               </h3>
               <div className="space-y-3">
                 {notifications.filter(n => n.required).map((notification, idx) => (
-                  <div key={idx} className="flex items-start justify-between p-3 bg-blue-50 rounded-lg">
+                  <div key={idx} className="flex items-start justify-between p-3 bg-pink-50 rounded-lg">
                     <div className="flex-1">
                       <p className="font-medium text-gray-900">{notification.recipient}</p>
                       <p className="text-sm text-gray-600 mt-1">
@@ -304,32 +304,32 @@ export const BreachImpactEstimatorModal: React.FC<BreachImpactEstimatorModalProp
               </h3>
               <div className="space-y-2 text-sm">
                 <label className="flex items-start space-x-2">
-                  <input type="checkbox" className="mt-1 rounded border-gray-300 text-blue-600" />
+                  <input type="checkbox" className="mt-1 rounded border-gray-300 text-pink-600" />
                   <span>Contain the breach and prevent further unauthorized access</span>
                 </label>
                 <label className="flex items-start space-x-2">
-                  <input type="checkbox" className="mt-1 rounded border-gray-300 text-blue-600" />
+                  <input type="checkbox" className="mt-1 rounded border-gray-300 text-pink-600" />
                   <span>Begin investigation and document all findings</span>
                 </label>
                 <label className="flex items-start space-x-2">
-                  <input type="checkbox" className="mt-1 rounded border-gray-300 text-blue-600" />
+                  <input type="checkbox" className="mt-1 rounded border-gray-300 text-pink-600" />
                   <span>Notify Privacy Officer and executive leadership</span>
                 </label>
                 <label className="flex items-start space-x-2">
-                  <input type="checkbox" className="mt-1 rounded border-gray-300 text-blue-600" />
+                  <input type="checkbox" className="mt-1 rounded border-gray-300 text-pink-600" />
                   <span>Consult legal counsel and breach coach</span>
                 </label>
                 <label className="flex items-start space-x-2">
-                  <input type="checkbox" className="mt-1 rounded border-gray-300 text-blue-600" />
+                  <input type="checkbox" className="mt-1 rounded border-gray-300 text-pink-600" />
                   <span>Draft notification letters for affected individuals</span>
                 </label>
                 <label className="flex items-start space-x-2">
-                  <input type="checkbox" className="mt-1 rounded border-gray-300 text-blue-600" />
+                  <input type="checkbox" className="mt-1 rounded border-gray-300 text-pink-600" />
                   <span>Prepare HHS breach notification submission</span>
                 </label>
                 {individualsAffected >= 500 && (
                   <label className="flex items-start space-x-2">
-                    <input type="checkbox" className="mt-1 rounded border-gray-300 text-blue-600" />
+                    <input type="checkbox" className="mt-1 rounded border-gray-300 text-pink-600" />
                     <span>Prepare media notice for prominent outlets</span>
                   </label>
                 )}

@@ -95,7 +95,7 @@ export function ExportModal({ open, setOpen, rows, defaultFilename = 'export', t
                 onClick={() => setFormat('csv')}
                 className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-colors ${
                   format === 'csv'
-                    ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20'
+                    ? 'border-pink-600 bg-pink-50 dark:bg-pink-900/20'
                     : 'border-gray-200 hover:border-gray-300'
                 }`}
               >
@@ -106,7 +106,7 @@ export function ExportModal({ open, setOpen, rows, defaultFilename = 'export', t
                 onClick={() => setFormat('json')}
                 className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-colors ${
                   format === 'json'
-                    ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20'
+                    ? 'border-pink-600 bg-pink-50 dark:bg-pink-900/20'
                     : 'border-gray-200 hover:border-gray-300'
                 }`}
               >
@@ -117,7 +117,7 @@ export function ExportModal({ open, setOpen, rows, defaultFilename = 'export', t
                 onClick={() => setFormat('pdf')}
                 className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-colors ${
                   format === 'pdf'
-                    ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20'
+                    ? 'border-pink-600 bg-pink-50 dark:bg-pink-900/20'
                     : 'border-gray-200 hover:border-gray-300'
                 }`}
               >
@@ -152,7 +152,7 @@ export function ExportModal({ open, setOpen, rows, defaultFilename = 'export', t
             Cancel
           </button>
           <button
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-pink-600 text-white hover:bg-pink-700 disabled:opacity-50"
             onClick={handleExport}
             disabled={busy || rows.length === 0}
           >

@@ -203,7 +203,7 @@ export default function QuickLinks() {
   const getCategoryIcon = (category: string | null) => {
     switch (category?.toLowerCase()) {
       case 'development':
-        return <FileText className="w-6 h-6 text-blue-600" />;
+        return <FileText className="w-6 h-6 text-pink-600" />;
       case 'analytics':
         return <Workflow className="w-6 h-6 text-emerald-600" />;
       case 'database':
@@ -217,7 +217,7 @@ export default function QuickLinks() {
       case 'cloud':
         return <CloudLightning className="w-6 h-6 text-cyan-600" />;
       default:
-        return <Layers className="w-6 h-6 text-sky-600" />;
+        return <Layers className="w-6 h-6 text-pink-600" />;
     }
   };
 
@@ -235,7 +235,7 @@ export default function QuickLinks() {
         >
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-sky-100 rounded-lg flex items-center justify-center">
+              <div className="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center">
                 {link.icon ? (
                   <span className="text-2xl">{link.icon}</span> // Simplified for demo
                 ) : (
@@ -252,7 +252,7 @@ export default function QuickLinks() {
             <div className="flex items-center space-x-1">
               <button
                 onClick={() => handleEditLink(link)}
-                className="p-2 text-slate-400 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition-colors"
+                className="p-2 text-slate-400 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition-colors"
                 title="Edit link"
               >
                 <Pencil className="w-4 h-4" />
@@ -283,7 +283,7 @@ export default function QuickLinks() {
             </div>
             <button
               onClick={() => handleLinkClick(link.id, link.url)}
-              className="flex items-center space-x-1 text-sky-600 hover:text-sky-800 text-sm"
+              className="flex items-center space-x-1 text-pink-600 hover:text-pink-800 text-sm"
             >
               <ExternalLink className="w-3 h-3" />
               <span>Open</span>
@@ -308,7 +308,7 @@ export default function QuickLinks() {
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4 flex-1 min-w-0">
-              <div className="w-10 h-10 bg-sky-100 rounded-lg flex items-center justify-center flex-shrink-0">
+              <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center flex-shrink-0">
                 {link.icon ? (
                   <span className="text-xl">{link.icon}</span>
                 ) : (
@@ -335,14 +335,14 @@ export default function QuickLinks() {
               </div>
               <button
                 onClick={() => handleLinkClick(link.id, link.url)}
-                className="px-3 py-1.5 bg-sky-50 text-sky-600 rounded-lg hover:bg-sky-100 transition-colors text-sm"
+                className="px-3 py-1.5 bg-pink-50 text-pink-600 rounded-lg hover:bg-pink-100 transition-colors text-sm"
               >
                 Open
               </button>
               <div className="flex items-center">
                 <button
                   onClick={() => handleEditLink(link)}
-                  className="p-1.5 text-slate-400 hover:text-sky-600 hover:bg-sky-50 rounded transition-colors"
+                  className="p-1.5 text-slate-400 hover:text-pink-600 hover:bg-pink-50 rounded transition-colors"
                   title="Edit link"
                 >
                   <Pencil className="w-4 h-4" />
@@ -377,7 +377,7 @@ export default function QuickLinks() {
         </div>
         <button 
           onClick={() => setIsAddModalOpen(true)}
-          className="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+          className="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
         >
           <Plus className="w-4 h-4" />
           <span>Add QuickLink</span>
@@ -388,8 +388,8 @@ export default function QuickLinks() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-sky-100 rounded-lg flex items-center justify-center">
-              <Link2 className="w-6 h-6 text-sky-600" />
+            <div className="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center">
+              <Link2 className="w-6 h-6 text-pink-600" />
             </div>
             <div>
               <p className="text-sm font-medium text-slate-600">Total Links</p>
@@ -426,8 +426,8 @@ export default function QuickLinks() {
         
         <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-              <Clock className="w-6 h-6 text-blue-600" />
+            <div className="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center">
+              <Clock className="w-6 h-6 text-pink-600" />
             </div>
             <div>
               <p className="text-sm font-medium text-slate-600">Recently Added</p>
@@ -454,7 +454,7 @@ export default function QuickLinks() {
               <input
                 type="text"
                 placeholder="Search by name, description, or URL..."
-                className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+                className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -473,7 +473,7 @@ export default function QuickLinks() {
           <div className="flex flex-wrap items-center gap-3">
             {/* Category Filter */}
             <select
-              className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+              className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
             >
@@ -485,7 +485,7 @@ export default function QuickLinks() {
             
             {/* Sort By */}
             <select
-              className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+              className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as SortBy)}
             >
@@ -533,7 +533,7 @@ export default function QuickLinks() {
         {loading ? (
           <div className="flex items-center justify-center h-64">
             <div className="flex flex-col items-center">
-              <RefreshCw className="w-8 h-8 text-sky-600 animate-spin mb-2" />
+              <RefreshCw className="w-8 h-8 text-pink-600 animate-spin mb-2" />
               <p className="text-slate-600">Loading quick links...</p>
             </div>
           </div>
@@ -550,7 +550,7 @@ export default function QuickLinks() {
             )}
             <button
               onClick={() => setIsAddModalOpen(true)}
-              className="px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-lg transition-colors flex items-center space-x-2"
+              className="px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg transition-colors flex items-center space-x-2"
             >
               <Plus className="w-4 h-4" />
               <span>Add Quick Link</span>

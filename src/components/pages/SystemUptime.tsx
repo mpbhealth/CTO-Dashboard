@@ -58,7 +58,7 @@ export default function SystemUptime() {
           <button
             onClick={fetchUptimeData}
             disabled={isRefreshing}
-            className="flex items-center space-x-2 px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center space-x-2 px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
             <span>{isRefreshing ? 'Refreshing...' : 'Refresh Uptime'}</span>
@@ -172,7 +172,7 @@ export default function SystemUptime() {
                       e.stopPropagation();
                       alert(`Checking ${component.name}...`);
                     }}
-                    className="opacity-0 group-hover:opacity-100 transition-opacity text-sky-600 hover:text-sky-800 text-sm font-medium"
+                    className="opacity-0 group-hover:opacity-100 transition-opacity text-pink-600 hover:text-pink-800 text-sm font-medium"
                   >
                     Check →
                   </button>

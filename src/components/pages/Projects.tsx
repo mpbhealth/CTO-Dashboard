@@ -20,7 +20,7 @@ export default function Projects() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-sky-600"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-pink-600"></div>
       </div>
     );
   }
@@ -43,7 +43,7 @@ export default function Projects() {
       case 'Building':
         return 'bg-amber-100 text-amber-800';
       case 'Planning':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-pink-100 text-pink-800';
       default:
         return 'bg-slate-100 text-slate-800';
     }
@@ -52,7 +52,7 @@ export default function Projects() {
   const getProgressColor = (progress: number) => {
     if (progress >= 80) return 'bg-emerald-500';
     if (progress >= 50) return 'bg-amber-500';
-    return 'bg-blue-500';
+    return 'bg-pink-500';
   };
 
   const handleEditProject = (project: Project) => {
@@ -116,7 +116,7 @@ export default function Projects() {
           }} />
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+            className="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
             title="Add new project"
           >
             <Plus className="w-4 h-4" />
@@ -129,8 +129,8 @@ export default function Projects() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-              <FolderOpen className="w-6 h-6 text-blue-600" />
+            <div className="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center">
+              <FolderOpen className="w-6 h-6 text-pink-600" />
             </div>
             <div>
               <p className="text-sm font-medium text-slate-600">Active Projects</p>
@@ -173,7 +173,7 @@ export default function Projects() {
         {projects.map((project) => (
           <div 
             key={project.id} 
-            className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-all duration-200 cursor-pointer group hover:border-sky-200"
+            className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-all duration-200 cursor-pointer group hover:border-pink-200"
             onClick={() => setSelectedProject(selectedProject === project.id ? null : project.id)}
           >
             <div className="flex items-start justify-between mb-4">
@@ -191,7 +191,7 @@ export default function Projects() {
                       e.stopPropagation();
                       handleEditProject(project);
                     }}
-                    className="p-1 text-slate-400 hover:text-sky-600 hover:bg-sky-50 rounded transition-colors"
+                    className="p-1 text-slate-400 hover:text-pink-600 hover:bg-pink-50 rounded transition-colors"
                     title="Edit project"
                   >
                     <Edit className="w-4 h-4" />
@@ -216,7 +216,7 @@ export default function Projects() {
             </div>
 
             {/* Progress Bar */}
-            <div className={`mb-4 transition-all duration-200 ${selectedProject === project.id ? 'bg-sky-50 p-3 rounded-lg' : ''}`}>
+            <div className={`mb-4 transition-all duration-200 ${selectedProject === project.id ? 'bg-pink-50 p-3 rounded-lg' : ''}`}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-slate-700">Progress</span>
                 <span className="text-sm font-medium text-slate-900">{project.progress}%</span>
@@ -254,7 +254,7 @@ export default function Projects() {
                         e.stopPropagation();
                         handleEditProject(project);
                       }}
-                      className="flex-1 bg-sky-600 hover:bg-sky-700 text-white py-2 px-3 rounded-lg text-sm font-medium transition-colors"
+                      className="flex-1 bg-pink-600 hover:bg-pink-700 text-white py-2 px-3 rounded-lg text-sm font-medium transition-colors"
                       title="Edit project"
                     >
                       Edit Project
@@ -291,7 +291,7 @@ export default function Projects() {
               {project.github_link && (
                 <a 
                   href={project.github_link}
-                  className="flex items-center space-x-1 text-slate-600 hover:text-sky-600 transition-colors"
+                  className="flex items-center space-x-1 text-slate-600 hover:text-pink-600 transition-colors"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -302,7 +302,7 @@ export default function Projects() {
               {project.monday_link && (
                 <a 
                   href={project.monday_link}
-                  className="flex items-center space-x-1 text-slate-600 hover:text-sky-600 transition-colors"
+                  className="flex items-center space-x-1 text-slate-600 hover:text-pink-600 transition-colors"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -332,7 +332,7 @@ export default function Projects() {
           <p className="text-slate-600 mb-4">No projects found. Get started by adding your first project.</p>
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors mx-auto"
+            className="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors mx-auto"
           >
             <Plus className="w-4 h-4" />
             <span>Add Your First Project</span>

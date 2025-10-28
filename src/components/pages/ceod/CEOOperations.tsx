@@ -144,7 +144,7 @@ export function CEOOperations() {
 
           <div className="bg-white rounded-lg border border-gray-200 p-4">
             <div className="flex items-center justify-between mb-2">
-              <Users className="text-blue-600" size={20} />
+              <Users className="text-pink-600" size={20} />
               <span className="text-xs font-medium text-gray-500">SAVES</span>
             </div>
             <div className="text-2xl font-bold text-gray-900">{metrics.saveSuccessful}</div>

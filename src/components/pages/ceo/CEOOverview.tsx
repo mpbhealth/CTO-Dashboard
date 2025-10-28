@@ -116,7 +116,7 @@ export default function CEOOverview() {
 
   // Quick actions for CEO
   const quickActions = [
-    { label: 'View Sales Pipeline', icon: Target, color: 'bg-blue-500', action: () => {} },
+    { label: 'View Sales Pipeline', icon: Target, color: 'bg-pink-500', action: () => {} },
     { label: 'Agent Performance', icon: Award, color: 'bg-purple-500', action: () => {} },
     { label: 'Marketing ROI', icon: TrendingUp, color: 'bg-green-500', action: () => {} },
     { label: 'Strategic Goals', icon: Briefcase, color: 'bg-amber-500', action: () => {} },
@@ -156,7 +156,7 @@ export default function CEOOverview() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold mb-2">Good morning, CEO</h1>
-              <p className="text-blue-100 text-lg">
+              <p className="text-pink-100 text-lg">
                 Here's what's happening at MPB Health today
               </p>
             </div>
@@ -164,7 +164,7 @@ export default function CEOOverview() {
               <select
                 value={timeRange}
                 onChange={(e) => setTimeRange(e.target.value)}
-                className="bg-blue-800 text-white px-4 py-2 rounded-lg border border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="bg-pink-800 text-white px-4 py-2 rounded-lg border border-pink-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 aria-label="Select time range"
               >
                 <option value="7d">Last 7 days</option>
@@ -174,7 +174,7 @@ export default function CEOOverview() {
               </select>
               <button
                 onClick={() => window.location.reload()}
-                className="p-2 bg-blue-800 rounded-lg hover:bg-blue-700 transition-colors"
+                className="p-2 bg-pink-800 rounded-lg hover:bg-pink-700 transition-colors"
                 aria-label="Refresh data"
               >
                 <Activity className="w-5 h-5" />
@@ -351,7 +351,7 @@ export default function CEOOverview() {
                   <span className="text-slate-600">Actual</span>
                 </div>
                 <div className="flex items-center space-x-1">
-                  <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                  <div className="w-3 h-3 bg-pink-500 rounded-full"></div>
                   <span className="text-slate-600">Target</span>
                 </div>
               </div>
@@ -527,17 +527,17 @@ export default function CEOOverview() {
                 className={`flex items-start space-x-3 p-4 rounded-lg ${
                   alert.type === 'success' ? 'bg-emerald-50 border border-emerald-200' :
                   alert.type === 'warning' ? 'bg-amber-50 border border-amber-200' :
-                  'bg-blue-50 border border-blue-200'
+                  'bg-pink-50 border border-pink-200'
                 }`}
               >
                 {alert.type === 'success' && <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />}
                 {alert.type === 'warning' && <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />}
-                {alert.type === 'info' && <Activity className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />}
+                {alert.type === 'info' && <Activity className="w-5 h-5 text-pink-600 flex-shrink-0 mt-0.5" />}
                 <div className="flex-1">
                   <p className={`text-sm font-medium ${
                     alert.type === 'success' ? 'text-emerald-900' :
                     alert.type === 'warning' ? 'text-amber-900' :
-                    'text-blue-900'
+                    'text-pink-900'
                   }`}>
                     {alert.message}
                   </p>

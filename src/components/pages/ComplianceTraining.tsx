@@ -50,7 +50,7 @@ const ComplianceTraining: React.FC = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent" />
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-pink-600 border-t-transparent" />
       </div>
     );
   }
@@ -61,7 +61,7 @@ const ComplianceTraining: React.FC = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center space-x-2">
-            <Users className="w-8 h-8 text-sky-600" />
+            <Users className="w-8 h-8 text-pink-600" />
             <span>Training & Awareness</span>
           </h1>
           <p className="text-gray-600 mt-1">
@@ -70,7 +70,7 @@ const ComplianceTraining: React.FC = () => {
         </div>
         <button
           onClick={() => setShowImportModal(true)}
-          className="flex items-center space-x-2 px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700"
+          className="flex items-center space-x-2 px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700"
         >
           <Download className="w-5 h-5" />
           <span>Import Attendance</span>
@@ -83,9 +83,9 @@ const ComplianceTraining: React.FC = () => {
           <p className="text-sm text-gray-600">Training Programs</p>
           <p className="text-2xl font-bold text-gray-900">{trainings.length}</p>
         </div>
-        <div className="bg-sky-50 rounded-lg border-2 border-sky-200 p-4">
+        <div className="bg-pink-50 rounded-lg border-2 border-pink-200 p-4">
           <p className="text-sm text-gray-600">Required Trainings</p>
-          <p className="text-2xl font-bold text-sky-800">
+          <p className="text-2xl font-bold text-pink-800">
             {trainings.filter(t => t.is_required).length}
           </p>
         </div>
@@ -112,12 +112,12 @@ const ComplianceTraining: React.FC = () => {
             return (
               <div
                 key={training.id}
-                className="border-2 border-gray-200 rounded-lg p-4 hover:border-sky-300 transition-colors"
+                className="border-2 border-gray-200 rounded-lg p-4 hover:border-pink-300 transition-colors"
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
                     <div className="flex items-center space-x-2 mb-1">
-                      <BookOpen className="w-5 h-5 text-sky-600" />
+                      <BookOpen className="w-5 h-5 text-pink-600" />
                       <h3 className="font-semibold text-gray-900">{training.name}</h3>
                       {training.is_required && (
                         <span className="px-2 py-0.5 text-xs rounded-full bg-red-100 text-red-800">
@@ -129,7 +129,7 @@ const ComplianceTraining: React.FC = () => {
                   </div>
                   <button
                     onClick={() => setSelectedTraining(training.id)}
-                    className="px-3 py-1 text-sm bg-sky-600 text-white rounded hover:bg-sky-700"
+                    className="px-3 py-1 text-sm bg-pink-600 text-white rounded hover:bg-pink-700"
                   >
                     View Details
                   </button>
@@ -237,7 +237,7 @@ const ComplianceTraining: React.FC = () => {
                             href={record.certificate_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center space-x-1 text-sky-600 hover:text-sky-700"
+                            className="flex items-center space-x-1 text-pink-600 hover:text-pink-700"
                           >
                             <Award className="w-4 h-4" />
                             <span className="text-sm">View</span>

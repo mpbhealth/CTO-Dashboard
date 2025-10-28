@@ -40,8 +40,8 @@ export function CEOMarketingBudget() {
           </div>
           <div className="bg-white rounded-xl shadow-sm border p-5">
             <div className="flex items-center justify-between mb-2">
-              <TrendingUp size={18} className="text-blue-600" />
-              <span className="text-sm font-medium text-blue-600">${totalSpent.toLocaleString()}</span>
+              <TrendingUp size={18} className="text-pink-600" />
+              <span className="text-sm font-medium text-pink-600">${totalSpent.toLocaleString()}</span>
             </div>
             <div className="text-2xl font-bold text-gray-900">${(totalBudget - totalSpent).toLocaleString()}</div>
             <div className="text-sm text-gray-500 mt-1">Remaining Budget</div>

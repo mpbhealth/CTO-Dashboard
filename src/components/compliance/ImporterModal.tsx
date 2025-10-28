@@ -218,7 +218,7 @@ export const ImporterModal: React.FC<ImporterModalProps> = ({
                 />
                 <label
                   htmlFor="import-file"
-                  className="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer"
+                  className="inline-block px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 cursor-pointer"
                 >
                   Select File
                 </label>
@@ -239,8 +239,8 @@ export const ImporterModal: React.FC<ImporterModalProps> = ({
           {/* Step 2: Map Columns */}
           {step === 'map' && (
             <div className="space-y-4">
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-                <p className="text-sm text-blue-800">
+              <div className="bg-pink-50 border border-pink-200 rounded-lg p-4 mb-4">
+                <p className="text-sm text-pink-800">
                   Map the columns from your file to the required fields
                 </p>
               </div>
@@ -351,7 +351,7 @@ export const ImporterModal: React.FC<ImporterModalProps> = ({
             <button
               onClick={handleImport}
               disabled={!validateMappings() || importing}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+              className="px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
             >
               {importing ? 'Importing...' : 'Import Data'}
             </button>

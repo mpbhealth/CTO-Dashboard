@@ -27,7 +27,7 @@ export default function TechStack() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-sky-600"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-pink-600"></div>
       </div>
     );
   }
@@ -139,7 +139,7 @@ export default function TechStack() {
           }} />
           <button 
             onClick={() => setIsAddModalOpen(true)}
-            className="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors shadow-md hover:shadow-lg"
+            className="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors shadow-md hover:shadow-lg"
             title="Add new technology"
           >
             <Plus className="w-4 h-4" />
@@ -194,8 +194,8 @@ export default function TechStack() {
         
         <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-sky-100 rounded-lg flex items-center justify-center">
-              <Server className="w-6 h-6 text-sky-600" />
+            <div className="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center">
+              <Server className="w-6 h-6 text-pink-600" />
             </div>
             <div>
               <p className="text-sm font-medium text-slate-600">Total Technologies</p>
@@ -212,13 +212,13 @@ export default function TechStack() {
           <input
             type="text"
             placeholder="Search technologies..."
-            className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+            className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
         <select
-          className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+          className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
         >
@@ -233,7 +233,7 @@ export default function TechStack() {
         <div className="p-4 bg-slate-50 border-b border-slate-200">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <Server className="w-5 h-5 text-sky-600" />
+              <Server className="w-5 h-5 text-pink-600" />
               <span className="font-medium text-slate-900">Technology Inventory</span>
             </div>
             <span className="text-sm text-slate-600">{filteredStack.length} technologies</span>
@@ -261,15 +261,15 @@ export default function TechStack() {
                   <td className="px-6 py-4">
                     <div className="flex items-center space-x-3">
                       <div className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${
-                        selectedTech?.id === item.id ? 'bg-sky-600' : 'bg-sky-100 group-hover:bg-indigo-200'
+                        selectedTech?.id === item.id ? 'bg-pink-600' : 'bg-pink-100 group-hover:bg-pink-200'
                       }`}>
                         <Server className={`w-5 h-5 ${
-                          selectedTech?.id === item.id ? 'text-white' : 'text-sky-600'
+                          selectedTech?.id === item.id ? 'text-white' : 'text-pink-600'
                         }`} />
                       </div>
                       <div>
                         <p className={`font-semibold transition-colors ${
-                          selectedTech?.id === item.id ? 'text-sky-600' : 'text-slate-900'
+                          selectedTech?.id === item.id ? 'text-pink-600' : 'text-slate-900'
                         }`}>{item.name}</p>
                         <p className="text-sm text-slate-600">{item.notes}</p>
                       </div>
@@ -290,7 +290,7 @@ export default function TechStack() {
                           e.stopPropagation();
                           handleEditTechnology(item);
                         }}
-                        className="p-2 text-slate-600 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition-colors"
+                        className="p-2 text-slate-600 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition-colors"
                         title="Edit technology"
                       >
                         <Edit className="w-4 h-4" />
@@ -364,7 +364,7 @@ export default function TechStack() {
                 <div className="space-y-2">
                   <button
                     onClick={() => handleEditTechnology(selectedTech)}
-                    className="w-full bg-sky-600 hover:bg-sky-700 text-white py-2 px-3 rounded-lg text-sm font-medium transition-colors"
+                    className="w-full bg-pink-600 hover:bg-pink-700 text-white py-2 px-3 rounded-lg text-sm font-medium transition-colors"
                   >
                     Edit Technology
                   </button>

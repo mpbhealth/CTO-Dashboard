@@ -79,12 +79,12 @@ export function FinancePanel() {
             {formatCurrency(metrics.accountsPayable)}
           </div>
         </div>
-        <div className="text-center p-4 bg-blue-50 rounded-lg border border-blue-200">
-          <div className="flex items-center justify-center gap-1 text-blue-700 mb-1">
+        <div className="text-center p-4 bg-pink-50 rounded-lg border border-pink-200">
+          <div className="flex items-center justify-center gap-1 text-pink-700 mb-1">
             <DollarSign className="w-4 h-4" />
             <span className="text-xs font-medium">Payouts</span>
           </div>
-          <div className="text-xl font-bold text-blue-900">
+          <div className="text-xl font-bold text-pink-900">
             {formatCurrency(metrics.payoutsThisMonth)}
           </div>
         </div>

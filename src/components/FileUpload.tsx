@@ -105,7 +105,7 @@ export default function FileUpload({
     <div className="space-y-3">
       <label className="block text-sm font-medium text-gray-700">{label}</label>
       <div className="flex items-center gap-3">
-        <label className="flex items-center gap-2 px-4 py-2 bg-sky-600 text-white rounded-lg cursor-pointer hover:bg-sky-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+        <label className="flex items-center gap-2 px-4 py-2 bg-pink-600 text-white rounded-lg cursor-pointer hover:bg-pink-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
           <Upload className="w-4 h-4" />
           <span className="text-sm font-medium">Choose File</span>
           <input
@@ -121,7 +121,7 @@ export default function FileUpload({
             <div className="text-sm text-gray-600">Uploading... {progress}%</div>
             <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
               <div
-                className="h-full bg-sky-600 transition-all duration-300"
+                className="h-full bg-pink-600 transition-all duration-300"
                 style={{ width: `${progress}%` }}
               />
             </div>

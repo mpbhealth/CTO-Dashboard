@@ -15,7 +15,7 @@ export function CEOContentCalendar() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'Published': return 'bg-green-100 text-green-700';
-      case 'Scheduled': return 'bg-blue-100 text-blue-700';
+      case 'Scheduled': return 'bg-pink-100 text-pink-700';
       case 'Draft': return 'bg-gray-100 text-gray-700';
       case 'In Review': return 'bg-yellow-100 text-yellow-700';
       case 'Production': return 'bg-purple-100 text-purple-700';
@@ -81,7 +81,7 @@ export function CEOContentCalendar() {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-sm">
-                      <button className="text-blue-600 hover:text-blue-700 font-medium">Edit</button>
+                      <button className="text-pink-600 hover:text-pink-700 font-medium">Edit</button>
                     </td>
                   </tr>
                 ))}

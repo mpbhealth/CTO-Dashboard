@@ -60,13 +60,13 @@ export default function CEOSales() {
           className="bg-white p-6 rounded-xl shadow-lg border border-slate-200"
         >
           <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-blue-500 rounded-lg">
+            <div className="p-3 bg-pink-500 rounded-lg">
               <Target className="w-6 h-6 text-white" />
             </div>
           </div>
           <h3 className="text-slate-600 text-sm font-medium">Deals Closed</h3>
           <p className="text-2xl font-bold text-slate-900 mt-2">58</p>
-          <p className="text-xs text-blue-600 mt-1">+8 vs last month</p>
+          <p className="text-xs text-pink-600 mt-1">+8 vs last month</p>
         </motion.div>
 
         <motion.div
@@ -92,13 +92,13 @@ export default function CEOSales() {
           className="bg-white p-6 rounded-xl shadow-lg border border-slate-200"
         >
           <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-sky-500 rounded-lg">
+            <div className="p-3 bg-pink-500 rounded-lg">
               <Users className="w-6 h-6 text-white" />
             </div>
           </div>
           <h3 className="text-slate-600 text-sm font-medium">Active Pipeline</h3>
           <p className="text-2xl font-bold text-slate-900 mt-2">270</p>
-          <p className="text-xs text-sky-600 mt-1">{formatCurrency(3345000)} value</p>
+          <p className="text-xs text-pink-600 mt-1">{formatCurrency(3345000)} value</p>
         </motion.div>
       </div>
 

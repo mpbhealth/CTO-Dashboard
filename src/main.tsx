@@ -82,7 +82,7 @@ function ErrorBoundary({ children }: { children: React.ReactNode }) {
                 }
                 window.location.reload();
               }}
-              className="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg transition-colors"
+              className="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg transition-colors"
             >
               Clear Cache & Reload
             </button>
@@ -102,7 +102,7 @@ function ErrorBoundary({ children }: { children: React.ReactNode }) {
             <pre className="mt-2 p-2 bg-slate-100 rounded text-xs text-slate-700 overflow-auto">
               {errorInfo || error?.stack || 'No stack trace available'}
             </pre>
-            <div className="mt-2 p-2 bg-blue-50 rounded text-xs text-blue-700">
+            <div className="mt-2 p-2 bg-pink-50 rounded text-xs text-pink-700">
               <strong>Debug Info:</strong><br/>
               • Environment: {import.meta.env.MODE}<br/>
               • Timestamp: {new Date().toISOString()}<br/>

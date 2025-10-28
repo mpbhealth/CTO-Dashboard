@@ -49,7 +49,7 @@ export default function ITSupport() {
       case 'high':
         return 'bg-yellow-100 text-yellow-800 border-yellow-200';
       case 'medium':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
+        return 'bg-pink-100 text-pink-800 border-pink-200';
       case 'low':
         return 'bg-gray-100 text-gray-800 border-gray-200';
       default:
@@ -60,7 +60,7 @@ export default function ITSupport() {
   const getStatusColor = (status: TicketStatus) => {
     switch (status) {
       case 'open':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
+        return 'bg-pink-100 text-pink-800 border-pink-200';
       case 'in_progress':
         return 'bg-purple-100 text-purple-800 border-purple-200';
       case 'pending':
@@ -93,7 +93,7 @@ export default function ITSupport() {
   const getActionTypeColor = (actionType: StaffActionType) => {
     switch (actionType) {
       case 'created':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-pink-100 text-pink-800';
       case 'assigned':
         return 'bg-purple-100 text-purple-800';
       case 'status_changed':
@@ -137,7 +137,7 @@ export default function ITSupport() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
-            <Ticket className="w-8 h-8 text-sky-600" />
+            <Ticket className="w-8 h-8 text-pink-600" />
             IT Support Tickets
           </h1>
           <p className="text-slate-600 mt-1">
@@ -148,7 +148,7 @@ export default function ITSupport() {
           <button
             onClick={() => syncTickets()}
             disabled={syncing}
-            className="flex items-center gap-2 px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors disabled:opacity-50"
+            className="flex items-center gap-2 px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors disabled:opacity-50"
           >
             <RefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
             {syncing ? 'Syncing...' : 'Sync Tickets'}
@@ -176,9 +176,9 @@ export default function ITSupport() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-slate-600">Open Tickets</p>
-                <p className="text-2xl font-bold text-blue-600 mt-1">{stats.open_tickets}</p>
+                <p className="text-2xl font-bold text-pink-600 mt-1">{stats.open_tickets}</p>
               </div>
-              <AlertCircle className="w-8 h-8 text-blue-400" />
+              <AlertCircle className="w-8 h-8 text-pink-400" />
             </div>
           </div>
 
@@ -227,7 +227,7 @@ export default function ITSupport() {
               onClick={() => setShowFilters(!showFilters)}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors ${
                 showFilters
-                  ? 'bg-sky-100 border-sky-300 text-sky-700'
+                  ? 'bg-pink-100 border-pink-300 text-pink-700'
                   : 'border-slate-300 text-slate-700 hover:bg-slate-50'
               }`}
             >
@@ -392,16 +392,16 @@ export default function ITSupport() {
                       {isExpanded && (
                         <tr key={`${ticket.id}-logs`} className="bg-slate-50">
                           <td colSpan={6} className="px-6 py-4">
-                            <div className="border-l-4 border-sky-500 pl-4">
+                            <div className="border-l-4 border-pink-500 pl-4">
                               <div className="flex items-center justify-between mb-3">
                                 <h4 className="text-sm font-semibold text-slate-900 flex items-center gap-2">
-                                  <History className="w-4 h-4 text-sky-600" />
+                                  <History className="w-4 h-4 text-pink-600" />
                                   Staff Activity Log
                                 </h4>
                                 {ticketLogs.length === 0 && !logsLoading && (
                                   <button
                                     onClick={() => syncLogs(ticket.id)}
-                                    className="text-xs text-sky-600 hover:text-sky-700 flex items-center gap-1"
+                                    className="text-xs text-pink-600 hover:text-pink-700 flex items-center gap-1"
                                   >
                                     <RefreshCw className="w-3 h-3" />
                                     Sync Logs

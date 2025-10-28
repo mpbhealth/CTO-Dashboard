@@ -62,8 +62,8 @@ export function CEODataManagement() {
       name: 'Lead Reports',
       description: 'CRM lead pipeline data with sources and status',
       icon: FileSpreadsheet,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50',
+      color: 'text-pink-600',
+      bgColor: 'bg-pink-50',
     },
     {
       id: 'sales' as const,
@@ -256,7 +256,7 @@ export function CEODataManagement() {
                       onClick={() => setSelectedDataset(dataset.id)}
                       className={`text-left p-4 rounded-lg border-2 transition-all ${
                         selectedDataset === dataset.id
-                          ? 'border-blue-500 bg-blue-50'
+                          ? 'border-pink-500 bg-pink-50'
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                     >
@@ -346,7 +346,7 @@ export function CEODataManagement() {
                 <h2 className="text-lg font-semibold text-gray-900">Department Uploads</h2>
                 <button
                   onClick={() => refetchUploads()}
-                  className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-[#1a3d97] hover:bg-blue-50 rounded-lg transition-colors"
+                  className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-[#1a3d97] hover:bg-pink-50 rounded-lg transition-colors"
                 >
                   <RefreshCw className="w-4 h-4" />
                   <span>Refresh</span>
@@ -387,7 +387,7 @@ export function CEODataManagement() {
                             {new Date(upload.created_at).toLocaleDateString()}
                           </td>
                           <td className="px-4 py-3 text-sm">
-                            <span className="inline-block px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-medium capitalize">
+                            <span className="inline-block px-2 py-1 bg-pink-100 text-pink-700 rounded text-xs font-medium capitalize">
                               {upload.department}
                             </span>
                           </td>
@@ -407,7 +407,7 @@ export function CEODataManagement() {
                                   : upload.status === 'failed'
                                   ? 'bg-red-100 text-red-700'
                                   : upload.status === 'approved'
-                                  ? 'bg-blue-100 text-blue-700'
+                                  ? 'bg-pink-100 text-pink-700'
                                   : 'bg-yellow-100 text-yellow-700'
                               }`}
                             >
@@ -440,7 +440,7 @@ export function CEODataManagement() {
               <h2 className="text-lg font-semibold text-gray-900">Recent Imports</h2>
               <button
                 onClick={() => refetchHistory()}
-                className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-[#1a3d97] hover:bg-blue-50 rounded-lg transition-colors"
+                className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-[#1a3d97] hover:bg-pink-50 rounded-lg transition-colors"
               >
                 <RefreshCw className="w-4 h-4" />
                 <span>Refresh</span>

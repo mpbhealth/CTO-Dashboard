@@ -153,7 +153,7 @@ export function CEOHome() {
                 {priorities.map((priority, index) => {
                   const statusColors = {
                     green: 'bg-green-100 text-green-700',
-                    blue: 'bg-blue-100 text-blue-700',
+                    blue: 'bg-pink-100 text-pink-700',
                     yellow: 'bg-yellow-100 text-yellow-700',
                   };
                   return (

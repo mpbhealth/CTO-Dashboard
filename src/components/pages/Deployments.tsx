@@ -88,7 +88,7 @@ export default function Deployments() {
   if (loading || projectsLoading || roadmapLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-sky-600"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-pink-600"></div>
       </div>
     );
   }
@@ -151,7 +151,7 @@ export default function Deployments() {
       case 'Staging':
         return 'bg-amber-100 text-amber-800';
       case 'Development':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-pink-100 text-pink-800';
       default:
         return 'bg-slate-100 text-slate-800';
     }
@@ -307,7 +307,7 @@ export default function Deployments() {
           }} />
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="flex items-center space-x-2 px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-lg transition-colors"
+            className="flex items-center space-x-2 px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg transition-colors"
             title="Add new deployment log"
           >
             <Plus className="w-4 h-4" />
@@ -362,8 +362,8 @@ export default function Deployments() {
         
         <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-sky-100 rounded-lg flex items-center justify-center">
-              <GitBranch className="w-6 h-6 text-sky-600" />
+            <div className="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center">
+              <GitBranch className="w-6 h-6 text-pink-600" />
             </div>
             <div>
               <p className="text-sm font-medium text-slate-600">Total Deployments</p>
@@ -382,7 +382,7 @@ export default function Deployments() {
           </div>
           <div className="flex flex-col sm:flex-row gap-3 flex-1">
             <select
-              className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+              className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
               value={selectedProject}
               onChange={(e) => setSelectedProject(e.target.value)}
             >
@@ -393,7 +393,7 @@ export default function Deployments() {
               ))}
             </select>
             <select
-              className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+              className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
             >
@@ -404,7 +404,7 @@ export default function Deployments() {
               ))}
             </select>
             <select
-              className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+              className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
               value={selectedEnv}
               onChange={(e) => setSelectedEnv(e.target.value)}
             >
@@ -449,7 +449,7 @@ export default function Deployments() {
                       {log.env}
                     </span>
                     {getProjectStatus(log.project) !== 'Unknown' && (
-                      <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-medium">
+                      <span className="px-2 py-1 bg-pink-100 text-pink-800 rounded text-xs font-medium">
                         Project: {getProjectStatus(log.project)}
                       </span>
                     )}
@@ -466,7 +466,7 @@ export default function Deployments() {
                       <div className="flex items-center space-x-2">
                         <div className="w-16 bg-slate-200 rounded-full h-2">
                           <div 
-                            className="bg-sky-600 h-2 rounded-full transition-all duration-300"
+                            className="bg-pink-600 h-2 rounded-full transition-all duration-300"
                             style={{ width: `${getProjectProgress(log.project)}%` }}
                           ></div>
                         </div>
@@ -480,7 +480,7 @@ export default function Deployments() {
               <div className="flex items-center space-x-2">
                 <button
                   onClick={() => openEditModal(log)}
-                  className="p-2 text-slate-600 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition-colors"
+                  className="p-2 text-slate-600 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition-colors"
                   title="Edit deployment"
                 >
                   <Edit className="w-4 h-4" />
@@ -508,7 +508,7 @@ export default function Deployments() {
             <p className="text-slate-600 mb-2">No deployment logs match the selected filters.</p>
             <button
               onClick={clearFilters}
-              className="text-sky-600 hover:text-sky-800 font-medium"
+              className="text-pink-600 hover:text-pink-800 font-medium"
             >
               Clear all filters to see all deployments
             </button>
@@ -554,7 +554,7 @@ export default function Deployments() {
                     required
                     value={formData.project}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
                   >
                     <option value="">Select Project</option>
                     {projects.map(project => (
@@ -572,7 +572,7 @@ export default function Deployments() {
                     required
                     value={formData.env}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
                   >
                     <option value="Development">Development</option>
                     <option value="Staging">Staging</option>
@@ -589,7 +589,7 @@ export default function Deployments() {
                     required
                     value={formData.status}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
                   >
                     <option value="In Progress">In Progress</option>
                     <option value="Success">Success</option>
@@ -607,7 +607,7 @@ export default function Deployments() {
                     required
                     value={formData.timestamp}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
                   />
                 </div>
 
@@ -621,7 +621,7 @@ export default function Deployments() {
                     rows={4}
                     value={formData.log}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
                     placeholder="Detailed deployment log, including any issues, changes, or notes..."
                   />
                 </div>
@@ -643,7 +643,7 @@ export default function Deployments() {
                 <button
                   onClick={isAddModalOpen ? handleAddDeployment : handleEditDeployment}
                   disabled={isSubmitting}
-                  className="bg-sky-600 hover:bg-sky-700 text-white px-6 py-2 rounded-lg flex items-center space-x-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-pink-600 hover:bg-pink-700 text-white px-6 py-2 rounded-lg flex items-center space-x-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Save className="w-4 h-4" />
                   <span>{isSubmitting ? (isAddModalOpen ? 'Adding...' : 'Updating...') : (isAddModalOpen ? 'Add Deployment' : 'Update Deployment')}</span>

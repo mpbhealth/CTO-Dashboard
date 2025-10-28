@@ -164,7 +164,7 @@ export const EvidenceUploader: React.FC<EvidenceUploaderProps> = ({
         onDrop={handleDrop}
         className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
           isDragging
-            ? 'border-blue-500 bg-blue-50'
+            ? 'border-pink-500 bg-pink-50'
             : 'border-gray-300 hover:border-gray-400'
         }`}
       >
@@ -178,7 +178,7 @@ export const EvidenceUploader: React.FC<EvidenceUploaderProps> = ({
         
         {selectedFile ? (
           <div className="flex items-center justify-center space-x-3">
-            <FileText className="w-8 h-8 text-blue-600" />
+            <FileText className="w-8 h-8 text-pink-600" />
             <div className="text-left">
               <p className="font-medium text-gray-900">{selectedFile.name}</p>
               <p className="text-sm text-gray-500">{formatFileSize(selectedFile.size)}</p>
@@ -197,7 +197,7 @@ export const EvidenceUploader: React.FC<EvidenceUploaderProps> = ({
             <p className="text-gray-600 mb-2">Drag and drop your file here, or</p>
             <label
               htmlFor="file-upload"
-              className="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer"
+              className="inline-block px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 cursor-pointer"
             >
               Browse Files
             </label>
@@ -218,7 +218,7 @@ export const EvidenceUploader: React.FC<EvidenceUploaderProps> = ({
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-pink-500"
               placeholder="Enter evidence title"
             />
           </div>
@@ -231,7 +231,7 @@ export const EvidenceUploader: React.FC<EvidenceUploaderProps> = ({
               type="text"
               value={tags}
               onChange={(e) => setTags(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-pink-500"
               placeholder="e.g., policy, training, 2025"
             />
           </div>
@@ -240,7 +240,7 @@ export const EvidenceUploader: React.FC<EvidenceUploaderProps> = ({
             type="button"
             onClick={handleUpload}
             disabled={uploading || !title}
-            className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+            className="w-full px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
           >
             {uploading ? (
               <>

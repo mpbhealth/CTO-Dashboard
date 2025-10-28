@@ -90,7 +90,7 @@ export function ShareModal({ resource, onClose }: ShareModalProps) {
       <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Users className="text-blue-600" size={24} />
+            <Users className="text-pink-600" size={24} />
             <div>
               <h2 className="text-xl font-semibold text-gray-900">Share Settings</h2>
               <p className="text-sm text-gray-500">{resource.title}</p>
@@ -119,7 +119,7 @@ export function ShareModal({ resource, onClose }: ShareModalProps) {
                         key={option.value}
                         className={`flex items-start gap-3 p-3 border rounded-lg cursor-pointer transition-all ${
                           selectedVisibility === option.value
-                            ? 'border-blue-500 bg-blue-50'
+                            ? 'border-pink-500 bg-pink-50'
                             : 'border-gray-200 hover:border-gray-300'
                         }`}
                       >
@@ -146,7 +146,7 @@ export function ShareModal({ resource, onClose }: ShareModalProps) {
                   <button
                     onClick={handleUpdateVisibility}
                     disabled={updateVisibility.isPending}
-                    className="mt-3 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                    className="mt-3 px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors disabled:opacity-50"
                   >
                     {updateVisibility.isPending ? 'Updating...' : 'Update Visibility'}
                   </button>

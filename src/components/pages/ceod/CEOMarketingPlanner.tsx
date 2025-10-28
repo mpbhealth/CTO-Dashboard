@@ -42,7 +42,7 @@ export function CEOMarketingPlanner() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'Active': return 'bg-green-100 text-green-700';
-      case 'Planning': return 'bg-blue-100 text-blue-700';
+      case 'Planning': return 'bg-pink-100 text-pink-700';
       case 'Completed': return 'bg-gray-100 text-gray-700';
       default: return 'bg-gray-100 text-gray-700';
     }
@@ -65,7 +65,7 @@ export function CEOMarketingPlanner() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-white rounded-xl shadow-sm border p-5">
             <div className="flex items-center justify-between mb-2">
-              <Target size={18} className="text-blue-600" />
+              <Target size={18} className="text-pink-600" />
               <span className="text-sm font-medium text-green-600">+12%</span>
             </div>
             <div className="text-2xl font-bold text-gray-900">{campaigns.filter(c => c.status === 'Active').length}</div>

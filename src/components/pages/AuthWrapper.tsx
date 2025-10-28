@@ -125,12 +125,12 @@ export default function AuthWrapper({ children }: AuthWrapperProps) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="text-center max-w-md px-6">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-sky-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-pink-600 mx-auto mb-4"></div>
           <p className="text-slate-600 font-medium text-lg">{loadingMessage}</p>
           <p className="text-slate-400 text-sm mt-2">Please wait...</p>
-          <div className="mt-6 p-4 bg-blue-50 rounded-lg text-left">
-            <p className="text-xs text-blue-700 mb-2">If loading takes too long:</p>
-            <ul className="text-xs text-blue-600 space-y-1">
+          <div className="mt-6 p-4 bg-pink-50 rounded-lg text-left">
+            <p className="text-xs text-pink-700 mb-2">If loading takes too long:</p>
+            <ul className="text-xs text-pink-600 space-y-1">
               <li>• Check your internet connection</li>
               <li>• Verify Supabase configuration</li>
               <li>• Clear browser cache and try again</li>
@@ -156,7 +156,7 @@ export default function AuthWrapper({ children }: AuthWrapperProps) {
                 redirectAttemptedRef.current = false;
                 window.location.reload();
               }}
-              className="w-full bg-sky-600 hover:bg-sky-700 text-white px-4 py-3 rounded-lg transition-colors font-medium"
+              className="w-full bg-pink-600 hover:bg-pink-700 text-white px-4 py-3 rounded-lg transition-colors font-medium"
             >
               Reload and Try Again
             </button>
@@ -201,7 +201,7 @@ export default function AuthWrapper({ children }: AuthWrapperProps) {
                 setError(null);
                 window.location.reload();
               }}
-              className="w-full bg-sky-600 hover:bg-sky-700 text-white px-4 py-3 rounded-lg transition-colors font-medium"
+              className="w-full bg-pink-600 hover:bg-pink-700 text-white px-4 py-3 rounded-lg transition-colors font-medium"
             >
               Try Again
             </button>

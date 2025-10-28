@@ -81,7 +81,7 @@ const MarketingAnalytics = lazy(() => import('./components/pages/MarketingAnalyt
 
 const LoadingFallback = () => (
   <div className="flex items-center justify-center min-h-screen">
-    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600"></div>
   </div>
 );
 
@@ -282,7 +282,7 @@ function DualDashboardContent() {
 
       {isMobile && !isSidebarExpanded && (
         <button
-          className="fixed top-4 left-4 p-3 rounded-md bg-sky-600 text-white shadow-lg md:hidden z-50 mobile-hamburger"
+          className="fixed top-4 left-4 p-3 rounded-md bg-pink-600 text-white shadow-lg md:hidden z-50 mobile-hamburger"
           onClick={toggleSidebar}
           aria-label="Open menu"
         >

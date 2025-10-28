@@ -152,7 +152,7 @@ const ComplianceAudits: React.FC = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-pink-600 border-t-transparent" />
       </div>
     );
   }
@@ -162,7 +162,7 @@ const ComplianceAudits: React.FC = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="flex items-center space-x-2 text-2xl font-bold text-gray-900">
-            <ClipboardCheck className="h-8 w-8 text-sky-600" />
+            <ClipboardCheck className="h-8 w-8 text-pink-600" />
             <span>Audits & Monitoring</span>
           </h1>
           <p className="mt-1 text-gray-600">
@@ -171,7 +171,7 @@ const ComplianceAudits: React.FC = () => {
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="flex items-center space-x-2 rounded-lg bg-sky-600 px-4 py-2 text-white hover:bg-sky-700"
+          className="flex items-center space-x-2 rounded-lg bg-pink-600 px-4 py-2 text-white hover:bg-pink-700"
         >
           <Plus className="h-5 w-5" />
           <span>Schedule Audit</span>
@@ -179,9 +179,9 @@ const ComplianceAudits: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-        <div className="rounded-lg border-2 border-sky-200 bg-white p-4">
+        <div className="rounded-lg border-2 border-pink-200 bg-white p-4">
           <p className="text-sm text-gray-600">Upcoming Audits</p>
-          <p className="text-2xl font-bold text-sky-700">
+          <p className="text-2xl font-bold text-pink-700">
             {upcomingAudits.length}
           </p>
         </div>
@@ -220,7 +220,7 @@ const ComplianceAudits: React.FC = () => {
               placeholder="Search audits..."
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
-              className="w-full rounded-lg border border-gray-300 py-2 pl-10 pr-4 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500"
+              className="w-full rounded-lg border border-gray-300 py-2 pl-10 pr-4 focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-sky-500"
             />
           </div>
           <div className="flex flex-wrap items-center gap-3">
@@ -234,7 +234,7 @@ const ComplianceAudits: React.FC = () => {
                 setStatusFilter(event.target.value as 'all' | AuditStatus)
               }
               aria-label="Filter by status"
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500"
+              className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-sky-500"
             >
               <option value="all">All statuses</option>
               {auditStatusOptions.map((status) => (
@@ -249,7 +249,7 @@ const ComplianceAudits: React.FC = () => {
                 setKindFilter(event.target.value as 'all' | AuditKind)
               }
               aria-label="Filter by audit type"
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500"
+              className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-sky-500"
             >
               <option value="all">All types</option>
               {auditKindOptions.map((kind) => (
@@ -342,7 +342,7 @@ const ComplianceAudits: React.FC = () => {
                           )
                         }
                         aria-label={`Change status for ${audit.title}`}
-                        className="rounded-full border border-gray-300 px-3 py-1.5 text-xs font-medium capitalize text-gray-700 hover:border-indigo-400 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                        className="rounded-full border border-gray-300 px-3 py-1.5 text-xs font-medium capitalize text-gray-700 hover:border-pink-400 focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-sky-500"
                       >
                         {auditStatusOptions.map((status) => (
                           <option key={status} value={status}>
@@ -358,7 +358,7 @@ const ComplianceAudits: React.FC = () => {
                             href={audit.report_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center space-x-1 rounded-full bg-sky-50 px-3 py-1 text-xs font-medium text-sky-700 hover:bg-sky-100"
+                            className="inline-flex items-center space-x-1 rounded-full bg-pink-50 px-3 py-1 text-xs font-medium text-pink-700 hover:bg-pink-100"
                           >
                             <FileText className="h-4 w-4" />
                             <span>Report</span>
@@ -383,7 +383,7 @@ const ComplianceAudits: React.FC = () => {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <div className="rounded-lg border border-gray-200 bg-white p-6">
           <h2 className="mb-4 flex items-center space-x-2 text-lg font-semibold text-gray-900">
-            <Calendar className="h-5 w-5 text-sky-600" />
+            <Calendar className="h-5 w-5 text-pink-600" />
             <span>Audit Calendar</span>
           </h2>
           <ul className="space-y-3">
@@ -399,7 +399,7 @@ const ComplianceAudits: React.FC = () => {
                     {formatDate(audit.period_end)}
                   </p>
                 </div>
-                <span className="rounded-full bg-sky-50 px-3 py-1 text-xs font-medium text-sky-700">
+                <span className="rounded-full bg-pink-50 px-3 py-1 text-xs font-medium text-pink-700">
                   {audit.kind
                     .replace(/-/g, ' ')
                     .replace(/\b\w/g, (c) => c.toUpperCase())}
@@ -416,7 +416,7 @@ const ComplianceAudits: React.FC = () => {
 
         <div className="rounded-lg border border-gray-200 bg-white p-6">
           <h2 className="mb-4 flex items-center space-x-2 text-lg font-semibold text-gray-900">
-            <Target className="h-5 w-5 text-sky-600" />
+            <Target className="h-5 w-5 text-pink-600" />
             <span>Continuous Monitoring Checklist</span>
           </h2>
           <div className="space-y-3">
@@ -444,14 +444,14 @@ const ComplianceAudits: React.FC = () => {
                   className="flex items-center justify-between rounded-lg border border-gray-200 p-3"
                 >
                   <div className="flex items-center space-x-3">
-                    <div className="rounded-lg bg-sky-50 p-2">
-                      <Icon className="h-5 w-5 text-sky-600" />
+                    <div className="rounded-lg bg-pink-50 p-2">
+                      <Icon className="h-5 w-5 text-pink-600" />
                     </div>
                     <span className="text-sm font-medium text-gray-900">
                       {item.label}
                     </span>
                   </div>
-                  <span className="text-xs font-medium text-sky-700">
+                  <span className="text-xs font-medium text-pink-700">
                     {item.status}
                   </span>
                 </div>
@@ -488,7 +488,7 @@ const ComplianceAudits: React.FC = () => {
                         title: event.target.value,
                       }))
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-sky-500"
                     placeholder="e.g. Annual HIPAA Security Risk Assessment"
                   />
                 </div>
@@ -505,7 +505,7 @@ const ComplianceAudits: React.FC = () => {
                       }))
                     }
                     aria-label="Audit Type"
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-sky-500"
                   >
                     {auditKindOptions.map((kind) => (
                       <option key={kind} value={kind}>
@@ -532,7 +532,7 @@ const ComplianceAudits: React.FC = () => {
                       }))
                     }
                     aria-label="Audit Status"
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-sky-500"
                   >
                     {auditStatusOptions.map((status) => (
                       <option key={status} value={status}>
@@ -557,7 +557,7 @@ const ComplianceAudits: React.FC = () => {
                       }))
                     }
                     aria-label="Audit Period Start Date"
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-sky-500"
                   />
                 </div>
                 <div>
@@ -574,7 +574,7 @@ const ComplianceAudits: React.FC = () => {
                       }))
                     }
                     aria-label="Audit Period End Date"
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-sky-500"
                   />
                 </div>
               </div>
@@ -593,7 +593,7 @@ const ComplianceAudits: React.FC = () => {
                         auditor_name: event.target.value,
                       }))
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-sky-500"
                     placeholder="Jane Doe"
                   />
                 </div>
@@ -610,7 +610,7 @@ const ComplianceAudits: React.FC = () => {
                         auditor_org: event.target.value,
                       }))
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-sky-500"
                     placeholder="MPB Compliance Team"
                   />
                 </div>
@@ -629,7 +629,7 @@ const ComplianceAudits: React.FC = () => {
                     }))
                   }
                   rows={3}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-sky-500"
                   placeholder="Describe the scope of this audit engagement"
                 />
               </div>
@@ -647,7 +647,7 @@ const ComplianceAudits: React.FC = () => {
                     }))
                   }
                   rows={3}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-sky-500"
                   placeholder="Document key findings when available"
                 />
               </div>
@@ -665,7 +665,7 @@ const ComplianceAudits: React.FC = () => {
                       report_url: event.target.value,
                     }))
                   }
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-sky-500"
                   placeholder="https://..."
                 />
               </div>
@@ -684,7 +684,7 @@ const ComplianceAudits: React.FC = () => {
                 <button
                   type="submit"
                   disabled={createAudit.isPending}
-                  className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white hover:bg-sky-700 disabled:cursor-not-allowed disabled:bg-gray-300"
+                  className="rounded-lg bg-pink-600 px-4 py-2 text-sm font-semibold text-white hover:bg-pink-700 disabled:cursor-not-allowed disabled:bg-gray-300"
                 >
                   {createAudit.isPending ? 'Saving...' : 'Create Audit'}
                 </button>

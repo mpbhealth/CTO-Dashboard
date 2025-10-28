@@ -99,7 +99,7 @@ export function CTOOperations() {
       <CTODashboardLayout>
         <div className="space-y-6">
           <div className="flex items-center justify-center min-h-96">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-600"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600"></div>
           </div>
         </div>
       </CTODashboardLayout>
@@ -112,7 +112,7 @@ export function CTOOperations() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-              <Activity className="text-sky-600" size={32} />
+              <Activity className="text-pink-600" size={32} />
               Operations & Churn Analytics
             </h1>
             <p className="text-gray-600 mt-1">Technical view of cancellations and operational metrics</p>
@@ -147,7 +147,7 @@ export function CTOOperations() {
 
           <div className="bg-white rounded-lg border border-gray-200 p-4">
             <div className="flex items-center justify-between mb-2">
-              <Users className="text-blue-600" size={20} />
+              <Users className="text-pink-600" size={20} />
               <span className="text-xs font-medium text-gray-500">SAVES</span>
             </div>
             <div className="text-2xl font-bold text-gray-900">{metrics.saveSuccessful}</div>
@@ -301,10 +301,10 @@ export function CTOOperations() {
 
             <div className="bg-gradient-to-br from-sky-600 to-blue-700 rounded-lg p-6 text-white">
               <h3 className="font-semibold text-lg mb-2">Shared Data Access</h3>
-              <p className="text-sky-100 text-sm mb-4">
+              <p className="text-pink-100 text-sm mb-4">
                 This operations data is shared with the CEO dashboard for cross-functional collaboration.
               </p>
-              <div className="flex items-center gap-2 text-sm text-sky-50">
+              <div className="flex items-center gap-2 text-sm text-pink-50">
                 <Activity size={16} />
                 <span>Real-time sync enabled</span>
               </div>

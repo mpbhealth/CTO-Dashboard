@@ -39,7 +39,7 @@ export function CEOBoardPacket() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'Draft': return 'bg-yellow-100 text-yellow-700';
-      case 'In Review': return 'bg-blue-100 text-blue-700';
+      case 'In Review': return 'bg-pink-100 text-pink-700';
       case 'Published': return 'bg-green-100 text-green-700';
       default: return 'bg-gray-100 text-gray-700';
     }
@@ -61,7 +61,7 @@ export function CEOBoardPacket() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-white rounded-xl shadow-sm border p-5">
             <div className="flex items-center justify-between mb-2">
-              <FileText size={18} className="text-blue-600" />
+              <FileText size={18} className="text-pink-600" />
             </div>
             <div className="text-2xl font-bold text-gray-900">{packets.length}</div>
             <div className="text-sm text-gray-500 mt-1">Total Packets</div>
@@ -130,7 +130,7 @@ export function CEOBoardPacket() {
               const Icon = template.icon;
               return (
                 <div key={template.name} className="bg-white rounded-xl shadow-sm border p-6 hover:shadow-md transition-shadow cursor-pointer">
-                  <Icon size={32} className="text-blue-600 mb-3" />
+                  <Icon size={32} className="text-pink-600 mb-3" />
                   <h3 className="font-semibold text-gray-900 mb-2">{template.name}</h3>
                   <p className="text-sm text-gray-500">{template.sections} sections included</p>
                   <button className="mt-4 w-full px-4 py-2 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-lg hover:opacity-90 transition-opacity text-sm font-medium shadow-md">

@@ -45,11 +45,11 @@ export function OperationsPanel() {
       </div>
 
       <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="text-center p-4 bg-blue-50 rounded-lg">
-          <div className="text-2xl font-bold text-blue-900">
+        <div className="text-center p-4 bg-pink-50 rounded-lg">
+          <div className="text-2xl font-bold text-pink-900">
             {metrics.openByQueue.reduce((sum, q) => sum + q.count, 0)}
           </div>
-          <div className="text-xs text-blue-600 mt-1">Open Tickets</div>
+          <div className="text-xs text-pink-600 mt-1">Open Tickets</div>
         </div>
         <div className="text-center p-4 bg-amber-50 rounded-lg">
           <div className="text-2xl font-bold text-amber-900">{metrics.agingOver48h}</div>

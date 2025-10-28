@@ -17,6 +17,8 @@ import {
   BarChart3,
   Database,
   Upload,
+  MessageSquare,
+  ShoppingCart,
 } from 'lucide-react';
 import { useState, useCallback, useMemo, memo } from 'react';
 

@@ -6,8 +6,6 @@ import {
   TrendingUp,
   Megaphone,
   DollarSign,
-  FolderKanban,
-  CheckSquare,
   Share2,
   LogOut,
   MessageSquare,
@@ -16,11 +14,7 @@ import {
   Database,
   Code,
   BarChart3,
-  Shield,
-  LineChart,
-  Users,
-  TrendingDown,
-  Award
+  Shield
 } from 'lucide-react';
 import { useCurrentProfile } from '../../hooks/useDualDashboard';
 import { supabase } from '../../lib/supabase';
@@ -54,10 +48,6 @@ export function CEODashboardLayout({ children }: CEODashboardLayoutProps) {
     { path: '/ctod/kpis', label: 'Tech KPIs', icon: BarChart3 },
     { path: '/ctod/engineering', label: 'Engineering', icon: Code },
     { path: '/ctod/compliance', label: 'Compliance', icon: Shield },
-  ];
-
-  const sharedNavItems = [
-    { path: '/shared/overview', label: 'Shared View', icon: Share2 },
   ];
 
   useEffect(() => {

@@ -119,7 +119,7 @@ function App() {
       case 'compliance':
         return <Compliance />;
       case 'compliance/command-center':
-        return <ComplianceCommandCenter onTabChange={setActiveTab} />;
+        return <ComplianceCommandCenter />;
       case 'compliance/incidents':
         return <ComplianceIncidents />;
       case 'compliance/baas':

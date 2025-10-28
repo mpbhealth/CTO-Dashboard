@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   FileText,
   AlertTriangle,
@@ -20,11 +21,8 @@ import {
 import { TaskStatusChip, PriorityChip, SeverityChip } from '../compliance/ComplianceChips';
 import type { KPIData } from '../../types/compliance';
 
-interface ComplianceCommandCenterProps {
-  onTabChange?: (tab: string) => void;
-}
-
-const ComplianceCommandCenter: React.FC<ComplianceCommandCenterProps> = ({ onTabChange }) => {
+const ComplianceCommandCenter: React.FC = () => {
+  const navigate = useNavigate();
   const { data: stats, isLoading: statsLoading } = useComplianceDashboard();
   const { data: myTasks = [] } = useMyTasks();
   const { data: auditLog = [] } = useAuditLog();
@@ -111,37 +109,37 @@ const ComplianceCommandCenter: React.FC<ComplianceCommandCenterProps> = ({ onTab
     {
       label: 'New Incident',
       icon: AlertTriangle,
-      tab: 'compliance/incidents',
+      route: '/ctod/compliance/incidents',
       color: 'bg-red-600 hover:bg-red-700',
     },
     {
       label: 'Log PHI Access',
       icon: Shield,
-      tab: 'compliance/phi-minimum',
+      route: '/ctod/compliance/phi-minimum',
       color: 'bg-blue-600 hover:bg-blue-700',
     },
     {
       label: 'Create Policy',
       icon: FileText,
-      tab: 'compliance/administration',
+      route: '/ctod/compliance/administration',
       color: 'bg-green-600 hover:bg-green-700',
     },
     {
       label: 'Upload Evidence',
       icon: FileCheck,
-      tab: 'compliance/templates-tools',
+      route: '/ctod/compliance/templates-tools',
       color: 'bg-orange-600 hover:bg-orange-700',
     },
     {
       label: 'Employee Documents',
       icon: FileText,
-      tab: 'compliance/employee-documents',
+      route: '/ctod/compliance/employee-documents',
       color: 'bg-orange-600 hover:bg-orange-700',
     },
     {
       label: 'Record Training',
       icon: Users,
-      tab: 'compliance/training',
+      route: '/ctod/compliance/training',
       color: 'bg-teal-600 hover:bg-teal-700',
     },
   ];
@@ -225,7 +223,7 @@ const ComplianceCommandCenter: React.FC<ComplianceCommandCenterProps> = ({ onTab
           {quickActions.map((action, idx) => (
             <button
               key={idx}
-              onClick={() => onTabChange?.(action.tab)}
+              onClick={() => navigate(action.route)}
               className={`${action.color} text-white rounded-lg p-4 flex flex-col items-center justify-center space-y-2 transition-all hover:scale-105`}
             >
               <action.icon className="w-6 h-6" />
@@ -246,7 +244,7 @@ const ComplianceCommandCenter: React.FC<ComplianceCommandCenterProps> = ({ onTab
               <span className="text-sm text-gray-500">({myTasks.length})</span>
             </h2>
             <button
-              onClick={() => onTabChange?.('compliance/tasks')}
+              onClick={() => navigate('/ctod/compliance/dashboard')}
               className="text-sm text-blue-600 hover:text-blue-700"
             >
               View All
@@ -351,19 +349,19 @@ const ComplianceCommandCenter: React.FC<ComplianceCommandCenterProps> = ({ onTab
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {[
-            { name: 'Administration & Governance', tab: 'compliance/administration', icon: FileText },
-            { name: 'Training & Awareness', tab: 'compliance/training', icon: Users },
-            { name: 'PHI & Minimum Necessary', tab: 'compliance/phi-minimum', icon: Shield },
-            { name: 'Technical Safeguards', tab: 'compliance/technical-safeguards', icon: Shield },
-            { name: 'Business Associates', tab: 'compliance/baas', icon: FileCheck },
-            { name: 'Incidents & Breaches', tab: 'compliance/incidents', icon: AlertTriangle },
-            { name: 'Audits & Monitoring', tab: 'compliance/audits', icon: Activity },
-            { name: 'Templates & Tools', tab: 'compliance/templates-tools', icon: FileText },
-            { name: 'Employee Documents', tab: 'compliance/employee-documents', icon: FileText },
+            { name: 'Administration & Governance', route: '/ctod/compliance/administration', icon: FileText },
+            { name: 'Training & Awareness', route: '/ctod/compliance/training', icon: Users },
+            { name: 'PHI & Minimum Necessary', route: '/ctod/compliance/phi-minimum', icon: Shield },
+            { name: 'Technical Safeguards', route: '/ctod/compliance/technical-safeguards', icon: Shield },
+            { name: 'Business Associates', route: '/ctod/compliance/baas', icon: FileCheck },
+            { name: 'Incidents & Breaches', route: '/ctod/compliance/incidents', icon: AlertTriangle },
+            { name: 'Audits & Monitoring', route: '/ctod/compliance/audits', icon: Activity },
+            { name: 'Templates & Tools', route: '/ctod/compliance/templates-tools', icon: FileText },
+            { name: 'Employee Documents', route: '/ctod/compliance/employee-documents', icon: FileText },
           ].map((section, idx) => (
             <button
               key={idx}
-              onClick={() => onTabChange?.(section.tab)}
+              onClick={() => navigate(section.route)}
               className="p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group text-left"
             >
               <section.icon className="w-8 h-8 text-gray-400 group-hover:text-blue-600 mb-2" />

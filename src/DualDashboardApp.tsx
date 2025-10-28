@@ -47,6 +47,18 @@ const Deployments = lazy(() => import('./components/pages/Deployments'));
 const APIStatus = lazy(() => import('./components/pages/APIStatus'));
 const SystemUptime = lazy(() => import('./components/pages/SystemUptime'));
 
+// Compliance pages
+const ComplianceCommandCenter = lazy(() => import('./components/pages/ComplianceCommandCenter'));
+const ComplianceAdministration = lazy(() => import('./components/pages/ComplianceAdministration'));
+const ComplianceTraining = lazy(() => import('./components/pages/ComplianceTraining'));
+const CompliancePHIAccess = lazy(() => import('./components/pages/CompliancePHIAccess'));
+const ComplianceTechnicalSafeguards = lazy(() => import('./components/pages/ComplianceTechnicalSafeguards'));
+const ComplianceBAAs = lazy(() => import('./components/pages/ComplianceBAAs'));
+const ComplianceIncidents = lazy(() => import('./components/pages/ComplianceIncidents'));
+const ComplianceAudits = lazy(() => import('./components/pages/ComplianceAudits'));
+const ComplianceTemplatesTools = lazy(() => import('./components/pages/ComplianceTemplatesTools'));
+const EmployeeDocumentStorage = lazy(() => import('./components/pages/EmployeeDocumentStorage'));
+
 const LoadingFallback = () => (
   <div className="flex items-center justify-center min-h-screen">
     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -82,6 +94,16 @@ const routeToTabMap: Record<string, string> = {
   '/ctod/kpis': 'overview',
   '/ctod/engineering': 'tech-stack',
   '/ctod/compliance': 'compliance',
+  '/ctod/compliance/dashboard': 'compliance',
+  '/ctod/compliance/administration': 'compliance',
+  '/ctod/compliance/training': 'compliance',
+  '/ctod/compliance/phi-minimum': 'compliance',
+  '/ctod/compliance/technical-safeguards': 'compliance',
+  '/ctod/compliance/baas': 'compliance',
+  '/ctod/compliance/incidents': 'compliance',
+  '/ctod/compliance/audits': 'compliance',
+  '/ctod/compliance/templates-tools': 'compliance',
+  '/ctod/compliance/employee-documents': 'compliance',
   '/ceod/home': 'overview',
   '/ceod/marketing': 'marketing-analytics',
   '/ceod/marketing/planner': 'marketing-analytics',
@@ -137,17 +159,17 @@ const tabToRouteMap: Record<string, string> = {
   'monday-tasks': '/monday-tasks',
   'assignments': '/assignments',
   'notepad': '/notepad',
-  'compliance': '/ctod/compliance',
-  'compliance/command-center': '/ctod/compliance',
-  'compliance/administration': '/ctod/compliance',
-  'compliance/training': '/ctod/compliance',
-  'compliance/phi-minimum': '/ctod/compliance',
-  'compliance/technical-safeguards': '/ctod/compliance',
-  'compliance/baas': '/ctod/compliance',
-  'compliance/incidents': '/ctod/compliance',
-  'compliance/audits': '/ctod/compliance',
-  'compliance/templates-tools': '/ctod/compliance',
-  'compliance/employee-documents': '/ctod/compliance',
+  'compliance': '/ctod/compliance/dashboard',
+  'compliance/command-center': '/ctod/compliance/dashboard',
+  'compliance/administration': '/ctod/compliance/administration',
+  'compliance/training': '/ctod/compliance/training',
+  'compliance/phi-minimum': '/ctod/compliance/phi-minimum',
+  'compliance/technical-safeguards': '/ctod/compliance/technical-safeguards',
+  'compliance/baas': '/ctod/compliance/baas',
+  'compliance/incidents': '/ctod/compliance/incidents',
+  'compliance/audits': '/ctod/compliance/audits',
+  'compliance/templates-tools': '/ctod/compliance/templates-tools',
+  'compliance/employee-documents': '/ctod/compliance/employee-documents',
   'saas': '/shared/saas',
   'ai-agents': '/shared/ai-agents',
   'it-support': '/shared/it-support',
@@ -242,7 +264,17 @@ function DualDashboardContent() {
             <Route path="/ctod/files" element={<CTOOnly><CTOHome /></CTOOnly>} />
             <Route path="/ctod/kpis" element={<CTOOnly><CTOHome /></CTOOnly>} />
             <Route path="/ctod/engineering" element={<CTOOnly><CTOHome /></CTOOnly>} />
-            <Route path="/ctod/compliance" element={<CTOOnly><CTOHome /></CTOOnly>} />
+            <Route path="/ctod/compliance" element={<CTOOnly><ComplianceCommandCenter /></CTOOnly>} />
+            <Route path="/ctod/compliance/dashboard" element={<CTOOnly><ComplianceCommandCenter /></CTOOnly>} />
+            <Route path="/ctod/compliance/administration" element={<CTOOnly><ComplianceAdministration /></CTOOnly>} />
+            <Route path="/ctod/compliance/training" element={<CTOOnly><ComplianceTraining /></CTOOnly>} />
+            <Route path="/ctod/compliance/phi-minimum" element={<CTOOnly><CompliancePHIAccess /></CTOOnly>} />
+            <Route path="/ctod/compliance/technical-safeguards" element={<CTOOnly><ComplianceTechnicalSafeguards /></CTOOnly>} />
+            <Route path="/ctod/compliance/baas" element={<CTOOnly><ComplianceBAAs /></CTOOnly>} />
+            <Route path="/ctod/compliance/incidents" element={<CTOOnly><ComplianceIncidents /></CTOOnly>} />
+            <Route path="/ctod/compliance/audits" element={<CTOOnly><ComplianceAudits /></CTOOnly>} />
+            <Route path="/ctod/compliance/templates-tools" element={<CTOOnly><ComplianceTemplatesTools /></CTOOnly>} />
+            <Route path="/ctod/compliance/employee-documents" element={<CTOOnly><EmployeeDocumentStorage /></CTOOnly>} />
             <Route path="/ctod/operations" element={<CTOOnly><CTOOperations /></CTOOnly>} />
 
             <Route path="/ceod/home" element={<CEOOnly><CEOHome /></CEOOnly>} />

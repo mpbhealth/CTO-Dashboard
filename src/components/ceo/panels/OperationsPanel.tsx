@@ -1,12 +1,15 @@
+import { memo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Activity, Clock, AlertTriangle } from 'lucide-react';
 import { loadOperationsMetrics } from '@/lib/data/ceo/loaders';
 
-export function OperationsPanel() {
+export const OperationsPanel = memo(function OperationsPanel() {
   const { data: metrics, isLoading, error } = useQuery({
     queryKey: ['ceo', 'operations-metrics'],
     queryFn: loadOperationsMetrics,
     staleTime: 2 * 60 * 1000,
+    refetchOnMount: false,
+    placeholderData: (previousData) => previousData,
   });
 
   if (isLoading) {
@@ -118,4 +121,4 @@ export function OperationsPanel() {
       )}
     </div>
   );
-}
+});

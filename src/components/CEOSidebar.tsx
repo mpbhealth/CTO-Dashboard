@@ -23,7 +23,7 @@ import {
   Database,
   Upload,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useCallback, useMemo, memo } from 'react';
 
 interface NavItem {
   name: string;
@@ -106,25 +106,30 @@ const navigationItems: NavItem[] = [
   { name: 'Files & Documents', path: '/ceod/files', icon: FileText },
 ];
 
-export default function CEOSidebar() {
+function CEOSidebar() {
   const location = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
 
-  const isActive = (path: string) => {
+  // Memoize isActive to prevent recreation on every render
+  const isActive = useCallback((path: string) => {
     if (path === '/ceod/home') {
       return location.pathname === '/ceod/home';
     }
     return location.pathname.startsWith(path);
-  };
+  }, [location.pathname]);
 
-  const toggleExpanded = (path: string) => {
+  // Memoize toggleExpanded to prevent recreation
+  const toggleExpanded = useCallback((path: string) => {
     setExpandedItems(prev =>
       prev.includes(path)
         ? prev.filter(p => p !== path)
         : [...prev, path]
     );
-  };
+  }, []);
+
+  // Memoize expanded state checks using Set for O(1) lookup
+  const expandedSet = useMemo(() => new Set(expandedItems), [expandedItems]);
 
   return (
     <div
@@ -170,7 +175,7 @@ export default function CEOSidebar() {
           const Icon = item.icon;
           const active = isActive(item.path);
           const hasSubItems = item.subItems && item.subItems.length > 0;
-          const isExpanded = expandedItems.includes(item.path);
+          const isExpanded = expandedSet.has(item.path);
 
           return (
             <div key={item.path}>
@@ -296,4 +301,7 @@ export default function CEOSidebar() {
     </div>
   );
 }
+
+// Memoize the entire component to prevent unnecessary re-renders from parent
+export default memo(CEOSidebar);
 

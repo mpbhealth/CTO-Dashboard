@@ -1,12 +1,15 @@
+import { memo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { MessageSquare, Clock, CheckCircle2, TrendingUp } from 'lucide-react';
 import { loadConciergeMetrics } from '@/lib/data/ceo/loaders';
 
-export function ConciergePanel() {
+export const ConciergePanel = memo(function ConciergePanel() {
   const { data: metrics, isLoading, error } = useQuery({
     queryKey: ['ceo', 'concierge-metrics'],
     queryFn: loadConciergeMetrics,
     staleTime: 2 * 60 * 1000,
+    refetchOnMount: false,
+    placeholderData: (previousData) => previousData,
   });
 
   if (isLoading) {
@@ -90,4 +93,4 @@ export function ConciergePanel() {
       </div>
     </div>
   );
-}
+});

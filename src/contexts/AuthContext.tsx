@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 
@@ -30,7 +30,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchProfile = async (userId: string) => {
+  const profileCache = useRef<Map<string, Profile>>(new Map());
+  const fetchingRef = useRef<string | null>(null);
+
+  const fetchProfile = useCallback(async (userId: string) => {
+    // Prevent duplicate fetches
+    if (fetchingRef.current === userId) {
+      return;
+    }
+
+    // Check cache first
+    const cached = profileCache.current.get(userId);
+    if (cached) {
+      setProfile(cached);
+      return;
+    }
+
+    fetchingRef.current = userId;
+
     try {
       const { data, error } = await supabase
         .from('profiles')
@@ -39,18 +56,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .maybeSingle();
 
       if (error) throw error;
-      setProfile(data);
+
+      if (data) {
+        // Only update if data actually changed (shallow comparison)
+        setProfile(prev => {
+          if (!prev ||
+              prev.id !== data.id ||
+              prev.role !== data.role ||
+              prev.email !== data.email) {
+            profileCache.current.set(userId, data);
+            return data;
+          }
+          return prev;
+        });
+      }
     } catch (error) {
       console.error('Error fetching profile:', error);
       setProfile(null);
+    } finally {
+      fetchingRef.current = null;
     }
-  };
+  }, []);
 
-  const refreshProfile = async () => {
+  const refreshProfile = useCallback(async () => {
     if (user?.id) {
+      // Clear cache for this user to force fresh fetch
+      profileCache.current.delete(user.id);
       await fetchProfile(user.id);
     }
-  };
+  }, [user?.id, fetchProfile]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -75,7 +109,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = useCallback(async (email: string, password: string) => {
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -85,9 +119,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (data.user) {
       await fetchProfile(data.user.id);
     }
-  };
+  }, [fetchProfile]);
 
-  const signUp = async (email: string, password: string) => {
+  const signUp = useCallback(async (email: string, password: string) => {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -97,15 +131,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (data.user) {
       await fetchProfile(data.user.id);
     }
-  };
+  }, [fetchProfile]);
 
-  const signOut = async () => {
+  const signOut = useCallback(async () => {
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
     setProfile(null);
-  };
+    profileCache.current.clear();
+  }, []);
 
-  const value = {
+  // Memoize the context value to prevent unnecessary re-renders
+  const value = useMemo(() => ({
     user,
     session,
     profile,
@@ -114,7 +150,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signUp,
     signOut,
     refreshProfile,
-  };
+  }), [user, session, profile, loading, signIn, signUp, signOut, refreshProfile]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

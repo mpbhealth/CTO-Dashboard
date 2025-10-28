@@ -1,12 +1,15 @@
+import { memo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { ShoppingCart, TrendingUp, Award } from 'lucide-react';
 import { loadSalesMetrics } from '@/lib/data/ceo/loaders';
 
-export function SalesPanel() {
+export const SalesPanel = memo(function SalesPanel() {
   const { data: metrics, isLoading, error } = useQuery({
     queryKey: ['ceo', 'sales-metrics'],
     queryFn: loadSalesMetrics,
     staleTime: 5 * 60 * 1000,
+    refetchOnMount: false,
+    placeholderData: (previousData) => previousData,
   });
 
   if (isLoading) {
@@ -121,4 +124,4 @@ export function SalesPanel() {
       </div>
     </div>
   );
-}
+});

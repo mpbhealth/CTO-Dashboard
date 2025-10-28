@@ -1,13 +1,16 @@
+import { memo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { DollarSign, TrendingUp, TrendingDown } from 'lucide-react';
 import { loadFinanceMetrics } from '@/lib/data/ceo/loaders';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
-export function FinancePanel() {
+export const FinancePanel = memo(function FinancePanel() {
   const { data: metrics, isLoading, error } = useQuery({
     queryKey: ['ceo', 'finance-metrics'],
     queryFn: loadFinanceMetrics,
     staleTime: 5 * 60 * 1000,
+    refetchOnMount: false,
+    placeholderData: (previousData) => previousData,
   });
 
   if (isLoading) {
@@ -127,4 +130,4 @@ export function FinancePanel() {
       </div>
     </div>
   );
-}
+});

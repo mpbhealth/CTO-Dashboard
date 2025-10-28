@@ -1,12 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
 import { DollarSign, Users, TrendingDown, FileCheck, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { loadExecutiveKPIs } from '@/lib/data/ceo/loaders';
+import { memo } from 'react';
 
-export function ExecutiveOverviewPanel() {
+export const ExecutiveOverviewPanel = memo(function ExecutiveOverviewPanel() {
   const { data: kpis, isLoading, error } = useQuery({
     queryKey: ['ceo', 'executive-kpis'],
     queryFn: loadExecutiveKPIs,
     staleTime: 5 * 60 * 1000,
+    refetchOnMount: false,
+    placeholderData: (previousData) => previousData,
   });
 
   if (isLoading) {
@@ -67,7 +70,7 @@ export function ExecutiveOverviewPanel() {
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 will-change-contents">
       {metrics.map((metric) => {
         const Icon = metric.icon;
         const isPositive = metric.invertChange ? metric.change < 0 : metric.change > 0;
@@ -103,4 +106,4 @@ export function ExecutiveOverviewPanel() {
       })}
     </div>
   );
-}
+});

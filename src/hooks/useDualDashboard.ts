@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -30,63 +31,83 @@ export function useRoleBasedRedirect() {
 
 export function useCurrentProfile() {
   const { profile, loading } = useAuth();
-  return { profile, loading };
+  return { data: profile, isLoading: loading };
 }
 
-export function useResources() {
-  const [resources, setResources] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchResources() {
+export function useResources(filters?: { workspaceId?: string }) {
+  return useQuery({
+    queryKey: ['resources', filters?.workspaceId],
+    queryFn: async () => {
       try {
-        const { data, error } = await supabase
-          .from('shared_resources')
+        let query = supabase
+          .from('resources')
           .select('*')
           .order('created_at', { ascending: false });
 
+        if (filters?.workspaceId) {
+          query = query.eq('workspace_id', filters.workspaceId);
+        }
+
+        const { data, error } = await query;
+
         if (error) throw error;
-        setResources(data || []);
+        return data || [];
       } catch (error) {
         console.error('Error fetching resources:', error);
-      } finally {
-        setLoading(false);
+        return [];
       }
-    }
-    fetchResources();
-  }, []);
-
-  return { resources, loading };
+    },
+    staleTime: 5 * 60 * 1000,
+    enabled: !filters?.workspaceId || !!filters.workspaceId,
+  });
 }
 
-export function useWorkspace() {
-  const [workspace, setWorkspace] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+export function useWorkspace(orgId?: string, kind?: string, name?: string) {
   const { user } = useAuth();
 
-  useEffect(() => {
-    async function fetchWorkspace() {
-      if (!user) return;
+  return useQuery({
+    queryKey: ['workspace', orgId, kind],
+    queryFn: async () => {
+      if (!orgId || !kind) return null;
 
       try {
-        const { data, error } = await supabase
+        // Try to find existing workspace
+        const { data: existing, error: fetchError } = await supabase
           .from('workspaces')
           .select('*')
-          .eq('user_id', user.id)
+          .eq('org_id', orgId)
+          .eq('kind', kind)
           .maybeSingle();
 
-        if (error) throw error;
-        setWorkspace(data);
-      } catch (error) {
-        console.error('Error fetching workspace:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchWorkspace();
-  }, [user]);
+        if (fetchError && fetchError.code !== 'PGRST116') throw fetchError;
+        if (existing) return existing;
 
-  return { workspace, loading };
+        // Create workspace if it doesn't exist and name is provided
+        if (name && user) {
+          const { data: newWorkspace, error: createError } = await supabase
+            .from('workspaces')
+            .insert({
+              org_id: orgId,
+              kind,
+              name,
+              owner_profile_id: user.id
+            })
+            .select()
+            .maybeSingle();
+
+          if (createError) throw createError;
+          return newWorkspace;
+        }
+
+        return null;
+      } catch (error) {
+        console.error('Error with workspace:', error);
+        return null;
+      }
+    },
+    staleTime: 10 * 60 * 1000,
+    enabled: !!orgId && !!kind,
+  });
 }
 
 export function useSharedContent(filters?: { visibility?: string; role?: string }) {

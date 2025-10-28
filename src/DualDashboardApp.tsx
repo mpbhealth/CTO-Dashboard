@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState, useEffect } from 'react';
+import { lazy, Suspense, useState, useEffect, useMemo, useCallback, memo } from 'react';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Menu } from 'lucide-react';
@@ -91,8 +91,11 @@ const LoadingFallback = () => (
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 60000,
+      staleTime: 5 * 60 * 1000, // 5 minutes
       refetchOnWindowFocus: false,
+      retry: 1,
+      // Keep previous data during refetches to prevent flickering
+      placeholderData: (previousData: any) => previousData,
     },
   },
 });
@@ -230,10 +233,10 @@ function DualDashboardContent() {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
 
-  // Determine if we're on CEO routes (which use CEOSidebar, not the CTO Sidebar)
-  const isCEORoute = location.pathname.startsWith('/ceod/');
-  const isCTORoute = location.pathname.startsWith('/ctod/');
-  const isSharedRoute = location.pathname.startsWith('/shared/');
+  // Memoize route checks to prevent unnecessary re-calculations
+  const isCEORoute = useMemo(() => location.pathname.startsWith('/ceod/'), [location.pathname]);
+  const isCTORoute = useMemo(() => location.pathname.startsWith('/ctod/'), [location.pathname]);
+  const isSharedRoute = useMemo(() => location.pathname.startsWith('/shared/'), [location.pathname]);
 
   useEffect(() => {
     function checkIfMobile() {
@@ -272,17 +275,18 @@ function DualDashboardContent() {
     }
   }, [location.pathname, isCEORoute]);
 
-  const handleTabChange = (tab: string) => {
+  // Memoize callbacks to prevent re-creation on every render
+  const handleTabChange = useCallback((tab: string) => {
     setActiveTab(tab);
     const route = tabToRouteMap[tab];
     if (route) {
       navigate(route);
     }
-  };
+  }, [navigate]);
 
-  const toggleSidebar = () => {
-    setIsSidebarExpanded(!isSidebarExpanded);
-  };
+  const toggleSidebar = useCallback(() => {
+    setIsSidebarExpanded(prev => !prev);
+  }, []);
 
   return (
     <div className="flex min-h-screen bg-slate-50 overflow-x-hidden">

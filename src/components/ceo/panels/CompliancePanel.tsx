@@ -1,12 +1,15 @@
+import { memo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Shield, AlertTriangle, CheckCircle2, Clock } from 'lucide-react';
 import { loadComplianceMetrics } from '@/lib/data/ceo/loaders';
 
-export function CompliancePanel() {
+export const CompliancePanel = memo(function CompliancePanel() {
   const { data: metrics, isLoading, error } = useQuery({
     queryKey: ['ceo', 'compliance-metrics'],
     queryFn: loadComplianceMetrics,
     staleTime: 10 * 60 * 1000,
+    refetchOnMount: false,
+    placeholderData: (previousData) => previousData,
   });
 
   if (isLoading) {
@@ -158,4 +161,4 @@ export function CompliancePanel() {
       )}
     </div>
   );
-}
+});

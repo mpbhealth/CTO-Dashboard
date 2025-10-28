@@ -42,6 +42,7 @@ export function CEODashboardLayout({ children }: CEODashboardLayoutProps) {
     { path: '/ceod/concierge/tracking', label: 'Concierge', icon: MessageSquare },
     { path: '/ceod/sales/reports', label: 'Sales', icon: ShoppingCart },
     { path: '/ceod/operations/overview', label: 'Operations', icon: Activity },
+    { path: '/ceod/finance', label: 'Finance', icon: DollarSign },
     { path: '/ceod/data', label: 'Data Import', icon: Database },
     { path: '/ceod/files', label: 'CEO Files', icon: FileText },
     { path: '/ceod/board', label: 'Board Packet', icon: TrendingUp },

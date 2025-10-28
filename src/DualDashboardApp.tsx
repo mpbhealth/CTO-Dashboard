@@ -20,6 +20,8 @@ const CEOSalesReports = lazy(() => import('./components/pages/ceod/CEOSalesRepor
 const CEOOperations = lazy(() => import('./components/pages/ceod/CEOOperations').then(m => ({ default: m.CEOOperations })));
 const CEOFiles = lazy(() => import('./components/pages/ceod/CEOFiles').then(m => ({ default: m.CEOFiles })));
 const CEODataManagement = lazy(() => import('./components/pages/ceod/CEODataManagement').then(m => ({ default: m.CEODataManagement })));
+const CEOFinance = lazy(() => import('./components/pages/ceod/CEOFinance').then(m => ({ default: m.CEOFinance })));
+const CEODepartmentUpload = lazy(() => import('./components/pages/ceod/CEODepartmentUpload').then(m => ({ default: m.CEODepartmentUpload })));
 const SharedOverview = lazy(() => import('./components/pages/shared/SharedOverview').then(m => ({ default: m.SharedOverview })));
 const AuditLogViewer = lazy(() => import('./components/pages/shared/AuditLogViewer').then(m => ({ default: m.AuditLogViewer })));
 const AuthDiagnostics = lazy(() => import('./components/pages/AuthDiagnostics'));
@@ -308,6 +310,9 @@ function DualDashboardContent() {
             <Route path="/ceod/concierge/notes" element={<CEOOnly><CEOConciergeNotes /></CEOOnly>} />
             <Route path="/ceod/sales/reports" element={<CEOOnly><CEOSalesReports /></CEOOnly>} />
             <Route path="/ceod/operations/overview" element={<CEOOnly><CEOOperations /></CEOOnly>} />
+            <Route path="/ceod/finance" element={<CEOOnly><CEOFinance /></CEOOnly>} />
+            <Route path="/ceod/finance/overview" element={<CEOOnly><CEOFinance /></CEOOnly>} />
+            <Route path="/ceod/upload" element={<CEODepartmentUpload />} />
             <Route path="/ceod/files" element={<CEOOnly><CEOFiles /></CEOOnly>} />
             <Route path="/ceod/data" element={<CEOOnly><CEODataManagement /></CEOOnly>} />
             <Route path="/ceod/board" element={<CEOOnly><CEOBoardPacket /></CEOOnly>} />

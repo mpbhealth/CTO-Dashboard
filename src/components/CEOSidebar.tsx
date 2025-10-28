@@ -19,6 +19,7 @@ import {
   Upload,
   MessageSquare,
   ShoppingCart,
+  Headphones,
 } from 'lucide-react';
 import { useState, useCallback, useMemo, memo } from 'react';
 

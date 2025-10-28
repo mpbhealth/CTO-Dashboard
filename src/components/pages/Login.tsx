@@ -183,19 +183,19 @@ export default function Login({ onLoginSuccess }: LoginProps) {
               onClick={() => handleRoleSelect('ceo')}
               whileHover={{ scale: 1.02, y: -5 }}
               whileTap={{ scale: 0.98 }}
-              className="group relative bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border-2 border-transparent hover:border-emerald-500 transition-all duration-300"
+              className="group relative bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border-2 border-transparent hover:border-pink-500 transition-all duration-300"
             >
-              <div className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full opacity-20 blur-xl group-hover:opacity-30 transition-opacity"></div>
+              <div className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-pink-400 to-rose-500 rounded-full opacity-20 blur-xl group-hover:opacity-30 transition-opacity"></div>
 
               <div className="relative">
-                <div className="w-16 h-16 bg-gradient-to-br from-emerald-600 to-teal-600 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:shadow-emerald-500/50 transition-shadow">
+                <div className="w-16 h-16 bg-gradient-to-br from-pink-600 to-rose-600 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:shadow-pink-500/50 transition-shadow">
                   <Briefcase className="w-8 h-8 text-white" />
                 </div>
                 <h2 className="text-2xl font-bold text-slate-900 mb-2">CEO Portal</h2>
                 <p className="text-slate-600 mb-6">
                   Executive dashboard with strategic insights, marketing analytics, and board-level reporting
                 </p>
-                <div className="flex items-center justify-center text-emerald-600 font-medium group-hover:text-emerald-700">
+                <div className="flex items-center justify-center text-pink-600 font-medium group-hover:text-pink-700">
                   Continue as CEO
                   <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

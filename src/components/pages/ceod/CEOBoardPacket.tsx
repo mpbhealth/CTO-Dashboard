@@ -52,7 +52,7 @@ export function CEOBoardPacket() {
             <h1 className="text-3xl font-bold text-gray-900">Board Packet Builder</h1>
             <p className="text-gray-600 mt-1">Create comprehensive board meeting materials</p>
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+          <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-lg hover:opacity-90 transition-opacity font-medium shadow-md">
             <Plus size={18} />
             New Packet
           </button>
@@ -133,7 +133,7 @@ export function CEOBoardPacket() {
                   <Icon size={32} className="text-blue-600 mb-3" />
                   <h3 className="font-semibold text-gray-900 mb-2">{template.name}</h3>
                   <p className="text-sm text-gray-500">{template.sections} sections included</p>
-                  <button className="mt-4 w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+                  <button className="mt-4 w-full px-4 py-2 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-lg hover:opacity-90 transition-opacity text-sm font-medium shadow-md">
                     Use Template
                   </button>
                 </div>

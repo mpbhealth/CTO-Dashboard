@@ -24,7 +24,7 @@ export function CEOMarketingBudget() {
             <h1 className="text-3xl font-bold text-gray-900">Marketing Budget</h1>
             <p className="text-gray-600 mt-1">Track spend and ROI by channel</p>
           </div>
-          <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+          <button className="px-4 py-2 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-lg hover:opacity-90 transition-opacity font-medium shadow-md">
             Download Report
           </button>
         </div>

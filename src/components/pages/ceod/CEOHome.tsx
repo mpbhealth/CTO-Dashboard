@@ -174,7 +174,7 @@ export function CEOHome() {
                       <div className="flex items-center gap-3">
                         <div className="flex-1 bg-gray-200 rounded-full h-2">
                           <div
-                            className="bg-blue-600 h-2 rounded-full transition-all"
+                            className="bg-pink-600 h-2 rounded-full transition-all"
                             style={{ width: `${priority.progress}%` }}
                           />
                         </div>
@@ -273,7 +273,7 @@ export function CEOHome() {
               <h2 className="text-sm font-semibold text-gray-700 mb-3">UPCOMING</h2>
               <div className="space-y-3">
                 <div className="flex items-start gap-3">
-                  <div className="w-2 h-2 bg-blue-600 rounded-full mt-1.5" />
+                  <div className="w-2 h-2 bg-pink-600 rounded-full mt-1.5" />
                   <div className="flex-1">
                     <p className="text-sm font-medium text-gray-900">Board Meeting</p>
                     <p className="text-xs text-gray-500">Tomorrow, 2:00 PM</p>

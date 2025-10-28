@@ -36,7 +36,7 @@ export function CEOContentCalendar() {
               <Filter size={18} />
               Filter
             </button>
-            <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+            <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-lg hover:opacity-90 transition-opacity font-medium shadow-md">
               <Plus size={18} />
               Add Content
             </button>

@@ -59,6 +59,13 @@ const ComplianceAudits = lazy(() => import('./components/pages/ComplianceAudits'
 const ComplianceTemplatesTools = lazy(() => import('./components/pages/ComplianceTemplatesTools'));
 const EmployeeDocumentStorage = lazy(() => import('./components/pages/EmployeeDocumentStorage'));
 
+// Analytics pages
+const Analytics = lazy(() => import('./components/pages/Analytics'));
+const MemberEngagement = lazy(() => import('./components/pages/MemberEngagement'));
+const MemberRetention = lazy(() => import('./components/pages/MemberRetention'));
+const AdvisorPerformance = lazy(() => import('./components/pages/AdvisorPerformance'));
+const MarketingAnalytics = lazy(() => import('./components/pages/MarketingAnalytics'));
+
 const LoadingFallback = () => (
   <div className="flex items-center justify-center min-h-screen">
     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -105,6 +112,12 @@ const routeToTabMap: Record<string, string> = {
   '/ctod/compliance/templates-tools': 'compliance',
   '/ctod/compliance/employee-documents': 'compliance',
   '/ceod/home': 'overview',
+  '/ceod/analytics': 'analytics',
+  '/ceod/analytics/overview': 'analytics',
+  '/ceod/analytics/member-engagement': 'member-engagement',
+  '/ceod/analytics/member-retention': 'member-retention',
+  '/ceod/analytics/advisor-performance': 'advisor-performance',
+  '/ceod/analytics/marketing': 'marketing-analytics',
   '/ceod/marketing': 'marketing-analytics',
   '/ceod/marketing/planner': 'marketing-analytics',
   '/ceod/marketing/calendar': 'marketing-analytics',
@@ -145,11 +158,11 @@ const routeToTabMap: Record<string, string> = {
 
 const tabToRouteMap: Record<string, string> = {
   'overview': '/ctod/home',
-  'analytics': '/ctod/home',
-  'member-engagement': '/ctod/home',
-  'member-retention': '/ctod/home',
-  'advisor-performance': '/ctod/home',
-  'marketing-analytics': '/ceod/marketing',
+  'analytics': '/ceod/analytics/overview',
+  'member-engagement': '/ceod/analytics/member-engagement',
+  'member-retention': '/ceod/analytics/member-retention',
+  'advisor-performance': '/ceod/analytics/advisor-performance',
+  'marketing-analytics': '/ceod/analytics/marketing',
   'tech-stack': '/tech-stack',
   'quick-links': '/quick-links',
   'roadmap': '/roadmap',
@@ -278,6 +291,15 @@ function DualDashboardContent() {
             <Route path="/ctod/operations" element={<CTOOnly><CTOOperations /></CTOOnly>} />
 
             <Route path="/ceod/home" element={<CEOOnly><CEOHome /></CEOOnly>} />
+
+            {/* CEO Analytics Routes */}
+            <Route path="/ceod/analytics" element={<CEOOnly><Analytics /></CEOOnly>} />
+            <Route path="/ceod/analytics/overview" element={<CEOOnly><Analytics /></CEOOnly>} />
+            <Route path="/ceod/analytics/member-engagement" element={<CEOOnly><MemberEngagement /></CEOOnly>} />
+            <Route path="/ceod/analytics/member-retention" element={<CEOOnly><MemberRetention /></CEOOnly>} />
+            <Route path="/ceod/analytics/advisor-performance" element={<CEOOnly><AdvisorPerformance /></CEOOnly>} />
+            <Route path="/ceod/analytics/marketing" element={<CEOOnly><MarketingAnalytics /></CEOOnly>} />
+
             <Route path="/ceod/marketing" element={<CEOOnly><CEOMarketingDashboard /></CEOOnly>} />
             <Route path="/ceod/marketing/planner" element={<CEOOnly><CEOMarketingPlanner /></CEOOnly>} />
             <Route path="/ceod/marketing/calendar" element={<CEOOnly><CEOContentCalendar /></CEOOnly>} />

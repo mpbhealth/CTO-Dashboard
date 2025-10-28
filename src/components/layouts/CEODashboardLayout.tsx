@@ -16,7 +16,11 @@ import {
   Database,
   Code,
   BarChart3,
-  Shield
+  Shield,
+  LineChart,
+  Users,
+  TrendingDown,
+  Award
 } from 'lucide-react';
 import { useCurrentProfile } from '../../hooks/useDualDashboard';
 import { supabase } from '../../lib/supabase';
@@ -33,6 +37,7 @@ export function CEODashboardLayout({ children }: CEODashboardLayoutProps) {
 
   const ceoNavItems = [
     { path: '/ceod/home', label: 'CEO Home', icon: Home },
+    { path: '/ceod/analytics', label: 'Analytics', icon: BarChart3 },
     { path: '/ceod/marketing', label: 'Marketing', icon: Megaphone },
     { path: '/ceod/concierge/tracking', label: 'Concierge', icon: MessageSquare },
     { path: '/ceod/sales/reports', label: 'Sales', icon: ShoppingCart },

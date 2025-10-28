@@ -10,11 +10,11 @@ interface RoleGuardProps {
 
 export function RoleGuard({ children, allowedRoles, redirectTo }: RoleGuardProps) {
   const location = useLocation();
-  const { profile, loading } = useAuth();
+  const { profile, loading, profileReady } = useAuth();
 
-  if (loading) {
+  if (loading || !profileReady) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen bg-slate-50">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading...</p>
@@ -26,7 +26,6 @@ export function RoleGuard({ children, allowedRoles, redirectTo }: RoleGuardProps
   const role = profile?.role;
 
   if (!role || !allowedRoles.includes(role)) {
-    console.log(`[RoleGuard] Role ${role} not in allowed roles [${allowedRoles.join(', ')}], redirecting`);
     const defaultRedirect = role === 'ceo' || role === 'admin' ? '/ceod/home' : '/ctod/home';
     return <Navigate to={redirectTo || defaultRedirect} replace state={{ from: location }} />;
   }

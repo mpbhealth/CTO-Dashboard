@@ -5,6 +5,8 @@ import { Menu } from 'lucide-react';
 import { useRoleBasedRedirect } from './hooks/useDualDashboard';
 import { CEOOnly, CTOOnly } from './components/guards/RoleGuard';
 import { CEOErrorBoundary } from './components/ceo/ErrorBoundary';
+import { useAuth } from './contexts/AuthContext';
+import { CEODashboardLayout } from './components/layouts/CEODashboardLayout';
 import Sidebar from './components/Sidebar';
 import CEOSidebar from './components/CEOSidebar';
 
@@ -229,14 +231,37 @@ const tabToRouteMap: Record<string, string> = {
 function DualDashboardContent() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { profile, profileReady, loading } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
 
-  // Memoize route checks to prevent unnecessary re-calculations
   const isCEORoute = useMemo(() => location.pathname.startsWith('/ceod/'), [location.pathname]);
   const isCTORoute = useMemo(() => location.pathname.startsWith('/ctod/'), [location.pathname]);
   const isSharedRoute = useMemo(() => location.pathname.startsWith('/shared/'), [location.pathname]);
+
+  const isCEOUser = useMemo(() => {
+    return profile?.role === 'ceo' || profile?.role === 'admin';
+  }, [profile?.role]);
+
+  const shouldShowCEOSidebar = useMemo(() => {
+    return profileReady && isCEOUser && isCEORoute;
+  }, [profileReady, isCEOUser, isCEORoute]);
+
+  const shouldShowCTOSidebar = useMemo(() => {
+    return profileReady && !isCEORoute;
+  }, [profileReady, isCEORoute]);
+
+  if (loading || !profileReady) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-slate-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading your dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
   useEffect(() => {
     function checkIfMobile() {
@@ -255,10 +280,9 @@ function DualDashboardContent() {
     };
   }, []);
 
-  // Only sync tab state for CTO and shared routes, not CEO routes
   useEffect(() => {
-    if (isCEORoute) {
-      return; // CEO routes use CEODashboardLayout navigation, not tab-based
+    if (!profileReady || isCEORoute) {
+      return;
     }
 
     const currentPath = location.pathname;
@@ -273,7 +297,7 @@ function DualDashboardContent() {
         }
       }
     }
-  }, [location.pathname, isCEORoute]);
+  }, [location.pathname, isCEORoute, profileReady]);
 
   // Memoize callbacks to prevent re-creation on every render
   const handleTabChange = useCallback((tab: string) => {
@@ -290,11 +314,9 @@ function DualDashboardContent() {
 
   return (
     <div className="flex min-h-screen bg-slate-50 overflow-x-hidden">
-      {/* Show CEO Sidebar for CEO routes */}
-      {isCEORoute && <CEOSidebar />}
+      {shouldShowCEOSidebar && <CEOSidebar />}
 
-      {/* Only show CTO Sidebar for CTO and shared routes, not CEO routes */}
-      {!isCEORoute && (
+      {shouldShowCTOSidebar && (
         <Sidebar
           activeTab={activeTab}
           onTabChange={handleTabChange}
@@ -303,7 +325,7 @@ function DualDashboardContent() {
         />
       )}
 
-      {!isCEORoute && isMobile && !isSidebarExpanded && (
+      {shouldShowCTOSidebar && isMobile && !isSidebarExpanded && (
         <button
           className="fixed top-4 left-4 p-3 rounded-md bg-pink-600 text-white shadow-lg md:hidden z-50 mobile-hamburger"
           onClick={toggleSidebar}
@@ -314,8 +336,8 @@ function DualDashboardContent() {
       )}
 
       <main className={`flex-1 overflow-y-auto ${
-        isCEORoute
-          ? 'p-6 md:p-8'
+        shouldShowCEOSidebar
+          ? ''
           : `transition-all duration-300 ${isMobile ? 'p-3' : 'p-8 pl-12'} ${isSidebarExpanded ? 'md:pl-96' : isMobile ? 'ml-0 pt-16' : 'md:pl-32'}`
       }`}>
         <CEOErrorBoundary>
@@ -338,40 +360,40 @@ function DualDashboardContent() {
             <Route path="/ctod/compliance/employee-documents" element={<CTOOnly><EmployeeDocumentStorage /></CTOOnly>} />
             <Route path="/ctod/operations" element={<CTOOnly><CTOOperations /></CTOOnly>} />
 
-            <Route path="/ceod/home" element={<CEOOnly><CEOHome /></CEOOnly>} />
+            <Route path="/ceod/home" element={<CEOOnly><CEODashboardLayout><CEOHome /></CEODashboardLayout></CEOOnly>} />
 
             {/* CEO Analytics Routes */}
-            <Route path="/ceod/analytics" element={<CEOOnly><Analytics /></CEOOnly>} />
-            <Route path="/ceod/analytics/overview" element={<CEOOnly><Analytics /></CEOOnly>} />
-            <Route path="/ceod/analytics/member-engagement" element={<CEOOnly><MemberEngagement /></CEOOnly>} />
-            <Route path="/ceod/analytics/member-retention" element={<CEOOnly><MemberRetention /></CEOOnly>} />
-            <Route path="/ceod/analytics/advisor-performance" element={<CEOOnly><AdvisorPerformance /></CEOOnly>} />
-            <Route path="/ceod/analytics/marketing" element={<CEOOnly><MarketingAnalytics /></CEOOnly>} />
+            <Route path="/ceod/analytics" element={<CEOOnly><CEODashboardLayout><Analytics /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/analytics/overview" element={<CEOOnly><CEODashboardLayout><Analytics /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/analytics/member-engagement" element={<CEOOnly><CEODashboardLayout><MemberEngagement /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/analytics/member-retention" element={<CEOOnly><CEODashboardLayout><MemberRetention /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/analytics/advisor-performance" element={<CEOOnly><CEODashboardLayout><AdvisorPerformance /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/analytics/marketing" element={<CEOOnly><CEODashboardLayout><MarketingAnalytics /></CEODashboardLayout></CEOOnly>} />
 
-            <Route path="/ceod/marketing" element={<CEOOnly><CEOMarketingDashboard /></CEOOnly>} />
-            <Route path="/ceod/marketing/planner" element={<CEOOnly><CEOMarketingPlanner /></CEOOnly>} />
-            <Route path="/ceod/marketing/calendar" element={<CEOOnly><CEOContentCalendar /></CEOOnly>} />
-            <Route path="/ceod/marketing/budget" element={<CEOOnly><CEOMarketingBudget /></CEOOnly>} />
-            <Route path="/ceod/concierge/tracking" element={<CEOOnly><CEOConciergeTrackingReports /></CEOOnly>} />
-            <Route path="/ceod/concierge/notes" element={<CEOOnly><CEOConciergeNotes /></CEOOnly>} />
-            <Route path="/ceod/sales/reports" element={<CEOOnly><CEOSalesReports /></CEOOnly>} />
-            <Route path="/ceod/operations/overview" element={<CEOOnly><CEOOperationsDashboard /></CEOOnly>} />
-            <Route path="/ceod/operations/tracking" element={<CEOOnly><CEOOperationsTrackingReports /></CEOOnly>} />
-            <Route path="/ceod/finance" element={<CEOOnly><CEOFinanceSnapshot /></CEOOnly>} />
-            <Route path="/ceod/finance/overview" element={<CEOOnly><CEOFinanceSnapshot /></CEOOnly>} />
-            <Route path="/ceod/saudemax/reports" element={<CEOOnly><CEOSaudeMAXReports /></CEOOnly>} />
-            <Route path="/ceod/upload-portal" element={<CEODepartmentUploadPortal />} />
-            <Route path="/ceod/upload" element={<CEODepartmentUpload />} />
-            <Route path="/ceod/files" element={<CEOOnly><CEOFiles /></CEOOnly>} />
-            <Route path="/ceod/data" element={<CEOOnly><CEODataManagement /></CEOOnly>} />
-            <Route path="/ceod/departments/concierge" element={<CEOOnly><CEODepartmentConcierge /></CEOOnly>} />
-            <Route path="/ceod/departments/sales" element={<CEOOnly><CEODepartmentSales /></CEOOnly>} />
-            <Route path="/ceod/departments/operations" element={<CEOOnly><CEODepartmentOperations /></CEOOnly>} />
-            <Route path="/ceod/departments/finance" element={<CEOOnly><CEODepartmentFinance /></CEOOnly>} />
-            <Route path="/ceod/departments/saudemax" element={<CEOOnly><CEODepartmentSaudeMAX /></CEOOnly>} />
-            <Route path="/ceod/board" element={<CEOOnly><CEOBoardPacket /></CEOOnly>} />
-            <Route path="/ceod/initiatives" element={<CEOOnly><CEOHome /></CEOOnly>} />
-            <Route path="/ceod/approvals" element={<CEOOnly><CEOHome /></CEOOnly>} />
+            <Route path="/ceod/marketing" element={<CEOOnly><CEODashboardLayout><CEOMarketingDashboard /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/marketing/planner" element={<CEOOnly><CEODashboardLayout><CEOMarketingPlanner /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/marketing/calendar" element={<CEOOnly><CEODashboardLayout><CEOContentCalendar /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/marketing/budget" element={<CEOOnly><CEODashboardLayout><CEOMarketingBudget /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/concierge/tracking" element={<CEOOnly><CEODashboardLayout><CEOConciergeTrackingReports /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/concierge/notes" element={<CEOOnly><CEODashboardLayout><CEOConciergeNotes /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/sales/reports" element={<CEOOnly><CEODashboardLayout><CEOSalesReports /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/operations/overview" element={<CEOOnly><CEODashboardLayout><CEOOperationsDashboard /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/operations/tracking" element={<CEOOnly><CEODashboardLayout><CEOOperationsTrackingReports /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/finance" element={<CEOOnly><CEODashboardLayout><CEOFinanceSnapshot /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/finance/overview" element={<CEOOnly><CEODashboardLayout><CEOFinanceSnapshot /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/saudemax/reports" element={<CEOOnly><CEODashboardLayout><CEOSaudeMAXReports /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/upload-portal" element={<CEODashboardLayout><CEODepartmentUploadPortal /></CEODashboardLayout>} />
+            <Route path="/ceod/upload" element={<CEODashboardLayout><CEODepartmentUpload /></CEODashboardLayout>} />
+            <Route path="/ceod/files" element={<CEOOnly><CEODashboardLayout><CEOFiles /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/data" element={<CEOOnly><CEODashboardLayout><CEODataManagement /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/departments/concierge" element={<CEOOnly><CEODashboardLayout><CEODepartmentConcierge /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/departments/sales" element={<CEOOnly><CEODashboardLayout><CEODepartmentSales /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/departments/operations" element={<CEOOnly><CEODashboardLayout><CEODepartmentOperations /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/departments/finance" element={<CEOOnly><CEODashboardLayout><CEODepartmentFinance /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/departments/saudemax" element={<CEOOnly><CEODashboardLayout><CEODepartmentSaudeMAX /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/board" element={<CEOOnly><CEODashboardLayout><CEOBoardPacket /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/initiatives" element={<CEOOnly><CEODashboardLayout><CEOHome /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/approvals" element={<CEOOnly><CEODashboardLayout><CEOHome /></CEODashboardLayout></CEOOnly>} />
 
             <Route path="/shared/overview" element={<SharedOverview />} />
             <Route path="/shared/audit" element={<AuditLogViewer />} />

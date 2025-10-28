@@ -23,15 +23,15 @@ export function ProtectedRoute({
   allowedRoles,
   requireAuth = true,
 }: ProtectedRouteProps) {
-  const { user, role, loading } = useAuth();
+  const { user, profile, loading, profileReady } = useAuth();
   const location = useLocation();
   const cookieRole = getCookie('role') as 'ceo' | 'cto' | 'admin' | 'staff' | null;
 
-  const effectiveRole = role || cookieRole;
+  const effectiveRole = profile?.role || cookieRole;
 
-  if (loading) {
+  if (loading || !profileReady) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading...</p>
@@ -45,7 +45,6 @@ export function ProtectedRoute({
   }
 
   if (allowedRoles && effectiveRole && !allowedRoles.includes(effectiveRole)) {
-    console.log(`[ProtectedRoute] Role ${effectiveRole} not allowed for ${location.pathname}, redirecting`);
     const defaultPath = effectiveRole === 'ceo' || effectiveRole === 'admin' ? '/ceod/home' : '/ctod/home';
     return <Navigate to={defaultPath} replace />;
   }

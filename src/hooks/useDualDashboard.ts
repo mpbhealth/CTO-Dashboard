@@ -5,11 +5,11 @@ import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 
 export function useRoleBasedRedirect() {
-  const { profile, loading } = useAuth();
+  const { profile, loading, profileReady } = useAuth();
   const [redirectPath, setRedirectPath] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!loading && profile) {
+    if (!loading && profileReady && profile) {
       const role = profile.role?.toLowerCase();
       const currentPath = window.location.pathname;
 
@@ -21,17 +21,17 @@ export function useRoleBasedRedirect() {
         setRedirectPath(null);
       }
     }
-  }, [profile, loading]);
+  }, [profile, loading, profileReady]);
 
   return {
     redirectPath,
-    isLoading: loading
+    isLoading: loading || !profileReady
   };
 }
 
 export function useCurrentProfile() {
-  const { profile, loading } = useAuth();
-  return { data: profile, isLoading: loading };
+  const { profile, loading, profileReady } = useAuth();
+  return { data: profile, isLoading: loading || !profileReady };
 }
 
 export function useResources(filters?: { workspaceId?: string }) {

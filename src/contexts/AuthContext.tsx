@@ -6,7 +6,9 @@ interface Profile {
   id: string;
   email: string;
   full_name?: string;
+  display_name?: string;
   role?: string;
+  org_id?: string;
   created_at?: string;
   updated_at?: string;
 }
@@ -16,6 +18,7 @@ interface AuthContextType {
   session: Session | null;
   profile: Profile | null;
   loading: boolean;
+  profileReady: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
@@ -24,26 +27,67 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const PROFILE_CACHE_KEY = 'mpb_profile_cache';
+const PROFILE_CACHE_TTL = 5 * 60 * 1000;
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [profileReady, setProfileReady] = useState(false);
 
   const profileCache = useRef<Map<string, Profile>>(new Map());
   const fetchingRef = useRef<string | null>(null);
+  const initializingRef = useRef(false);
 
-  const fetchProfile = useCallback(async (userId: string) => {
-    // Prevent duplicate fetches
+  const loadCachedProfile = useCallback((userId: string): Profile | null => {
+    try {
+      const cached = localStorage.getItem(`${PROFILE_CACHE_KEY}_${userId}`);
+      if (cached) {
+        const { profile, timestamp } = JSON.parse(cached);
+        if (Date.now() - timestamp < PROFILE_CACHE_TTL) {
+          return profile;
+        }
+        localStorage.removeItem(`${PROFILE_CACHE_KEY}_${userId}`);
+      }
+    } catch (error) {
+      console.error('Error loading cached profile:', error);
+    }
+    return null;
+  }, []);
+
+  const saveCachedProfile = useCallback((userId: string, profile: Profile) => {
+    try {
+      localStorage.setItem(
+        `${PROFILE_CACHE_KEY}_${userId}`,
+        JSON.stringify({ profile, timestamp: Date.now() })
+      );
+    } catch (error) {
+      console.error('Error saving cached profile:', error);
+    }
+  }, []);
+
+  const fetchProfile = useCallback(async (userId: string, skipCache = false) => {
     if (fetchingRef.current === userId) {
       return;
     }
 
-    // Check cache first
-    const cached = profileCache.current.get(userId);
-    if (cached) {
-      setProfile(cached);
-      return;
+    if (!skipCache) {
+      const memCached = profileCache.current.get(userId);
+      if (memCached) {
+        setProfile(memCached);
+        setProfileReady(true);
+        return;
+      }
+
+      const diskCached = loadCachedProfile(userId);
+      if (diskCached) {
+        setProfile(diskCached);
+        profileCache.current.set(userId, diskCached);
+        setProfileReady(true);
+        return;
+      }
     }
 
     fetchingRef.current = userId;
@@ -58,40 +102,46 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error) throw error;
 
       if (data) {
-        // Only update if data actually changed (shallow comparison)
-        setProfile(prev => {
-          if (!prev ||
-              prev.id !== data.id ||
-              prev.role !== data.role ||
-              prev.email !== data.email) {
-            profileCache.current.set(userId, data);
-            return data;
-          }
-          return prev;
-        });
+        setProfile(data);
+        profileCache.current.set(userId, data);
+        saveCachedProfile(userId, data);
+        setProfileReady(true);
+      } else {
+        setProfile(null);
+        setProfileReady(true);
       }
     } catch (error) {
       console.error('Error fetching profile:', error);
       setProfile(null);
+      setProfileReady(true);
     } finally {
       fetchingRef.current = null;
     }
-  }, []);
+  }, [loadCachedProfile, saveCachedProfile]);
 
   const refreshProfile = useCallback(async () => {
     if (user?.id) {
-      // Clear cache for this user to force fresh fetch
       profileCache.current.delete(user.id);
-      await fetchProfile(user.id);
+      try {
+        localStorage.removeItem(`${PROFILE_CACHE_KEY}_${user.id}`);
+      } catch (error) {
+        console.error('Error clearing cached profile:', error);
+      }
+      await fetchProfile(user.id, true);
     }
   }, [user?.id, fetchProfile]);
 
   useEffect(() => {
+    if (initializingRef.current) return;
+    initializingRef.current = true;
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user?.id) {
         fetchProfile(session.user.id);
+      } else {
+        setProfileReady(true);
       }
       setLoading(false);
     });
@@ -103,11 +153,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         fetchProfile(session.user.id);
       } else {
         setProfile(null);
+        setProfileReady(true);
       }
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [fetchProfile]);
 
   const signIn = useCallback(async (email: string, password: string) => {
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -137,20 +188,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
     setProfile(null);
+    setProfileReady(false);
     profileCache.current.clear();
+    try {
+      Object.keys(localStorage)
+        .filter(key => key.startsWith(PROFILE_CACHE_KEY))
+        .forEach(key => localStorage.removeItem(key));
+    } catch (error) {
+      console.error('Error clearing profile cache:', error);
+    }
   }, []);
 
-  // Memoize the context value to prevent unnecessary re-renders
   const value = useMemo(() => ({
     user,
     session,
     profile,
     loading,
+    profileReady,
     signIn,
     signUp,
     signOut,
     refreshProfile,
-  }), [user, session, profile, loading, signIn, signUp, signOut, refreshProfile]);
+  }), [user, session, profile, loading, profileReady, signIn, signUp, signOut, refreshProfile]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

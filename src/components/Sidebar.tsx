@@ -33,14 +33,9 @@ import {
   CheckSquare,
   ClipboardCheck,
   Ticket,
-  FolderUp,
-  MessageSquare,
-  ShoppingCart,
-  DollarSign,
-  Headphones
+  FolderUp
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
-import { useDashboardContext } from '../hooks/useDashboardContext';
 import { useCurrentProfile } from '../hooks/useDualDashboard';
 
 interface SidebarProps {

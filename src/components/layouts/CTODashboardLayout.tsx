@@ -22,6 +22,15 @@ export function CTODashboardLayout({ children }: CTODashboardLayoutProps) {
   const location = useLocation();
   const { data: profile, isLoading } = useCurrentProfile();
 
+  useEffect(() => {
+    if (profile?.role) {
+      document.documentElement.dataset.role = profile.role;
+    }
+    return () => {
+      delete document.documentElement.dataset.role;
+    };
+  }, [profile?.role]);
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -33,15 +42,6 @@ export function CTODashboardLayout({ children }: CTODashboardLayoutProps) {
   if (profile && profile.role !== 'cto' && profile.role !== 'admin' && profile.role !== 'ceo' && profile.role !== 'staff') {
     return <Navigate to="/ceod/home" replace />;
   }
-
-  useEffect(() => {
-    if (profile?.role) {
-      document.documentElement.dataset.role = profile.role;
-    }
-    return () => {
-      delete document.documentElement.dataset.role;
-    };
-  }, [profile?.role]);
 
   const navItems = [
     { path: '/ctod/home', label: 'Home', icon: Home },

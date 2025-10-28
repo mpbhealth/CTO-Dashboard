@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState, useEffect, useMemo, useCallback, memo } from 'react';
+import { lazy, Suspense, useState, useEffect, useMemo, useCallback } from 'react';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Menu } from 'lucide-react';
@@ -97,7 +97,7 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
       retry: 1,
       // Keep previous data during refetches to prevent flickering
-      placeholderData: (previousData: any) => previousData,
+      placeholderData: (previousData: unknown) => previousData,
     },
   },
 });
@@ -237,8 +237,6 @@ function DualDashboardContent() {
   const [isMobile, setIsMobile] = useState(false);
 
   const isCEORoute = useMemo(() => location.pathname.startsWith('/ceod/'), [location.pathname]);
-  const isCTORoute = useMemo(() => location.pathname.startsWith('/ctod/'), [location.pathname]);
-  const isSharedRoute = useMemo(() => location.pathname.startsWith('/shared/'), [location.pathname]);
 
   const isCEOUser = useMemo(() => {
     return profile?.role === 'ceo' || profile?.role === 'admin';
@@ -251,17 +249,6 @@ function DualDashboardContent() {
   const shouldShowCTOSidebar = useMemo(() => {
     return profileReady && !isCEORoute;
   }, [profileReady, isCEORoute]);
-
-  if (loading || !profileReady) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-slate-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading your dashboard...</p>
-        </div>
-      </div>
-    );
-  }
 
   useEffect(() => {
     function checkIfMobile() {
@@ -299,7 +286,6 @@ function DualDashboardContent() {
     }
   }, [location.pathname, isCEORoute, profileReady]);
 
-  // Memoize callbacks to prevent re-creation on every render
   const handleTabChange = useCallback((tab: string) => {
     setActiveTab(tab);
     const route = tabToRouteMap[tab];
@@ -311,6 +297,17 @@ function DualDashboardContent() {
   const toggleSidebar = useCallback(() => {
     setIsSidebarExpanded(prev => !prev);
   }, []);
+
+  if (loading || !profileReady) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-slate-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading your dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen bg-slate-50 overflow-x-hidden">

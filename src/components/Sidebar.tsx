@@ -107,8 +107,9 @@ export default function Sidebar({
 }: SidebarProps) {
   const [isMobile, setIsMobile] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState<string[]>(['compliance']);
-  const { dashboardType, isCEO } = useDashboardContext();
   const { data: profile } = useCurrentProfile();
+
+  const isCEO = profile?.role === 'ceo' || profile?.role === 'admin';
   
   // Detect if we're on mobile
   useEffect(() => {

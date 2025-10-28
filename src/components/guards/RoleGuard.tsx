@@ -52,7 +52,7 @@ interface CTOOnlyProps {
 
 export function CTOOnly({ children }: CTOOnlyProps) {
   return (
-    <RoleGuard allowedRoles={['ceo', 'cto', 'admin', 'staff']} redirectTo="/ceod/home">
+    <RoleGuard allowedRoles={['cto', 'admin', 'staff']} redirectTo="/ceod/home">
       {children}
     </RoleGuard>
   );

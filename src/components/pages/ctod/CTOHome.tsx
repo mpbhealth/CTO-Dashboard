@@ -60,14 +60,27 @@ export function CTOHome() {
 
   const recentResources = resources.slice(0, 5);
 
+  const isCEOUser = profile?.role === 'ceo' || profile?.role === 'admin';
+
   return (
     <CTODashboardLayout>
       <div className="space-y-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">
-            Welcome back, {profile?.display_name || 'Vinnie'}
-          </h1>
-          <p className="text-gray-600 mt-1">Here's your technology overview</p>
+          {isCEOUser ? (
+            <>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent">
+                CEO Dashboard — CTO Technology Overview
+              </h1>
+              <p className="text-gray-600 mt-1">Viewing CTO operations and technology metrics</p>
+            </>
+          ) : (
+            <>
+              <h1 className="text-3xl font-bold text-gray-900">
+                Welcome back, {profile?.display_name || 'Vinnie'}
+              </h1>
+              <p className="text-gray-600 mt-1">Here's your technology overview</p>
+            </>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

@@ -1,5 +1,5 @@
 import { ReactNode, useEffect } from 'react';
-import { Link, useLocation, Navigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   Home,
   FileText,
@@ -20,6 +20,8 @@ import {
 } from 'lucide-react';
 import { useCurrentProfile } from '../../hooks/useDualDashboard';
 import { supabase } from '../../lib/supabase';
+import { DashboardViewToggle } from '../ui/DashboardViewToggle';
+import { ViewingContextBadge } from '../ui/ViewingContextBadge';
 
 interface CEODashboardLayoutProps {
   children: ReactNode;
@@ -29,29 +31,37 @@ export function CEODashboardLayout({ children }: CEODashboardLayoutProps) {
   const location = useLocation();
   const { data: profile } = useCurrentProfile();
 
-  const navItems = [
-    { path: '/ceod/home', label: 'CEO Home', icon: Home, section: 'ceo' },
-    { path: '/ceod/marketing', label: 'Marketing', icon: Megaphone, section: 'ceo' },
-    { path: '/ceod/concierge/tracking', label: 'Concierge', icon: MessageSquare, section: 'ceo' },
-    { path: '/ceod/sales/reports', label: 'Sales', icon: ShoppingCart, section: 'ceo' },
-    { path: '/ceod/operations/overview', label: 'Operations', icon: Activity, section: 'ceo' },
-    { path: '/ceod/data', label: 'Data Import', icon: Database, section: 'ceo' },
-    { path: '/ceod/files', label: 'CEO Files', icon: FileText, section: 'ceo' },
-    { path: '/ceod/board', label: 'Board Packet', icon: TrendingUp, section: 'ceo' },
-    { path: '/ctod/home', label: 'CTO Home', icon: Code, section: 'cto' },
-    { path: '/ctod/files', label: 'CTO Files', icon: FileText, section: 'cto' },
-    { path: '/ctod/kpis', label: 'Tech KPIs', icon: BarChart3, section: 'cto' },
-    { path: '/ctod/engineering', label: 'Engineering', icon: Code, section: 'cto' },
-    { path: '/ctod/compliance', label: 'Compliance', icon: Shield, section: 'cto' },
-    { path: '/shared/overview', label: 'Shared View', icon: Share2, section: 'shared' },
+  const ceoNavItems = [
+    { path: '/ceod/home', label: 'CEO Home', icon: Home },
+    { path: '/ceod/marketing', label: 'Marketing', icon: Megaphone },
+    { path: '/ceod/concierge/tracking', label: 'Concierge', icon: MessageSquare },
+    { path: '/ceod/sales/reports', label: 'Sales', icon: ShoppingCart },
+    { path: '/ceod/operations/overview', label: 'Operations', icon: Activity },
+    { path: '/ceod/data', label: 'Data Import', icon: Database },
+    { path: '/ceod/files', label: 'CEO Files', icon: FileText },
+    { path: '/ceod/board', label: 'Board Packet', icon: TrendingUp },
+  ];
+
+  const ctoNavItems = [
+    { path: '/ctod/home', label: 'CTO Home', icon: Code },
+    { path: '/ctod/files', label: 'CTO Files', icon: FileText },
+    { path: '/ctod/kpis', label: 'Tech KPIs', icon: BarChart3 },
+    { path: '/ctod/engineering', label: 'Engineering', icon: Code },
+    { path: '/ctod/compliance', label: 'Compliance', icon: Shield },
+  ];
+
+  const sharedNavItems = [
+    { path: '/shared/overview', label: 'Shared View', icon: Share2 },
   ];
 
   useEffect(() => {
-    document.documentElement.dataset.role = 'ceo';
+    if (profile?.role) {
+      document.documentElement.dataset.role = profile.role;
+    }
     return () => {
       delete document.documentElement.dataset.role;
     };
-  }, []);
+  }, [profile?.role]);
 
   const handleSignOut = async () => {
     try {
@@ -80,41 +90,64 @@ export function CEODashboardLayout({ children }: CEODashboardLayoutProps) {
                   className="h-10 w-auto object-contain"
                 />
                 <div>
-                  <h1 className="text-lg font-bold text-gray-900">CEO Dashboard — {profile?.display_name || 'Catherine Okubo'}</h1>
+                  <h1 className="text-lg font-bold bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent">
+                    CEO Dashboard — {profile?.display_name || 'Catherine Okubo'}
+                  </h1>
                   <p className="text-xs text-gray-500">MPB Health Executive Portal</p>
                 </div>
               </div>
-              <div className="hidden lg:flex items-center gap-1 overflow-x-auto max-w-4xl">
-                {navItems.map((item) => {
-                  const Icon = item.icon;
-                  const isActive = location.pathname.startsWith(item.path);
-                  const isCTOSection = item.section === 'cto';
-                  return (
-                    <Link
-                      key={item.path}
-                      to={item.path}
-                      className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
-                        isActive
-                          ? isCTOSection
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-gradient-to-r from-pink-500 to-pink-600 text-white'
-                          : isCTOSection
-                            ? 'text-gray-500 hover:bg-blue-50 hover:text-blue-600 border border-gray-300'
+              <div className="hidden lg:flex items-center gap-4 overflow-x-auto max-w-4xl">
+                <div className="flex items-center gap-1">
+                  <span className="text-xs font-semibold text-pink-600 mr-2">CEO Portal</span>
+                  {ceoNavItems.map((item) => {
+                    const Icon = item.icon;
+                    const isActive = location.pathname.startsWith(item.path);
+                    return (
+                      <Link
+                        key={item.path}
+                        to={item.path}
+                        className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
+                          isActive
+                            ? 'bg-gradient-to-r from-pink-500 to-pink-600 text-white shadow-md'
                             : 'text-gray-600 hover:bg-pink-50 hover:text-pink-700'
-                      }`}
-                      title={isCTOSection ? `CTO Dashboard: ${item.label}` : item.label}
-                    >
-                      <Icon size={16} />
-                      {item.label}
-                    </Link>
-                  );
-                })}
+                        }`}
+                      >
+                        <Icon size={16} />
+                        <span className="hidden xl:inline">{item.label}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+
+                <div className="h-8 w-px bg-gray-300"></div>
+
+                <div className="flex items-center gap-1">
+                  <span className="text-xs font-semibold text-gray-500 mr-2">CTO Access</span>
+                  {ctoNavItems.map((item) => {
+                    const Icon = item.icon;
+                    const isActive = location.pathname.startsWith(item.path);
+                    return (
+                      <Link
+                        key={item.path}
+                        to={item.path}
+                        className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap border ${
+                          isActive
+                            ? 'bg-pink-50 text-pink-700 border-pink-300 shadow-sm'
+                            : 'text-gray-500 hover:bg-pink-50 hover:text-pink-600 border-gray-300 hover:border-pink-300'
+                        }`}
+                        title={`View CTO: ${item.label}`}
+                      >
+                        <Icon size={16} />
+                        <span className="hidden xl:inline">{item.label}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <div className="px-3 py-1 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-full text-xs font-medium">
-                CEO
-              </div>
+              <DashboardViewToggle />
+              <ViewingContextBadge />
               <button
                 onClick={handleSignOut}
                 className="flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-gray-900 rounded-lg hover:bg-gray-50 transition-colors"

@@ -33,7 +33,9 @@ export function CEOHome() {
   const [shareModalResource, setShareModalResource] = useState<Resource | null>(null);
 
   useEffect(() => {
-    document.documentElement.dataset.role = 'ceo';
+    if (profile?.role) {
+      document.documentElement.dataset.role = profile.role;
+    }
     console.log('CEOHome mounted - Profile:', profile?.display_name);
   }, [profile]);
 

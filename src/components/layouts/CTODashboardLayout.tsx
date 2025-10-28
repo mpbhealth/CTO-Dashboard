@@ -11,6 +11,8 @@ import {
 } from 'lucide-react';
 import { useCurrentProfile } from '../../hooks/useDualDashboard';
 import { supabase } from '../../lib/supabase';
+import { DashboardViewToggle } from '../ui/DashboardViewToggle';
+import { ViewingContextBadge } from '../ui/ViewingContextBadge';
 
 interface CTODashboardLayoutProps {
   children: ReactNode;
@@ -28,16 +30,18 @@ export function CTODashboardLayout({ children }: CTODashboardLayoutProps) {
     );
   }
 
-  if (profile && profile.role !== 'cto' && profile.role !== 'admin' && profile.role !== 'ceo') {
+  if (profile && profile.role !== 'cto' && profile.role !== 'admin' && profile.role !== 'ceo' && profile.role !== 'staff') {
     return <Navigate to="/ceod/home" replace />;
   }
 
   useEffect(() => {
-    document.documentElement.dataset.role = 'cto';
+    if (profile?.role) {
+      document.documentElement.dataset.role = profile.role;
+    }
     return () => {
       delete document.documentElement.dataset.role;
     };
-  }, []);
+  }, [profile?.role]);
 
   const navItems = [
     { path: '/ctod/home', label: 'Home', icon: Home },
@@ -75,7 +79,13 @@ export function CTODashboardLayout({ children }: CTODashboardLayoutProps) {
                   className="h-10 w-auto object-contain"
                 />
                 <div>
-                  <h1 className="text-lg font-bold text-gray-900">CTO Dashboard</h1>
+                  <h1 className={`text-lg font-bold ${
+                    profile?.role === 'ceo'
+                      ? 'bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent'
+                      : 'text-gray-900'
+                  }`}>
+                    {profile?.role === 'ceo' ? 'CEO Dashboard — CTO Technology Overview' : 'CTO Dashboard'}
+                  </h1>
                   <p className="text-xs text-gray-500">{profile?.display_name || profile?.email}</p>
                 </div>
               </div>
@@ -88,9 +98,13 @@ export function CTODashboardLayout({ children }: CTODashboardLayoutProps) {
                       key={item.path}
                       to={item.path}
                       className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                        isActive
-                          ? 'bg-blue-50 text-blue-700'
-                          : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                        profile?.role === 'ceo'
+                          ? isActive
+                            ? 'bg-gradient-to-r from-pink-50 to-rose-50 text-pink-700'
+                            : 'text-gray-600 hover:bg-pink-50 hover:text-pink-700'
+                          : isActive
+                            ? 'bg-blue-50 text-blue-700'
+                            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                       }`}
                     >
                       <Icon size={16} />
@@ -101,13 +115,8 @@ export function CTODashboardLayout({ children }: CTODashboardLayoutProps) {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <div className={`px-3 py-1 rounded-full text-xs font-medium ${
-                profile?.role === 'ceo'
-                  ? 'bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white'
-                  : 'bg-blue-100 text-blue-700'
-              }`}>
-                {profile?.role === 'ceo' ? 'CEO (Viewing CTO)' : 'CTO'}
-              </div>
+              <DashboardViewToggle />
+              <ViewingContextBadge />
               <button
                 onClick={handleSignOut}
                 className="flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-gray-900 rounded-lg hover:bg-gray-50 transition-colors"

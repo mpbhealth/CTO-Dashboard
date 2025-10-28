@@ -7,6 +7,7 @@ import { CEOOnly, CTOOnly } from './components/guards/RoleGuard';
 import Sidebar from './components/Sidebar';
 
 const CTOHome = lazy(() => import('./components/pages/ctod/CTOHome').then(m => ({ default: m.CTOHome })));
+const CTOOperations = lazy(() => import('./components/pages/ctod/CTOOperations').then(m => ({ default: m.CTOOperations })));
 const CEOHome = lazy(() => import('./components/pages/ceod/CEOHome').then(m => ({ default: m.CEOHome })));
 const CEOMarketingDashboard = lazy(() => import('./components/pages/ceod/CEOMarketingDashboard').then(m => ({ default: m.CEOMarketingDashboard })));
 const CEOMarketingPlanner = lazy(() => import('./components/pages/ceod/CEOMarketingPlanner').then(m => ({ default: m.CEOMarketingPlanner })));
@@ -32,6 +33,19 @@ const Projects = lazy(() => import('./components/pages/Projects'));
 const MondayTasks = lazy(() => import('./components/pages/MondayTasks'));
 const Assignments = lazy(() => import('./components/pages/Assignments'));
 const Notepad = lazy(() => import('./components/pages/Notepad'));
+
+// Operations & Management pages
+const SaaSSpend = lazy(() => import('./components/pages/SaaSSpend'));
+const AIAgents = lazy(() => import('./components/pages/AIAgents'));
+const ITSupport = lazy(() => import('./components/pages/ITSupport'));
+const IntegrationsHub = lazy(() => import('./components/pages/IntegrationsHub'));
+const PolicyManagement = lazy(() => import('./components/pages/PolicyManagement'));
+const EmployeePerformance = lazy(() => import('./components/pages/EmployeePerformance'));
+const PerformanceEvaluation = lazy(() => import('./components/pages/PerformanceEvaluation'));
+const OrganizationalStructure = lazy(() => import('./components/pages/OrganizationalStructure'));
+const Deployments = lazy(() => import('./components/pages/Deployments'));
+const APIStatus = lazy(() => import('./components/pages/APIStatus'));
+const SystemUptime = lazy(() => import('./components/pages/SystemUptime'));
 
 const LoadingFallback = () => (
   <div className="flex items-center justify-center min-h-screen">
@@ -84,6 +98,17 @@ const routeToTabMap: Record<string, string> = {
   '/ceod/approvals': 'overview',
   '/shared/overview': 'overview',
   '/shared/audit': 'overview',
+  '/shared/saas': 'saas',
+  '/shared/ai-agents': 'ai-agents',
+  '/shared/it-support': 'it-support',
+  '/shared/integrations': 'integrations',
+  '/shared/deployments': 'deployments',
+  '/shared/policy-management': 'policy-management',
+  '/shared/employee-performance': 'employee-performance',
+  '/shared/api-status': 'api-status',
+  '/shared/system-uptime': 'system-uptime',
+  '/shared/performance-evaluation': 'performance-evaluation',
+  '/shared/organizational-structure': 'organizational-structure',
   '/diagnostics': 'overview',
   '/tech-stack': 'tech-stack',
   '/quick-links': 'quick-links',
@@ -123,17 +148,17 @@ const tabToRouteMap: Record<string, string> = {
   'compliance/audits': '/ctod/compliance',
   'compliance/templates-tools': '/ctod/compliance',
   'compliance/employee-documents': '/ctod/compliance',
-  'saas': '/ctod/home',
-  'ai-agents': '/ctod/home',
-  'it-support': '/ctod/home',
-  'integrations': '/ctod/home',
-  'deployments': '/ctod/home',
-  'policy-management': '/ctod/home',
-  'employee-performance': '/ctod/home',
-  'api-status': '/ctod/home',
-  'system-uptime': '/ctod/home',
-  'performance-evaluation': '/ctod/home',
-  'organizational-structure': '/ctod/home',
+  'saas': '/shared/saas',
+  'ai-agents': '/shared/ai-agents',
+  'it-support': '/shared/it-support',
+  'integrations': '/shared/integrations',
+  'deployments': '/shared/deployments',
+  'policy-management': '/shared/policy-management',
+  'employee-performance': '/shared/employee-performance',
+  'api-status': '/shared/api-status',
+  'system-uptime': '/shared/system-uptime',
+  'performance-evaluation': '/shared/performance-evaluation',
+  'organizational-structure': '/shared/organizational-structure',
 };
 
 function DualDashboardContent() {
@@ -218,6 +243,7 @@ function DualDashboardContent() {
             <Route path="/ctod/kpis" element={<CTOOnly><CTOHome /></CTOOnly>} />
             <Route path="/ctod/engineering" element={<CTOOnly><CTOHome /></CTOOnly>} />
             <Route path="/ctod/compliance" element={<CTOOnly><CTOHome /></CTOOnly>} />
+            <Route path="/ctod/operations" element={<CTOOnly><CTOOperations /></CTOOnly>} />
 
             <Route path="/ceod/home" element={<CEOOnly><CEOHome /></CEOOnly>} />
             <Route path="/ceod/marketing" element={<CEOOnly><CEOMarketingDashboard /></CEOOnly>} />
@@ -237,6 +263,19 @@ function DualDashboardContent() {
             <Route path="/shared/overview" element={<SharedOverview />} />
             <Route path="/shared/audit" element={<AuditLogViewer />} />
             <Route path="/diagnostics" element={<AuthDiagnostics />} />
+
+            {/* Shared Operations & Management Routes */}
+            <Route path="/shared/saas" element={<SaaSSpend />} />
+            <Route path="/shared/ai-agents" element={<AIAgents />} />
+            <Route path="/shared/it-support" element={<ITSupport />} />
+            <Route path="/shared/integrations" element={<IntegrationsHub />} />
+            <Route path="/shared/deployments" element={<Deployments />} />
+            <Route path="/shared/policy-management" element={<PolicyManagement />} />
+            <Route path="/shared/employee-performance" element={<EmployeePerformance />} />
+            <Route path="/shared/api-status" element={<APIStatus />} />
+            <Route path="/shared/system-uptime" element={<SystemUptime />} />
+            <Route path="/shared/performance-evaluation" element={<PerformanceEvaluation />} />
+            <Route path="/shared/organizational-structure" element={<OrganizationalStructure />} />
 
             <Route path="/tech-stack" element={<TechStack />} />
             <Route path="/quick-links" element={<QuickLinks />} />

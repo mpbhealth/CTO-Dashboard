@@ -152,14 +152,14 @@ export function CEODataManagement() {
                 setUploadLinkCopied(true);
                 setTimeout(() => setUploadLinkCopied(false), 2000);
               }}
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-600 to-teal-700 text-white rounded-lg hover:opacity-90 transition-opacity shadow-md"
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-lg hover:opacity-90 transition-opacity shadow-md"
             >
               {uploadLinkCopied ? <CheckCircle size={18} /> : <Share2 size={18} />}
               {uploadLinkCopied ? 'Copied!' : 'Share Upload Portal'}
             </button>
             <button
               onClick={handleCopyUploadLink}
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity"
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-lg hover:opacity-90 transition-opacity shadow-md"
             >
               {uploadLinkCopied ? <CheckCircle size={18} /> : <Copy size={18} />}
               {uploadLinkCopied ? 'Copied!' : 'Upload Department Data'}

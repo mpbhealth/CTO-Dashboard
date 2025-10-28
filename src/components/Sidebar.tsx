@@ -32,7 +32,11 @@ import {
   CheckSquare,
   ClipboardCheck,
   Ticket,
-  FolderUp
+  FolderUp,
+  MessageSquare,
+  ShoppingCart,
+  DollarSign,
+  Headphones
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useDashboardContext } from '../hooks/useDashboardContext';
@@ -52,7 +56,19 @@ const menuItems = [
   { id: 'member-retention', label: 'Member Retention', icon: TrendingDown, category: 'analytics' },
   { id: 'advisor-performance', label: 'Advisor Performance', icon: Award, category: 'analytics' },
   { id: 'marketing-analytics', label: 'Marketing Analytics', icon: LineChart, category: 'analytics' },
-  { id: 'department-reporting', label: 'Department Reporting', icon: FolderUp, category: 'reporting' },
+  {
+    id: 'department-reporting',
+    label: 'Department Reporting',
+    icon: FolderUp,
+    category: 'reporting',
+    submenu: [
+      { id: 'department-reporting/concierge', label: 'Concierge' },
+      { id: 'department-reporting/sales', label: 'Sales' },
+      { id: 'department-reporting/operations', label: 'Operations' },
+      { id: 'department-reporting/finance', label: 'Finance' },
+      { id: 'department-reporting/saudemax', label: 'SaudeMAX' },
+    ]
+  },
   { id: 'tech-stack', label: 'Tech Stack', icon: Code2, category: 'development' },
   { id: 'quick-links', label: 'QuickLinks Directory', icon: Link2, category: 'development' },
   { id: 'roadmap', label: 'Roadmap', icon: Calendar, category: 'development' },

@@ -28,6 +28,11 @@ const CEOFinanceSnapshot = lazy(() => import('./components/pages/ceod/CEOFinance
 const CEOOperationsDashboard = lazy(() => import('./components/pages/ceod/CEOOperationsDashboard').then(m => ({ default: m.CEOOperationsDashboard })));
 const CEOOperationsTrackingReports = lazy(() => import('./components/pages/ceod/CEOOperationsTrackingReports').then(m => ({ default: m.CEOOperationsTrackingReports })));
 const CEOSaudeMAXReports = lazy(() => import('./components/pages/ceod/CEOSaudeMAXReports').then(m => ({ default: m.CEOSaudeMAXReports })));
+const CEODepartmentConcierge = lazy(() => import('./components/pages/ceod/CEODepartmentConcierge').then(m => ({ default: m.CEODepartmentConcierge })));
+const CEODepartmentSales = lazy(() => import('./components/pages/ceod/CEODepartmentSales').then(m => ({ default: m.CEODepartmentSales })));
+const CEODepartmentOperations = lazy(() => import('./components/pages/ceod/CEODepartmentOperations').then(m => ({ default: m.CEODepartmentOperations })));
+const CEODepartmentFinance = lazy(() => import('./components/pages/ceod/CEODepartmentFinance').then(m => ({ default: m.CEODepartmentFinance })));
+const CEODepartmentSaudeMAX = lazy(() => import('./components/pages/ceod/CEODepartmentSaudeMAX').then(m => ({ default: m.CEODepartmentSaudeMAX })));
 const SharedOverview = lazy(() => import('./components/pages/shared/SharedOverview').then(m => ({ default: m.SharedOverview })));
 const AuditLogViewer = lazy(() => import('./components/pages/shared/AuditLogViewer').then(m => ({ default: m.AuditLogViewer })));
 const AuthDiagnostics = lazy(() => import('./components/pages/AuthDiagnostics'));
@@ -110,6 +115,11 @@ const routeToTabMap: Record<string, string> = {
   '/ctod/engineering': 'tech-stack',
   '/ctod/compliance': 'compliance',
   '/ceod/data': 'department-reporting',
+  '/ceod/departments/concierge': 'department-reporting/concierge',
+  '/ceod/departments/sales': 'department-reporting/sales',
+  '/ceod/departments/operations': 'department-reporting/operations',
+  '/ceod/departments/finance': 'department-reporting/finance',
+  '/ceod/departments/saudemax': 'department-reporting/saudemax',
   '/ctod/compliance/dashboard': 'compliance',
   '/ctod/compliance/administration': 'compliance',
   '/ctod/compliance/training': 'compliance',
@@ -172,6 +182,11 @@ const tabToRouteMap: Record<string, string> = {
   'advisor-performance': '/ceod/analytics/advisor-performance',
   'marketing-analytics': '/ceod/analytics/marketing',
   'department-reporting': '/ceod/data',
+  'department-reporting/concierge': '/ceod/departments/concierge',
+  'department-reporting/sales': '/ceod/departments/sales',
+  'department-reporting/operations': '/ceod/departments/operations',
+  'department-reporting/finance': '/ceod/departments/finance',
+  'department-reporting/saudemax': '/ceod/departments/saudemax',
   'tech-stack': '/tech-stack',
   'quick-links': '/quick-links',
   'roadmap': '/roadmap',
@@ -325,6 +340,11 @@ function DualDashboardContent() {
             <Route path="/ceod/upload" element={<CEODepartmentUpload />} />
             <Route path="/ceod/files" element={<CEOOnly><CEOFiles /></CEOOnly>} />
             <Route path="/ceod/data" element={<CEOOnly><CEODataManagement /></CEOOnly>} />
+            <Route path="/ceod/departments/concierge" element={<CEOOnly><CEODepartmentConcierge /></CEOOnly>} />
+            <Route path="/ceod/departments/sales" element={<CEOOnly><CEODepartmentSales /></CEOOnly>} />
+            <Route path="/ceod/departments/operations" element={<CEOOnly><CEODepartmentOperations /></CEOOnly>} />
+            <Route path="/ceod/departments/finance" element={<CEOOnly><CEODepartmentFinance /></CEOOnly>} />
+            <Route path="/ceod/departments/saudemax" element={<CEOOnly><CEODepartmentSaudeMAX /></CEOOnly>} />
             <Route path="/ceod/board" element={<CEOOnly><CEOBoardPacket /></CEOOnly>} />
             <Route path="/ceod/initiatives" element={<CEOOnly><CEOHome /></CEOOnly>} />
             <Route path="/ceod/approvals" element={<CEOOnly><CEOHome /></CEOOnly>} />

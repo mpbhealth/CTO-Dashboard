@@ -14,6 +14,11 @@ import {
   Globe,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
+  MessageSquare,
+  ShoppingCart,
+  PieChart,
+  Headphones,
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -22,29 +27,46 @@ interface NavItem {
   path: string;
   icon: React.ComponentType<{ className?: string }>;
   badge?: string;
+  subItems?: NavItem[];
 }
 
 const navigationItems: NavItem[] = [
-  { name: 'Executive Overview', path: '/ceo', icon: LayoutDashboard },
-  { name: 'Sales Performance', path: '/ceo/sales', icon: TrendingUp },
-  { name: 'Marketing Analytics', path: '/ceo/marketing', icon: Target },
-  { name: 'Enrollment Insights', path: '/ceo/enrollments', icon: Users },
-  { name: 'Agent Performance', path: '/ceo/agents', icon: Award },
-  { name: 'Operations', path: '/ceo/operations', icon: Activity },
-  { name: 'Financial Overview', path: '/ceo/financial', icon: DollarSign },
-  { name: 'Strategic Goals', path: '/ceo/goals', icon: Briefcase },
-  { name: 'Reports & Analytics', path: '/ceo/reports', icon: FileText },
+  { name: 'Executive Overview', path: '/ceod/home', icon: LayoutDashboard },
+  { name: 'Concierge Tracking', path: '/ceod/concierge/tracking', icon: MessageSquare },
+  { name: 'Sales Reports', path: '/ceod/sales/reports', icon: ShoppingCart },
+  { name: 'Finance Snapshot', path: '/ceod/finance/overview', icon: DollarSign },
+  {
+    name: 'Operations Dashboard',
+    path: '/ceod/operations/overview',
+    icon: Activity,
+    subItems: [
+      { name: 'Operations Tracking', path: '/ceod/operations/tracking', icon: Activity }
+    ]
+  },
+  { name: 'SaudeMAX Reports', path: '/ceod/saudemax/reports', icon: Headphones },
+  { name: 'Marketing Analytics', path: '/ceod/marketing', icon: Target },
+  { name: 'Board Packet', path: '/ceod/board', icon: Briefcase },
+  { name: 'Files & Documents', path: '/ceod/files', icon: FileText },
 ];
 
 export default function CEOSidebar() {
   const location = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [expandedItems, setExpandedItems] = useState<string[]>([]);
 
   const isActive = (path: string) => {
-    if (path === '/ceo') {
-      return location.pathname === '/ceo';
+    if (path === '/ceod/home') {
+      return location.pathname === '/ceod/home';
     }
     return location.pathname.startsWith(path);
+  };
+
+  const toggleExpanded = (path: string) => {
+    setExpandedItems(prev =>
+      prev.includes(path)
+        ? prev.filter(p => p !== path)
+        : [...prev, path]
+    );
   };
 
   return (
@@ -90,28 +112,74 @@ export default function CEOSidebar() {
         {navigationItems.map((item) => {
           const Icon = item.icon;
           const active = isActive(item.path);
+          const hasSubItems = item.subItems && item.subItems.length > 0;
+          const isExpanded = expandedItems.includes(item.path);
 
           return (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all ${
-                active
-                  ? 'bg-pink-900 text-white shadow-lg'
-                  : 'hover:bg-pink-800 text-pink-50'
-              } ${isCollapsed ? 'justify-center' : ''}`}
-              title={isCollapsed ? item.name : undefined}
-            >
-              <Icon className={`${isCollapsed ? 'w-6 h-6' : 'w-5 h-5'} flex-shrink-0`} />
-              {!isCollapsed && (
-                <span className="font-medium text-sm">{item.name}</span>
+            <div key={item.path}>
+              {hasSubItems ? (
+                <button
+                  onClick={() => toggleExpanded(item.path)}
+                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all ${
+                    active
+                      ? 'bg-pink-900 text-white shadow-lg'
+                      : 'hover:bg-pink-800 text-pink-50'
+                  } ${isCollapsed ? 'justify-center' : ''}`}
+                  title={isCollapsed ? item.name : undefined}
+                >
+                  <Icon className={`${isCollapsed ? 'w-6 h-6' : 'w-5 h-5'} flex-shrink-0`} />
+                  {!isCollapsed && (
+                    <>
+                      <span className="font-medium text-sm flex-1 text-left">{item.name}</span>
+                      <ChevronDown className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                    </>
+                  )}
+                </button>
+              ) : (
+                <Link
+                  to={item.path}
+                  className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all ${
+                    active
+                      ? 'bg-pink-900 text-white shadow-lg'
+                      : 'hover:bg-pink-800 text-pink-50'
+                  } ${isCollapsed ? 'justify-center' : ''}`}
+                  title={isCollapsed ? item.name : undefined}
+                >
+                  <Icon className={`${isCollapsed ? 'w-6 h-6' : 'w-5 h-5'} flex-shrink-0`} />
+                  {!isCollapsed && (
+                    <span className="font-medium text-sm">{item.name}</span>
+                  )}
+                  {!isCollapsed && item.badge && (
+                    <span className="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+                      {item.badge}
+                    </span>
+                  )}
+                </Link>
               )}
-              {!isCollapsed && item.badge && (
-                <span className="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full">
-                  {item.badge}
-                </span>
+
+              {hasSubItems && isExpanded && !isCollapsed && (
+                <div className="ml-4 mt-1 space-y-1">
+                  {item.subItems!.map((subItem) => {
+                    const SubIcon = subItem.icon;
+                    const subActive = isActive(subItem.path);
+                    return (
+                      <Link
+                        key={subItem.path}
+                        to={subItem.path}
+                        className={`flex items-center space-x-3 px-4 py-2 rounded-lg transition-all text-sm ${
+                          subActive
+                            ? 'bg-pink-900 text-white shadow-lg'
+                            : 'hover:bg-pink-800 text-pink-100'
+                        }`}
+                      >
+                        <SubIcon className="w-4 h-4 flex-shrink-0" />
+                        <span className="font-medium">{subItem.name}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
               )}
-            </Link>
+            </div>
           );
         })}
       </nav>

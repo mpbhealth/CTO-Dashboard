@@ -6,6 +6,7 @@ import {
   CheckCircle,
   Share2,
   FileText,
+  Upload,
 } from 'lucide-react';
 import { CEODashboardLayout } from '../../layouts/CEODashboardLayout';
 import { useCurrentProfile, useResources, useWorkspace } from '../../../hooks/useDualDashboard';
@@ -83,11 +84,20 @@ export function CEOHome() {
 
   return (
     <div className="space-y-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">
-            {getGreeting()}, {profile?.display_name || 'Catherine'}!
-          </h1>
-          <p className="text-gray-600 mt-1">Welcome to your executive command center. Here's what's happening across MPB Health today.</p>
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">
+              {getGreeting()}, {profile?.display_name || 'Catherine'}!
+            </h1>
+            <p className="text-gray-600 mt-1">Welcome to your executive command center. Here's what's happening across MPB Health today.</p>
+          </div>
+          <Link
+            to="/ceod/upload"
+            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-lg hover:opacity-90 transition-opacity shadow-lg font-medium"
+          >
+            <Upload size={20} />
+            <span>Upload Department Data</span>
+          </Link>
         </div>
 
         <CEOErrorBoundary>

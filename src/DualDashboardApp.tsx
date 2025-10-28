@@ -22,6 +22,12 @@ const CEOFiles = lazy(() => import('./components/pages/ceod/CEOFiles').then(m =>
 const CEODataManagement = lazy(() => import('./components/pages/ceod/CEODataManagement').then(m => ({ default: m.CEODataManagement })));
 const CEOFinance = lazy(() => import('./components/pages/ceod/CEOFinance').then(m => ({ default: m.CEOFinance })));
 const CEODepartmentUpload = lazy(() => import('./components/pages/ceod/CEODepartmentUpload').then(m => ({ default: m.CEODepartmentUpload })));
+const CEODepartmentUploadPortal = lazy(() => import('./components/pages/ceod/CEODepartmentUploadPortal').then(m => ({ default: m.CEODepartmentUploadPortal })));
+const CEOConciergeTrackingReports = lazy(() => import('./components/pages/ceod/CEOConciergeTrackingReports').then(m => ({ default: m.CEOConciergeTrackingReports })));
+const CEOFinanceSnapshot = lazy(() => import('./components/pages/ceod/CEOFinanceSnapshot').then(m => ({ default: m.CEOFinanceSnapshot })));
+const CEOOperationsDashboard = lazy(() => import('./components/pages/ceod/CEOOperationsDashboard').then(m => ({ default: m.CEOOperationsDashboard })));
+const CEOOperationsTrackingReports = lazy(() => import('./components/pages/ceod/CEOOperationsTrackingReports').then(m => ({ default: m.CEOOperationsTrackingReports })));
+const CEOSaudeMAXReports = lazy(() => import('./components/pages/ceod/CEOSaudeMAXReports').then(m => ({ default: m.CEOSaudeMAXReports })));
 const SharedOverview = lazy(() => import('./components/pages/shared/SharedOverview').then(m => ({ default: m.SharedOverview })));
 const AuditLogViewer = lazy(() => import('./components/pages/shared/AuditLogViewer').then(m => ({ default: m.AuditLogViewer })));
 const AuthDiagnostics = lazy(() => import('./components/pages/AuthDiagnostics'));
@@ -306,12 +312,15 @@ function DualDashboardContent() {
             <Route path="/ceod/marketing/planner" element={<CEOOnly><CEOMarketingPlanner /></CEOOnly>} />
             <Route path="/ceod/marketing/calendar" element={<CEOOnly><CEOContentCalendar /></CEOOnly>} />
             <Route path="/ceod/marketing/budget" element={<CEOOnly><CEOMarketingBudget /></CEOOnly>} />
-            <Route path="/ceod/concierge/tracking" element={<CEOOnly><CEOConciergeTracking /></CEOOnly>} />
+            <Route path="/ceod/concierge/tracking" element={<CEOOnly><CEOConciergeTrackingReports /></CEOOnly>} />
             <Route path="/ceod/concierge/notes" element={<CEOOnly><CEOConciergeNotes /></CEOOnly>} />
             <Route path="/ceod/sales/reports" element={<CEOOnly><CEOSalesReports /></CEOOnly>} />
-            <Route path="/ceod/operations/overview" element={<CEOOnly><CEOOperations /></CEOOnly>} />
-            <Route path="/ceod/finance" element={<CEOOnly><CEOFinance /></CEOOnly>} />
-            <Route path="/ceod/finance/overview" element={<CEOOnly><CEOFinance /></CEOOnly>} />
+            <Route path="/ceod/operations/overview" element={<CEOOnly><CEOOperationsDashboard /></CEOOnly>} />
+            <Route path="/ceod/operations/tracking" element={<CEOOnly><CEOOperationsTrackingReports /></CEOOnly>} />
+            <Route path="/ceod/finance" element={<CEOOnly><CEOFinanceSnapshot /></CEOOnly>} />
+            <Route path="/ceod/finance/overview" element={<CEOOnly><CEOFinanceSnapshot /></CEOOnly>} />
+            <Route path="/ceod/saudemax/reports" element={<CEOOnly><CEOSaudeMAXReports /></CEOOnly>} />
+            <Route path="/ceod/upload-portal" element={<CEODepartmentUploadPortal />} />
             <Route path="/ceod/upload" element={<CEODepartmentUpload />} />
             <Route path="/ceod/files" element={<CEOOnly><CEOFiles /></CEOOnly>} />
             <Route path="/ceod/data" element={<CEOOnly><CEODataManagement /></CEOOnly>} />

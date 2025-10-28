@@ -7,7 +7,7 @@ const corsHeaders = {
 };
 
 interface UploadRequest {
-  department: 'concierge' | 'sales' | 'operations' | 'finance';
+  department: 'concierge' | 'sales' | 'operations' | 'finance' | 'saudemax';
   data: Array<Record<string, unknown>>;
   metadata: {
     fileName: string;
@@ -153,6 +153,20 @@ Deno.serve(async (req: Request) => {
             };
             break;
 
+          case 'saudemax':
+            processedRow = {
+              ...processedRow,
+              staging_id: crypto.randomUUID(),
+              enrollment_date: row.enrollment_date || null,
+              member_id: row.member_id || null,
+              program_type: row.program_type || null,
+              status: row.status || 'active',
+              engagement_score: row.engagement_score ? Number(row.engagement_score) : null,
+              satisfaction_score: row.satisfaction_score ? Number(row.satisfaction_score) : null,
+              health_improvement: row.health_improvement ? Number(row.health_improvement) : null,
+            };
+            break;
+
           default:
             throw new Error(`Unknown department: ${department}`);
         }
@@ -179,6 +193,9 @@ Deno.serve(async (req: Request) => {
           break;
         case 'finance':
           tableName = 'stg_finance_records';
+          break;
+        case 'saudemax':
+          tableName = 'stg_saudemax_data';
           break;
       }
 

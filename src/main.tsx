@@ -6,8 +6,6 @@ import { AuthProvider } from './contexts/AuthContext.tsx';
 import { ProtectedRoute } from './components/guards/ProtectedRoute.tsx';
 import { AuthCallback } from './components/pages/AuthCallback.tsx';
 import Login from './components/pages/Login.tsx';
-import App from './App.tsx';
-import CEOApp from './CEOApp.tsx';
 import DualDashboardApp from './DualDashboardApp.tsx';
 import { PublicDepartmentUploadLanding } from './components/pages/public/PublicDepartmentUploadLanding.tsx';
 import { PublicDepartmentUpload } from './components/pages/public/PublicDepartmentUpload.tsx';
@@ -159,35 +157,7 @@ createRoot(document.getElementById('root')!).render(
               <Route path="/public/upload" element={<PublicDepartmentUploadLanding />} />
               <Route path="/public/upload/:department" element={<PublicDepartmentUpload />} />
 
-              {/* CEO Portal Routes (Legacy) - Protected */}
-              <Route
-                path="/ceo/*"
-                element={
-                  <ProtectedRoute allowedRoles={['ceo', 'admin']}>
-                    <CEOApp />
-                  </ProtectedRoute>
-                }
-              />
-
-              {/* CTO Dashboard Routes (Legacy - for backward compatibility) */}
-              <Route
-                path="/overview"
-                element={
-                  <ProtectedRoute>
-                    <App />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/assignments"
-                element={
-                  <ProtectedRoute>
-                    <App />
-                  </ProtectedRoute>
-                }
-              />
-
-              {/* Dual Dashboard Routes (New System) - Handles all /ceod, /ctod, /shared routes */}
+              {/* All Dashboard Routes - Handles /ceod, /ctod, /shared, and legacy routes */}
               <Route
                 path="/*"
                 element={

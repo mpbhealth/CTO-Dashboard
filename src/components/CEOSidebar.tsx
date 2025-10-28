@@ -19,6 +19,9 @@ import {
   ShoppingCart,
   PieChart,
   Headphones,
+  BarChart3,
+  Database,
+  Upload,
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -32,19 +35,73 @@ interface NavItem {
 
 const navigationItems: NavItem[] = [
   { name: 'Executive Overview', path: '/ceod/home', icon: LayoutDashboard },
-  { name: 'Concierge Tracking', path: '/ceod/concierge/tracking', icon: MessageSquare },
-  { name: 'Sales Reports', path: '/ceod/sales/reports', icon: ShoppingCart },
-  { name: 'Finance Snapshot', path: '/ceod/finance/overview', icon: DollarSign },
   {
-    name: 'Operations Dashboard',
+    name: 'Analytics',
+    path: '/ceod/analytics',
+    icon: BarChart3,
+    subItems: [
+      { name: 'Analytics Overview', path: '/ceod/analytics/overview', icon: BarChart3 },
+      { name: 'Member Engagement', path: '/ceod/analytics/member-engagement', icon: Users },
+      { name: 'Member Retention', path: '/ceod/analytics/member-retention', icon: TrendingUp },
+      { name: 'Advisor Performance', path: '/ceod/analytics/advisor-performance', icon: Award },
+      { name: 'Marketing Analytics', path: '/ceod/analytics/marketing', icon: Target }
+    ]
+  },
+  {
+    name: 'Marketing',
+    path: '/ceod/marketing',
+    icon: Target,
+    subItems: [
+      { name: 'Marketing Dashboard', path: '/ceod/marketing', icon: Target },
+      { name: 'Marketing Planner', path: '/ceod/marketing/planner', icon: FileText },
+      { name: 'Content Calendar', path: '/ceod/marketing/calendar', icon: LayoutDashboard },
+      { name: 'Marketing Budget', path: '/ceod/marketing/budget', icon: DollarSign }
+    ]
+  },
+  {
+    name: 'Concierge',
+    path: '/ceod/concierge/tracking',
+    icon: MessageSquare,
+    subItems: [
+      { name: 'Concierge Tracking', path: '/ceod/concierge/tracking', icon: Activity },
+      { name: 'Concierge Notes', path: '/ceod/concierge/notes', icon: FileText }
+    ]
+  },
+  { name: 'Sales Reports', path: '/ceod/sales/reports', icon: ShoppingCart },
+  {
+    name: 'Operations',
     path: '/ceod/operations/overview',
     icon: Activity,
     subItems: [
+      { name: 'Operations Dashboard', path: '/ceod/operations/overview', icon: LayoutDashboard },
       { name: 'Operations Tracking', path: '/ceod/operations/tracking', icon: Activity }
     ]
   },
+  {
+    name: 'Finance',
+    path: '/ceod/finance/overview',
+    icon: DollarSign,
+    subItems: [
+      { name: 'Finance Snapshot', path: '/ceod/finance/overview', icon: DollarSign },
+      { name: 'Finance Details', path: '/ceod/finance', icon: PieChart }
+    ]
+  },
   { name: 'SaudeMAX Reports', path: '/ceod/saudemax/reports', icon: Headphones },
-  { name: 'Marketing Analytics', path: '/ceod/marketing', icon: Target },
+  {
+    name: 'Department Data',
+    path: '/ceod/data',
+    icon: Database,
+    subItems: [
+      { name: 'Data Management', path: '/ceod/data', icon: Database },
+      { name: 'Department Upload', path: '/ceod/upload', icon: Upload },
+      { name: 'Upload Portal', path: '/ceod/upload-portal', icon: Upload },
+      { name: 'Concierge Dept', path: '/ceod/departments/concierge', icon: MessageSquare },
+      { name: 'Sales Dept', path: '/ceod/departments/sales', icon: ShoppingCart },
+      { name: 'Operations Dept', path: '/ceod/departments/operations', icon: Activity },
+      { name: 'Finance Dept', path: '/ceod/departments/finance', icon: DollarSign },
+      { name: 'SaudeMAX Dept', path: '/ceod/departments/saudemax', icon: Headphones }
+    ]
+  },
   { name: 'Board Packet', path: '/ceod/board', icon: Briefcase },
   { name: 'Files & Documents', path: '/ceod/files', icon: FileText },
 ];
@@ -187,30 +244,25 @@ export default function CEOSidebar() {
       {/* Bottom Section */}
       <div className="p-4 border-t border-pink-800 space-y-2">
         <Link
-          to="/ceo/notifications"
+          to="/ceod/initiatives"
           className={`flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-pink-800 transition-colors ${
             isCollapsed ? 'justify-center' : ''
           }`}
-          title={isCollapsed ? 'Notifications' : undefined}
+          title={isCollapsed ? 'Initiatives' : undefined}
         >
-          <Bell className={`${isCollapsed ? 'w-6 h-6' : 'w-5 h-5'} flex-shrink-0`} />
-          {!isCollapsed && <span className="font-medium text-sm">Notifications</span>}
-          {!isCollapsed && (
-            <span className="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full">
-              3
-            </span>
-          )}
+          <Target className={`${isCollapsed ? 'w-6 h-6' : 'w-5 h-5'} flex-shrink-0`} />
+          {!isCollapsed && <span className="font-medium text-sm">Initiatives</span>}
         </Link>
 
         <Link
-          to="/ceo/settings"
+          to="/ceod/approvals"
           className={`flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-pink-800 transition-colors ${
             isCollapsed ? 'justify-center' : ''
           }`}
-          title={isCollapsed ? 'Settings' : undefined}
+          title={isCollapsed ? 'Approvals' : undefined}
         >
-          <Settings className={`${isCollapsed ? 'w-6 h-6' : 'w-5 h-5'} flex-shrink-0`} />
-          {!isCollapsed && <span className="font-medium text-sm">Settings</span>}
+          <Award className={`${isCollapsed ? 'w-6 h-6' : 'w-5 h-5'} flex-shrink-0`} />
+          {!isCollapsed && <span className="font-medium text-sm">Approvals</span>}
         </Link>
 
         {/* Role Switcher */}
@@ -221,7 +273,7 @@ export default function CEOSidebar() {
               className="flex items-center space-x-2 text-xs text-pink-100 hover:text-white transition-colors"
             >
               <Globe className="w-4 h-4" />
-              <span>Switch to CTO Dashboard</span>
+              <span>Switch to CTO Portal</span>
             </Link>
           </div>
         )}

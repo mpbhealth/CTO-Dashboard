@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Menu } from 'lucide-react';
 import { useRoleBasedRedirect } from './hooks/useDualDashboard';
 import { CEOOnly, CTOOnly } from './components/guards/RoleGuard';
+import { CEOErrorBoundary } from './components/ceo/ErrorBoundary';
 import Sidebar from './components/Sidebar';
 import CEOSidebar from './components/CEOSidebar';
 
@@ -38,6 +39,7 @@ const SharedOverview = lazy(() => import('./components/pages/shared/SharedOvervi
 const AuditLogViewer = lazy(() => import('./components/pages/shared/AuditLogViewer').then(m => ({ default: m.AuditLogViewer })));
 const AuthDiagnostics = lazy(() => import('./components/pages/AuthDiagnostics'));
 
+const Overview = lazy(() => import('./components/pages/Overview'));
 const TechStack = lazy(() => import('./components/pages/TechStack'));
 const QuickLinks = lazy(() => import('./components/pages/QuickLinks'));
 const Roadmap = lazy(() => import('./components/pages/Roadmap'));
@@ -312,8 +314,9 @@ function DualDashboardContent() {
           ? 'p-6 md:p-8'
           : `transition-all duration-300 ${isMobile ? 'p-3' : 'p-8 pl-12'} ${isSidebarExpanded ? 'md:pl-96' : isMobile ? 'ml-0 pt-16' : 'md:pl-32'}`
       }`}>
-        <Suspense fallback={<LoadingFallback />}>
-          <Routes>
+        <CEOErrorBoundary>
+          <Suspense fallback={<LoadingFallback />}>
+            <Routes>
             <Route path="/ctod/home" element={<CTOOnly><CTOHome /></CTOOnly>} />
             <Route path="/ctod/files" element={<CTOOnly><CTOHome /></CTOOnly>} />
             <Route path="/ctod/kpis" element={<CTOOnly><CTOHome /></CTOOnly>} />
@@ -383,6 +386,8 @@ function DualDashboardContent() {
             <Route path="/shared/performance-evaluation" element={<PerformanceEvaluation />} />
             <Route path="/shared/organizational-structure" element={<OrganizationalStructure />} />
 
+            {/* Legacy CTO Routes for backward compatibility */}
+            <Route path="/overview" element={<Overview />} />
             <Route path="/tech-stack" element={<TechStack />} />
             <Route path="/quick-links" element={<QuickLinks />} />
             <Route path="/roadmap" element={<Roadmap />} />
@@ -396,6 +401,7 @@ function DualDashboardContent() {
             <Route path="*" element={<RoleBasedRedirect />} />
           </Routes>
         </Suspense>
+        </CEOErrorBoundary>
       </main>
     </div>
   );

@@ -35,6 +35,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useDashboardContext } from '../hooks/useDashboardContext';
+import { useCurrentProfile } from '../hooks/useDualDashboard';
 
 interface SidebarProps {
   activeTab: string;
@@ -107,6 +108,7 @@ export default function Sidebar({
   const [isMobile, setIsMobile] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState<string[]>(['compliance']);
   const { dashboardType, isCEO } = useDashboardContext();
+  const { data: profile } = useCurrentProfile();
   
   // Detect if we're on mobile
   useEffect(() => {
@@ -305,13 +307,17 @@ export default function Sidebar({
             <div className={`w-10 h-10 rounded-full flex items-center justify-center shadow-lg ${
               isCEO ? 'bg-gradient-to-br from-amber-500 to-amber-600' : 'bg-gradient-to-br from-emerald-500 to-emerald-600'
             }`}>
-              <span className="text-sm font-bold text-white">{isCEO ? 'CEO' : 'VT'}</span>
+              <span className="text-sm font-bold text-white">
+                {profile?.display_name ? profile.display_name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : (isCEO ? 'CEO' : 'CTO')}
+              </span>
             </div>
             {isSidebarExpanded && (
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-white truncate">Vinnie R. Tannous</p>
+                <p className="text-sm font-semibold text-white truncate">
+                  {profile?.display_name || profile?.full_name || 'User'}
+                </p>
                 <p className="text-xs text-slate-300 truncate">
-                  {isCEO ? 'Chief Executive Officer' : 'Chief Technology Officer'}
+                  {profile?.role === 'ceo' ? 'Chief Executive Officer' : profile?.role === 'cto' ? 'Chief Technology Officer' : profile?.role === 'admin' ? 'Administrator' : 'Staff Member'}
                 </p>
               </div>
             )}

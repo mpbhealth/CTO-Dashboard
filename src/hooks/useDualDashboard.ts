@@ -6,6 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 export function useRoleBasedRedirect() {
   const navigate = useNavigate();
   const { profile, loading } = useAuth();
+  const [redirectPath, setRedirectPath] = useState<string | null>(null);
 
   useEffect(() => {
     if (!loading && profile) {
@@ -13,12 +14,14 @@ export function useRoleBasedRedirect() {
       const currentPath = window.location.pathname;
 
       if (role === 'ceo' && !currentPath.startsWith('/ceod') && !currentPath.startsWith('/shared')) {
-        navigate('/ceod/home');
+        setRedirectPath('/ceod/home');
       } else if (role === 'cto' && !currentPath.startsWith('/ctod') && !currentPath.startsWith('/shared')) {
-        navigate('/ctod/home');
+        setRedirectPath('/ctod/home');
       }
     }
   }, [profile, loading, navigate]);
+
+  return { redirectPath, isLoading: loading };
 }
 
 export function useCurrentProfile() {

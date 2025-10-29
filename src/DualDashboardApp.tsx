@@ -103,6 +103,7 @@ const queryClient = new QueryClient({
 
 function RoleBasedRedirect() {
   const { redirectPath, isLoading } = useRoleBasedRedirect();
+  const { profile } = useAuth();
 
   if (isLoading) {
     return <LoadingFallback />;
@@ -112,7 +113,8 @@ function RoleBasedRedirect() {
     return <Navigate to={redirectPath} replace />;
   }
 
-  return <Navigate to="/ctod/home" replace />;
+  const defaultPath = profile?.role === 'ceo' ? '/ceod/home' : '/ctod/home';
+  return <Navigate to={defaultPath} replace />;
 }
 
 const routeToTabMap: Record<string, string> = {

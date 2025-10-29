@@ -7,26 +7,28 @@ import { useAuth } from '../contexts/AuthContext';
 export function useRoleBasedRedirect() {
   const { profile, loading, profileReady } = useAuth();
   const location = useLocation();
-  const [redirectPath, setRedirectPath] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!loading && profileReady && profile) {
-      const role = profile.role?.toLowerCase();
-      const currentPath = location.pathname;
+  if (!profileReady || loading || !profile) {
+    return {
+      redirectPath: null,
+      isLoading: true
+    };
+  }
 
-      if (role === 'ceo' && !currentPath.startsWith('/ceod') && !currentPath.startsWith('/shared')) {
-        setRedirectPath('/ceod/home');
-      } else if (role === 'cto' && !currentPath.startsWith('/ctod') && !currentPath.startsWith('/shared')) {
-        setRedirectPath('/ctod/home');
-      } else {
-        setRedirectPath(null);
-      }
-    }
-  }, [profile, loading, profileReady, location.pathname]);
+  const role = profile.role?.toLowerCase();
+  const currentPath = location.pathname;
+
+  let redirectPath: string | null = null;
+
+  if (role === 'ceo' && !currentPath.startsWith('/ceod') && !currentPath.startsWith('/shared')) {
+    redirectPath = '/ceod/home';
+  } else if (role === 'cto' && !currentPath.startsWith('/ctod') && !currentPath.startsWith('/shared')) {
+    redirectPath = '/ctod/home';
+  }
 
   return {
     redirectPath,
-    isLoading: loading || !profileReady
+    isLoading: false
   };
 }
 

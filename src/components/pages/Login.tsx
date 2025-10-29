@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Eye, EyeOff, Mail, Lock, Building2, AlertCircle, CheckCircle, User, KeyRound, Briefcase, Code2 } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
+import { supabase, isSupabaseConfigured } from '../../lib/supabase';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface LoginProps {
   onLoginSuccess: () => void;
@@ -10,6 +12,8 @@ interface LoginProps {
 type UserRole = 'ceo' | 'cto' | null;
 
 export default function Login({ onLoginSuccess }: LoginProps) {
+  const navigate = useNavigate();
+  const { isDemoMode, profile } = useAuth();
   const [isSignUp, setIsSignUp] = useState(false);
   const [selectedRole, setSelectedRole] = useState<UserRole>(null);
   const [email, setEmail] = useState('');
@@ -21,6 +25,13 @@ export default function Login({ onLoginSuccess }: LoginProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (isDemoMode && profile) {
+      const redirectPath = profile.role === 'ceo' ? '/ceod/home' : '/ctod/home';
+      navigate(redirectPath, { replace: true });
+    }
+  }, [isDemoMode, profile, navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -147,6 +158,114 @@ export default function Login({ onLoginSuccess }: LoginProps) {
     if (role === 'cto') return 'text-pink-600';
     return 'text-slate-600';
   };
+
+  if (!isSupabaseConfigured && !selectedRole) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
+        <div className="absolute inset-0 opacity-20" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+        }}></div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="relative w-full max-w-4xl"
+        >
+          <div className="bg-amber-500/10 border-2 border-amber-500 rounded-2xl p-6 mb-8">
+            <div className="flex items-center space-x-4">
+              <svg className="w-8 h-8 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <div>
+                <h2 className="text-xl font-bold text-amber-300">Demo Mode Available</h2>
+                <p className="text-amber-100 text-sm">Supabase is not configured. Select a role to explore the dashboard in demo mode.</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="text-center mb-12">
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              className="w-20 h-20 bg-gradient-to-br from-slate-600 to-slate-700 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-2xl"
+            >
+              <Building2 className="w-10 h-10 text-white" />
+            </motion.div>
+            <h1 className="text-4xl font-bold text-white mb-3">
+              Welcome to MPB Health
+            </h1>
+            <p className="text-slate-300 text-lg">
+              Select your role to continue in demo mode
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            <motion.button
+              onClick={() => {
+                window.location.href = '/?demo_role=ceo';
+              }}
+              whileHover={{ scale: 1.02, y: -5 }}
+              whileTap={{ scale: 0.98 }}
+              className="group relative bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border-2 border-transparent hover:border-pink-500 transition-all duration-300"
+            >
+              <div className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-pink-400 to-rose-500 rounded-full opacity-20 blur-xl group-hover:opacity-30 transition-opacity"></div>
+
+              <div className="relative">
+                <div className="w-16 h-16 bg-gradient-to-br from-pink-600 to-rose-600 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:shadow-pink-500/50 transition-shadow">
+                  <Briefcase className="w-8 h-8 text-white" />
+                </div>
+                <h2 className="text-2xl font-bold text-slate-900 mb-2">CEO Demo</h2>
+                <p className="text-slate-600 mb-6">
+                  Executive dashboard with strategic insights, marketing analytics, and board-level reporting
+                </p>
+                <div className="flex items-center justify-center text-pink-600 font-medium group-hover:text-pink-700">
+                  Try CEO Demo
+                  <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </div>
+            </motion.button>
+
+            <motion.button
+              onClick={() => {
+                window.location.href = '/?demo_role=cto';
+              }}
+              whileHover={{ scale: 1.02, y: -5 }}
+              whileTap={{ scale: 0.98 }}
+              className="group relative bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border-2 border-transparent hover:border-pink-500 transition-all duration-300"
+            >
+              <div className="absolute -top-4 -left-4 w-24 h-24 bg-gradient-to-br from-sky-400 to-blue-500 rounded-full opacity-20 blur-xl group-hover:opacity-30 transition-opacity"></div>
+
+              <div className="relative">
+                <div className="w-16 h-16 bg-gradient-to-br from-sky-600 to-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:shadow-sky-500/50 transition-shadow">
+                  <Code2 className="w-8 h-8 text-white" />
+                </div>
+                <h2 className="text-2xl font-bold text-slate-900 mb-2">CTO Demo</h2>
+                <p className="text-slate-600 mb-6">
+                  Technical dashboard with engineering metrics, system monitoring, and operational insights
+                </p>
+                <div className="flex items-center justify-center text-pink-600 font-medium group-hover:text-pink-700">
+                  Try CTO Demo
+                  <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </div>
+            </motion.button>
+          </div>
+
+          <div className="mt-8 text-center">
+            <p className="text-slate-400 text-sm">
+              © 2025 MPB Health. All rights reserved.
+            </p>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
 
   if (!selectedRole) {
     return (

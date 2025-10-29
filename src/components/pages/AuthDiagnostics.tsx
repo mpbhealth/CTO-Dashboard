@@ -3,7 +3,7 @@ import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function AuthDiagnostics() {
-  const { user, profile, role, loading } = useAuth();
+  const { user, profile, loading, isDemoMode } = useAuth();
   const [diagnostics, setDiagnostics] = useState<any>({});
   const [testResults, setTestResults] = useState<any>({});
   const [isRunningTests, setIsRunningTests] = useState(false);
@@ -23,6 +23,7 @@ export default function AuthDiagnostics() {
         supabaseConfigured: isSupabaseConfigured,
         supabaseUrl: import.meta.env.VITE_SUPABASE_URL ? 'Set' : 'Missing',
         supabaseKey: import.meta.env.VITE_SUPABASE_ANON_KEY ? 'Set' : 'Missing',
+        demoMode: isDemoMode,
       },
       auth: {
         loading,
@@ -31,7 +32,7 @@ export default function AuthDiagnostics() {
         userEmail: user?.email || 'None',
         hasProfile: !!profile,
         profileRole: profile?.role || 'None',
-        contextRole: role || 'None',
+        isDemoMode,
       },
       cookies: {
         role: getCookie('role') || 'None',
@@ -40,6 +41,8 @@ export default function AuthDiagnostics() {
       storage: {
         localStorageKeys: Object.keys(localStorage),
         sessionStorageKeys: Object.keys(sessionStorage),
+        demoModeKey: localStorage.getItem('mpb_demo_mode') || 'Not Set',
+        demoRoleKey: localStorage.getItem('mpb_demo_role') || 'Not Set',
       },
       browser: {
         userAgent: navigator.userAgent,
@@ -47,7 +50,7 @@ export default function AuthDiagnostics() {
         onLine: navigator.onLine,
       },
     });
-  }, [user, profile, role, loading]);
+  }, [user, profile, loading, isDemoMode]);
 
   const runDiagnosticTests = async () => {
     setIsRunningTests(true);
@@ -164,6 +167,23 @@ export default function AuthDiagnostics() {
   return (
     <div className="min-h-screen bg-slate-50 p-8">
       <div className="max-w-6xl mx-auto">
+        {isDemoMode && (
+          <div className="bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-xl shadow-lg p-6 mb-6">
+            <div className="flex items-center space-x-4">
+              <div className="flex-shrink-0">
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <h2 className="text-xl font-bold mb-1">Demo Mode Active</h2>
+                <p className="text-white/90">You are viewing the dashboard in demo mode as <span className="font-semibold uppercase">{profile?.role || 'unknown'}</span>. This is a simulated session without Supabase authentication.</p>
+                <p className="text-sm mt-2 text-white/80">To switch roles, use: <code className="bg-white/20 px-2 py-1 rounded">?demo_role=ceo</code> or <code className="bg-white/20 px-2 py-1 rounded">?demo_role=cto</code></p>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="bg-white rounded-xl shadow-lg p-8 mb-6">
           <h1 className="text-3xl font-bold text-slate-900 mb-2">Authentication Diagnostics</h1>
           <p className="text-slate-600">Comprehensive debugging information for authentication issues</p>

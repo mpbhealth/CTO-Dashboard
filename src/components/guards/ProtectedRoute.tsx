@@ -13,7 +13,7 @@ export function ProtectedRoute({
   allowedRoles,
   requireAuth = true,
 }: ProtectedRouteProps) {
-  const { user, profile, loading, profileReady } = useAuth();
+  const { user, profile, loading, profileReady, isDemoMode } = useAuth();
   const location = useLocation();
 
   const effectiveRole = useMemo(() => profile?.role as 'ceo' | 'cto' | 'admin' | 'staff' | undefined, [profile?.role]);
@@ -29,7 +29,7 @@ export function ProtectedRoute({
     );
   }
 
-  if (requireAuth && !user) {
+  if (requireAuth && !user && !isDemoMode) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 

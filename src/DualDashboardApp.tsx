@@ -121,7 +121,9 @@ function DualDashboardContent() {
   const shouldShowCTOSidebar = useMemo(() => {
     if (!profileReady) return false;
     if (isCEORoute) return false;
-    return profile?.role === 'cto' || profile?.role === 'admin' || profile?.role === 'staff';
+    const role = profile?.role?.toLowerCase();
+    if (role === 'ceo') return false;
+    return role === 'cto' || role === 'admin' || role === 'staff';
   }, [profileReady, isCEORoute, profile?.role]);
 
   const navigationItems = useMemo(() => {
@@ -270,8 +272,8 @@ function DualDashboardContent() {
             <Route path="/ceod/finance" element={<CEOOnly><CEODashboardLayout><CEOFinanceSnapshot /></CEODashboardLayout></CEOOnly>} />
             <Route path="/ceod/finance/overview" element={<CEOOnly><CEODashboardLayout><CEOFinanceSnapshot /></CEODashboardLayout></CEOOnly>} />
             <Route path="/ceod/saudemax/reports" element={<CEOOnly><CEODashboardLayout><CEOSaudeMAXReports /></CEODashboardLayout></CEOOnly>} />
-            <Route path="/ceod/upload-portal" element={<CEODashboardLayout><CEODepartmentUploadPortal /></CEODashboardLayout>} />
-            <Route path="/ceod/upload" element={<CEODashboardLayout><CEODepartmentUpload /></CEODashboardLayout>} />
+            <Route path="/ceod/upload-portal" element={<CEOOnly><CEODashboardLayout><CEODepartmentUploadPortal /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/upload" element={<CEOOnly><CEODashboardLayout><CEODepartmentUpload /></CEODashboardLayout></CEOOnly>} />
             <Route path="/ceod/files" element={<CEOOnly><CEODashboardLayout><CEOFiles /></CEODashboardLayout></CEOOnly>} />
             <Route path="/ceod/data" element={<CEOOnly><CEODashboardLayout><CEODataManagement /></CEODashboardLayout></CEOOnly>} />
             <Route path="/ceod/departments/concierge" element={<CEOOnly><CEODashboardLayout><CEODepartmentConcierge /></CEODashboardLayout></CEOOnly>} />

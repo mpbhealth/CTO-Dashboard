@@ -20,9 +20,10 @@ export const isSupabaseConfigured = !!(isValidUrl && isValidKey);
 const finalUrl = isSupabaseConfigured ? supabaseUrl : 'https://placeholder.supabase.co';
 const finalKey = isSupabaseConfigured ? supabaseAnonKey : 'placeholder-key';
 
-// Log configuration status
-if (import.meta.env.DEV || !isSupabaseConfigured) {
-  console.log('Supabase Configuration:', {
+if (import.meta.env.DEV && !isSupabaseConfigured) {
+  console.warn('[Supabase] Not configured - using placeholder values');
+} else if (import.meta.env.DEV && localStorage.getItem('debug') === 'true') {
+  console.log('[Supabase] Configuration:', {
     configured: isSupabaseConfigured,
     hasUrl: !!supabaseUrl,
     hasValidUrl: isValidUrl,

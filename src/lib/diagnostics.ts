@@ -1,6 +1,16 @@
-// Production diagnostics utility
+import { Environment } from './environment';
+
 export class ProductionDiagnostics {
   static logEnvironment() {
+    if (!Environment.shouldShowDebugLogs() && !import.meta.env.PROD) {
+      return;
+    }
+
+    if (Environment.isStackBlitz()) {
+      Environment.log('Running in StackBlitz/WebContainer environment');
+      return;
+    }
+
     console.group('Production Environment Check');
     console.log('Build time:', import.meta.env.VITE_BUILD_TIME || 'Unknown');
     console.log('Environment:', import.meta.env.MODE);
@@ -15,45 +25,37 @@ export class ProductionDiagnostics {
   }
 
   static testAssetLoading() {
+    if (!Environment.shouldShowDebugLogs()) {
+      return;
+    }
+
     console.group('Asset Loading Test');
 
-    // Test if main CSS loaded
     const hasStyles = Array.from(document.styleSheets).some(
       sheet => sheet.href?.includes('assets/index-') || sheet.href?.includes('main.'),
     );
     console.log('CSS loaded:', hasStyles);
 
-    // Test if main JS loaded
     const hasMainJS = Array.from(document.scripts).some(
       script => script.src?.includes('assets/index-') || script.src?.includes('main.'),
     );
     console.log('Main JS loaded:', hasMainJS);
 
-    // Check for common missing assets
-    const checkImage = (src: string) => {
-      const img = new Image();
-      img.onload = () => console.log(`Icon loaded: ${src}`);
-      img.onerror = () => console.warn(`Icon failed to load: ${src}`);
-      img.src = src;
-    };
-
-    // Run image checks for core favicons/icons if they exist
-    const iconPaths = ['favicon.ico', '/icons/icon-192.png', '/icons/icon-512.png'];
-    iconPaths.forEach(checkImage);
-
     console.groupEnd();
   }
 
   static async performHealthCheck() {
+    if (!Environment.shouldShowDebugLogs() && Environment.isStackBlitz()) {
+      return;
+    }
+
     console.group('Application Health Check');
 
     try {
-      // Check if React is working
       const rootElement = document.getElementById('root');
       console.log('Root element exists:', !!rootElement);
       console.log('Root has content:', rootElement?.innerHTML.length || 0);
 
-      // Check if environment variables are accessible
       const envCheck = {
         hasSupabaseUrl: !!import.meta.env.VITE_SUPABASE_URL,
         hasSupabaseKey: !!import.meta.env.VITE_SUPABASE_ANON_KEY,
@@ -63,7 +65,6 @@ export class ProductionDiagnostics {
       };
       console.table(envCheck);
 
-      // Test basic browser APIs
       const apiCheck = {
         localStorage: typeof localStorage !== 'undefined',
         sessionStorage: typeof sessionStorage !== 'undefined',
@@ -73,7 +74,7 @@ export class ProductionDiagnostics {
       };
       console.table(apiCheck);
     } catch (error) {
-      console.error('Health check failed:', error);
+      Environment.error('Health check failed:', error);
     }
 
     console.groupEnd();
@@ -114,16 +115,16 @@ export class ProductionDiagnostics {
   }
 }
 
-// Auto-run diagnostics in production
-if (import.meta.env.PROD) {
+if (import.meta.env.PROD || Environment.shouldShowDebugLogs()) {
   document.addEventListener('DOMContentLoaded', () => {
     ProductionDiagnostics.logEnvironment();
     ProductionDiagnostics.testAssetLoading();
 
-    // Add global diagnostic functions for debugging
     (window as any).diagnose = ProductionDiagnostics.performHealthCheck;
     (window as any).clearAllCaches = ProductionDiagnostics.clearAllCaches;
 
-    console.log('Debug tools available: diagnose(), clearAllCaches()');
+    if (Environment.shouldShowDebugLogs()) {
+      console.log('Debug tools available: diagnose(), clearAllCaches()');
+    }
   });
 }

@@ -11,6 +11,7 @@ import { PublicDepartmentUploadLanding } from './components/pages/public/PublicD
 import { PublicDepartmentUpload } from './components/pages/public/PublicDepartmentUpload.tsx';
 import './index.css';
 import './lib/diagnostics';
+import { Environment } from './lib/environment';
 import React from 'react';
 
 // Create a client for React Query
@@ -24,7 +25,6 @@ const queryClient = new QueryClient({
   },
 });
 
-// Enhanced Error boundary to catch and display any startup errors
 function ErrorBoundary({ children }: { children: React.ReactNode }) {
   const [hasError, setHasError] = React.useState(false);
   const [error, setError] = React.useState<Error | null>(null);
@@ -32,14 +32,22 @@ function ErrorBoundary({ children }: { children: React.ReactNode }) {
 
   React.useEffect(() => {
     const handleError = (event: ErrorEvent) => {
-      console.error('Application error caught:', event.error);
+      if (Environment.isPlatformError(event.error || event.message)) {
+        return;
+      }
+
+      Environment.error('Application error caught:', event.error);
       setHasError(true);
       setError(event.error);
       setErrorInfo(event.error?.stack || 'No stack trace available');
     };
 
     const handleRejection = (event: PromiseRejectionEvent) => {
-      console.error('Unhandled promise rejection:', event.reason);
+      if (Environment.isPlatformError(String(event.reason))) {
+        return;
+      }
+
+      Environment.error('Unhandled promise rejection:', event.reason);
       setHasError(true);
       setError(new Error(event.reason));
       setErrorInfo(event.reason?.stack || String(event.reason));
@@ -53,8 +61,6 @@ function ErrorBoundary({ children }: { children: React.ReactNode }) {
       window.removeEventListener('unhandledrejection', handleRejection);
     };
   }, []);
-
-  // Note: React 18 function components cannot implement componentDidCatch.
 
   if (hasError) {
     return (
@@ -116,23 +122,16 @@ function ErrorBoundary({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
-// Service Worker Registration for PWA
-// Skip SW registration on StackBlitz since it's not supported
-const isStackBlitz = window.location.hostname.includes('stackblitz') ||
-                     window.location.hostname.includes('webcontainer');
-
-if ('serviceWorker' in navigator && !isStackBlitz) {
+if ('serviceWorker' in navigator && !Environment.isStackBlitz()) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js')
       .then((registration) => {
-        console.log('SW registered: ', registration);
+        Environment.log('Service Worker registered successfully', registration);
       })
       .catch((registrationError) => {
-        console.log('SW registration failed: ', registrationError);
+        Environment.warn('Service Worker registration failed', registrationError);
       });
   });
-} else if (isStackBlitz) {
-  console.log('Service Worker registration skipped: running on StackBlitz/WebContainer');
 }
 
 createRoot(document.getElementById('root')!).render(

@@ -2,7 +2,6 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
   base: '/',
@@ -24,24 +23,38 @@ export default defineConfig({
     outDir: 'dist',
     sourcemap: true,
     assetsDir: 'assets',
+    modulePreload: {
+      polyfill: false,
+    },
     rollupOptions: {
       output: {
         assetFileNames: 'assets/[name]-[hash][extname]',
         chunkFileNames: 'assets/[name]-[hash].js',
         entryFileNames: 'assets/[name]-[hash].js',
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-          supabase: ['@supabase/supabase-js'],
-          charts: ['recharts'],
-          utils: ['framer-motion', 'lucide-react']
-        }
-      }
-    }
+        manualChunks: (id) => {
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom')) {
+              return 'vendor';
+            }
+            if (id.includes('@supabase')) {
+              return 'supabase';
+            }
+            if (id.includes('recharts')) {
+              return 'charts';
+            }
+            if (id.includes('framer-motion') || id.includes('lucide-react')) {
+              return 'utils';
+            }
+            return 'vendor-other';
+          }
+        },
+      },
+    },
   },
   server: {
     headers: {
       'Cross-Origin-Embedder-Policy': 'credentialless',
-      'Cross-Origin-Opener-Policy': 'same-origin'
-    }
-  }
+      'Cross-Origin-Opener-Policy': 'same-origin',
+    },
+  },
 });

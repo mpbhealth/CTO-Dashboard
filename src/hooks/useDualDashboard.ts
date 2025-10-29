@@ -1,17 +1,18 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 
 export function useRoleBasedRedirect() {
   const { profile, loading, profileReady } = useAuth();
+  const location = useLocation();
   const [redirectPath, setRedirectPath] = useState<string | null>(null);
 
   useEffect(() => {
     if (!loading && profileReady && profile) {
       const role = profile.role?.toLowerCase();
-      const currentPath = window.location.pathname;
+      const currentPath = location.pathname;
 
       if (role === 'ceo' && !currentPath.startsWith('/ceod') && !currentPath.startsWith('/shared')) {
         setRedirectPath('/ceod/home');
@@ -21,7 +22,7 @@ export function useRoleBasedRedirect() {
         setRedirectPath(null);
       }
     }
-  }, [profile, loading, profileReady]);
+  }, [profile, loading, profileReady, location.pathname]);
 
   return {
     redirectPath,

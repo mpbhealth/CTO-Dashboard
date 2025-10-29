@@ -39,6 +39,7 @@ const CEODepartmentSaudeMAX = lazy(() => import('./components/pages/ceod/CEODepa
 const SharedOverview = lazy(() => import('./components/pages/shared/SharedOverview').then(m => ({ default: m.SharedOverview })));
 const AuditLogViewer = lazy(() => import('./components/pages/shared/AuditLogViewer').then(m => ({ default: m.AuditLogViewer })));
 const AuthDiagnostics = lazy(() => import('./components/pages/AuthDiagnostics'));
+const DiagnosticsDashboard = lazy(() => import('./components/pages/DiagnosticsDashboard'));
 
 const Overview = lazy(() => import('./components/pages/Overview'));
 const TechStack = lazy(() => import('./components/pages/TechStack'));
@@ -285,6 +286,7 @@ function DualDashboardContent() {
             <Route path="/shared/overview" element={<SharedOverview />} />
             <Route path="/shared/audit" element={<AuditLogViewer />} />
             <Route path="/diagnostics" element={<AuthDiagnostics />} />
+            <Route path="/diagnostics/system" element={<DiagnosticsDashboard />} />
 
             {/* Shared Operations & Management Routes */}
             <Route path="/shared/saas" element={<SaaSSpend />} />

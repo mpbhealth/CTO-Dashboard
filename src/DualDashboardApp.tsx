@@ -238,6 +238,7 @@ function DualDashboardContent() {
   const [isMobile, setIsMobile] = useState(false);
 
   const isCEORoute = useMemo(() => location.pathname.startsWith('/ceod/'), [location.pathname]);
+  const isSharedRoute = useMemo(() => location.pathname.startsWith('/shared/'), [location.pathname]);
 
   const shouldShowCTOSidebar = useMemo(() => {
     return profileReady && !isCEORoute;

@@ -83,11 +83,85 @@ const MemberRetention = lazy(() => import('./components/pages/MemberRetention'))
 const AdvisorPerformance = lazy(() => import('./components/pages/AdvisorPerformance'));
 const MarketingAnalytics = lazy(() => import('./components/pages/MarketingAnalytics'));
 
-const LoadingFallback = () => (
-  <div className="flex items-center justify-center min-h-screen">
-    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600"></div>
-  </div>
-);
+const LoadingFallback = () => {
+  const [showSlowWarning, setShowSlowWarning] = useState(false);
+  const [showReloadButton, setShowReloadButton] = useState(false);
+
+  useEffect(() => {
+    // Show "taking longer" warning after 3 seconds
+    const warningTimer = setTimeout(() => {
+      setShowSlowWarning(true);
+      console.warn('[LoadingFallback] Page taking longer than expected to load');
+    }, 3000);
+
+    // Show reload button after 8 seconds
+    const reloadTimer = setTimeout(() => {
+      setShowReloadButton(true);
+      console.error('[LoadingFallback] Page failed to load within expected time');
+    }, 8000);
+
+    return () => {
+      clearTimeout(warningTimer);
+      clearTimeout(reloadTimer);
+    };
+  }, []);
+
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-slate-50">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600 mx-auto mb-4"></div>
+        <p className="text-gray-600 mb-2">Loading...</p>
+
+        {showSlowWarning && !showReloadButton && (
+          <p className="text-amber-600 text-sm animate-pulse">
+            Taking longer than expected...
+          </p>
+        )}
+
+        {showReloadButton && (
+          <div className="mt-4 space-y-2">
+            <p className="text-red-600 text-sm mb-3">
+              The page is taking too long to load
+            </p>
+            <div className="flex gap-2 justify-center">
+              <button
+                onClick={() => {
+                  console.log('[LoadingFallback] User triggered reload');
+                  window.location.reload();
+                }}
+                className="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
+              >
+                Reload Page
+              </button>
+              <button
+                onClick={() => {
+                  console.log('[LoadingFallback] User clearing cache');
+                  localStorage.clear();
+                  sessionStorage.clear();
+                  window.location.reload();
+                }}
+                className="bg-slate-600 hover:bg-slate-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
+              >
+                Clear Cache & Reload
+              </button>
+            </div>
+            <details className="mt-4 text-left max-w-md mx-auto">
+              <summary className="text-slate-500 cursor-pointer text-xs">
+                Troubleshooting Tips
+              </summary>
+              <ul className="mt-2 text-xs text-slate-600 space-y-1 list-disc list-inside">
+                <li>Check your internet connection</li>
+                <li>Try clearing your browser cache</li>
+                <li>Open browser console (F12) for error details</li>
+                <li>Verify environment variables are configured</li>
+              </ul>
+            </details>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
 function RoleBasedRedirect() {
   const { redirectPath, isLoading } = useRoleBasedRedirect();

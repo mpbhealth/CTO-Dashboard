@@ -34,11 +34,22 @@ if (import.meta.env.DEV && !isSupabaseConfigured) {
   });
 }
 
-// Production validation - fail fast if misconfigured
+// Production validation - warn but don't crash (allows app to render with mock data)
 if (import.meta.env.PROD && !isSupabaseConfigured) {
-  const errorMsg = 'CRITICAL: Supabase is not configured in production environment';
-  logger.error(errorMsg);
-  throw new Error(errorMsg);
+  const errorMsg = 'WARNING: Supabase is not configured - app will run in limited mode';
+  logger.warn(errorMsg);
+
+  // Add visual indicator in DOM for debugging
+  if (typeof document !== 'undefined') {
+    setTimeout(() => {
+      const warningDiv = document.createElement('div');
+      warningDiv.id = 'supabase-config-warning';
+      warningDiv.style.cssText = 'position: fixed; bottom: 10px; right: 10px; background: #f97316; color: white; padding: 10px 15px; border-radius: 8px; z-index: 9999; font-size: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); cursor: pointer;';
+      warningDiv.innerHTML = '⚠️ Supabase not configured - using mock data';
+      warningDiv.onclick = () => warningDiv.remove();
+      document.body?.appendChild(warningDiv);
+    }, 1000);
+  }
 }
 
 // Create client without type parameter to avoid import errors

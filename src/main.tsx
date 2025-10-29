@@ -14,6 +14,35 @@ import './lib/diagnostics';
 import { Environment } from './lib/environment';
 import React from 'react';
 
+// Startup diagnostics - log initialization steps
+console.log('%c[MPB Health Dashboard] Initializing...', 'color: #ec4899; font-weight: bold; font-size: 14px');
+console.log('[Init] Environment:', {
+  mode: import.meta.env.MODE,
+  prod: import.meta.env.PROD,
+  dev: import.meta.env.DEV,
+  hasSupabaseUrl: !!import.meta.env.VITE_SUPABASE_URL,
+  hasSupabaseKey: !!import.meta.env.VITE_SUPABASE_ANON_KEY,
+  timestamp: new Date().toISOString()
+});
+
+// Track initialization progress
+const initSteps = {
+  rootElement: false,
+  reactRoot: false,
+  rendering: false,
+  complete: false
+};
+
+window.addEventListener('load', () => {
+  console.log('[Init] Window loaded');
+  setTimeout(() => {
+    if (!initSteps.complete) {
+      console.error('[Init] App did not complete initialization within 5 seconds');
+      console.error('[Init] Progress:', initSteps);
+    }
+  }, 5000);
+});
+
 // Create a client for React Query
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -134,41 +163,75 @@ if ('serviceWorker' in navigator && !Environment.isStackBlitz()) {
   });
 }
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <BrowserRouter
-          future={{
-            v7_startTransition: true,
-            v7_relativeSplatPath: true
-          }}
-        >
-          <AuthProvider>
-            <Routes>
-              {/* Login Route */}
-              <Route path="/login" element={<Login onLoginSuccess={() => {}} />} />
+const rootElement = document.getElementById('root');
+if (!rootElement) {
+  console.error('[Init] CRITICAL: Root element not found!');
+  document.body.innerHTML = '<div style="padding: 20px; color: red;">Error: Root element not found. Check your HTML file.</div>';
+} else {
+  console.log('[Init] Root element found');
+  initSteps.rootElement = true;
 
-              {/* Auth Callback Route */}
-              <Route path="/auth/callback" element={<AuthCallback />} />
+  try {
+    const root = createRoot(rootElement);
+    console.log('[Init] React root created');
+    initSteps.reactRoot = true;
 
-              {/* Public Department Upload Routes - No Auth Required */}
-              <Route path="/public/upload" element={<PublicDepartmentUploadLanding />} />
-              <Route path="/public/upload/:department" element={<PublicDepartmentUpload />} />
+    console.log('[Init] Starting render...');
+    initSteps.rendering = true;
 
-              {/* All Dashboard Routes - Handles /ceod, /ctod, /shared, and legacy routes */}
-              <Route
-                path="/*"
-                element={
-                  <ProtectedRoute>
-                    <DualDashboardApp />
-                  </ProtectedRoute>
-                }
-              />
-            </Routes>
-          </AuthProvider>
-        </BrowserRouter>
-      </QueryClientProvider>
-    </ErrorBoundary>
-  </StrictMode>
-);
+    root.render(
+      <StrictMode>
+        <ErrorBoundary>
+          <QueryClientProvider client={queryClient}>
+            <BrowserRouter
+              future={{
+                v7_startTransition: true,
+                v7_relativeSplatPath: true
+              }}
+            >
+              <AuthProvider>
+                <Routes>
+                  {/* Login Route */}
+                  <Route path="/login" element={<Login onLoginSuccess={() => {}} />} />
+
+                  {/* Auth Callback Route */}
+                  <Route path="/auth/callback" element={<AuthCallback />} />
+
+                  {/* Public Department Upload Routes - No Auth Required */}
+                  <Route path="/public/upload" element={<PublicDepartmentUploadLanding />} />
+                  <Route path="/public/upload/:department" element={<PublicDepartmentUpload />} />
+
+                  {/* All Dashboard Routes - Handles /ceod, /ctod, /shared, and legacy routes */}
+                  <Route
+                    path="/*"
+                    element={
+                      <ProtectedRoute>
+                        <DualDashboardApp />
+                      </ProtectedRoute>
+                    }
+                  />
+                </Routes>
+              </AuthProvider>
+            </BrowserRouter>
+          </QueryClientProvider>
+        </ErrorBoundary>
+      </StrictMode>
+    );
+
+    console.log('[Init] Render initiated');
+    setTimeout(() => {
+      initSteps.complete = true;
+      console.log('%c[Init] ✓ Initialization complete', 'color: #10b981; font-weight: bold');
+    }, 100);
+  } catch (error) {
+    console.error('[Init] CRITICAL: Failed to render React app:', error);
+    initSteps.complete = false;
+    rootElement.innerHTML = `
+      <div style="padding: 20px; color: red; font-family: monospace;">
+        <h2>Critical Error: Failed to initialize application</h2>
+        <p>Check the browser console for details.</p>
+        <pre>${error}</pre>
+      </div>
+    `;
+  }
+}

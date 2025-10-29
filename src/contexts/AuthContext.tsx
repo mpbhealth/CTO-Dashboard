@@ -136,7 +136,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (initializingRef.current) return;
     initializingRef.current = true;
 
+    // Add timeout to prevent infinite loading state
+    const initTimeout = setTimeout(() => {
+      logger.warn('Auth initialization timeout - forcing ready state');
+      setLoading(false);
+      setProfileReady(true);
+    }, 10000); // 10 second timeout
+
     supabase.auth.getSession().then(({ data: { session } }) => {
+      clearTimeout(initTimeout);
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user?.id) {
@@ -152,6 +160,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setProfileReady(true);
       }
       setLoading(false);
+    }).catch((error) => {
+      clearTimeout(initTimeout);
+      logger.error('Auth initialization error:', error);
+      setLoading(false);
+      setProfileReady(true);
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -171,7 +184,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      clearTimeout(initTimeout);
+      subscription.unsubscribe();
+    };
   }, [fetchProfile, loadCachedProfile]);
 
   const signIn = useCallback(async (email: string, password: string) => {

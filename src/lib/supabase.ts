@@ -34,11 +34,12 @@ if (import.meta.env.DEV && !isSupabaseConfigured) {
   });
 }
 
-// Production validation - fail fast if misconfigured
+// Production validation - warn if misconfigured but allow demo mode to take over
 if (import.meta.env.PROD && !isSupabaseConfigured) {
-  const errorMsg = 'CRITICAL: Supabase is not configured in production environment';
-  logger.error(errorMsg);
-  throw new Error(errorMsg);
+  const warnMsg = 'WARNING: Supabase is not configured in production environment - running in demo mode';
+  logger.warn(warnMsg);
+  console.warn(warnMsg);
+  // Don't throw - let AuthContext handle demo mode gracefully
 }
 
 // Create client without type parameter to avoid import errors

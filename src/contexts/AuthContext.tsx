@@ -139,6 +139,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user?.id) {
+        const cachedProfile = loadCachedProfile(session.user.id);
+        if (cachedProfile) {
+          setProfile(cachedProfile);
+          profileCache.current.set(session.user.id, cachedProfile);
+          setProfileReady(true);
+          setLoading(false);
+        }
         fetchProfile(session.user.id);
       } else {
         setProfileReady(true);
@@ -150,6 +157,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user?.id) {
+        const cachedProfile = loadCachedProfile(session.user.id);
+        if (cachedProfile) {
+          setProfile(cachedProfile);
+          profileCache.current.set(session.user.id, cachedProfile);
+          setProfileReady(true);
+        }
         fetchProfile(session.user.id);
       } else {
         setProfile(null);
@@ -158,7 +171,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     return () => subscription.unsubscribe();
-  }, [fetchProfile]);
+  }, [fetchProfile, loadCachedProfile]);
 
   const signIn = useCallback(async (email: string, password: string) => {
     const { data, error } = await supabase.auth.signInWithPassword({

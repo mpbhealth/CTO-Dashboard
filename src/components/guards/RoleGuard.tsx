@@ -36,7 +36,7 @@ export function RoleGuard({ children, allowedRoles, redirectTo }: RoleGuardProps
 
   const role = profile?.role;
 
-  if (!role || (!allowedRoles.includes(role) && role !== 'admin')) {
+  if (!role || !allowedRoles.includes(role)) {
     const defaultRedirect = role === 'ceo' ? '/ceod/home' : '/ctod/home';
     return <Navigate to={redirectTo || defaultRedirect} replace state={{ from: location }} />;
   }
@@ -50,7 +50,7 @@ interface CEOOnlyProps {
 
 export function CEOOnly({ children }: CEOOnlyProps) {
   return (
-    <RoleGuard allowedRoles={['ceo', 'admin']} redirectTo="/ctod/home">
+    <RoleGuard allowedRoles={['ceo']} redirectTo="/ctod/home">
       {children}
     </RoleGuard>
   );

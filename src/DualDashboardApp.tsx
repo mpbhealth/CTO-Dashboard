@@ -241,8 +241,10 @@ function DualDashboardContent() {
   const isSharedRoute = useMemo(() => location.pathname.startsWith('/shared/'), [location.pathname]);
 
   const shouldShowCTOSidebar = useMemo(() => {
-    return profileReady && !isCEORoute;
-  }, [profileReady, isCEORoute]);
+    if (!profileReady) return false;
+    if (isCEORoute) return false;
+    return profile?.role === 'cto' || profile?.role === 'admin' || profile?.role === 'staff';
+  }, [profileReady, isCEORoute, profile?.role]);
 
   useEffect(() => {
     function checkIfMobile() {

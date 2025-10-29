@@ -16,7 +16,7 @@ import {
   mockComplianceMetrics,
 } from './mockData';
 
-const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true' || false;
+const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA !== 'false';
 
 export async function loadExecutiveKPIs(): Promise<ExecutiveKPIs> {
   if (USE_MOCK_DATA) {

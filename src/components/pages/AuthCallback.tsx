@@ -26,7 +26,7 @@ export function AuthCallback() {
 
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
-          .select('role, display_name')
+          .select('role, display_name, is_superuser')
           .eq('id', session.user.id)
           .maybeSingle();
 
@@ -35,14 +35,16 @@ export function AuthCallback() {
         }
 
         const role = profile?.role || 'staff';
+        const isSuperuser = profile?.is_superuser || false;
 
         document.cookie = `role=${role}; path=/; max-age=86400; samesite=lax`;
+        document.cookie = `is_superuser=${isSuperuser}; path=/; max-age=86400; samesite=lax`;
         if (profile?.display_name) {
           document.cookie = `display_name=${profile.display_name}; path=/; max-age=86400; samesite=lax`;
         }
 
         let redirectPath = '/ctod/home';
-        if (role === 'ceo' || role === 'admin') {
+        if (role === 'ceo') {
           redirectPath = '/ceod/home';
         } else if (role === 'cto') {
           redirectPath = '/ctod/home';

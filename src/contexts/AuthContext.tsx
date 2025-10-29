@@ -201,6 +201,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
+    const loadingTimeout = setTimeout(() => {
+      if (loading) {
+        logger.warn('Auth timeout - falling back to demo mode');
+        const demoRole = savedDemoRole || 'cto';
+        setIsDemoMode(true);
+        const demoUser = createDemoUser(demoRole);
+        const demoProfile = createDemoProfile(demoRole);
+        setUser(demoUser as User);
+        setProfile(demoProfile);
+        setProfileReady(true);
+        setLoading(false);
+      }
+    }, 5000);
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
@@ -214,8 +228,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
         fetchProfile(session.user.id);
       } else {
+        const demoRole = savedDemoRole || 'cto';
+        setIsDemoMode(true);
+        const demoUser = createDemoUser(demoRole);
+        const demoProfile = createDemoProfile(demoRole);
+        setUser(demoUser as User);
+        setProfile(demoProfile);
         setProfileReady(true);
+        logger.warn(`No session found - Running in DEMO MODE as ${demoRole.toUpperCase()}`);
       }
+      setLoading(false);
+    }).catch((error) => {
+      logger.error('Error getting session, falling back to demo mode', error);
+      const demoRole = savedDemoRole || 'cto';
+      setIsDemoMode(true);
+      const demoUser = createDemoUser(demoRole);
+      const demoProfile = createDemoProfile(demoRole);
+      setUser(demoUser as User);
+      setProfile(demoProfile);
+      setProfileReady(true);
       setLoading(false);
     });
 
@@ -236,7 +267,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(loadingTimeout);
+    };
   }, [fetchProfile, loadCachedProfile]);
 
   const signIn = useCallback(async (email: string, password: string) => {

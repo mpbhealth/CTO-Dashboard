@@ -8,13 +8,23 @@ interface ColumnMapping {
   required: boolean;
 }
 
+interface ImportError {
+  row: number;
+  message: string;
+}
+
+interface ImportResult {
+  success: number;
+  errors: ImportError[];
+}
+
 interface ImporterModalProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
   columnMappings: ColumnMapping[];
-  onImport: (data: any[]) => Promise<{ success: number; errors: any[] }>;
-  templateData?: any[];
+  onImport: (data: Record<string, unknown>[]) => Promise<ImportResult>;
+  templateData?: Record<string, unknown>[];
 }
 
 export const ImporterModal: React.FC<ImporterModalProps> = ({
@@ -26,12 +36,12 @@ export const ImporterModal: React.FC<ImporterModalProps> = ({
   templateData,
 }) => {
   const [file, setFile] = useState<File | null>(null);
-  const [previewData, setPreviewData] = useState<any[]>([]);
+  const [previewData, setPreviewData] = useState<Record<string, unknown>[]>([]);
   const [headers, setHeaders] = useState<string[]>([]);
   const [mappings, setMappings] = useState<Record<string, string>>({});
   const [importing, setImporting] = useState(false);
   const [step, setStep] = useState<'upload' | 'map' | 'preview' | 'complete'>('upload');
-  const [result, setResult] = useState<{ success: number; errors: any[] } | null>(null);
+  const [result, setResult] = useState<ImportResult | null>(null);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -56,7 +66,7 @@ export const ImporterModal: React.FC<ImporterModalProps> = ({
         }
 
         const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-        const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 }) as any[][];
+        const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 }) as unknown[][];
 
         if (jsonData.length > 0) {
           const headerRow = jsonData[0] as string[];
@@ -64,7 +74,7 @@ export const ImporterModal: React.FC<ImporterModalProps> = ({
           
           const dataRows = jsonData.slice(1, 6); // Preview first 5 rows
           setPreviewData(dataRows.map(row => {
-            const obj: any = {};
+            const obj: Record<string, unknown> = {};
             headerRow.forEach((header, idx) => {
               obj[header] = row[idx];
             });
@@ -107,7 +117,7 @@ export const ImporterModal: React.FC<ImporterModalProps> = ({
     return requiredFields.every(field => mappings[field.targetField]);
   };
 
-  const transformData = (): any[] => {
+  const transformData = (): Promise<Record<string, unknown>[]> => {
     if (!file) return [];
 
     const reader = new FileReader();
@@ -119,10 +129,10 @@ export const ImporterModal: React.FC<ImporterModalProps> = ({
           : XLSX.read(data, { type: 'array' });
 
         const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-        const jsonData = XLSX.utils.sheet_to_json(firstSheet) as any[];
+        const jsonData = XLSX.utils.sheet_to_json(firstSheet) as Record<string, unknown>[];
 
         const transformed = jsonData.map(row => {
-          const transformedRow: any = {};
+          const transformedRow: Record<string, unknown> = {};
           Object.entries(mappings).forEach(([targetField, sourceColumn]) => {
             transformedRow[targetField] = row[sourceColumn];
           });

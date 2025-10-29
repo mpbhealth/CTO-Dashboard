@@ -62,7 +62,7 @@ export function downloadCSV(filename: string, csv: string) {
 
 export async function postExport(
   format: "csv" | "xlsx",
-  data: any[],
+  data: Record<string, unknown>[],
   filename?: string,
   sheetName?: string
 ) {

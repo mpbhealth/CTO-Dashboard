@@ -9,10 +9,11 @@ interface LogEntry {
 
 class Logger {
   private isDevelopment = import.meta.env.DEV;
+  private isProduction = import.meta.env.PROD;
   private logs: LogEntry[] = [];
   private maxLogs = 100;
 
-  private log(level: LogLevel, message: string, context?: Record<string, unknown>) {
+  private logEntry(level: LogLevel, message: string, context?: Record<string, unknown>) {
     const entry: LogEntry = {
       level,
       message,
@@ -25,7 +26,7 @@ class Logger {
       this.logs.shift();
     }
 
-    if (this.isDevelopment) {
+    if (this.isDevelopment || (this.isProduction && level === 'error')) {
       const prefix = `[${entry.timestamp.toISOString()}] [${level.toUpperCase()}]`;
       if (context) {
         console[level === 'debug' ? 'log' : level](prefix, message, context);
@@ -36,11 +37,11 @@ class Logger {
   }
 
   info(message: string, context?: Record<string, unknown>) {
-    this.log('info', message, context);
+    this.logEntry('info', message, context);
   }
 
   warn(message: string, context?: Record<string, unknown>) {
-    this.log('warn', message, context);
+    this.logEntry('warn', message, context);
   }
 
   error(message: string, error?: Error | unknown, context?: Record<string, unknown>) {
@@ -52,12 +53,17 @@ class Logger {
         name: error.name,
       } : error,
     };
-    this.log('error', message, errorContext);
+    this.logEntry('error', message, errorContext);
+
+    // In production, errors should always be logged
+    if (this.isProduction && error instanceof Error) {
+      console.error(`[PRODUCTION ERROR] ${message}:`, error);
+    }
   }
 
   debug(message: string, context?: Record<string, unknown>) {
     if (this.isDevelopment) {
-      this.log('debug', message, context);
+      this.logEntry('debug', message, context);
     }
   }
 
@@ -67,6 +73,31 @@ class Logger {
 
   clearLogs() {
     this.logs = [];
+  }
+
+  // Convenience methods that match console API
+  log(message: string, ...args: unknown[]) {
+    if (this.isDevelopment) {
+      console.log(message, ...args);
+    }
+  }
+
+  table(data: unknown) {
+    if (this.isDevelopment) {
+      console.table(data);
+    }
+  }
+
+  group(label: string) {
+    if (this.isDevelopment) {
+      console.group(label);
+    }
+  }
+
+  groupEnd() {
+    if (this.isDevelopment) {
+      console.groupEnd();
+    }
   }
 }
 

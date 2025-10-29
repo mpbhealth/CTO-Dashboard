@@ -1,4 +1,5 @@
 import { Environment } from './environment';
+import { logger } from './logger';
 
 export class ProductionDiagnostics {
   static logEnvironment() {
@@ -7,21 +8,21 @@ export class ProductionDiagnostics {
     }
 
     if (Environment.isStackBlitz()) {
-      Environment.log('Running in StackBlitz/WebContainer environment');
+      logger.info('Running in StackBlitz/WebContainer environment');
       return;
     }
 
-    console.group('Production Environment Check');
-    console.log('Build time:', import.meta.env.VITE_BUILD_TIME || 'Unknown');
-    console.log('Environment:', import.meta.env.MODE);
-    console.log('Base URL:', import.meta.env.BASE_URL);
-    console.log(
+    logger.group('Production Environment Check');
+    logger.log('Build time:', import.meta.env.VITE_BUILD_TIME || 'Unknown');
+    logger.log('Environment:', import.meta.env.MODE);
+    logger.log('Base URL:', import.meta.env.BASE_URL);
+    logger.log(
       'Supabase configured:',
       !!(import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY),
     );
-    console.log('Document ready state:', document.readyState);
-    console.log('Root element:', !!document.getElementById('root'));
-    console.groupEnd();
+    logger.log('Document ready state:', document.readyState);
+    logger.log('Root element:', !!document.getElementById('root'));
+    logger.groupEnd();
   }
 
   static testAssetLoading() {
@@ -29,19 +30,19 @@ export class ProductionDiagnostics {
       return;
     }
 
-    console.group('Asset Loading Test');
+    logger.group('Asset Loading Test');
 
     const hasStyles = Array.from(document.styleSheets).some(
       sheet => sheet.href?.includes('assets/index-') || sheet.href?.includes('main.'),
     );
-    console.log('CSS loaded:', hasStyles);
+    logger.log('CSS loaded:', hasStyles);
 
     const hasMainJS = Array.from(document.scripts).some(
       script => script.src?.includes('assets/index-') || script.src?.includes('main.'),
     );
-    console.log('Main JS loaded:', hasMainJS);
+    logger.log('Main JS loaded:', hasMainJS);
 
-    console.groupEnd();
+    logger.groupEnd();
   }
 
   static async performHealthCheck() {
@@ -49,12 +50,12 @@ export class ProductionDiagnostics {
       return;
     }
 
-    console.group('Application Health Check');
+    logger.group('Application Health Check');
 
     try {
       const rootElement = document.getElementById('root');
-      console.log('Root element exists:', !!rootElement);
-      console.log('Root has content:', rootElement?.innerHTML.length || 0);
+      logger.log('Root element exists:', !!rootElement);
+      logger.log('Root has content:', rootElement?.innerHTML.length || 0);
 
       const envCheck = {
         hasSupabaseUrl: !!import.meta.env.VITE_SUPABASE_URL,
@@ -63,7 +64,7 @@ export class ProductionDiagnostics {
         dev: import.meta.env.DEV,
         prod: import.meta.env.PROD,
       };
-      console.table(envCheck);
+      logger.table(envCheck);
 
       const apiCheck = {
         localStorage: typeof localStorage !== 'undefined',
@@ -72,46 +73,50 @@ export class ProductionDiagnostics {
         crypto: typeof crypto !== 'undefined',
         serviceWorker: 'serviceWorker' in navigator,
       };
-      console.table(apiCheck);
+      logger.table(apiCheck);
     } catch (error) {
-      Environment.error('Health check failed:', error);
+      logger.error('Health check failed', error);
     }
 
-    console.groupEnd();
+    logger.groupEnd();
   }
 
   static clearAllCaches() {
-    console.group('Cache Clearing');
+    logger.group('Cache Clearing');
 
-    // Clear service worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.getRegistrations().then(registrations => {
-        console.log(`Unregistering ${registrations.length} service workers`);
+        logger.log(`Unregistering ${registrations.length} service workers`);
         registrations.forEach(registration => registration.unregister());
       });
     }
 
-    // Clear all caches
     if ('caches' in window) {
       caches.keys().then(cacheNames => {
-        console.log(`Deleting ${cacheNames.length} cache entries:`, cacheNames);
+        logger.log(`Deleting ${cacheNames.length} cache entries:`, cacheNames);
         cacheNames.forEach(cacheName => caches.delete(cacheName));
       });
     }
 
-    // Clear storage
     try {
       localStorage.clear();
       sessionStorage.clear();
-      console.log('Storage cleared');
+      logger.log('Storage cleared');
     } catch (error) {
-      console.warn('Could not clear storage:', error);
+      logger.warn('Could not clear storage', { error });
     }
 
-    console.groupEnd();
-    console.log('All caches cleared. Reloading page...');
+    logger.groupEnd();
+    logger.log('All caches cleared. Reloading page...');
 
     setTimeout(() => window.location.reload(), 1000);
+  }
+}
+
+declare global {
+  interface Window {
+    diagnose: () => Promise<void>;
+    clearAllCaches: () => void;
   }
 }
 
@@ -120,11 +125,11 @@ if (import.meta.env.PROD || Environment.shouldShowDebugLogs()) {
     ProductionDiagnostics.logEnvironment();
     ProductionDiagnostics.testAssetLoading();
 
-    (window as any).diagnose = ProductionDiagnostics.performHealthCheck;
-    (window as any).clearAllCaches = ProductionDiagnostics.clearAllCaches;
+    window.diagnose = ProductionDiagnostics.performHealthCheck;
+    window.clearAllCaches = ProductionDiagnostics.clearAllCaches;
 
     if (Environment.shouldShowDebugLogs()) {
-      console.log('Debug tools available: diagnose(), clearAllCaches()');
+      logger.log('Debug tools available: diagnose(), clearAllCaches()');
     }
   });
 }

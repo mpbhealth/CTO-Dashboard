@@ -20,9 +20,11 @@ export function useRoleBasedRedirect() {
 
   let redirectPath: string | null = null;
 
-  if (role === 'ceo' && !currentPath.startsWith('/ceod') && !currentPath.startsWith('/shared')) {
+  if (currentPath === '/' || currentPath === '') {
+    redirectPath = role === 'ceo' ? '/ceod/home' : '/ctod/home';
+  } else if (role === 'ceo' && !currentPath.startsWith('/ceod') && !currentPath.startsWith('/shared') && !currentPath.startsWith('/login')) {
     redirectPath = '/ceod/home';
-  } else if (role === 'cto' && !currentPath.startsWith('/ctod') && !currentPath.startsWith('/shared')) {
+  } else if (role === 'cto' && !currentPath.startsWith('/ctod') && !currentPath.startsWith('/shared') && !currentPath.startsWith('/login')) {
     redirectPath = '/ctod/home';
   }
 

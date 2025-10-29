@@ -93,6 +93,7 @@ const LoadingFallback = () => (
 function RoleBasedRedirect() {
   const { redirectPath, isLoading } = useRoleBasedRedirect();
   const { profile } = useAuth();
+  const location = useLocation();
 
   if (isLoading) {
     return <LoadingFallback />;
@@ -102,8 +103,12 @@ function RoleBasedRedirect() {
     return <Navigate to={redirectPath} replace />;
   }
 
-  const defaultPath = profile?.role === 'ceo' ? '/ceod/home' : '/ctod/home';
-  return <Navigate to={defaultPath} replace />;
+  if (location.pathname === '/' || location.pathname === '') {
+    const defaultPath = profile?.role === 'ceo' ? '/ceod/home' : '/ctod/home';
+    return <Navigate to={defaultPath} replace />;
+  }
+
+  return null;
 }
 
 

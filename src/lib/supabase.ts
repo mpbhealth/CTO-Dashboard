@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { logger } from './logger';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -21,9 +22,9 @@ const finalUrl = isSupabaseConfigured ? supabaseUrl : 'https://placeholder.supab
 const finalKey = isSupabaseConfigured ? supabaseAnonKey : 'placeholder-key';
 
 if (import.meta.env.DEV && !isSupabaseConfigured) {
-  console.warn('[Supabase] Not configured - using placeholder values');
+  logger.warn('Supabase not configured - using placeholder values');
 } else if (import.meta.env.DEV && localStorage.getItem('debug') === 'true') {
-  console.log('[Supabase] Configuration:', {
+  logger.debug('Supabase configuration', {
     configured: isSupabaseConfigured,
     hasUrl: !!supabaseUrl,
     hasValidUrl: isValidUrl,
@@ -31,6 +32,13 @@ if (import.meta.env.DEV && !isSupabaseConfigured) {
     hasValidKey: isValidKey,
     mode: isSupabaseConfigured ? 'production' : 'demo'
   });
+}
+
+// Production validation - fail fast if misconfigured
+if (import.meta.env.PROD && !isSupabaseConfigured) {
+  const errorMsg = 'CRITICAL: Supabase is not configured in production environment';
+  logger.error(errorMsg);
+  throw new Error(errorMsg);
 }
 
 // Create client without type parameter to avoid import errors

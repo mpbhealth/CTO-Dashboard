@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import { logger } from './logger';
 
 export type WorkspaceKind = 'CTO' | 'CEO' | 'SHARED';
 export type ResourceType = 'file' | 'doc' | 'kpi' | 'campaign' | 'note' | 'task' | 'dashboard';
@@ -66,20 +67,20 @@ export interface AuditLog {
 
 export async function getCurrentProfile(): Promise<Profile | null> {
   try {
-    console.log('[getCurrentProfile] Starting profile fetch...');
+    logger.debug('Starting profile fetch');
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
     if (authError) {
-      console.error('[getCurrentProfile] Auth error:', authError);
+      logger.error('Auth error in getCurrentProfile', authError);
       return null;
     }
 
     if (!user) {
-      console.warn('[getCurrentProfile] No authenticated user found');
+      logger.warn('No authenticated user found');
       return null;
     }
 
-    console.log('[getCurrentProfile] Authenticated user:', { id: user.id, email: user.email });
+    logger.debug('Authenticated user', { id: user.id, email: user.email });
 
     // Query with simplified field selection
     const { data, error } = await supabase
@@ -88,21 +89,21 @@ export async function getCurrentProfile(): Promise<Profile | null> {
       .eq('user_id', user.id)
       .maybeSingle();
 
-    console.log('[getCurrentProfile] Query result:', { data, error, hasData: !!data, hasError: !!error });
+    logger.debug('Profile query result', { hasData: !!data, hasError: !!error });
 
     if (error) {
-      console.error('[getCurrentProfile] Error fetching profile:', error);
+      logger.error('Error fetching profile', error);
       return null;
     }
 
     if (!data) {
       // If profile doesn't exist, try to create it
-      console.log('[getCurrentProfile] No profile found, creating from auth metadata...');
+      logger.info('No profile found, creating from auth metadata');
 
       const role = (user.user_metadata?.role || 'staff') as 'cto' | 'ceo' | 'admin' | 'staff';
       const displayName = user.user_metadata?.full_name || user.email?.split('@')[0] || 'User';
 
-      console.log('[getCurrentProfile] Creating profile with:', { role, displayName, user_id: user.id });
+      logger.debug('Creating profile', { role, displayName, user_id: user.id });
 
       const { data: newProfile, error: insertError } = await supabase
         .from('profiles')
@@ -118,23 +119,23 @@ export async function getCurrentProfile(): Promise<Profile | null> {
         .maybeSingle();
 
       if (insertError) {
-        console.error('[getCurrentProfile] Failed to create profile:', insertError);
+        logger.error('Failed to create profile', insertError);
         return null;
       }
 
       if (!newProfile) {
-        console.error('[getCurrentProfile] No profile returned after insert');
+        logger.error('No profile returned after insert');
         return null;
       }
 
-      console.log('[getCurrentProfile] Profile created successfully:', { role: newProfile.role, email: newProfile.email });
+      logger.info('Profile created successfully', { role: newProfile.role, email: newProfile.email });
       return newProfile;
     }
 
-    console.log('[getCurrentProfile] Profile found successfully:', { role: data.role, email: data.email, display_name: data.display_name });
+    logger.info('Profile found successfully', { role: data.role, email: data.email });
     return data;
   } catch (err) {
-    console.error('[getCurrentProfile] Unexpected error:', err);
+    logger.error('Unexpected error in getCurrentProfile', err);
     return null;
   }
 }
@@ -168,7 +169,7 @@ export async function getOrCreateWorkspace(
     .single();
 
   if (error) {
-    console.error('Error creating workspace:', error);
+    logger.error('Error creating workspace', error);
     return null;
   }
 
@@ -200,7 +201,7 @@ export async function createResource(params: {
     .single();
 
   if (error) {
-    console.error('Error creating resource:', error);
+    logger.error('Error creating resource', error);
     return null;
   }
 
@@ -223,7 +224,7 @@ export async function updateResourceVisibility(
     .eq('id', resourceId);
 
   if (error) {
-    console.error('Error updating visibility:', error);
+    logger.error('Error updating visibility', error);
     return false;
   }
 
@@ -252,7 +253,7 @@ export async function grantResourceAccess(
     });
 
   if (error) {
-    console.error('Error granting access:', error);
+    logger.error('Error granting access', error);
     return false;
   }
 
@@ -276,7 +277,7 @@ export async function revokeResourceAccess(
     .eq('grantee_profile_id', granteeProfileId);
 
   if (error) {
-    console.error('Error revoking access:', error);
+    logger.error('Error revoking access', error);
     return false;
   }
 
@@ -296,7 +297,7 @@ export async function getResourceACL(resourceId: string): Promise<ResourceACL[]>
     .eq('resource_id', resourceId);
 
   if (error) {
-    console.error('Error fetching ACL:', error);
+    logger.error('Error fetching ACL', error);
     return [];
   }
 
@@ -323,7 +324,7 @@ export async function listResources(filters: {
   const { data, error } = await query.order('created_at', { ascending: false });
 
   if (error) {
-    console.error('Error listing resources:', error);
+    logger.error('Error listing resources', error);
     return [];
   }
 
@@ -348,7 +349,7 @@ export async function uploadFile(
     .upload(storagePath, file);
 
   if (uploadError) {
-    console.error('Error uploading file:', uploadError);
+    logger.error('Error uploading file', uploadError);
     return null;
   }
 
@@ -398,7 +399,7 @@ export async function uploadFile(
     .single();
 
   if (fileError) {
-    console.error('Error creating file metadata:', fileError);
+    logger.error('Error creating file metadata', fileError);
     await supabase.storage.from(bucket).remove([storagePath]);
     return null;
   }
@@ -421,7 +422,7 @@ export async function getSignedUrl(
     .createSignedUrl(storageKey, 3600);
 
   if (error) {
-    console.error('Error creating signed URL:', error);
+    logger.error('Error creating signed URL', error);
     return null;
   }
 
@@ -474,7 +475,7 @@ export async function getAuditLogs(filters?: {
   const { data, error } = await query;
 
   if (error) {
-    console.error('Error fetching audit logs:', error);
+    logger.error('Error fetching audit logs', error);
     return [];
   }
 

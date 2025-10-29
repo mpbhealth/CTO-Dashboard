@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
+import { logger } from '../lib/logger';
 
 interface Profile {
   id: string;
@@ -52,7 +53,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         localStorage.removeItem(`${PROFILE_CACHE_KEY}_${userId}`);
       }
     } catch (error) {
-      console.error('Error loading cached profile:', error);
+      logger.error('Error loading cached profile', error);
     }
     return null;
   }, []);
@@ -64,7 +65,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         JSON.stringify({ profile, timestamp: Date.now() })
       );
     } catch (error) {
-      console.error('Error saving cached profile:', error);
+      logger.error('Error saving cached profile', error);
     }
   }, []);
 
@@ -111,7 +112,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setProfileReady(true);
       }
     } catch (error) {
-      console.error('Error fetching profile:', error);
+      logger.error('Error fetching profile', error);
       setProfile(null);
       setProfileReady(true);
     } finally {
@@ -125,7 +126,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         localStorage.removeItem(`${PROFILE_CACHE_KEY}_${user.id}`);
       } catch (error) {
-        console.error('Error clearing cached profile:', error);
+        logger.error('Error clearing cached profile', error);
       }
       await fetchProfile(user.id, true);
     }
@@ -208,7 +209,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .filter(key => key.startsWith(PROFILE_CACHE_KEY))
         .forEach(key => localStorage.removeItem(key));
     } catch (error) {
-      console.error('Error clearing profile cache:', error);
+      logger.error('Error clearing profile cache', error);
     }
   }, []);
 

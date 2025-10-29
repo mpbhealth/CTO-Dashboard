@@ -50,19 +50,19 @@ export class Environment {
     );
   }
 
-  static log(message: string, data?: any) {
+  static log(message: string, data?: unknown) {
     if (this.shouldShowDebugLogs()) {
       console.log(`[MPB Health] ${message}`, data || '');
     }
   }
 
-  static warn(message: string, data?: any) {
+  static warn(message: string, data?: unknown) {
     if (!this.isStackBlitz() || this.shouldShowDebugLogs()) {
       console.warn(`[MPB Health] ${message}`, data || '');
     }
   }
 
-  static error(message: string, error?: any) {
+  static error(message: string, error?: unknown) {
     if (!this.isPlatformError(error || message)) {
       console.error(`[MPB Health] ${message}`, error || '');
     }

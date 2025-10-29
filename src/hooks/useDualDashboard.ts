@@ -113,8 +113,18 @@ export function useWorkspace(orgId?: string, kind?: string, name?: string) {
   });
 }
 
+interface SharedContent {
+  id: string;
+  title: string;
+  content?: string;
+  visibility: string;
+  target_role?: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export function useSharedContent(filters?: { visibility?: string; role?: string }) {
-  const [content, setContent] = useState<any[]>([]);
+  const [content, setContent] = useState<SharedContent[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -160,9 +170,9 @@ export function useGrantAccess() {
 
       if (error) throw error;
       return { success: true, message: 'Access granted successfully' };
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error granting access:', error);
-      return { success: false, message: error.message };
+      return { success: false, message: error instanceof Error ? error.message : 'An error occurred' };
     }
   };
 }
@@ -178,15 +188,29 @@ export function useRevokeAccess() {
 
       if (error) throw error;
       return { success: true, message: 'Access revoked successfully' };
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error revoking access:', error);
-      return { success: false, message: error.message };
+      return { success: false, message: error instanceof Error ? error.message : 'An error occurred' };
     }
   };
 }
 
+interface ResourceACL {
+  id: string;
+  resource_id: string;
+  user_id: string;
+  access_level: string;
+  granted_at: string;
+  profiles?: {
+    id: string;
+    email: string;
+    full_name?: string;
+    role?: string;
+  };
+}
+
 export function useResourceACL(resourceId: string) {
-  const [acl, setAcl] = useState<any[]>([]);
+  const [acl, setAcl] = useState<ResourceACL[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -229,7 +253,7 @@ export function useResourceACL(resourceId: string) {
 export function useUpdateVisibility() {
   return async (resourceId: string, visibility: string, targetRole?: string) => {
     try {
-      const updates: any = {
+      const updates: Record<string, string> = {
         visibility,
         updated_at: new Date().toISOString()
       };
@@ -245,9 +269,9 @@ export function useUpdateVisibility() {
 
       if (error) throw error;
       return { success: true, message: 'Visibility updated successfully' };
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error updating visibility:', error);
-      return { success: false, message: error.message };
+      return { success: false, message: error instanceof Error ? error.message : 'An error occurred' };
     }
   };
 }

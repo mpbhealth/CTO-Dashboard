@@ -1,8 +1,16 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 
+interface StaffLog {
+  id: string;
+  staff_id: string;
+  action: string;
+  details?: string;
+  created_at: string;
+}
+
 export function useStaffLogs() {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<StaffLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -16,8 +24,8 @@ export function useStaffLogs() {
 
         if (logsError) throw logsError;
         setData(logs || []);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
       } finally {
         setLoading(false);
       }

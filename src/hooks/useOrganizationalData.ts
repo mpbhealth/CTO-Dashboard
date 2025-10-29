@@ -24,7 +24,7 @@ export interface EmployeeProfile {
 }
 
 export function useDepartments() {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<Department[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -38,8 +38,8 @@ export function useDepartments() {
 
         if (deptError) throw deptError;
         setData(departments || []);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
       } finally {
         setLoading(false);
       }
@@ -51,7 +51,7 @@ export function useDepartments() {
 }
 
 export function useEmployeeProfiles() {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<EmployeeProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -65,8 +65,8 @@ export function useEmployeeProfiles() {
 
         if (empError) throw empError;
         setData(employees || []);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
       } finally {
         setLoading(false);
       }
@@ -77,8 +77,16 @@ export function useEmployeeProfiles() {
   return { data, loading, error };
 }
 
+interface DepartmentMetric {
+  id: string;
+  department_id: string;
+  metric_name: string;
+  metric_value: number;
+  created_at: string;
+}
+
 export function useDepartmentMetrics() {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<DepartmentMetric[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -92,8 +100,8 @@ export function useDepartmentMetrics() {
 
         if (metricsError) throw metricsError;
         setData(metrics || []);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
       } finally {
         setLoading(false);
       }
@@ -104,8 +112,18 @@ export function useDepartmentMetrics() {
   return { data, loading, error };
 }
 
+interface PolicyDocument {
+  id: string;
+  title: string;
+  content?: string;
+  version: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export function usePolicyDocuments() {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<PolicyDocument[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -118,7 +136,7 @@ export function usePolicyDocuments() {
 
       if (policiesError) throw policiesError;
       setData(policies || []);
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
@@ -155,8 +173,8 @@ export function useDepartmentRelationships() {
 
         if (relError) throw relError;
         setData(relationships || []);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
       } finally {
         setLoading(false);
       }
@@ -192,8 +210,8 @@ export function useOrgChartPositions() {
 
         if (posError) throw posError;
         setData(positions || []);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
       } finally {
         setLoading(false);
       }
@@ -226,7 +244,7 @@ export function useOrgChartPositions() {
         }
         return prev;
       });
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error updating position:', err);
       throw err;
     }
@@ -246,7 +264,7 @@ export function useOrgChartPositions() {
         .upsert(updates);
 
       if (saveError) throw saveError;
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error saving layout:', err);
       throw err;
     }
@@ -261,7 +279,7 @@ export function useOrgChartPositions() {
 
       if (deleteError) throw deleteError;
       setData([]);
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error resetting layout:', err);
       throw err;
     }

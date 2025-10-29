@@ -10,7 +10,7 @@ export interface Record {
   visibility: 'private' | 'org' | 'shared';
   title: string;
   content?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   created_at?: string;
   updated_at?: string;
 }
@@ -176,7 +176,7 @@ export function useRecordShares(recordId: string) {
         .order('granted_at', { ascending: false });
 
       if (error) throw error;
-      return (data || []) as (RecordShare & { profiles?: any })[];
+      return (data || []) as (RecordShare & { profiles?: { id: string; email: string; display_name?: string; role?: string } })[];
     },
     enabled: !!user && !!recordId,
     staleTime: 1 * 60 * 1000,

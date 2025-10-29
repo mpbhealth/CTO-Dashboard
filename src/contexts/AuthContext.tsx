@@ -184,7 +184,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem(DEMO_ROLE_KEY, queryRole);
     }
 
-    const shouldUseDemoMode = !isSupabaseConfigured || queryRole || savedDemoMode;
+    const shouldUseDemoMode = !isSupabaseConfigured || queryRole;
 
     if (shouldUseDemoMode) {
       const demoRole = queryRole || savedDemoRole || 'cto';
@@ -203,17 +203,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const loadingTimeout = setTimeout(() => {
       if (loading) {
-        logger.warn('Auth timeout - falling back to demo mode');
-        const demoRole = savedDemoRole || 'cto';
-        setIsDemoMode(true);
-        const demoUser = createDemoUser(demoRole);
-        const demoProfile = createDemoProfile(demoRole);
-        setUser(demoUser as User);
-        setProfile(demoProfile);
-        setProfileReady(true);
+        logger.error('Auth timeout - check your network connection');
         setLoading(false);
+        setProfileReady(true);
       }
-    }, 5000);
+    }, 10000);
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
@@ -228,24 +222,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
         fetchProfile(session.user.id);
       } else {
-        const demoRole = savedDemoRole || 'cto';
-        setIsDemoMode(true);
-        const demoUser = createDemoUser(demoRole);
-        const demoProfile = createDemoProfile(demoRole);
-        setUser(demoUser as User);
-        setProfile(demoProfile);
+        setProfile(null);
         setProfileReady(true);
-        logger.warn(`No session found - Running in DEMO MODE as ${demoRole.toUpperCase()}`);
       }
       setLoading(false);
     }).catch((error) => {
-      logger.error('Error getting session, falling back to demo mode', error);
-      const demoRole = savedDemoRole || 'cto';
-      setIsDemoMode(true);
-      const demoUser = createDemoUser(demoRole);
-      const demoProfile = createDemoProfile(demoRole);
-      setUser(demoUser as User);
-      setProfile(demoProfile);
+      logger.error('Error getting session', error);
+      setProfile(null);
       setProfileReady(true);
       setLoading(false);
     });

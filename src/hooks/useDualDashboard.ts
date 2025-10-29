@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
@@ -8,30 +8,34 @@ export function useRoleBasedRedirect() {
   const { profile, loading, profileReady } = useAuth();
   const location = useLocation();
 
-  if (!profileReady || loading || !profile) {
+  const result = useMemo(() => {
+    if (!profileReady || loading || !profile) {
+      return {
+        redirectPath: null,
+        isLoading: true
+      };
+    }
+
+    const role = profile.role?.toLowerCase();
+    const currentPath = location.pathname;
+
+    let redirectPath: string | null = null;
+
+    if (currentPath === '/' || currentPath === '') {
+      redirectPath = role === 'ceo' ? '/ceod/home' : '/ctod/home';
+    } else if (role === 'ceo' && !currentPath.startsWith('/ceod') && !currentPath.startsWith('/shared') && !currentPath.startsWith('/login')) {
+      redirectPath = '/ceod/home';
+    } else if (role === 'cto' && !currentPath.startsWith('/ctod') && !currentPath.startsWith('/shared') && !currentPath.startsWith('/login')) {
+      redirectPath = '/ctod/home';
+    }
+
     return {
-      redirectPath: null,
-      isLoading: true
+      redirectPath,
+      isLoading: false
     };
-  }
+  }, [profile, profileReady, loading, location.pathname]);
 
-  const role = profile.role?.toLowerCase();
-  const currentPath = location.pathname;
-
-  let redirectPath: string | null = null;
-
-  if (currentPath === '/' || currentPath === '') {
-    redirectPath = role === 'ceo' ? '/ceod/home' : '/ctod/home';
-  } else if (role === 'ceo' && !currentPath.startsWith('/ceod') && !currentPath.startsWith('/shared') && !currentPath.startsWith('/login')) {
-    redirectPath = '/ceod/home';
-  } else if (role === 'cto' && !currentPath.startsWith('/ctod') && !currentPath.startsWith('/shared') && !currentPath.startsWith('/login')) {
-    redirectPath = '/ctod/home';
-  }
-
-  return {
-    redirectPath,
-    isLoading: false
-  };
+  return result;
 }
 
 export function useCurrentProfile() {

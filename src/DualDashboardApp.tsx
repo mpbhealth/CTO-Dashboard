@@ -8,7 +8,6 @@ import { CEOErrorBoundary } from './components/ceo/ErrorBoundary';
 import { useAuth } from './contexts/AuthContext';
 import { CEODashboardLayout } from './components/layouts/CEODashboardLayout';
 import Sidebar from './components/Sidebar';
-import CEOSidebar from './components/CEOSidebar';
 
 const CTOHome = lazy(() => import('./components/pages/ctod/CTOHome').then(m => ({ default: m.CTOHome })));
 const CTOOperations = lazy(() => import('./components/pages/ctod/CTOOperations').then(m => ({ default: m.CTOOperations })));
@@ -238,14 +237,6 @@ function DualDashboardContent() {
 
   const isCEORoute = useMemo(() => location.pathname.startsWith('/ceod/'), [location.pathname]);
 
-  const isCEOUser = useMemo(() => {
-    return profile?.role === 'ceo' || profile?.role === 'admin';
-  }, [profile?.role]);
-
-  const shouldShowCEOSidebar = useMemo(() => {
-    return profileReady && isCEOUser && isCEORoute;
-  }, [profileReady, isCEOUser, isCEORoute]);
-
   const shouldShowCTOSidebar = useMemo(() => {
     return profileReady && !isCEORoute;
   }, [profileReady, isCEORoute]);
@@ -311,8 +302,6 @@ function DualDashboardContent() {
 
   return (
     <div className="flex min-h-screen bg-slate-50 overflow-x-hidden">
-      {shouldShowCEOSidebar && <CEOSidebar />}
-
       {shouldShowCTOSidebar && (
         <Sidebar
           activeTab={activeTab}
@@ -333,7 +322,7 @@ function DualDashboardContent() {
       )}
 
       <main className={`flex-1 overflow-y-auto ${
-        shouldShowCEOSidebar
+        isCEORoute
           ? ''
           : `transition-all duration-300 ${isMobile ? 'p-3' : 'p-8 pl-12'} ${isSidebarExpanded ? 'md:pl-96' : isMobile ? 'ml-0 pt-16' : 'md:pl-32'}`
       }`}>

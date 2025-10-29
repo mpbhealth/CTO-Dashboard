@@ -1,42 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
-  Code2,
-  UserSquare2,
-  Calendar,
-  FolderKanban,
-  ShieldCheck,
-  Database,
-  Cpu,
-  UploadCloud,
-  Activity,
-  Building2,
-  BarChart3,
-  Users,
-  TrendingDown,
-  Award,
-  Server,
-  GitBranch,
-  Map,
-  Settings,
   LogOut,
-  Presentation,
-  StickyNote,
-  Zap,
-  FileText,
-  LineChart,
   Menu,
   X,
   ChevronsLeft,
-  Link2,
-  ChevronsRight,
-  CheckSquare,
-  ClipboardCheck,
-  Ticket,
-  FolderUp
+  ChevronsRight
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useCurrentProfile } from '../hooks/useDualDashboard';
+import { getNavigationForRole, categories, type NavItem } from '../config/navigation';
 
 interface SidebarProps {
   activeTab: string;
@@ -45,76 +18,6 @@ interface SidebarProps {
   onSidebarToggle?: () => void;
 }
 
-const menuItems = [
-  { id: 'overview', label: 'Overview', icon: Building2, category: 'main', path: '/ctod/home' },
-  { id: 'analytics', label: 'Analytics', icon: BarChart3, category: 'analytics', path: '/ceod/analytics/overview' },
-  { id: 'member-engagement', label: 'Member Engagement', icon: Users, category: 'analytics', path: '/ceod/analytics/member-engagement' },
-  { id: 'member-retention', label: 'Member Retention', icon: TrendingDown, category: 'analytics', path: '/ceod/analytics/member-retention' },
-  { id: 'advisor-performance', label: 'Advisor Performance', icon: Award, category: 'analytics', path: '/ceod/analytics/advisor-performance' },
-  { id: 'marketing-analytics', label: 'Marketing Analytics', icon: LineChart, category: 'analytics', path: '/ceod/analytics/marketing' },
-  {
-    id: 'department-reporting',
-    label: 'Department Reporting',
-    icon: FolderUp,
-    category: 'reporting',
-    path: '/ceod/data',
-    submenu: [
-      { id: 'department-reporting/concierge', label: 'Concierge', path: '/ceod/departments/concierge' },
-      { id: 'department-reporting/sales', label: 'Sales', path: '/ceod/departments/sales' },
-      { id: 'department-reporting/operations', label: 'Operations', path: '/ceod/departments/operations' },
-      { id: 'department-reporting/finance', label: 'Finance', path: '/ceod/departments/finance' },
-      { id: 'department-reporting/saudemax', label: 'SaudeMAX', path: '/ceod/departments/saudemax' },
-    ]
-  },
-  { id: 'tech-stack', label: 'Tech Stack', icon: Code2, category: 'development', path: '/tech-stack' },
-  { id: 'quick-links', label: 'QuickLinks Directory', icon: Link2, category: 'development', path: '/quick-links' },
-  { id: 'roadmap', label: 'Roadmap', icon: Calendar, category: 'development', path: '/roadmap' },
-  { id: 'road-visualizer', label: 'Roadmap Visualizer', icon: Map, category: 'development', path: '/road-visualizer' },
-  { id: 'roadmap-presentation', label: 'Roadmap Presentation', icon: Presentation, category: 'development', path: '/roadmap-presentation' },
-  { id: 'projects', label: 'Projects', icon: FolderKanban, category: 'development', path: '/projects' },
-  { id: 'monday-tasks', label: 'Monday Tasks', icon: Zap, category: 'development', path: '/monday-tasks' },
-  { id: 'assignments', label: 'Assignments', icon: CheckSquare, category: 'development', path: '/assignments' },
-  { id: 'notepad', label: 'Notepad', icon: StickyNote, category: 'development', path: '/notepad' },
-  {
-    id: 'compliance',
-    label: 'Compliance Command Center',
-    icon: ShieldCheck,
-    category: 'operations',
-    path: '/ctod/compliance/dashboard',
-    submenu: [
-      { id: 'compliance/command-center', label: 'Dashboard', path: '/ctod/compliance/dashboard' },
-      { id: 'compliance/administration', label: 'Administration & Governance', path: '/ctod/compliance/administration' },
-      { id: 'compliance/training', label: 'Training & Awareness', path: '/ctod/compliance/training' },
-      { id: 'compliance/phi-minimum', label: 'PHI & Minimum Necessary', path: '/ctod/compliance/phi-minimum' },
-      { id: 'compliance/technical-safeguards', label: 'Technical Safeguards', path: '/ctod/compliance/technical-safeguards' },
-      { id: 'compliance/baas', label: 'Business Associates', path: '/ctod/compliance/baas' },
-      { id: 'compliance/incidents', label: 'Incidents & Breaches', path: '/ctod/compliance/incidents' },
-      { id: 'compliance/audits', label: 'Audits & Monitoring', path: '/ctod/compliance/audits' },
-      { id: 'compliance/templates-tools', label: 'Templates & Tools', path: '/ctod/compliance/templates-tools' },
-      { id: 'compliance/employee-documents', label: 'Employee Documents', path: '/ctod/compliance/employee-documents' },
-    ]
-  },
-  { id: 'saas', label: 'SaaS Spend', icon: Database, category: 'operations', path: '/shared/saas' },
-  { id: 'ai-agents', label: 'AI Agents', icon: Cpu, category: 'operations', path: '/shared/ai-agents' },
-  { id: 'it-support', label: 'IT Support Tickets', icon: Ticket, category: 'operations', path: '/shared/it-support' },
-  { id: 'integrations', label: 'Integrations Hub', icon: Settings, category: 'operations', path: '/shared/integrations' },
-  { id: 'deployments', label: 'Deployments', icon: UploadCloud, category: 'infrastructure', path: '/shared/deployments' },
-  { id: 'policy-management', label: 'Policy Manager', icon: FileText, category: 'operations', path: '/shared/policy-management' },
-  { id: 'employee-performance', label: 'Employee Performance', icon: ClipboardCheck, category: 'operations', path: '/shared/employee-performance' },
-  { id: 'api-status', label: 'API Status', icon: Activity, category: 'infrastructure', path: '/shared/api-status' },
-  { id: 'system-uptime', label: 'System Uptime', icon: Server, category: 'infrastructure', path: '/shared/system-uptime' },
-  { id: 'performance-evaluation', label: 'Performance Evaluation', icon: UserSquare2, category: 'operations', path: '/shared/performance-evaluation' },
-  { id: 'organizational-structure', label: 'Organization', icon: GitBranch, category: 'operations', path: '/shared/organizational-structure' },
-];
-
-const categories: Record<string, string> = {
-  main: 'Dashboard',
-  analytics: 'Analytics & Insights',
-  reporting: 'Department Reporting',
-  development: 'Development & Planning',
-  operations: 'Operations & Management',
-  infrastructure: 'Infrastructure & Monitoring'
-};
 
 export default function Sidebar({
   activeTab,
@@ -128,7 +31,12 @@ export default function Sidebar({
   const [expandedMenus, setExpandedMenus] = useState<string[]>(['compliance', 'department-reporting']);
   const { data: profile } = useCurrentProfile();
 
-  const isCEO = profile?.role === 'ceo' || profile?.role === 'admin';
+  const isCEO = profile?.role === 'ceo';
+  const userRole = profile?.role || 'staff';
+
+  const menuItems = useMemo(() => {
+    return getNavigationForRole(userRole as 'ceo' | 'cto' | 'admin' | 'staff');
+  }, [userRole]);
 
   // Detect if we're on mobile
   useEffect(() => {
@@ -165,13 +73,15 @@ export default function Sidebar({
     }
   }, [location.pathname]);
 
-  const groupedItems = menuItems.reduce((acc, item) => {
-    if (!acc[item.category]) {
-      acc[item.category] = [];
-    }
-    acc[item.category].push(item);
-    return acc;
-  }, {} as Record<string, typeof menuItems>);
+  const groupedItems = useMemo(() => {
+    return menuItems.reduce((acc, item) => {
+      if (!acc[item.category]) {
+        acc[item.category] = [];
+      }
+      acc[item.category].push(item);
+      return acc;
+    }, {} as Record<string, NavItem[]>);
+  }, [menuItems]);
 
   const handleLogout = async () => {
     try {

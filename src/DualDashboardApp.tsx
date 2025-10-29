@@ -1,6 +1,5 @@
 import { lazy, Suspense, useState, useEffect, useMemo, useCallback } from 'react';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Menu } from 'lucide-react';
 import { useRoleBasedRedirect } from './hooks/useDualDashboard';
 import { CEOOnly, CTOOnly } from './components/guards/RoleGuard';
@@ -8,6 +7,7 @@ import { CEOErrorBoundary } from './components/ceo/ErrorBoundary';
 import { useAuth } from './contexts/AuthContext';
 import { CEODashboardLayout } from './components/layouts/CEODashboardLayout';
 import Sidebar from './components/Sidebar';
+import { buildRouteToTabMap, buildTabToRouteMap, getNavigationForRole } from './config/navigation';
 
 const CTOHome = lazy(() => import('./components/pages/ctod/CTOHome').then(m => ({ default: m.CTOHome })));
 const CTOOperations = lazy(() => import('./components/pages/ctod/CTOOperations').then(m => ({ default: m.CTOOperations })));
@@ -89,18 +89,6 @@ const LoadingFallback = () => (
   </div>
 );
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 5 * 60 * 1000, // 5 minutes
-      refetchOnWindowFocus: false,
-      retry: 1,
-      // Keep previous data during refetches to prevent flickering
-      placeholderData: (previousData: unknown) => previousData,
-    },
-  },
-});
-
 function RoleBasedRedirect() {
   const { redirectPath, isLoading } = useRoleBasedRedirect();
   const { profile } = useAuth();
@@ -117,117 +105,6 @@ function RoleBasedRedirect() {
   return <Navigate to={defaultPath} replace />;
 }
 
-const routeToTabMap: Record<string, string> = {
-  '/ctod/home': 'overview',
-  '/ctod/files': 'overview',
-  '/ctod/kpis': 'overview',
-  '/ctod/engineering': 'tech-stack',
-  '/ctod/compliance': 'compliance',
-  '/ceod/data': 'department-reporting',
-  '/ceod/departments/concierge': 'department-reporting/concierge',
-  '/ceod/departments/sales': 'department-reporting/sales',
-  '/ceod/departments/operations': 'department-reporting/operations',
-  '/ceod/departments/finance': 'department-reporting/finance',
-  '/ceod/departments/saudemax': 'department-reporting/saudemax',
-  '/ctod/compliance/dashboard': 'compliance',
-  '/ctod/compliance/administration': 'compliance',
-  '/ctod/compliance/training': 'compliance',
-  '/ctod/compliance/phi-minimum': 'compliance',
-  '/ctod/compliance/technical-safeguards': 'compliance',
-  '/ctod/compliance/baas': 'compliance',
-  '/ctod/compliance/incidents': 'compliance',
-  '/ctod/compliance/audits': 'compliance',
-  '/ctod/compliance/templates-tools': 'compliance',
-  '/ctod/compliance/employee-documents': 'compliance',
-  '/ceod/home': 'overview',
-  '/ceod/analytics': 'analytics',
-  '/ceod/analytics/overview': 'analytics',
-  '/ceod/analytics/member-engagement': 'member-engagement',
-  '/ceod/analytics/member-retention': 'member-retention',
-  '/ceod/analytics/advisor-performance': 'advisor-performance',
-  '/ceod/analytics/marketing': 'marketing-analytics',
-  '/ceod/marketing': 'marketing-analytics',
-  '/ceod/marketing/planner': 'marketing-analytics',
-  '/ceod/marketing/calendar': 'marketing-analytics',
-  '/ceod/marketing/budget': 'marketing-analytics',
-  '/ceod/concierge/tracking': 'overview',
-  '/ceod/concierge/notes': 'overview',
-  '/ceod/sales/reports': 'overview',
-  '/ceod/operations/overview': 'overview',
-  '/ceod/files': 'overview',
-  '/ceod/board': 'overview',
-  '/ceod/initiatives': 'overview',
-  '/ceod/approvals': 'overview',
-  '/shared/overview': 'overview',
-  '/shared/audit': 'overview',
-  '/shared/saas': 'saas',
-  '/shared/ai-agents': 'ai-agents',
-  '/shared/it-support': 'it-support',
-  '/shared/integrations': 'integrations',
-  '/shared/deployments': 'deployments',
-  '/shared/policy-management': 'policy-management',
-  '/shared/employee-performance': 'employee-performance',
-  '/shared/api-status': 'api-status',
-  '/shared/system-uptime': 'system-uptime',
-  '/shared/performance-evaluation': 'performance-evaluation',
-  '/shared/organizational-structure': 'organizational-structure',
-  '/diagnostics': 'overview',
-  '/tech-stack': 'tech-stack',
-  '/quick-links': 'quick-links',
-  '/roadmap': 'roadmap',
-  '/road-visualizer': 'road-visualizer',
-  '/roadmap-presentation': 'roadmap-presentation',
-  '/projects': 'projects',
-  '/monday-tasks': 'monday-tasks',
-  '/assignments': 'assignments',
-  '/notepad': 'notepad',
-};
-
-const tabToRouteMap: Record<string, string> = {
-  'overview': '/ctod/home',
-  'analytics': '/ceod/analytics/overview',
-  'member-engagement': '/ceod/analytics/member-engagement',
-  'member-retention': '/ceod/analytics/member-retention',
-  'advisor-performance': '/ceod/analytics/advisor-performance',
-  'marketing-analytics': '/ceod/analytics/marketing',
-  'department-reporting': '/ceod/data',
-  'department-reporting/concierge': '/ceod/departments/concierge',
-  'department-reporting/sales': '/ceod/departments/sales',
-  'department-reporting/operations': '/ceod/departments/operations',
-  'department-reporting/finance': '/ceod/departments/finance',
-  'department-reporting/saudemax': '/ceod/departments/saudemax',
-  'tech-stack': '/tech-stack',
-  'quick-links': '/quick-links',
-  'roadmap': '/roadmap',
-  'road-visualizer': '/road-visualizer',
-  'roadmap-presentation': '/roadmap-presentation',
-  'projects': '/projects',
-  'monday-tasks': '/monday-tasks',
-  'assignments': '/assignments',
-  'notepad': '/notepad',
-  'compliance': '/ctod/compliance/dashboard',
-  'compliance/command-center': '/ctod/compliance/dashboard',
-  'compliance/administration': '/ctod/compliance/administration',
-  'compliance/training': '/ctod/compliance/training',
-  'compliance/phi-minimum': '/ctod/compliance/phi-minimum',
-  'compliance/technical-safeguards': '/ctod/compliance/technical-safeguards',
-  'compliance/baas': '/ctod/compliance/baas',
-  'compliance/incidents': '/ctod/compliance/incidents',
-  'compliance/audits': '/ctod/compliance/audits',
-  'compliance/templates-tools': '/ctod/compliance/templates-tools',
-  'compliance/employee-documents': '/ctod/compliance/employee-documents',
-  'saas': '/shared/saas',
-  'ai-agents': '/shared/ai-agents',
-  'it-support': '/shared/it-support',
-  'integrations': '/shared/integrations',
-  'deployments': '/shared/deployments',
-  'policy-management': '/shared/policy-management',
-  'employee-performance': '/shared/employee-performance',
-  'api-status': '/shared/api-status',
-  'system-uptime': '/shared/system-uptime',
-  'performance-evaluation': '/shared/performance-evaluation',
-  'organizational-structure': '/shared/organizational-structure',
-};
 
 function DualDashboardContent() {
   const navigate = useNavigate();
@@ -245,6 +122,14 @@ function DualDashboardContent() {
     if (isCEORoute) return false;
     return profile?.role === 'cto' || profile?.role === 'admin' || profile?.role === 'staff';
   }, [profileReady, isCEORoute, profile?.role]);
+
+  const navigationItems = useMemo(() => {
+    const role = profile?.role || 'staff';
+    return getNavigationForRole(role as 'ceo' | 'cto' | 'admin' | 'staff');
+  }, [profile?.role]);
+
+  const routeToTabMap = useMemo(() => buildRouteToTabMap(navigationItems), [navigationItems]);
+  const tabToRouteMap = useMemo(() => buildTabToRouteMap(navigationItems), [navigationItems]);
 
   useEffect(() => {
     function checkIfMobile() {
@@ -435,12 +320,6 @@ function DualDashboardContent() {
   );
 }
 
-function DualDashboardApp() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <DualDashboardContent />
-    </QueryClientProvider>
-  );
+export default function DualDashboardApp() {
+  return <DualDashboardContent />;
 }
-
-export default DualDashboardApp;

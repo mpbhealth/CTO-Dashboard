@@ -45,7 +45,7 @@ export function ProtectedRoute({
   }
 
   if (allowedRoles && effectiveRole && !allowedRoles.includes(effectiveRole)) {
-    const defaultPath = effectiveRole === 'ceo' ? '/ceod/home' : effectiveRole === 'admin' ? '/ctod/home' : '/ctod/home';
+    const defaultPath = effectiveRole === 'ceo' ? '/ceod/home' : '/ctod/home';
     return <Navigate to={defaultPath} replace />;
   }
 

@@ -10,6 +10,7 @@ import {
   Search, 
   Star, 
   TrendingUp, 
+  TrendingDown,
   Users, 
   CheckCircle,
   Award,
@@ -26,12 +27,35 @@ import {
   type PerformanceReview
 } from '../../hooks/usePerformanceSystem';
 
+interface EmployeeKpiMeasurement {
+  id: string;
+  employee_id: string;
+  name?: string;
+  metric_name?: string;
+  status?: 'above_target' | 'on_target' | 'below_target' | 'critical' | string;
+  measurement_date: string;
+  actual_value?: number;
+  target_value?: number;
+  unit?: string;
+  trend?: string;
+  description?: string;
+  value?: number;
+  kpi?: {
+    name?: string;
+    description?: string;
+    measurement_unit?: string;
+    target_value?: number;
+  };
+}
+
 export default function EmployeePerformance() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [selectedEmployee, setSelectedEmployee] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [reviewCycle, setReviewCycle] = useState('all');
+  const [activeKpi, setActiveKpi] = useState<EmployeeKpiMeasurement | null>(null);
+  const closeKpiModal = () => setActiveKpi(null);
   
   const { data: employees, loading: employeesLoading } = useEmployeeProfiles();
   
@@ -86,9 +110,10 @@ export default function EmployeePerformance() {
     : feedback;
   
   // Get employee KPIs
-  const employeeKpis = selectedEmployee
-    ? kpiMeasurements.filter(m => m.employee_id === selectedEmployee)
-    : kpiMeasurements;
+  const typedKpis = (kpiMeasurements as EmployeeKpiMeasurement[]);
+  const employeeKpis: EmployeeKpiMeasurement[] = selectedEmployee
+    ? typedKpis.filter(m => m.employee_id === selectedEmployee)
+    : typedKpis;
   
   // Get employee milestones
   const employeeMilestones = selectedEmployee
@@ -506,7 +531,7 @@ export default function EmployeePerformance() {
                   <tbody className="bg-white divide-y divide-slate-200">
                     {filteredEmployees.slice(0, 5).map((employee) => {
                       const latestReview = reviews.find(r => r.employee_id === employee.id);
-                      const employeeKpis = kpiMeasurements.filter(k => k.employee_id === employee.id);
+                      const employeeKpisForSummary = typedKpis.filter(k => k.employee_id === employee.id);
                       const employeeGoals = goals.filter(g => g.employee_id === employee.id);
                       
                       return (
@@ -539,9 +564,9 @@ export default function EmployeePerformance() {
                             )}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            {employeeKpis.length > 0 ? (
+                            {employeeKpisForSummary.length > 0 ? (
                               <div>
-                                <div className="font-medium text-slate-900">{employeeKpis.length} KPIs</div>
+                                <div className="font-medium text-slate-900">{employeeKpisForSummary.length} KPIs</div>
                                 <div className="flex space-x-1 mt-1">
                                   <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
                                   <span className="w-2 h-2 rounded-full bg-amber-500"></span>
@@ -799,7 +824,7 @@ export default function EmployeePerformance() {
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <button
                               type="button"
-                              onClick={() => {/* TODO: Implement KPI details modal */}}
+                              onClick={() => setActiveKpi(kpi)}
                               className="text-pink-600 hover:text-pink-900 underline"
                             >
                               Details
@@ -1125,6 +1150,88 @@ export default function EmployeePerformance() {
           </div>
         )}
       </div>
+
+      {activeKpi && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+          <div className="w-full max-w-lg bg-white rounded-2xl shadow-xl border border-slate-200">
+            <div className="flex items-start justify-between border-b border-slate-200 px-6 py-4">
+              <div>
+                <h3 className="text-lg font-semibold text-slate-900">
+                  {activeKpi.kpi?.name || activeKpi.name || 'KPI Details'}
+                </h3>
+                <p className="text-sm text-slate-500 mt-1">
+                  Measured on {new Date(activeKpi.measurement_date).toLocaleString()}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={closeKpiModal}
+                className="text-slate-400 hover:text-slate-600 transition-colors"
+                aria-label="Close KPI details"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="px-6 py-5 space-y-5">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Status</span>
+                <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${getKpiStatusColor(activeKpi.status || 'on_target')}`}>
+                  {activeKpi.status === 'above_target' ? (
+                    <TrendingUp className="w-4 h-4" />
+                  ) : activeKpi.status === 'below_target' || activeKpi.status === 'critical' ? (
+                    <TrendingDown className="w-4 h-4" />
+                  ) : (
+                    <Target className="w-4 h-4" />
+                  )}
+                  <span>{activeKpi.status?.replace('_', ' ') || 'On Target'}</span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="rounded-lg border border-slate-200 p-4">
+                  <p className="text-xs uppercase font-semibold text-slate-500">Current Value</p>
+                  <p className="mt-2 text-lg font-semibold text-slate-900">
+                    {typeof activeKpi.value === 'number' ? activeKpi.value : 'N/A'}{' '}
+                    {activeKpi.kpi?.measurement_unit || activeKpi.unit || ''}
+                  </p>
+                </div>
+                <div className="rounded-lg border border-slate-200 p-4">
+                  <p className="text-xs uppercase font-semibold text-slate-500">Target</p>
+                  <p className="mt-2 text-lg font-semibold text-slate-900">
+                    {typeof activeKpi.kpi?.target_value === 'number' ? activeKpi.kpi.target_value : 'N/A'}{' '}
+                    {activeKpi.kpi?.measurement_unit || activeKpi.unit || ''}
+                  </p>
+                </div>
+              </div>
+
+              <div className="rounded-lg border border-slate-200 p-4 bg-slate-50">
+                <p className="text-xs uppercase font-semibold text-slate-500">Measured For</p>
+                <p className="mt-1 text-sm text-slate-700">{getEmployeeName(activeKpi.employee_id)}</p>
+              </div>
+
+              {(activeKpi.kpi?.description || activeKpi.description) && (
+                <div>
+                  <p className="text-xs uppercase font-semibold text-slate-500">Description</p>
+                  <p className="mt-2 text-sm text-slate-700 leading-relaxed">
+                    {activeKpi.kpi?.description || activeKpi.description}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4 bg-slate-50">
+              <button
+                type="button"
+                onClick={closeKpiModal}
+                className="px-4 py-2 text-sm font-semibold text-slate-600 hover:text-slate-800"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -163,11 +163,33 @@ export function PublicDepartmentUpload() {
     setProgress({ status: 'uploading', message: 'Uploading data...', rowsProcessed: 0, totalRows: parsedData.length });
 
     try {
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const publicUploadToken = import.meta.env.VITE_PUBLIC_UPLOAD_TOKEN;
+
+      if (!supabaseUrl) {
+        setProgress({
+          status: 'error',
+          message: 'Upload endpoint is not configured. Please contact support.',
+        });
+        return;
+      }
+
+      if (!publicUploadToken) {
+        setProgress({
+          status: 'error',
+          message: 'Public upload token is missing. Please provide VITE_PUBLIC_UPLOAD_TOKEN in your environment.',
+        });
+        return;
+      }
+
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        'X-Public-Upload-Token': publicUploadToken,
+      };
+
       const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/department-data-upload`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify({
           department,
           data: parsedData,

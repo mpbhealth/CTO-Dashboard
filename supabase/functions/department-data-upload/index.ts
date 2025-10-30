@@ -3,7 +3,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Client-Info, Apikey',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Client-Info, Apikey, X-Public-Upload-Token',
 };
 
 interface UploadRequest {
@@ -31,15 +31,29 @@ Deno.serve(async (req: Request) => {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      throw new Error('No authorization header');
+    const publicTokenHeader = req.headers.get('x-public-upload-token');
+    const publicTokenSecret = Deno.env.get('PUBLIC_UPLOAD_TOKEN') ?? null;
+    const fallbackUserId = Deno.env.get('PUBLIC_UPLOAD_USER_ID') ?? null;
+
+    let userId: string | null = null;
+
+    if (authHeader) {
+      const token = authHeader.replace('Bearer ', '');
+      const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+
+      if (!authError && user) {
+        userId = user.id;
+      } else if (!publicTokenSecret || publicTokenHeader !== publicTokenSecret) {
+        throw new Error('Unauthorized');
+      }
     }
 
-    const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-
-    if (authError || !user) {
-      throw new Error('Unauthorized');
+    if (!userId) {
+      if (publicTokenSecret && publicTokenHeader === publicTokenSecret) {
+        userId = fallbackUserId;
+      } else {
+        throw new Error('Unauthorized');
+      }
     }
 
     const requestData: UploadRequest = await req.json();
@@ -55,7 +69,7 @@ Deno.serve(async (req: Request) => {
     const uploadRecord = {
       id: uploadId,
       org_id: orgId,
-      uploaded_by: user.id,
+      uploaded_by: userId,
       department,
       file_name: metadata.fileName,
       file_size: metadata.fileSize,
@@ -89,7 +103,7 @@ Deno.serve(async (req: Request) => {
       try {
         let processedRow: Record<string, unknown> = {
           org_id: orgId,
-          uploaded_by: user.id,
+          uploaded_by: userId,
           upload_batch_id: batchId,
           sheet_name: metadata.fileName.replace(/\.(csv|xlsx)$/i, ''),
           created_at: new Date().toISOString(),

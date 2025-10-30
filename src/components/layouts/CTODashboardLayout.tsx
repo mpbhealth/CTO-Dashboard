@@ -10,7 +10,7 @@ import {
   LogOut
 } from 'lucide-react';
 import { useCurrentProfile } from '../../hooks/useDualDashboard';
-import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../contexts/AuthContext';
 import { DashboardViewToggle } from '../ui/DashboardViewToggle';
 import { ViewingContextBadge } from '../ui/ViewingContextBadge';
 
@@ -21,6 +21,7 @@ interface CTODashboardLayoutProps {
 export function CTODashboardLayout({ children }: CTODashboardLayoutProps) {
   const location = useLocation();
   const { data: profile, isLoading } = useCurrentProfile();
+  const { signOut, isDemoMode } = useAuth();
 
   useEffect(() => {
     if (profile?.role) {
@@ -54,12 +55,10 @@ export function CTODashboardLayout({ children }: CTODashboardLayoutProps) {
 
   const handleSignOut = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        console.error('Error signing out:', error);
-        throw error;
+      await signOut();
+      if (!isDemoMode) {
+        window.location.href = '/login';
       }
-      window.location.href = '/login';
     } catch (error) {
       console.error('Error signing out:', error);
       window.location.href = '/login';

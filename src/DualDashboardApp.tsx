@@ -83,6 +83,24 @@ const CEODepartmentSales = lazy(() => import('./components/pages/ceod/CEODepartm
 const CEODepartmentOperations = lazy(() => import('./components/pages/ceod/CEODepartmentOperations').then(m => ({ default: m.CEODepartmentOperations })));
 const CEODepartmentFinance = lazy(() => import('./components/pages/ceod/CEODepartmentFinance').then(m => ({ default: m.CEODepartmentFinance })));
 const CEODepartmentSaudeMAX = lazy(() => import('./components/pages/ceod/CEODepartmentSaudeMAX').then(m => ({ default: m.CEODepartmentSaudeMAX })));
+const CEODevelopmentOverview = lazy(() => import('./components/pages/ceod/development/CEODevelopmentOverview').then(m => ({ default: m.CEODevelopmentOverview })));
+const CEOTechStack = lazy(() => import('./components/pages/ceod/development/CEOTechStack').then(m => ({ default: m.CEOTechStack })));
+const CEOQuickLinks = lazy(() => import('./components/pages/ceod/development/CEOQuickLinks').then(m => ({ default: m.CEOQuickLinks })));
+const CEORoadmap = lazy(() => import('./components/pages/ceod/development/CEORoadmap').then(m => ({ default: m.CEORoadmap })));
+const CEORoadmapVisualizer = lazy(() => import('./components/pages/ceod/development/CEORoadmapVisualizer').then(m => ({ default: m.CEORoadmapVisualizer })));
+const CEORoadmapPresentation = lazy(() => import('./components/pages/ceod/development/CEORoadmapPresentation').then(m => ({ default: m.CEORoadmapPresentation })));
+const CEOProjects = lazy(() => import('./components/pages/ceod/development/CEOProjects').then(m => ({ default: m.CEOProjects })));
+const CEOAssignments = lazy(() => import('./components/pages/ceod/development/CEOAssignments').then(m => ({ default: m.CEOAssignments })));
+const CEONotepad = lazy(() => import('./components/pages/ceod/development/CEONotepad').then(m => ({ default: m.CEONotepad })));
+const CEOCompliance = lazy(() => import('./components/pages/ceod/operations/CEOCompliance').then(m => ({ default: m.CEOCompliance })));
+const CEOSaaSSpend = lazy(() => import('./components/pages/ceod/operations/CEOSaaSSpend').then(m => ({ default: m.CEOSaaSSpend })));
+const CEOAIAgents = lazy(() => import('./components/pages/ceod/operations/CEOAIAgents').then(m => ({ default: m.CEOAIAgents })));
+const CEOITSupport = lazy(() => import('./components/pages/ceod/operations/CEOITSupport').then(m => ({ default: m.CEOITSupport })));
+const CEOIntegrationsHub = lazy(() => import('./components/pages/ceod/operations/CEOIntegrationsHub').then(m => ({ default: m.CEOIntegrationsHub })));
+const CEOPolicyManager = lazy(() => import('./components/pages/ceod/operations/CEOPolicyManager').then(m => ({ default: m.CEOPolicyManager })));
+const CEOEmployeePerformance = lazy(() => import('./components/pages/ceod/operations/CEOEmployeePerformance').then(m => ({ default: m.CEOEmployeePerformance })));
+const CEOPerformanceEvaluation = lazy(() => import('./components/pages/ceod/operations/CEOPerformanceEvaluation').then(m => ({ default: m.CEOPerformanceEvaluation })));
+const CEOOrganization = lazy(() => import('./components/pages/ceod/operations/CEOOrganization').then(m => ({ default: m.CEOOrganization })));
 const SharedOverview = lazy(() => import('./components/pages/shared/SharedOverview').then(m => ({ default: m.SharedOverview })));
 const AuditLogViewer = lazy(() => import('./components/pages/shared/AuditLogViewer').then(m => ({ default: m.AuditLogViewer })));
 const AuthDiagnostics = lazy(() => import('./components/pages/AuthDiagnostics'));
@@ -220,7 +238,7 @@ function DualDashboardContent() {
         }
       }
     }
-  }, [location.pathname, isCEORoute, profileReady]);
+  }, [location.pathname, isCEORoute, profileReady, routeToTabMap]);
 
   const handleTabChange = useCallback((tab: string) => {
     setActiveTab(tab);
@@ -228,7 +246,7 @@ function DualDashboardContent() {
     if (route) {
       navigate(route);
     }
-  }, [navigate]);
+  }, [navigate, tabToRouteMap]);
 
   const toggleSidebar = useCallback(() => {
     setIsSidebarExpanded(prev => !prev);
@@ -354,12 +372,35 @@ function DualDashboardContent() {
             <Route path="/ceod/marketing/planner" element={<CEOOnly><CEODashboardLayout><CEOMarketingPlanner /></CEODashboardLayout></CEOOnly>} />
             <Route path="/ceod/marketing/calendar" element={<CEOOnly><CEODashboardLayout><CEOContentCalendar /></CEODashboardLayout></CEOOnly>} />
             <Route path="/ceod/marketing/budget" element={<CEOOnly><CEODashboardLayout><CEOMarketingBudget /></CEODashboardLayout></CEOOnly>} />
-            <Route path="/ceod/concierge/tracking" element={<CEOOnly><CEODashboardLayout><CEOConciergeTrackingReports /></CEODashboardLayout></CEOOnly>} />
+
+            <Route path="/ceod/development" element={<CEOOnly><CEODashboardLayout><CEODevelopmentOverview /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/development/tech-stack" element={<CEOOnly><CEODashboardLayout><CEOTechStack /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/development/quicklinks" element={<CEOOnly><CEODashboardLayout><CEOQuickLinks /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/development/roadmap" element={<CEOOnly><CEODashboardLayout><CEORoadmap /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/development/roadmap-visualizer" element={<CEOOnly><CEODashboardLayout><CEORoadmapVisualizer /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/development/roadmap-presentation" element={<CEOOnly><CEODashboardLayout><CEORoadmapPresentation /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/development/projects" element={<CEOOnly><CEODashboardLayout><CEOProjects /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/development/assignments" element={<CEOOnly><CEODashboardLayout><CEOAssignments /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/development/notepad" element={<CEOOnly><CEODashboardLayout><CEONotepad /></CEODashboardLayout></CEOOnly>} />
+
+            <Route path="/ceod/concierge/tracking" element={<CEOOnly><CEODashboardLayout><CEOConciergeTracking /></CEODashboardLayout></CEOOnly>} />
             <Route path="/ceod/concierge/notes" element={<CEOOnly><CEODashboardLayout><CEOConciergeNotes /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/concierge/reports" element={<CEOOnly><CEODashboardLayout><CEOConciergeTrackingReports /></CEODashboardLayout></CEOOnly>} />
             <Route path="/ceod/sales/reports" element={<CEOOnly><CEODashboardLayout><CEOSalesReports /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/operations" element={<CEOOnly><CEODashboardLayout><CEOOperations /></CEODashboardLayout></CEOOnly>} />
             <Route path="/ceod/operations/overview" element={<CEOOnly><CEODashboardLayout><CEOOperationsDashboard /></CEODashboardLayout></CEOOnly>} />
             <Route path="/ceod/operations/tracking" element={<CEOOnly><CEODashboardLayout><CEOOperationsTrackingReports /></CEODashboardLayout></CEOOnly>} />
-            <Route path="/ceod/finance" element={<CEOOnly><CEODashboardLayout><CEOFinanceSnapshot /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/operations/compliance" element={<CEOOnly><CEODashboardLayout><CEOCompliance /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/operations/saas-spend" element={<CEOOnly><CEODashboardLayout><CEOSaaSSpend /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/operations/ai-agents" element={<CEOOnly><CEODashboardLayout><CEOAIAgents /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/operations/it-support" element={<CEOOnly><CEODashboardLayout><CEOITSupport /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/operations/integrations" element={<CEOOnly><CEODashboardLayout><CEOIntegrationsHub /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/operations/policy-manager" element={<CEOOnly><CEODashboardLayout><CEOPolicyManager /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/operations/employee-performance" element={<CEOOnly><CEODashboardLayout><CEOEmployeePerformance /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/operations/performance-evaluation" element={<CEOOnly><CEODashboardLayout><CEOPerformanceEvaluation /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/operations/organization" element={<CEOOnly><CEODashboardLayout><CEOOrganization /></CEODashboardLayout></CEOOnly>} />
+
+            <Route path="/ceod/finance" element={<CEOOnly><CEODashboardLayout><CEOFinance /></CEODashboardLayout></CEOOnly>} />
             <Route path="/ceod/finance/overview" element={<CEOOnly><CEODashboardLayout><CEOFinanceSnapshot /></CEODashboardLayout></CEOOnly>} />
             <Route path="/ceod/saudemax/reports" element={<CEOOnly><CEODashboardLayout><CEOSaudeMAXReports /></CEODashboardLayout></CEOOnly>} />
             <Route path="/ceod/upload-portal" element={<CEOOnly><CEODashboardLayout><CEODepartmentUploadPortal /></CEODashboardLayout></CEOOnly>} />

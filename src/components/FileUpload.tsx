@@ -1,5 +1,5 @@
 import * as React from "react";
-import { supabase } from "../lib/supabase";
+import { supabase, isSupabaseConfigured } from "../lib/supabase";
 import { Upload } from "lucide-react";
 
 type Props = {
@@ -28,6 +28,19 @@ export default function FileUpload({
     setBusy(true);
     setErr(null);
     setProgress(0);
+
+    if (!isSupabaseConfigured) {
+      setErr("File uploads are disabled because Supabase is not configured.");
+      setBusy(false);
+      return;
+    }
+
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    if (!supabaseUrl) {
+      setErr("Supabase URL is not configured. Please check your environment settings.");
+      setBusy(false);
+      return;
+    }
 
     const maxSize = 50 * 1024 * 1024;
     if (file.size > maxSize) {
@@ -90,7 +103,7 @@ export default function FileUpload({
         return;
       }
 
-      const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/file-upload`;
+      const apiUrl = `${supabaseUrl}/functions/v1/file-upload`;
 
       xhr.open("POST", apiUrl);
       xhr.setRequestHeader("Authorization", `Bearer ${session.access_token}`);

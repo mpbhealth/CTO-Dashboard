@@ -7,8 +7,8 @@ import {
   ChevronsLeft,
   ChevronsRight
 } from 'lucide-react';
-import { supabase } from '../lib/supabase';
 import { useCurrentProfile } from '../hooks/useDualDashboard';
+import { useAuth } from '../contexts/AuthContext';
 import { getNavigationForRole, categories, type NavItem } from '../config/navigation';
 
 interface SidebarProps {
@@ -30,6 +30,7 @@ export default function Sidebar({
   const [isMobile, setIsMobile] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState<string[]>(['compliance', 'department-reporting']);
   const { data: profile } = useCurrentProfile();
+  const { signOut, isDemoMode } = useAuth();
 
   const isCEO = profile?.role === 'ceo';
   const userRole = profile?.role || 'staff';
@@ -71,7 +72,7 @@ export default function Sidebar({
     if (newExpandedMenus.length > 0) {
       setExpandedMenus(prev => [...new Set([...prev, ...newExpandedMenus])]);
     }
-  }, [location.pathname]);
+  }, [location.pathname, menuItems]);
 
   const groupedItems = useMemo(() => {
     return menuItems.reduce((acc, item) => {
@@ -85,12 +86,10 @@ export default function Sidebar({
 
   const handleLogout = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        console.error('Error logging out:', error);
-        throw error;
+      await signOut();
+      if (!isDemoMode) {
+        window.location.href = '/login';
       }
-      window.location.href = '/login';
     } catch (error) {
       console.error('Error logging out:', error);
       window.location.href = '/login';

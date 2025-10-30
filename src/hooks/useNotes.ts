@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
+import { useAuth } from '../contexts/AuthContext';
 
 export interface Note {
   id: string;
@@ -49,6 +50,7 @@ export interface UseNotesOptions {
 
 export function useNotes(options: UseNotesOptions) {
   const { dashboardRole, autoRefresh = false } = options;
+  const { user } = useAuth();
   const [notes, setNotes] = useState<Note[]>([]);
   const [sharedNotes, setSharedNotes] = useState<Note[]>([]);
   const [notifications, setNotifications] = useState<NoteNotification[]>([]);
@@ -57,7 +59,6 @@ export function useNotes(options: UseNotesOptions) {
 
   const fetchMyNotes = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
       const { data, error: fetchError } = await supabase
@@ -76,7 +77,6 @@ export function useNotes(options: UseNotesOptions) {
 
   const fetchSharedNotes = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
       const { data, error: fetchError } = await supabase
@@ -102,7 +102,6 @@ export function useNotes(options: UseNotesOptions) {
 
   const fetchNotifications = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
       const { data, error: fetchError } = await supabase
@@ -189,7 +188,6 @@ export function useNotes(options: UseNotesOptions) {
     }
   ) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
       const noteData = {
@@ -285,7 +283,6 @@ export function useNotes(options: UseNotesOptions) {
 
   const unshareNote = async (noteId: string, userId?: string) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
       let query = supabase
@@ -354,7 +351,6 @@ export function useNotes(options: UseNotesOptions) {
 
   const markAllNotificationsAsRead = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
       const { error: updateError } = await supabase

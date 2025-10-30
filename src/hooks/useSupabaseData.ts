@@ -95,7 +95,7 @@ export function useRoadmapItems() {
         const { data: items, error: itemsError } = await supabase
           .from('roadmap_items')
           .select('*')
-          .order('planned_date', { ascending: true });
+          .order('created_at', { ascending: false });
 
         if (itemsError) throw itemsError;
         setData(items || []);

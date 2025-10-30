@@ -67,21 +67,21 @@ export default function Roadmap() {
   }
 
   // Get unique values for filters
-  const quarters = ['All', ...Array.from(new Set(roadmapItems.map(item => item.quarter))).sort()];
+  const quarters = ['All', ...Array.from(new Set(roadmapItems.map(item => item.quarter).filter(Boolean) as string[])).sort()];
   const statuses = ['All', 'Backlog', 'In Progress', 'Complete'];
-  const departments = ['All', ...Array.from(new Set(roadmapItems.map(item => item.department)))];
+  const departments = ['All', ...Array.from(new Set(roadmapItems.map(item => item.department).filter(Boolean) as string[]))];
 
   // Filter roadmap items
   const filteredItems = roadmapItems.filter(item => {
-    const matchesSearch = searchTerm === '' || 
-      item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.owner.toLowerCase().includes(searchTerm.toLowerCase());
-    
+    const matchesSearch = searchTerm === '' ||
+      (item.title || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (item.description || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (item.owner || '').toLowerCase().includes(searchTerm.toLowerCase());
+
     const matchesQuarter = selectedQuarter === 'All' || item.quarter === selectedQuarter;
     const matchesStatus = selectedStatus === 'All' || item.status === selectedStatus;
     const matchesDepartment = selectedDepartment === 'All' || item.department === selectedDepartment;
-    
+
     return matchesSearch && matchesQuarter && matchesStatus && matchesDepartment;
   });
 

@@ -18,13 +18,14 @@ export default defineConfig({
   },
   optimizeDeps: {
     exclude: ['lucide-react'],
+    include: ['@supabase/supabase-js'],
   },
   build: {
     outDir: 'dist',
     sourcemap: true,
     assetsDir: 'assets',
     modulePreload: {
-      polyfill: false,
+      polyfill: true,
     },
     rollupOptions: {
       output: {
@@ -33,19 +34,35 @@ export default defineConfig({
         entryFileNames: 'assets/[name]-[hash].js',
         manualChunks: (id) => {
           if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom')) {
-              return 'vendor';
+            // Keep @supabase in its own chunk and load it early
+            if (id.includes('@supabase/supabase-js')) {
+              return 'supabase-client';
             }
+            // Other supabase packages
             if (id.includes('@supabase')) {
-              return 'supabase';
+              return 'supabase-deps';
             }
+            // React core - highest priority
+            if (id.includes('react-dom')) {
+              return 'react-dom';
+            }
+            if (id.includes('react') && !id.includes('react-dom')) {
+              return 'react';
+            }
+            // Router
+            if (id.includes('react-router')) {
+              return 'router';
+            }
+            // Charts
             if (id.includes('recharts')) {
               return 'charts';
             }
+            // UI libraries
             if (id.includes('framer-motion') || id.includes('lucide-react')) {
-              return 'utils';
+              return 'ui-libs';
             }
-            return 'vendor-other';
+            // Everything else
+            return 'vendor';
           }
         },
       },

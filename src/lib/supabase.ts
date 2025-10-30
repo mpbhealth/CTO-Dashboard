@@ -1,5 +1,4 @@
 import { createClient } from '@supabase/supabase-js';
-import { logger } from './logger';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -21,10 +20,11 @@ export const isSupabaseConfigured = !!(isValidUrl && isValidKey);
 const finalUrl = isSupabaseConfigured ? supabaseUrl : 'https://placeholder.supabase.co';
 const finalKey = isSupabaseConfigured ? supabaseAnonKey : 'placeholder-key';
 
+// Use direct console logging to avoid circular dependencies during module initialization
 if (import.meta.env.DEV && !isSupabaseConfigured) {
-  logger.warn('Supabase not configured - using placeholder values');
-} else if (import.meta.env.DEV && localStorage.getItem('debug') === 'true') {
-  logger.debug('Supabase configuration', {
+  console.warn('[Supabase] Not configured - using placeholder values');
+} else if (import.meta.env.DEV && typeof localStorage !== 'undefined' && localStorage.getItem('debug') === 'true') {
+  console.log('[Supabase] Configuration:', {
     configured: isSupabaseConfigured,
     hasUrl: !!supabaseUrl,
     hasValidUrl: isValidUrl,
@@ -37,7 +37,7 @@ if (import.meta.env.DEV && !isSupabaseConfigured) {
 // Production validation - fail fast if misconfigured
 if (import.meta.env.PROD && !isSupabaseConfigured) {
   const errorMsg = 'CRITICAL: Supabase is not configured in production environment';
-  logger.error(errorMsg);
+  console.error('[Supabase]', errorMsg);
   throw new Error(errorMsg);
 }
 

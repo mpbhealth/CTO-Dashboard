@@ -3,16 +3,20 @@ import { X } from 'lucide-react';
 import { AssignmentCreateData } from '../../types/Assignment';
 
 interface AssignmentFormProps {
+  isOpen: boolean;
   initialData?: Partial<AssignmentCreateData>;
   projects?: Array<{ id: string; name: string }>;
-  onSubmit: (data: AssignmentCreateData) => Promise<any>;
+  onCreate?: (data: AssignmentCreateData) => Promise<any>;
+  onSubmit?: (data: AssignmentCreateData) => Promise<any>;
   onClose: () => void;
   submitLabel?: string;
 }
 
 export default function AssignmentForm({
+  isOpen,
   initialData,
   projects = [],
+  onCreate,
   onSubmit,
   onClose,
   submitLabel = 'Create Assignment',
@@ -35,8 +39,11 @@ export default function AssignmentForm({
     setIsSubmitting(true);
 
     try {
-      await onSubmit(formData);
-      onClose();
+      const submitFn = onCreate || onSubmit;
+      if (submitFn) {
+        await submitFn(formData);
+        onClose();
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save assignment');
     } finally {
@@ -51,6 +58,8 @@ export default function AssignmentForm({
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  if (!isOpen) return null;
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
@@ -59,8 +68,10 @@ export default function AssignmentForm({
             {initialData ? 'Edit Assignment' : 'New Assignment'}
           </h2>
           <button
+            type="button"
             onClick={onClose}
             className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+            aria-label="Close modal"
           >
             <X className="w-5 h-5" />
           </button>

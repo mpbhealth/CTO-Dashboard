@@ -72,14 +72,15 @@ export const categories: Record<string, string> = {
 };
 
 export const ceoNavigationItems: NavItem[] = [
-  { id: 'ceo-home', label: 'Executive Overview', path: '/ceod/home', icon: LayoutDashboard, category: 'executive', roles: ['ceo'] },
+  { id: 'ceo-home', label: 'Executive Overview', path: '/ceod/home', icon: LayoutDashboard, category: 'executive', roles: ['ceo', 'admin'] },
+
   {
     id: 'ceo-analytics',
     label: 'Analytics',
     path: '/ceod/analytics',
     icon: BarChart3,
     category: 'analytics',
-    roles: ['ceo'],
+    roles: ['ceo', 'admin'],
     submenu: [
       { id: 'ceo-analytics-overview', label: 'Analytics Overview', path: '/ceod/analytics/overview', icon: BarChart3 },
       { id: 'ceo-analytics-engagement', label: 'Member Engagement', path: '/ceod/analytics/member-engagement', icon: Users },
@@ -88,13 +89,34 @@ export const ceoNavigationItems: NavItem[] = [
       { id: 'ceo-analytics-marketing', label: 'Marketing Analytics', path: '/ceod/analytics/marketing', icon: Target }
     ]
   },
+
+  {
+    id: 'ceo-development',
+    label: 'Development & Planning',
+    path: '/ceod/development',
+    icon: Code2,
+    category: 'development',
+    roles: ['ceo', 'admin'],
+    submenu: [
+      { id: 'ceo-dev-overview', label: 'Development Overview', path: '/ceod/development', icon: Code2 },
+      { id: 'ceo-tech-stack', label: 'Tech Stack', path: '/ceod/development/tech-stack', icon: Code2 },
+      { id: 'ceo-quick-links', label: 'QuickLinks Directory', path: '/ceod/development/quicklinks', icon: Link2 },
+      { id: 'ceo-roadmap', label: 'Roadmap', path: '/ceod/development/roadmap', icon: Calendar },
+      { id: 'ceo-roadmap-visualizer', label: 'Roadmap Visualizer', path: '/ceod/development/roadmap-visualizer', icon: Map },
+      { id: 'ceo-roadmap-presentation', label: 'Roadmap Presentation', path: '/ceod/development/roadmap-presentation', icon: Presentation },
+      { id: 'ceo-projects', label: 'Projects', path: '/ceod/development/projects', icon: FolderKanban },
+      { id: 'ceo-assignments', label: 'Assignments', path: '/ceod/development/assignments', icon: CheckSquare },
+      { id: 'ceo-notepad', label: 'Notepad', path: '/ceod/development/notepad', icon: StickyNote }
+    ]
+  },
+
   {
     id: 'ceo-marketing',
     label: 'Marketing',
     path: '/ceod/marketing',
     icon: Target,
     category: 'marketing',
-    roles: ['ceo'],
+    roles: ['ceo', 'admin'],
     submenu: [
       { id: 'ceo-marketing-dashboard', label: 'Marketing Dashboard', path: '/ceod/marketing', icon: Target },
       { id: 'ceo-marketing-planner', label: 'Marketing Planner', path: '/ceod/marketing/planner', icon: FileText },
@@ -102,51 +124,67 @@ export const ceoNavigationItems: NavItem[] = [
       { id: 'ceo-marketing-budget', label: 'Marketing Budget', path: '/ceod/marketing/budget', icon: DollarSign }
     ]
   },
+
   {
     id: 'ceo-concierge',
     label: 'Concierge',
     path: '/ceod/concierge/tracking',
     icon: MessageSquare,
     category: 'concierge',
-    roles: ['ceo'],
+    roles: ['ceo', 'admin'],
     submenu: [
       { id: 'ceo-concierge-tracking', label: 'Concierge Tracking', path: '/ceod/concierge/tracking', icon: Activity },
-      { id: 'ceo-concierge-notes', label: 'Concierge Notes', path: '/ceod/concierge/notes', icon: FileText }
+      { id: 'ceo-concierge-notes', label: 'Concierge Notes', path: '/ceod/concierge/notes', icon: FileText },
+      { id: 'ceo-concierge-reports', label: 'Tracking Reports', path: '/ceod/concierge/reports', icon: BarChart3 }
     ]
   },
-  { id: 'ceo-sales', label: 'Sales Reports', path: '/ceod/sales/reports', icon: ShoppingCart, category: 'sales', roles: ['ceo'] },
+
+  { id: 'ceo-sales', label: 'Sales Reports', path: '/ceod/sales/reports', icon: ShoppingCart, category: 'sales', roles: ['ceo', 'admin'] },
+
   {
     id: 'ceo-operations',
     label: 'Operations',
-    path: '/ceod/operations/overview',
+    path: '/ceod/operations',
     icon: Activity,
     category: 'operations',
-    roles: ['ceo'],
+    roles: ['ceo', 'admin'],
     submenu: [
       { id: 'ceo-operations-dashboard', label: 'Operations Dashboard', path: '/ceod/operations/overview', icon: LayoutDashboard },
-      { id: 'ceo-operations-tracking', label: 'Operations Tracking', path: '/ceod/operations/tracking', icon: Activity }
+      { id: 'ceo-operations-tracking', label: 'Operations Tracking', path: '/ceod/operations/tracking', icon: Activity },
+      { id: 'ceo-compliance', label: 'Compliance Command Center', path: '/ceod/operations/compliance', icon: ShieldCheck },
+      { id: 'ceo-saas-spend', label: 'SaaS Spend', path: '/ceod/operations/saas-spend', icon: Database },
+      { id: 'ceo-ai-agents', label: 'AI Agents', path: '/ceod/operations/ai-agents', icon: Cpu },
+      { id: 'ceo-it-support', label: 'IT Support Tickets', path: '/ceod/operations/it-support', icon: Ticket },
+      { id: 'ceo-integrations', label: 'Integrations Hub', path: '/ceod/operations/integrations', icon: Settings },
+      { id: 'ceo-policy', label: 'Policy Manager', path: '/ceod/operations/policy-manager', icon: FileText },
+      { id: 'ceo-emp-performance', label: 'Employee Performance', path: '/ceod/operations/employee-performance', icon: ClipboardCheck },
+      { id: 'ceo-perf-eval', label: 'Performance Evaluation', path: '/ceod/operations/performance-evaluation', icon: UserSquare2 },
+      { id: 'ceo-org-structure', label: 'Organization', path: '/ceod/operations/organization', icon: GitBranch }
     ]
   },
+
   {
     id: 'ceo-finance',
     label: 'Finance',
     path: '/ceod/finance/overview',
     icon: DollarSign,
     category: 'finance',
-    roles: ['ceo'],
+    roles: ['ceo', 'admin'],
     submenu: [
       { id: 'ceo-finance-snapshot', label: 'Finance Snapshot', path: '/ceod/finance/overview', icon: DollarSign },
       { id: 'ceo-finance-details', label: 'Finance Details', path: '/ceod/finance', icon: PieChart }
     ]
   },
-  { id: 'ceo-saudemax', label: 'SaudeMAX Reports', path: '/ceod/saudemax/reports', icon: Headphones, category: 'operations', roles: ['ceo'] },
+
+  { id: 'ceo-saudemax', label: 'SaudeMAX Reports', path: '/ceod/saudemax/reports', icon: Headphones, category: 'operations', roles: ['ceo', 'admin'] },
+
   {
     id: 'ceo-department-data',
     label: 'Department Data',
     path: '/ceod/data',
     icon: Database,
     category: 'departments',
-    roles: ['ceo'],
+    roles: ['ceo', 'admin'],
     submenu: [
       { id: 'ceo-data-management', label: 'Data Management', path: '/ceod/data', icon: Database },
       { id: 'ceo-department-upload', label: 'Department Upload', path: '/ceod/upload', icon: UploadCloud },
@@ -158,72 +196,121 @@ export const ceoNavigationItems: NavItem[] = [
       { id: 'ceo-dept-saudemax', label: 'SaudeMAX Dept', path: '/ceod/departments/saudemax', icon: Headphones }
     ]
   },
-  { id: 'ceo-board', label: 'Board Packet', path: '/ceod/board', icon: Briefcase, category: 'executive', roles: ['ceo'] },
-  { id: 'ceo-files', label: 'Files & Documents', path: '/ceod/files', icon: FileText, category: 'executive', roles: ['ceo'] },
+
+  { id: 'ceo-board', label: 'Board Packet', path: '/ceod/board', icon: Briefcase, category: 'executive', roles: ['ceo', 'admin'] },
+  { id: 'ceo-files', label: 'Files & Documents', path: '/ceod/files', icon: FileText, category: 'executive', roles: ['ceo', 'admin'] },
 ];
 
 export const ctoNavigationItems: NavItem[] = [
-  { id: 'overview', label: 'Overview', path: '/ctod/home', icon: Building2, category: 'main', roles: ['cto', 'admin', 'staff'] },
-  { id: 'analytics', label: 'Analytics', path: '/ceod/analytics/overview', icon: BarChart3, category: 'analytics', roles: ['cto', 'admin', 'staff'] },
-  { id: 'member-engagement', label: 'Member Engagement', path: '/ceod/analytics/member-engagement', icon: Users, category: 'analytics', roles: ['cto', 'admin', 'staff'] },
-  { id: 'member-retention', label: 'Member Retention', path: '/ceod/analytics/member-retention', icon: TrendingDown, category: 'analytics', roles: ['cto', 'admin', 'staff'] },
-  { id: 'advisor-performance', label: 'Advisor Performance', path: '/ceod/analytics/advisor-performance', icon: Award, category: 'analytics', roles: ['cto', 'admin', 'staff'] },
-  { id: 'marketing-analytics', label: 'Marketing Analytics', path: '/ceod/analytics/marketing', icon: LineChart, category: 'analytics', roles: ['cto', 'admin', 'staff'] },
+  { id: 'cto-home', label: 'CTO Overview', path: '/ctod/home', icon: Building2, category: 'main', roles: ['cto', 'admin'] },
+
   {
-    id: 'department-reporting',
-    label: 'Department Reporting',
-    icon: FolderUp,
-    category: 'reporting',
-    path: '/ceod/data',
+    id: 'cto-analytics',
+    label: 'Analytics',
+    path: '/ctod/analytics',
+    icon: BarChart3,
+    category: 'analytics',
     roles: ['cto', 'admin', 'staff'],
     submenu: [
-      { id: 'department-reporting/concierge', label: 'Concierge', path: '/ceod/departments/concierge' },
-      { id: 'department-reporting/sales', label: 'Sales', path: '/ceod/departments/sales' },
-      { id: 'department-reporting/operations', label: 'Operations', path: '/ceod/departments/operations' },
-      { id: 'department-reporting/finance', label: 'Finance', path: '/ceod/departments/finance' },
-      { id: 'department-reporting/saudemax', label: 'SaudeMAX', path: '/ceod/departments/saudemax' },
+      { id: 'cto-analytics-overview', label: 'Analytics Overview', path: '/ctod/analytics/overview', icon: BarChart3 },
+      { id: 'cto-member-engagement', label: 'Member Engagement', path: '/ctod/analytics/member-engagement', icon: Users },
+      { id: 'cto-member-retention', label: 'Member Retention', path: '/ctod/analytics/member-retention', icon: TrendingDown },
+      { id: 'cto-advisor-performance', label: 'Advisor Performance', path: '/ctod/analytics/advisor-performance', icon: Award },
+      { id: 'cto-marketing-analytics', label: 'Marketing Analytics', path: '/ctod/analytics/marketing', icon: LineChart }
     ]
   },
-  { id: 'tech-stack', label: 'Tech Stack', icon: Code2, category: 'development', path: '/tech-stack', roles: ['cto', 'admin', 'staff'] },
-  { id: 'quick-links', label: 'QuickLinks Directory', icon: Link2, category: 'development', path: '/quick-links', roles: ['cto', 'admin', 'staff'] },
-  { id: 'roadmap', label: 'Roadmap', icon: Calendar, category: 'development', path: '/roadmap', roles: ['cto', 'admin', 'staff'] },
-  { id: 'road-visualizer', label: 'Roadmap Visualizer', icon: Map, category: 'development', path: '/road-visualizer', roles: ['cto', 'admin', 'staff'] },
-  { id: 'roadmap-presentation', label: 'Roadmap Presentation', icon: Presentation, category: 'development', path: '/roadmap-presentation', roles: ['cto', 'admin', 'staff'] },
-  { id: 'projects', label: 'Projects', icon: FolderKanban, category: 'development', path: '/projects', roles: ['cto', 'admin', 'staff'] },
-  { id: 'monday-tasks', label: 'Monday Tasks', icon: Zap, category: 'development', path: '/monday-tasks', roles: ['cto', 'admin', 'staff'] },
-  { id: 'assignments', label: 'Assignments', icon: CheckSquare, category: 'development', path: '/assignments', roles: ['cto', 'admin', 'staff'] },
-  { id: 'notepad', label: 'Notepad', icon: StickyNote, category: 'development', path: '/notepad', roles: ['cto', 'admin', 'staff'] },
+
   {
-    id: 'compliance',
+    id: 'cto-development',
+    label: 'Development & Planning',
+    icon: Code2,
+    category: 'development',
+    path: '/ctod/development',
+    roles: ['cto', 'admin', 'staff'],
+    submenu: [
+      { id: 'cto-dev-overview', label: 'Development Overview', path: '/ctod/development' },
+      { id: 'cto-tech-stack', label: 'Tech Stack', path: '/ctod/development/tech-stack' },
+      { id: 'cto-quick-links', label: 'QuickLinks Directory', path: '/ctod/development/quicklinks' },
+      { id: 'cto-roadmap', label: 'Roadmap', path: '/ctod/development/roadmap' },
+      { id: 'cto-roadmap-visualizer', label: 'Roadmap Visualizer', path: '/ctod/development/roadmap-visualizer' },
+      { id: 'cto-roadmap-presentation', label: 'Roadmap Presentation', path: '/ctod/development/roadmap-presentation' },
+      { id: 'cto-projects', label: 'Projects', path: '/ctod/development/projects' },
+      { id: 'cto-monday-tasks', label: 'Monday Tasks', path: '/ctod/development/monday-tasks' },
+      { id: 'cto-assignments', label: 'Assignments', path: '/ctod/development/assignments' },
+      { id: 'cto-notepad', label: 'Notepad', path: '/ctod/development/notepad' }
+    ]
+  },
+
+  {
+    id: 'cto-compliance',
     label: 'Compliance Command Center',
     icon: ShieldCheck,
     category: 'operations',
-    path: '/ctod/compliance/dashboard',
+    path: '/ctod/compliance',
     roles: ['cto', 'admin', 'staff'],
     submenu: [
-      { id: 'compliance/command-center', label: 'Dashboard', path: '/ctod/compliance/dashboard' },
-      { id: 'compliance/administration', label: 'Administration & Governance', path: '/ctod/compliance/administration' },
-      { id: 'compliance/training', label: 'Training & Awareness', path: '/ctod/compliance/training' },
-      { id: 'compliance/phi-minimum', label: 'PHI & Minimum Necessary', path: '/ctod/compliance/phi-minimum' },
-      { id: 'compliance/technical-safeguards', label: 'Technical Safeguards', path: '/ctod/compliance/technical-safeguards' },
-      { id: 'compliance/baas', label: 'Business Associates', path: '/ctod/compliance/baas' },
-      { id: 'compliance/incidents', label: 'Incidents & Breaches', path: '/ctod/compliance/incidents' },
-      { id: 'compliance/audits', label: 'Audits & Monitoring', path: '/ctod/compliance/audits' },
-      { id: 'compliance/templates-tools', label: 'Templates & Tools', path: '/ctod/compliance/templates-tools' },
-      { id: 'compliance/employee-documents', label: 'Employee Documents', path: '/ctod/compliance/employee-documents' },
+      { id: 'cto-compliance-dashboard', label: 'Dashboard', path: '/ctod/compliance/dashboard' },
+      { id: 'cto-compliance-administration', label: 'Administration & Governance', path: '/ctod/compliance/administration' },
+      { id: 'cto-compliance-training', label: 'Training & Awareness', path: '/ctod/compliance/training' },
+      { id: 'cto-compliance-phi', label: 'PHI & Minimum Necessary', path: '/ctod/compliance/phi-minimum' },
+      { id: 'cto-compliance-technical', label: 'Technical Safeguards', path: '/ctod/compliance/technical-safeguards' },
+      { id: 'cto-compliance-baas', label: 'Business Associates', path: '/ctod/compliance/baas' },
+      { id: 'cto-compliance-incidents', label: 'Incidents & Breaches', path: '/ctod/compliance/incidents' },
+      { id: 'cto-compliance-audits', label: 'Audits & Monitoring', path: '/ctod/compliance/audits' },
+      { id: 'cto-compliance-templates', label: 'Templates & Tools', path: '/ctod/compliance/templates-tools' },
+      { id: 'cto-compliance-employee-docs', label: 'Employee Documents', path: '/ctod/compliance/employee-documents' }
     ]
   },
-  { id: 'saas', label: 'SaaS Spend', icon: Database, category: 'operations', path: '/shared/saas', roles: ['cto', 'admin', 'staff'] },
-  { id: 'ai-agents', label: 'AI Agents', icon: Cpu, category: 'operations', path: '/shared/ai-agents', roles: ['cto', 'admin', 'staff'] },
-  { id: 'it-support', label: 'IT Support Tickets', icon: Ticket, category: 'operations', path: '/shared/it-support', roles: ['cto', 'admin', 'staff'] },
-  { id: 'integrations', label: 'Integrations Hub', icon: Settings, category: 'operations', path: '/shared/integrations', roles: ['cto', 'admin', 'staff'] },
-  { id: 'deployments', label: 'Deployments', icon: UploadCloud, category: 'infrastructure', path: '/shared/deployments', roles: ['cto', 'admin', 'staff'] },
-  { id: 'policy-management', label: 'Policy Manager', icon: FileText, category: 'operations', path: '/shared/policy-management', roles: ['cto', 'admin', 'staff'] },
-  { id: 'employee-performance', label: 'Employee Performance', icon: ClipboardCheck, category: 'operations', path: '/shared/employee-performance', roles: ['cto', 'admin', 'staff'] },
-  { id: 'api-status', label: 'API Status', icon: Activity, category: 'infrastructure', path: '/shared/api-status', roles: ['cto', 'admin', 'staff'] },
-  { id: 'system-uptime', label: 'System Uptime', icon: Server, category: 'infrastructure', path: '/shared/system-uptime', roles: ['cto', 'admin', 'staff'] },
-  { id: 'performance-evaluation', label: 'Performance Evaluation', icon: UserSquare2, category: 'operations', path: '/shared/performance-evaluation', roles: ['cto', 'admin', 'staff'] },
-  { id: 'organizational-structure', label: 'Organization', icon: GitBranch, category: 'operations', path: '/shared/organizational-structure', roles: ['cto', 'admin', 'staff'] },
+
+  {
+    id: 'cto-operations',
+    label: 'Operations Management',
+    icon: Activity,
+    category: 'operations',
+    path: '/ctod/operations',
+    roles: ['cto', 'admin', 'staff'],
+    submenu: [
+      { id: 'cto-operations-overview', label: 'Operations Overview', path: '/ctod/operations' },
+      { id: 'cto-saas-spend', label: 'SaaS Spend', path: '/ctod/operations/saas-spend' },
+      { id: 'cto-ai-agents', label: 'AI Agents', path: '/ctod/operations/ai-agents' },
+      { id: 'cto-it-support', label: 'IT Support Tickets', path: '/ctod/operations/it-support' },
+      { id: 'cto-integrations', label: 'Integrations Hub', path: '/ctod/operations/integrations' },
+      { id: 'cto-policy-management', label: 'Policy Manager', path: '/ctod/operations/policy-manager' },
+      { id: 'cto-employee-performance', label: 'Employee Performance', path: '/ctod/operations/employee-performance' },
+      { id: 'cto-performance-evaluation', label: 'Performance Evaluation', path: '/ctod/operations/performance-evaluation' },
+      { id: 'cto-organization', label: 'Organization', path: '/ctod/operations/organization' }
+    ]
+  },
+
+  {
+    id: 'cto-infrastructure',
+    label: 'Infrastructure',
+    icon: Server,
+    category: 'infrastructure',
+    path: '/ctod/infrastructure',
+    roles: ['cto', 'admin', 'staff'],
+    submenu: [
+      { id: 'cto-deployments', label: 'Deployments', path: '/ctod/infrastructure/deployments' },
+      { id: 'cto-api-status', label: 'API Status', path: '/ctod/infrastructure/api-status' },
+      { id: 'cto-system-uptime', label: 'System Uptime', path: '/ctod/infrastructure/system-uptime' }
+    ]
+  },
+
+  {
+    id: 'cto-department-reporting',
+    label: 'Department Reporting',
+    icon: FolderUp,
+    category: 'reporting',
+    path: '/ctod/departments',
+    roles: ['cto', 'admin', 'staff'],
+    submenu: [
+      { id: 'cto-dept-concierge', label: 'Concierge', path: '/ctod/departments/concierge' },
+      { id: 'cto-dept-sales', label: 'Sales', path: '/ctod/departments/sales' },
+      { id: 'cto-dept-operations', label: 'Operations', path: '/ctod/departments/operations' },
+      { id: 'cto-dept-finance', label: 'Finance', path: '/ctod/departments/finance' },
+      { id: 'cto-dept-saudemax', label: 'SaudeMAX', path: '/ctod/departments/saudemax' }
+    ]
+  }
 ];
 
 export function buildRouteToTabMap(items: NavItem[]): Record<string, string> {
@@ -259,7 +346,7 @@ export function buildTabToRouteMap(items: NavItem[]): Record<string, string> {
 }
 
 export function getNavigationForRole(role: 'ceo' | 'cto' | 'admin' | 'staff'): NavItem[] {
-  if (role === 'ceo') {
+  if (role === 'ceo' || role === 'admin') {
     return ceoNavigationItems;
   }
   return ctoNavigationItems;

@@ -34,20 +34,17 @@ export default defineConfig({
         entryFileNames: 'assets/[name]-[hash].js',
         manualChunks: (id) => {
           if (id.includes('node_modules')) {
-            // Keep @supabase in its own chunk and load it early
+            // Keep React and React-DOM together - CRITICAL for proper initialization
+            if (id.includes('react') || id.includes('react-dom')) {
+              return 'react-vendor';
+            }
+            // Keep @supabase/supabase-js separate but after React
             if (id.includes('@supabase/supabase-js')) {
               return 'supabase-client';
             }
             // Other supabase packages
             if (id.includes('@supabase')) {
               return 'supabase-deps';
-            }
-            // React core - highest priority
-            if (id.includes('react-dom')) {
-              return 'react-dom';
-            }
-            if (id.includes('react') && !id.includes('react-dom')) {
-              return 'react';
             }
             // Router
             if (id.includes('react-router')) {

@@ -1,16 +1,26 @@
 import { motion } from 'framer-motion';
-import { LucideIcon } from 'lucide-react';
+import { LucideIcon, TrendingUp, TrendingDown } from 'lucide-react';
+
+interface KPIData {
+  id?: string;
+  label: string;
+  value: string | number;
+  change?: number;
+  trend?: 'up' | 'down' | 'neutral';
+  status?: 'success' | 'warning' | 'danger' | 'info';
+}
 
 interface KPICardProps {
-  title: string;
-  value: string | number;
-  icon: LucideIcon;
+  title?: string;
+  value?: string | number;
+  icon?: LucideIcon;
   trend?: {
     value: number;
     isPositive: boolean;
   };
   subtitle?: string;
   color?: string;
+  data?: KPIData;
 }
 
 export default function KPICard({
@@ -20,7 +30,20 @@ export default function KPICard({
   trend,
   subtitle,
   color = 'indigo',
+  data,
 }: KPICardProps) {
+  // If data prop is provided, use it to populate the card
+  const cardTitle = data?.label || title || '';
+  const cardValue = data?.value || value || 0;
+  const cardTrend = data?.change ? {
+    value: Math.abs(data.change),
+    isPositive: data.change > 0
+  } : trend;
+  const cardColor = data?.status === 'success' ? 'emerald' :
+                    data?.status === 'warning' ? 'amber' :
+                    data?.status === 'danger' ? 'red' :
+                    data?.status === 'info' ? 'sky' :
+                    color;
   const colorMap: Record<string, { bg: string; text: string; border: string }> = {
     indigo: { bg: 'from-indigo-500 to-indigo-700', text: 'text-indigo-100', border: 'border-indigo-300' },
     emerald: { bg: 'from-emerald-500 to-emerald-700', text: 'text-emerald-100', border: 'border-emerald-300' },
@@ -31,7 +54,11 @@ export default function KPICard({
     red: { bg: 'from-red-500 to-red-700', text: 'text-red-100', border: 'border-red-300' },
   };
 
-  const colors = colorMap[color] || colorMap.indigo;
+  const colors = colorMap[cardColor] || colorMap.indigo;
+
+  // Default icon based on trend
+  const DefaultIcon = cardTrend?.isPositive ? TrendingUp : TrendingDown;
+  const DisplayIcon = Icon || DefaultIcon;
 
   return (
     <motion.div
@@ -41,21 +68,21 @@ export default function KPICard({
       className={`bg-gradient-to-br ${colors.bg} p-6 rounded-xl shadow-lg text-white hover:shadow-xl transition-shadow`}
     >
       <div className="flex items-center justify-between mb-4">
-        <Icon className="w-10 h-10 opacity-80" />
-        <span className="text-3xl font-bold">{value}</span>
+        <DisplayIcon className="w-10 h-10 opacity-80" />
+        <span className="text-3xl font-bold">{cardValue}</span>
       </div>
-      <h3 className="text-lg font-semibold">{title}</h3>
+      <h3 className="text-lg font-semibold">{cardTitle}</h3>
       {subtitle && (
         <p className={`${colors.text} text-sm mt-1`}>{subtitle}</p>
       )}
-      {trend && (
+      {cardTrend && (
         <div className="mt-3 flex items-center space-x-2">
           <span
             className={`text-sm font-medium ${
-              trend.isPositive ? 'text-green-200' : 'text-red-200'
+              cardTrend.isPositive ? 'text-green-200' : 'text-red-200'
             }`}
           >
-            {trend.isPositive ? '↑' : '↓'} {Math.abs(trend.value)}%
+            {cardTrend.isPositive ? '↑' : '↓'} {Math.abs(cardTrend.value)}%
           </span>
           <span className="text-xs opacity-75">vs last period</span>
         </div>

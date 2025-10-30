@@ -11,6 +11,53 @@ import { buildRouteToTabMap, buildTabToRouteMap, getNavigationForRole } from './
 
 const CTOHome = lazy(() => import('./components/pages/ctod/CTOHome').then(m => ({ default: m.CTOHome })));
 const CTOOperations = lazy(() => import('./components/pages/ctod/CTOOperations').then(m => ({ default: m.CTOOperations })));
+
+// CTO Development & Planning
+const CTODevelopmentOverview = lazy(() => import('./components/pages/ctod/development/CTODevelopmentOverview').then(m => ({ default: m.CTODevelopmentOverview })));
+const CTOTechStack = lazy(() => import('./components/pages/ctod/development/CTOTechStack').then(m => ({ default: m.CTOTechStack })));
+const CTOQuickLinks = lazy(() => import('./components/pages/ctod/development/CTOQuickLinks').then(m => ({ default: m.CTOQuickLinks })));
+const CTORoadmap = lazy(() => import('./components/pages/ctod/development/CTORoadmap').then(m => ({ default: m.CTORoadmap })));
+const CTORoadmapVisualizer = lazy(() => import('./components/pages/ctod/development/CTORoadmapVisualizer').then(m => ({ default: m.CTORoadmapVisualizer })));
+const CTORoadmapPresentation = lazy(() => import('./components/pages/ctod/development/CTORoadmapPresentation').then(m => ({ default: m.CTORoadmapPresentation })));
+const CTOProjects = lazy(() => import('./components/pages/ctod/development/CTOProjects').then(m => ({ default: m.CTOProjects })));
+const CTOMondayTasks = lazy(() => import('./components/pages/ctod/development/CTOMondayTasks').then(m => ({ default: m.CTOMondayTasks })));
+const CTOAssignments = lazy(() => import('./components/pages/ctod/development/CTOAssignments').then(m => ({ default: m.CTOAssignments })));
+const CTONotepad = lazy(() => import('./components/pages/ctod/development/CTONotepad').then(m => ({ default: m.CTONotepad })));
+
+// CTO Compliance
+const CTOComplianceDashboard = lazy(() => import('./components/pages/ctod/compliance/CTOComplianceDashboard').then(m => ({ default: m.CTOComplianceDashboard })));
+const CTOComplianceAdministration = lazy(() => import('./components/pages/ctod/compliance/CTOComplianceAdministration').then(m => ({ default: m.CTOComplianceAdministration })));
+const CTOComplianceTraining = lazy(() => import('./components/pages/ctod/compliance/CTOComplianceTraining').then(m => ({ default: m.CTOComplianceTraining })));
+const CTOCompliancePHI = lazy(() => import('./components/pages/ctod/compliance/CTOCompliancePHI').then(m => ({ default: m.CTOCompliancePHI })));
+const CTOComplianceTechnical = lazy(() => import('./components/pages/ctod/compliance/CTOComplianceTechnical').then(m => ({ default: m.CTOComplianceTechnical })));
+const CTOComplianceBAAs = lazy(() => import('./components/pages/ctod/compliance/CTOComplianceBAAs').then(m => ({ default: m.CTOComplianceBAAs })));
+const CTOComplianceIncidents = lazy(() => import('./components/pages/ctod/compliance/CTOComplianceIncidents').then(m => ({ default: m.CTOComplianceIncidents })));
+const CTOComplianceAudits = lazy(() => import('./components/pages/ctod/compliance/CTOComplianceAudits').then(m => ({ default: m.CTOComplianceAudits })));
+const CTOComplianceTemplates = lazy(() => import('./components/pages/ctod/compliance/CTOComplianceTemplates').then(m => ({ default: m.CTOComplianceTemplates })));
+const CTOEmployeeDocuments = lazy(() => import('./components/pages/ctod/compliance/CTOEmployeeDocuments').then(m => ({ default: m.CTOEmployeeDocuments })));
+
+// CTO Operations
+const CTOSaaSSpend = lazy(() => import('./components/pages/ctod/operations/CTOSaaSSpend').then(m => ({ default: m.CTOSaaSSpend })));
+const CTOAIAgents = lazy(() => import('./components/pages/ctod/operations/CTOAIAgents').then(m => ({ default: m.CTOAIAgents })));
+const CTOITSupport = lazy(() => import('./components/pages/ctod/operations/CTOITSupport').then(m => ({ default: m.CTOITSupport })));
+const CTOIntegrationsHub = lazy(() => import('./components/pages/ctod/operations/CTOIntegrationsHub').then(m => ({ default: m.CTOIntegrationsHub })));
+const CTOPolicyManagement = lazy(() => import('./components/pages/ctod/operations/CTOPolicyManagement').then(m => ({ default: m.CTOPolicyManagement })));
+const CTOEmployeePerformance = lazy(() => import('./components/pages/ctod/operations/CTOEmployeePerformance').then(m => ({ default: m.CTOEmployeePerformance })));
+const CTOPerformanceEvaluation = lazy(() => import('./components/pages/ctod/operations/CTOPerformanceEvaluation').then(m => ({ default: m.CTOPerformanceEvaluation })));
+const CTOOrganization = lazy(() => import('./components/pages/ctod/operations/CTOOrganization').then(m => ({ default: m.CTOOrganization })));
+
+// CTO Infrastructure
+const CTODeployments = lazy(() => import('./components/pages/ctod/infrastructure/CTODeployments').then(m => ({ default: m.CTODeployments })));
+const CTOAPIStatus = lazy(() => import('./components/pages/ctod/infrastructure/CTOAPIStatus').then(m => ({ default: m.CTOAPIStatus })));
+const CTOSystemUptime = lazy(() => import('./components/pages/ctod/infrastructure/CTOSystemUptime').then(m => ({ default: m.CTOSystemUptime })));
+
+// CTO Analytics
+const CTOAnalyticsOverview = lazy(() => import('./components/pages/ctod/analytics/CTOAnalyticsOverview').then(m => ({ default: m.CTOAnalyticsOverview })));
+const CTOMemberEngagement = lazy(() => import('./components/pages/ctod/analytics/CTOMemberEngagement').then(m => ({ default: m.CTOMemberEngagement })));
+const CTOMemberRetention = lazy(() => import('./components/pages/ctod/analytics/CTOMemberRetention').then(m => ({ default: m.CTOMemberRetention })));
+const CTOAdvisorPerformance = lazy(() => import('./components/pages/ctod/analytics/CTOAdvisorPerformance').then(m => ({ default: m.CTOAdvisorPerformance })));
+const CTOMarketingAnalytics = lazy(() => import('./components/pages/ctod/analytics/CTOMarketingAnalytics').then(m => ({ default: m.CTOMarketingAnalytics })));
+
 const CEOHome = lazy(() => import('./components/pages/ceod/CEOHome').then(m => ({ default: m.CEOHome })));
 const CEOMarketingDashboard = lazy(() => import('./components/pages/ceod/CEOMarketingDashboard').then(m => ({ default: m.CEOMarketingDashboard })));
 const CEOMarketingPlanner = lazy(() => import('./components/pages/ceod/CEOMarketingPlanner').then(m => ({ default: m.CEOMarketingPlanner })));
@@ -238,22 +285,60 @@ function DualDashboardContent() {
         <CEOErrorBoundary>
           <Suspense fallback={<LoadingFallback />}>
             <Routes>
+            {/* CTO Home */}
             <Route path="/ctod/home" element={<CTOOnly><CTOHome /></CTOOnly>} />
             <Route path="/ctod/files" element={<CTOOnly><CTOHome /></CTOOnly>} />
             <Route path="/ctod/kpis" element={<CTOOnly><CTOHome /></CTOOnly>} />
             <Route path="/ctod/engineering" element={<CTOOnly><CTOHome /></CTOOnly>} />
-            <Route path="/ctod/compliance" element={<CTOOnly><ComplianceCommandCenter /></CTOOnly>} />
-            <Route path="/ctod/compliance/dashboard" element={<CTOOnly><ComplianceCommandCenter /></CTOOnly>} />
-            <Route path="/ctod/compliance/administration" element={<CTOOnly><ComplianceAdministration /></CTOOnly>} />
-            <Route path="/ctod/compliance/training" element={<CTOOnly><ComplianceTraining /></CTOOnly>} />
-            <Route path="/ctod/compliance/phi-minimum" element={<CTOOnly><CompliancePHIAccess /></CTOOnly>} />
-            <Route path="/ctod/compliance/technical-safeguards" element={<CTOOnly><ComplianceTechnicalSafeguards /></CTOOnly>} />
-            <Route path="/ctod/compliance/baas" element={<CTOOnly><ComplianceBAAs /></CTOOnly>} />
-            <Route path="/ctod/compliance/incidents" element={<CTOOnly><ComplianceIncidents /></CTOOnly>} />
-            <Route path="/ctod/compliance/audits" element={<CTOOnly><ComplianceAudits /></CTOOnly>} />
-            <Route path="/ctod/compliance/templates-tools" element={<CTOOnly><ComplianceTemplatesTools /></CTOOnly>} />
-            <Route path="/ctod/compliance/employee-documents" element={<CTOOnly><EmployeeDocumentStorage /></CTOOnly>} />
+
+            {/* CTO Analytics Routes */}
+            <Route path="/ctod/analytics" element={<CTOOnly><CTOAnalyticsOverview /></CTOOnly>} />
+            <Route path="/ctod/analytics/overview" element={<CTOOnly><CTOAnalyticsOverview /></CTOOnly>} />
+            <Route path="/ctod/analytics/member-engagement" element={<CTOOnly><CTOMemberEngagement /></CTOOnly>} />
+            <Route path="/ctod/analytics/member-retention" element={<CTOOnly><CTOMemberRetention /></CTOOnly>} />
+            <Route path="/ctod/analytics/advisor-performance" element={<CTOOnly><CTOAdvisorPerformance /></CTOOnly>} />
+            <Route path="/ctod/analytics/marketing" element={<CTOOnly><CTOMarketingAnalytics /></CTOOnly>} />
+
+            {/* CTO Development & Planning Routes */}
+            <Route path="/ctod/development" element={<CTOOnly><CTODevelopmentOverview /></CTOOnly>} />
+            <Route path="/ctod/development/tech-stack" element={<CTOOnly><CTOTechStack /></CTOOnly>} />
+            <Route path="/ctod/development/quicklinks" element={<CTOOnly><CTOQuickLinks /></CTOOnly>} />
+            <Route path="/ctod/development/roadmap" element={<CTOOnly><CTORoadmap /></CTOOnly>} />
+            <Route path="/ctod/development/roadmap-visualizer" element={<CTOOnly><CTORoadmapVisualizer /></CTOOnly>} />
+            <Route path="/ctod/development/roadmap-presentation" element={<CTOOnly><CTORoadmapPresentation /></CTOOnly>} />
+            <Route path="/ctod/development/projects" element={<CTOOnly><CTOProjects /></CTOOnly>} />
+            <Route path="/ctod/development/monday-tasks" element={<CTOOnly><CTOMondayTasks /></CTOOnly>} />
+            <Route path="/ctod/development/assignments" element={<CTOOnly><CTOAssignments /></CTOOnly>} />
+            <Route path="/ctod/development/notepad" element={<CTOOnly><CTONotepad /></CTOOnly>} />
+
+            {/* CTO Compliance Routes */}
+            <Route path="/ctod/compliance" element={<CTOOnly><CTOComplianceDashboard /></CTOOnly>} />
+            <Route path="/ctod/compliance/dashboard" element={<CTOOnly><CTOComplianceDashboard /></CTOOnly>} />
+            <Route path="/ctod/compliance/administration" element={<CTOOnly><CTOComplianceAdministration /></CTOOnly>} />
+            <Route path="/ctod/compliance/training" element={<CTOOnly><CTOComplianceTraining /></CTOOnly>} />
+            <Route path="/ctod/compliance/phi-minimum" element={<CTOOnly><CTOCompliancePHI /></CTOOnly>} />
+            <Route path="/ctod/compliance/technical-safeguards" element={<CTOOnly><CTOComplianceTechnical /></CTOOnly>} />
+            <Route path="/ctod/compliance/baas" element={<CTOOnly><CTOComplianceBAAs /></CTOOnly>} />
+            <Route path="/ctod/compliance/incidents" element={<CTOOnly><CTOComplianceIncidents /></CTOOnly>} />
+            <Route path="/ctod/compliance/audits" element={<CTOOnly><CTOComplianceAudits /></CTOOnly>} />
+            <Route path="/ctod/compliance/templates-tools" element={<CTOOnly><CTOComplianceTemplates /></CTOOnly>} />
+            <Route path="/ctod/compliance/employee-documents" element={<CTOOnly><CTOEmployeeDocuments /></CTOOnly>} />
+
+            {/* CTO Operations Routes */}
             <Route path="/ctod/operations" element={<CTOOnly><CTOOperations /></CTOOnly>} />
+            <Route path="/ctod/operations/saas-spend" element={<CTOOnly><CTOSaaSSpend /></CTOOnly>} />
+            <Route path="/ctod/operations/ai-agents" element={<CTOOnly><CTOAIAgents /></CTOOnly>} />
+            <Route path="/ctod/operations/it-support" element={<CTOOnly><CTOITSupport /></CTOOnly>} />
+            <Route path="/ctod/operations/integrations" element={<CTOOnly><CTOIntegrationsHub /></CTOOnly>} />
+            <Route path="/ctod/operations/policy-manager" element={<CTOOnly><CTOPolicyManagement /></CTOOnly>} />
+            <Route path="/ctod/operations/employee-performance" element={<CTOOnly><CTOEmployeePerformance /></CTOOnly>} />
+            <Route path="/ctod/operations/performance-evaluation" element={<CTOOnly><CTOPerformanceEvaluation /></CTOOnly>} />
+            <Route path="/ctod/operations/organization" element={<CTOOnly><CTOOrganization /></CTOOnly>} />
+
+            {/* CTO Infrastructure Routes */}
+            <Route path="/ctod/infrastructure/deployments" element={<CTOOnly><CTODeployments /></CTOOnly>} />
+            <Route path="/ctod/infrastructure/api-status" element={<CTOOnly><CTOAPIStatus /></CTOOnly>} />
+            <Route path="/ctod/infrastructure/system-uptime" element={<CTOOnly><CTOSystemUptime /></CTOOnly>} />
 
             <Route path="/ceod/home" element={<CEOOnly><CEODashboardLayout><CEOHome /></CEODashboardLayout></CEOOnly>} />
 

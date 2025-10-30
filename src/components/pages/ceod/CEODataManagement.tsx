@@ -134,8 +134,8 @@ export function CEODataManagement() {
 
   return (
     <CEODashboardLayout>
-      <div className="w-full space-y-6">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+      <div className="space-y-6">
+        <div className="flex flex-col gap-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
               <Database className="text-[#1a3d97]" size={32} />
@@ -143,7 +143,7 @@ export function CEODataManagement() {
             </h1>
             <p className="text-gray-600 mt-1">Import, manage, and monitor all department data uploads</p>
           </div>
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-3">
             <button
               onClick={() => {
                 const shareUrl = `${window.location.origin}/public/upload`;
@@ -167,7 +167,7 @@ export function CEODataManagement() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
           <div className="bg-white rounded-lg border border-gray-200 p-4">
             <div className="flex items-center justify-between mb-2">
               <Database className="text-[#1a3d97]" size={20} />
@@ -247,7 +247,7 @@ export function CEODataManagement() {
           <div className="space-y-6">
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Select Dataset</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {datasets.map((dataset) => {
                   const Icon = dataset.icon;
                   return (
@@ -308,7 +308,7 @@ export function CEODataManagement() {
                 <Filter size={20} className="text-gray-600" />
                 <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">Department</label>
                   <select

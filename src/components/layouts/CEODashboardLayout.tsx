@@ -33,7 +33,7 @@ export function CEODashboardLayout({ children }: CEODashboardLayoutProps) {
   }, []);
 
   return (
-    <div className="flex min-h-screen bg-gray-50 overflow-x-hidden">
+    <div className="flex min-h-screen bg-gray-50 overflow-hidden">
       <Sidebar
         activeTab={activeTab}
         onTabChange={setActiveTab}
@@ -51,10 +51,10 @@ export function CEODashboardLayout({ children }: CEODashboardLayoutProps) {
         </button>
       )}
 
-      <main className={`flex-1 overflow-y-auto transition-all duration-300 w-full ${
-        isMobile ? 'p-3' : 'p-8 pl-12'
-      } ${isSidebarExpanded ? 'md:pl-96' : isMobile ? 'ml-0 pt-16' : 'md:pl-32'}`}>
-        <div className="w-full">
+      <main className={`flex-1 overflow-y-auto overflow-x-hidden transition-all duration-300 ${
+        isMobile ? 'p-3' : 'p-4 md:p-6 lg:p-8'
+      } ${isSidebarExpanded ? 'md:ml-80 lg:ml-96' : isMobile ? 'ml-0 pt-16' : 'md:ml-20'}`}>
+        <div className="w-full max-w-[1600px] mx-auto">
           {children}
         </div>
       </main>

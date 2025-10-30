@@ -116,8 +116,8 @@ export function CEOSaudeMAXReports() {
 
   return (
     <CEODashboardLayout>
-      <div className="w-full space-y-6">
-        <div className="flex items-center justify-between">
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
               <Headphones className="text-[#a855f7]" size={32} />
@@ -134,7 +134,7 @@ export function CEOSaudeMAXReports() {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
           <div className="bg-white rounded-lg border border-gray-200 p-4">
             <div className="flex items-center justify-between mb-2">
               <Users className="text-[#a855f7]" size={20} />
@@ -186,7 +186,7 @@ export function CEOSaudeMAXReports() {
             <Filter size={20} className="text-gray-600" />
             <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             <div>
               <label className="block text-xs font-medium text-gray-700 mb-1">From Date</label>
               <input
@@ -238,13 +238,15 @@ export function CEOSaudeMAXReports() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+          <div className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6">
+            <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
               <Calendar size={20} />
               Enrollment Trend (12 Months)
             </h2>
-            <ResponsiveContainer width="100%" height={300}>
+            <div className="w-full overflow-x-auto">
+              <div className="min-w-[300px]">
+                <ResponsiveContainer width="100%" height={300}>
               <LineChart data={enrollmentTrend}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
@@ -253,15 +255,19 @@ export function CEOSaudeMAXReports() {
                 <Legend />
                 <Line type="monotone" dataKey="count" stroke="#a855f7" strokeWidth={2} name="New Enrollments" />
               </LineChart>
-            </ResponsiveContainer>
+                </ResponsiveContainer>
+              </div>
+            </div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <div className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6">
+            <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
               <Target size={20} />
               Program Distribution
             </h2>
-            <ResponsiveContainer width="100%" height={300}>
+            <div className="w-full overflow-x-auto">
+              <div className="min-w-[300px]">
+                <ResponsiveContainer width="100%" height={300}>
               <BarChart data={programDistribution}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
@@ -270,16 +276,18 @@ export function CEOSaudeMAXReports() {
                 <Legend />
                 <Bar dataKey="value" fill="#a855f7" name="Members" />
               </BarChart>
-            </ResponsiveContainer>
+                </ResponsiveContainer>
+              </div>
+            </div>
           </div>
         </div>
 
         <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-          <div className="p-6 border-b border-gray-200">
+          <div className="p-4 sm:p-6 border-b border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900">Member Records</h2>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="min-w-full w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase">Enrollment Date</th>

@@ -187,7 +187,7 @@ export default function ITSupport() {
               <div>
                 <p className="text-sm text-slate-600">Avg Resolution</p>
                 <p className="text-2xl font-bold text-green-600 mt-1">
-                  {stats.avg_resolution_time_hours.toFixed(1)}h
+                  {stats.avg_resolution_time_hours?.toFixed(1) || '0.0'}h
                 </p>
               </div>
               <Clock className="w-8 h-8 text-green-400" />
@@ -199,7 +199,7 @@ export default function ITSupport() {
               <div>
                 <p className="text-sm text-slate-600">SLA Compliance</p>
                 <p className="text-2xl font-bold text-purple-600 mt-1">
-                  {stats.sla_compliance_percentage.toFixed(0)}%
+                  {stats.sla_compliance_percentage?.toFixed(0) || '0'}%
                 </p>
               </div>
               <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">

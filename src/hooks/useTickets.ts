@@ -2,20 +2,38 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 
 interface TicketStats {
-  total: number;
-  open: number;
-  inProgress: number;
-  closed: number;
-  avgResolutionTime: number;
+  total_tickets: number;
+  open_tickets: number;
+  in_progress_tickets: number;
+  closed_tickets: number;
+  resolved_tickets: number;
+  avg_resolution_time_hours: number;
+  sla_compliance_percentage: number;
+  tickets_by_priority: {
+    critical: number;
+    urgent: number;
+    high: number;
+    medium: number;
+    low: number;
+  };
 }
 
 export function useTicketStats() {
   const [stats, setStats] = useState<TicketStats>({
-    total: 0,
-    open: 0,
-    inProgress: 0,
-    closed: 0,
-    avgResolutionTime: 0,
+    total_tickets: 0,
+    open_tickets: 0,
+    in_progress_tickets: 0,
+    closed_tickets: 0,
+    resolved_tickets: 0,
+    avg_resolution_time_hours: 0,
+    sla_compliance_percentage: 0,
+    tickets_by_priority: {
+      critical: 0,
+      urgent: 0,
+      high: 0,
+      medium: 0,
+      low: 0,
+    },
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -28,13 +46,14 @@ export function useTicketStats() {
         if (ticketsError) throw ticketsError;
 
         const ticketData = tickets || [];
-        const total = ticketData.length;
-        const open = ticketData.filter(t => t.status === 'open').length;
-        const inProgress = ticketData.filter(t => t.status === 'in_progress').length;
-        const closed = ticketData.filter(t => t.status === 'closed').length;
+        const total_tickets = ticketData.length;
+        const open_tickets = ticketData.filter(t => t.status === 'open').length;
+        const in_progress_tickets = ticketData.filter(t => t.status === 'in_progress').length;
+        const closed_tickets = ticketData.filter(t => t.status === 'closed').length;
+        const resolved_tickets = ticketData.filter(t => t.status === 'resolved').length;
 
         const closedTickets = ticketData.filter(t => t.status === 'closed' && t.created_at && t.updated_at);
-        const avgResolutionTime = closedTickets.length > 0
+        const avg_resolution_time_hours = closedTickets.length > 0
           ? closedTickets.reduce((sum, t) => {
               const created = new Date(t.created_at).getTime();
               const updated = new Date(t.updated_at).getTime();
@@ -42,7 +61,37 @@ export function useTicketStats() {
             }, 0) / closedTickets.length
           : 0;
 
-        setStats({ total, open, inProgress, closed, avgResolutionTime });
+        // Calculate SLA compliance (assuming 24-hour SLA for now)
+        const sla_hours = 24;
+        const slaCompliantTickets = closedTickets.filter(t => {
+          const created = new Date(t.created_at).getTime();
+          const updated = new Date(t.updated_at).getTime();
+          const resolutionTimeHours = (updated - created) / (1000 * 60 * 60);
+          return resolutionTimeHours <= sla_hours;
+        }).length;
+        const sla_compliance_percentage = closedTickets.length > 0 
+          ? (slaCompliantTickets / closedTickets.length) * 100 
+          : 0;
+
+        // Calculate tickets by priority
+        const tickets_by_priority = {
+          critical: ticketData.filter(t => t.priority === 'critical').length,
+          urgent: ticketData.filter(t => t.priority === 'urgent').length,
+          high: ticketData.filter(t => t.priority === 'high').length,
+          medium: ticketData.filter(t => t.priority === 'medium').length,
+          low: ticketData.filter(t => t.priority === 'low').length,
+        };
+
+        setStats({ 
+          total_tickets, 
+          open_tickets, 
+          in_progress_tickets, 
+          closed_tickets,
+          resolved_tickets,
+          avg_resolution_time_hours,
+          sla_compliance_percentage,
+          tickets_by_priority
+        });
       } catch (err: any) {
         setError(err.message);
       } finally {

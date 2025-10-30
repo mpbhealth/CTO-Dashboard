@@ -222,7 +222,7 @@ export function CEODepartmentUpload() {
 
   return (
     <CEODashboardLayout>
-      <div className="space-y-6">
+      <div className="w-full space-y-6">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
             <Upload className="text-[#1a3d97]" size={32} />
@@ -251,7 +251,7 @@ export function CEODepartmentUpload() {
 
         <div className="bg-white rounded-lg border border-gray-200 p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Select Department</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {DEPARTMENT_OPTIONS.map((dept) => (
               <button
                 key={dept.value}

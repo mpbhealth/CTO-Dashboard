@@ -96,7 +96,7 @@ export function CEOOperations() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
+      <div className="w-full space-y-6">
         <div className="flex items-center justify-center min-h-96">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1a3d97]"></div>
         </div>
@@ -105,7 +105,7 @@ export function CEOOperations() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="w-full space-y-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
@@ -282,7 +282,7 @@ export function CEOOperations() {
             </div>
           </div>
 
-          <div className="space-y-4">
+          <div className="w-full space-y-4">
             <div className="bg-white rounded-lg border border-gray-200 p-4">
               <h3 className="text-sm font-semibold text-gray-900 mb-4">Top Cancellation Reasons</h3>
               <ResponsiveContainer width="100%" height={300}>

@@ -105,7 +105,7 @@ export function CEOConciergeTracking() {
 
   return (
     
-      <div className="space-y-6">
+      <div className="w-full space-y-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
@@ -309,13 +309,13 @@ export function CEOConciergeTracking() {
             </div>
           </div>
 
-          <div className="space-y-4">
+          <div className="w-full space-y-4">
             <div className="bg-white rounded-lg border border-gray-200 p-4">
               <div className="flex items-center gap-2 mb-4">
                 <User size={20} className="text-[#1a3d97]" />
                 <h3 className="text-sm font-semibold text-gray-900">Top Agents</h3>
               </div>
-              <div className="space-y-3">
+              <div className="w-full space-y-3">
                 {agentLeaderboard.map(([agent, count], index) => (
                   <div key={agent} className="flex items-center justify-between">
                     <div className="flex items-center gap-2">

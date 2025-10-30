@@ -50,7 +50,7 @@ export function CEOMarketingPlanner() {
 
   return (
     
-      <div className="space-y-6">
+      <div className="w-full space-y-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Campaign Planner</h1>
@@ -89,7 +89,7 @@ export function CEOMarketingPlanner() {
           </div>
         </div>
 
-        <div className="space-y-4">
+        <div className="w-full space-y-4">
           {campaigns.map((campaign) => {
             const progress = campaign.budget > 0 ? (campaign.spent / campaign.budget) * 100 : 0;
             return (

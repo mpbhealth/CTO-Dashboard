@@ -72,7 +72,7 @@ export function CEOMarketingDashboard() {
 
   return (
     
-      <div className="space-y-6">
+      <div className="w-full space-y-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Marketing Suite</h1>
@@ -112,7 +112,7 @@ export function CEOMarketingDashboard() {
         </div>
 
         {activeTab === 'overview' && (
-          <div className="space-y-6">
+          <div className="w-full space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {funnelMetrics.map((metric) => {
                 const Icon = metric.icon;
@@ -156,7 +156,7 @@ export function CEOMarketingDashboard() {
         )}
 
         {activeTab === 'campaigns' && (
-          <div className="space-y-4">
+          <div className="w-full space-y-4">
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-semibold text-gray-900">Campaign Planner</h2>
               <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
@@ -215,7 +215,7 @@ export function CEOMarketingDashboard() {
         )}
 
         {activeTab === 'calendar' && (
-          <div className="space-y-4">
+          <div className="w-full space-y-4">
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-semibold text-gray-900">Content Calendar</h2>
               <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
@@ -266,7 +266,7 @@ export function CEOMarketingDashboard() {
         )}
 
         {activeTab === 'budget' && (
-          <div className="space-y-6">
+          <div className="w-full space-y-6">
             <h2 className="text-lg font-semibold text-gray-900">Budget vs Actuals by Channel</h2>
             <div className="grid gap-4">
               {budgetByChannel.map((item) => {
@@ -311,7 +311,7 @@ export function CEOMarketingDashboard() {
         )}
 
         {activeTab === 'assets' && (
-          <div className="space-y-4">
+          <div className="w-full space-y-4">
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-semibold text-gray-900">Brand Asset Library</h2>
               <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">

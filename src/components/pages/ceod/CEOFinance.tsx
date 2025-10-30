@@ -253,7 +253,7 @@ export function CEOFinance() {
 
   return (
     <CEODashboardLayout>
-      <div className="space-y-6">
+      <div className="w-full space-y-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
@@ -439,7 +439,7 @@ export function CEOFinance() {
 
           <div className="bg-white rounded-lg border border-gray-200 p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Top Vendors & Customers</h2>
-            <div className="space-y-3 max-h-[300px] overflow-y-auto">
+            <div className="w-full space-y-3 max-h-[300px] overflow-y-auto">
               {topVendorsCustomers.map((item, index) => (
                 <div key={item.name} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">

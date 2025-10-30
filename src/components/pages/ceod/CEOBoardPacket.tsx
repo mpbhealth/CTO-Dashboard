@@ -46,7 +46,7 @@ export function CEOBoardPacket() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="w-full space-y-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Board Packet Builder</h1>
@@ -84,7 +84,7 @@ export function CEOBoardPacket() {
 
         <div>
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Board Packets</h2>
-          <div className="space-y-4">
+          <div className="w-full space-y-4">
             {packets.map((packet) => (
               <div key={packet.id} className="bg-white rounded-xl shadow-sm border p-6 hover:shadow-md transition-shadow">
                 <div className="flex items-start justify-between mb-4">

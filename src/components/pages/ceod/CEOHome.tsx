@@ -83,7 +83,7 @@ export function CEOHome() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="w-full space-y-8">
         <div className="flex items-start justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">

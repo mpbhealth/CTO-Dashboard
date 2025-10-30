@@ -18,7 +18,7 @@ export function CEOMarketingBudget() {
 
   return (
     
-      <div className="space-y-6">
+      <div className="w-full space-y-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Marketing Budget</h1>
@@ -56,7 +56,7 @@ export function CEOMarketingBudget() {
           </div>
         </div>
 
-        <div className="space-y-4">
+        <div className="w-full space-y-4">
           {budgetData.map((item) => {
             const utilization = (item.spent / item.budget) * 100;
             const isEfficient = item.roi > 3.5;

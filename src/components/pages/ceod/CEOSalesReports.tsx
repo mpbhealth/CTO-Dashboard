@@ -129,7 +129,7 @@ export function CEOSalesReports() {
 
   return (
     
-      <div className="space-y-6">
+      <div className="w-full space-y-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
@@ -306,15 +306,15 @@ export function CEOSalesReports() {
             </div>
           </div>
 
-          <div className="space-y-4">
+          <div className="w-full space-y-4">
             <div className="bg-white rounded-lg border border-gray-200 p-4">
               <div className="flex items-center gap-2 mb-4">
                 <Award size={20} className="text-[#1a3d97]" />
                 <h3 className="text-sm font-semibold text-gray-900">Top Performers</h3>
               </div>
-              <div className="space-y-3">
+              <div className="w-full space-y-3">
                 {repLeaderboard.map(([rep, stats], index) => (
-                  <div key={rep} className="space-y-1">
+                  <div key={rep} className="w-full space-y-1">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <div className="w-6 h-6 rounded-full bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white text-xs flex items-center justify-center font-bold">

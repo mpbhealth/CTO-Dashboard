@@ -72,7 +72,7 @@ export function CEOConciergeNotes() {
 
   return (
     
-      <div className="space-y-6">
+      <div className="w-full space-y-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
@@ -91,7 +91,7 @@ export function CEOConciergeNotes() {
         </div>
 
         <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <div className="space-y-4">
+          <div className="w-full space-y-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
               <input
@@ -156,7 +156,7 @@ export function CEOConciergeNotes() {
           </div>
         </div>
 
-        <div className="space-y-4">
+        <div className="w-full space-y-4">
           {filteredNotes.length === 0 ? (
             <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
               <FileText className="mx-auto text-gray-400 mb-4" size={48} />

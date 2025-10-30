@@ -29,7 +29,7 @@ export default function KPICard({
   icon: Icon,
   trend,
   subtitle,
-  color = 'indigo',
+  color = 'cyan',
   data,
 }: KPICardProps) {
   // If data prop is provided, use it to populate the card
@@ -45,16 +45,18 @@ export default function KPICard({
                     data?.status === 'info' ? 'sky' :
                     color;
   const colorMap: Record<string, { bg: string; text: string; border: string }> = {
-    indigo: { bg: 'from-indigo-500 to-indigo-700', text: 'text-indigo-100', border: 'border-indigo-300' },
+    indigo: { bg: 'from-cyan-500 to-cyan-700', text: 'text-cyan-100', border: 'border-cyan-300' },
     emerald: { bg: 'from-emerald-500 to-emerald-700', text: 'text-emerald-100', border: 'border-emerald-300' },
     pink: { bg: 'from-pink-500 to-pink-700', text: 'text-pink-100', border: 'border-pink-300' },
     amber: { bg: 'from-amber-500 to-amber-700', text: 'text-amber-100', border: 'border-amber-300' },
     sky: { bg: 'from-sky-500 to-sky-700', text: 'text-sky-100', border: 'border-sky-300' },
-    purple: { bg: 'from-purple-500 to-purple-700', text: 'text-purple-100', border: 'border-purple-300' },
+    purple: { bg: 'from-teal-500 to-teal-700', text: 'text-teal-100', border: 'border-teal-300' },
     red: { bg: 'from-red-500 to-red-700', text: 'text-red-100', border: 'border-red-300' },
+    cyan: { bg: 'from-cyan-500 to-cyan-700', text: 'text-cyan-100', border: 'border-cyan-300' },
+    teal: { bg: 'from-teal-500 to-teal-700', text: 'text-teal-100', border: 'border-teal-300' },
   };
 
-  const colors = colorMap[cardColor] || colorMap.indigo;
+  const colors = colorMap[cardColor] || colorMap.cyan;
 
   // Default icon based on trend
   const DefaultIcon = cardTrend?.isPositive ? TrendingUp : TrendingDown;

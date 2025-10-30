@@ -1,5 +1,5 @@
 import { ReactNode, useEffect } from 'react';
-import { Link, useLocation, Navigate } from 'react-router-dom';
+import { Link, useLocation, Navigate, useNavigate } from 'react-router-dom';
 import {
   Home,
   FileText,
@@ -20,8 +20,9 @@ interface CTODashboardLayoutProps {
 
 export function CTODashboardLayout({ children }: CTODashboardLayoutProps) {
   const location = useLocation();
-  const { data: profile, isLoading } = useCurrentProfile();
+  const navigate = useNavigate();
   const { signOut, isDemoMode } = useAuth();
+  const { data: profile, isLoading } = useCurrentProfile();
 
   useEffect(() => {
     if (profile?.role) {
@@ -61,7 +62,7 @@ export function CTODashboardLayout({ children }: CTODashboardLayoutProps) {
       }
     } catch (error) {
       console.error('Error signing out:', error);
-      window.location.href = '/login';
+      navigate('/login');
     }
   };
 

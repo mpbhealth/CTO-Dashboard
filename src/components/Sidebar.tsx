@@ -27,10 +27,10 @@ export default function Sidebar({
 }: SidebarProps) {
   const navigate = useNavigate();
   const location = useLocation();
+  const { signOut, isDemoMode } = useAuth();
   const [isMobile, setIsMobile] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState<string[]>(['compliance', 'department-reporting']);
   const { data: profile } = useCurrentProfile();
-  const { signOut, isDemoMode } = useAuth();
 
   const isCEO = profile?.role === 'ceo';
   const userRole = profile?.role || 'staff';
@@ -92,7 +92,7 @@ export default function Sidebar({
       }
     } catch (error) {
       console.error('Error logging out:', error);
-      window.location.href = '/login';
+      navigate('/login');
     }
   };
 

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
+import { useAuth } from '../contexts/AuthContext';
 
 export interface Note {
   id: string;
@@ -49,6 +50,7 @@ export interface UseNotesOptions {
 
 export function useNotes(options: UseNotesOptions) {
   const { dashboardRole, autoRefresh = false } = options;
+  const { user } = useAuth();
   const [notes, setNotes] = useState<Note[]>([]);
   const [sharedNotes, setSharedNotes] = useState<Note[]>([]);
   const [notifications, setNotifications] = useState<NoteNotification[]>([]);
@@ -56,58 +58,67 @@ export function useNotes(options: UseNotesOptions) {
   const [error, setError] = useState<string | null>(null);
 
   const fetchMyNotes = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('Not authenticated');
+    try {
+      if (!user) throw new Error('Not authenticated');
 
-    const { data, error: fetchError } = await supabase
-      .from('notes')
-      .select('*')
-      .eq('created_by', user.id)
-      .eq('owner_role', dashboardRole)
-      .order('created_at', { ascending: false });
+      const { data, error: fetchError } = await supabase
+        .from('notes')
+        .select('*')
+        .eq('created_by', user.id)
+        .eq('owner_role', dashboardRole)
+        .order('created_at', { ascending: false });
 
-    if (fetchError) throw fetchError;
-    return data || [];
+      if (fetchError) throw fetchError;
+      return data || [];
+    } catch (error) {
+      throw error;
+    }
   };
 
   const fetchSharedNotes = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('Not authenticated');
+    try {
+      if (!user) throw new Error('Not authenticated');
 
-    const { data, error: fetchError } = await supabase
-      .from('notes')
-      .select(`
-        *,
-        note_shares!inner(
-          shared_by_user_id,
-          shared_with_user_id,
-          permission_level,
-          share_message
-        )
-      `)
-      .eq('note_shares.shared_with_user_id', user.id)
-      .order('created_at', { ascending: false });
+      const { data, error: fetchError } = await supabase
+        .from('notes')
+        .select(`
+          *,
+          note_shares!inner(
+            shared_by_user_id,
+            shared_with_user_id,
+            permission_level,
+            share_message
+          )
+        `)
+        .eq('note_shares.shared_with_user_id', user.id)
+        .order('created_at', { ascending: false });
 
-    if (fetchError) throw fetchError;
-    return data || [];
+      if (fetchError) throw fetchError;
+      return data || [];
+    } catch (error) {
+      throw error;
+    }
   };
 
   const fetchNotifications = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('Not authenticated');
+    try {
+      if (!user) throw new Error('Not authenticated');
 
-    const { data, error: fetchError } = await supabase
-      .from('note_notifications')
-      .select(`
-        *,
-        notes(*)
-      `)
-      .eq('recipient_user_id', user.id)
-      .order('created_at', { ascending: false })
-      .limit(20);
+      const { data, error: fetchError } = await supabase
+        .from('note_notifications')
+        .select(`
+          *,
+          notes(*)
+        `)
+        .eq('recipient_user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(20);
 
-    if (fetchError) throw fetchError;
-    return data || [];
+      if (fetchError) throw fetchError;
+      return data || [];
+    } catch (error) {
+      throw error;
+    }
   };
 
   const fetchAllNotes = async () => {
@@ -176,38 +187,41 @@ export function useNotes(options: UseNotesOptions) {
       shareMessage?: string;
     }
   ) => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('Not authenticated');
+    try {
+      if (!user) throw new Error('Not authenticated');
 
-    const noteData = {
-      content,
-      title: options?.title || null,
-      owner_role: dashboardRole,
-      created_for_role: options?.createdForRole || null,
-      created_by: user.id,
-      is_shared: options?.shareImmediately || false,
-      is_collaborative: options?.permissionLevel === 'edit' || false
-    };
+      const noteData = {
+        content,
+        title: options?.title || null,
+        owner_role: dashboardRole,
+        created_for_role: options?.createdForRole || null,
+        created_by: user.id,
+        is_shared: options?.shareImmediately || false,
+        is_collaborative: options?.permissionLevel === 'edit' || false
+      };
 
-    const { data, error: insertError } = await supabase
-      .from('notes')
-      .insert([noteData])
-      .select()
-      .single();
+      const { data, error: insertError } = await supabase
+        .from('notes')
+        .insert([noteData])
+        .select()
+        .single();
 
-    if (insertError) throw insertError;
+      if (insertError) throw insertError;
 
-    if (options?.shareImmediately && options?.createdForRole) {
-      await shareNoteWithRole(
-        data.id,
-        options.createdForRole,
-        options.permissionLevel || 'view',
-        options.shareMessage
-      );
+      if (options?.shareImmediately && options?.createdForRole) {
+        await shareNoteWithRole(
+          data.id,
+          options.createdForRole,
+          options.permissionLevel || 'view',
+          options.shareMessage
+        );
+      }
+
+      await fetchAllNotes();
+      return data;
+    } catch (error) {
+      throw error;
     }
-
-    await fetchAllNotes();
-    return data;
   };
 
   const updateNote = async (id: string, content: string, title?: string) => {
@@ -256,35 +270,38 @@ export function useNotes(options: UseNotesOptions) {
   };
 
   const unshareNote = async (noteId: string, userId?: string) => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('Not authenticated');
+    try {
+      if (!user) throw new Error('Not authenticated');
 
-    let query = supabase
-      .from('note_shares')
-      .delete()
-      .eq('note_id', noteId)
-      .eq('shared_by_user_id', user.id);
+      let query = supabase
+        .from('note_shares')
+        .delete()
+        .eq('note_id', noteId)
+        .eq('shared_by_user_id', user.id);
 
-    if (userId) {
-      query = query.eq('shared_with_user_id', userId);
+      if (userId) {
+        query = query.eq('shared_with_user_id', userId);
+      }
+
+      const { error: deleteError } = await query;
+      if (deleteError) throw deleteError;
+
+      const { count } = await supabase
+        .from('note_shares')
+        .select('*', { count: 'exact', head: true })
+        .eq('note_id', noteId);
+
+      if (count === 0) {
+        await supabase
+          .from('notes')
+          .update({ is_shared: false, is_collaborative: false })
+          .eq('id', noteId);
+      }
+
+      await fetchAllNotes();
+    } catch (error) {
+      throw error;
     }
-
-    const { error: deleteError } = await query;
-    if (deleteError) throw deleteError;
-
-    const { count } = await supabase
-      .from('note_shares')
-      .select('*', { count: 'exact', head: true })
-      .eq('note_id', noteId);
-
-    if (count === 0) {
-      await supabase
-        .from('notes')
-        .update({ is_shared: false, is_collaborative: false })
-        .eq('id', noteId);
-    }
-
-    await fetchAllNotes();
   };
 
   const getNoteShares = async (noteId: string): Promise<NoteShare[]> => {
@@ -313,18 +330,21 @@ export function useNotes(options: UseNotesOptions) {
   };
 
   const markAllNotificationsAsRead = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('Not authenticated');
+    try {
+      if (!user) throw new Error('Not authenticated');
 
-    const { error: updateError } = await supabase
-      .from('note_notifications')
-      .update({ is_read: true })
-      .eq('recipient_user_id', user.id)
-      .eq('is_read', false);
+      const { error: updateError } = await supabase
+        .from('note_notifications')
+        .update({ is_read: true })
+        .eq('recipient_user_id', user.id)
+        .eq('is_read', false);
 
-    if (updateError) throw updateError;
+      if (updateError) throw updateError;
 
-    await fetchAllNotes();
+      await fetchAllNotes();
+    } catch (error) {
+      throw error;
+    }
   };
 
   const unreadCount = notifications.filter(n => !n.is_read).length;

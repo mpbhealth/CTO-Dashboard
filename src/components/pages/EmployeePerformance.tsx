@@ -826,6 +826,7 @@ export default function EmployeePerformance() {
                               type="button"
                               onClick={() => setActiveKpi(kpi)}
                               className="text-pink-600 hover:text-pink-900 underline"
+                              title={`View details for ${kpi.name}`}
                             >
                               Details
                             </button>

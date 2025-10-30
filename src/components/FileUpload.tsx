@@ -96,6 +96,14 @@ export default function FileUpload({
     });
 
     try {
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+
+      if (!supabaseUrl || supabaseUrl === 'undefined') {
+        setErr("File upload is not configured. Please set up Supabase environment variables.");
+        setBusy(false);
+        return;
+      }
+
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         setErr("You must be logged in to upload files");

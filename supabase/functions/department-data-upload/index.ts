@@ -31,33 +31,34 @@ Deno.serve(async (req: Request) => {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     const authHeader = req.headers.get('Authorization');
-    const publicTokenHeader = req.headers.get('x-public-upload-token');
-    const publicTokenSecret = Deno.env.get('PUBLIC_UPLOAD_TOKEN') ?? null;
-    const fallbackUserId = Deno.env.get('PUBLIC_UPLOAD_USER_ID') ?? null;
-
-    let userId: string | null = null;
-
-    if (authHeader) {
-      const token = authHeader.replace('Bearer ', '');
-      const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-
-      if (!authError && user) {
-        userId = user.id;
-      } else if (!publicTokenSecret || publicTokenHeader !== publicTokenSecret) {
-        throw new Error('Unauthorized');
-      }
+    if (!authHeader) {
+      throw new Error('No authorization header');
     }
 
-    if (!userId) {
-      if (publicTokenSecret && publicTokenHeader === publicTokenSecret) {
-        userId = fallbackUserId;
-      } else {
-        throw new Error('Unauthorized');
-      }
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+
+    if (authError || !user) {
+      throw new Error('Unauthorized');
     }
 
     const requestData: UploadRequest = await req.json();
     const { department, data, metadata, orgId } = requestData;
+
+    let userId = 'anonymous';
+    const authHeader = req.headers.get('Authorization');
+
+    if (authHeader) {
+      const token = authHeader.replace('Bearer ', '');
+      const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+      if (user && !authError) {
+        userId = user.id;
+      }
+    }
+
+    if (orgId !== 'public-upload' && userId === 'anonymous') {
+      throw new Error('Unauthorized - authentication required for non-public uploads');
+    }
 
     if (!department || !data || !Array.isArray(data) || data.length === 0) {
       throw new Error('Invalid request data');

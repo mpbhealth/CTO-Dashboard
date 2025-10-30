@@ -1,10 +1,10 @@
 import { CTODashboardLayout } from '../../../layouts/CTODashboardLayout';
-import NotepadWithSharing from '../../NotepadWithSharing';
+import SimpleNotepad from '../../SimpleNotepad';
 
 export function CTONotepad() {
   return (
     <CTODashboardLayout>
-      <NotepadWithSharing dashboardRole="cto" dashboardTitle="CTO" />
+      <SimpleNotepad dashboardRole="cto" dashboardTitle="CTO" />
     </CTODashboardLayout>
   );
 }

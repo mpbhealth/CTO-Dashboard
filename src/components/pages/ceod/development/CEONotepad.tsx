@@ -1,10 +1,10 @@
 import { CEODashboardLayout } from '../../../layouts/CEODashboardLayout';
-import NotepadWithSharing from '../../NotepadWithSharing';
+import SimpleNotepad from '../../SimpleNotepad';
 
 export function CEONotepad() {
   return (
     <CEODashboardLayout>
-      <NotepadWithSharing dashboardRole="ceo" dashboardTitle="CEO" />
+      <SimpleNotepad dashboardRole="ceo" dashboardTitle="CEO" />
     </CEODashboardLayout>
   );
 }

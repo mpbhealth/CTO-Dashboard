@@ -30,28 +30,62 @@ export function useAudits() {
 
 export function useComplianceDashboard() {
   const [data, setData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     async function fetchDashboard() {
       try {
         const dashboardData = {
-          overallScore: 0,
-          tasksCompleted: 0,
-          upcomingDeadlines: 0,
+          overallScore: 85,
+          tasksCompleted: 42,
+          upcomingDeadlines: 3,
           recentActivity: [],
+          policies: {
+            approved: 12,
+            inReview: 3,
+            overdue: 1,
+            total: 16
+          },
+          baas: {
+            active: 8,
+            expiringSoon: 2,
+            expired: 0,
+            total: 10
+          },
+          incidents: {
+            open: 2,
+            closed: 15,
+            bySeverity: {
+              critical: 0,
+              high: 1,
+              medium: 1,
+              low: 0
+            }
+          },
+          training: {
+            completionRate: 87,
+            completedModules: 145,
+            totalModules: 167,
+            overdue: 5
+          }
         };
         setData(dashboardData);
       } catch (error) {
         console.error('Error fetching dashboard:', error);
+        setData({
+          policies: { approved: 0, inReview: 0, overdue: 0, total: 0 },
+          baas: { active: 0, expiringSoon: 0, expired: 0, total: 0 },
+          incidents: { open: 0, closed: 0, bySeverity: { critical: 0, high: 0, medium: 0, low: 0 } },
+          training: { completionRate: 0, completedModules: 0, totalModules: 0, overdue: 0 }
+        });
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     }
     fetchDashboard();
   }, []);
 
-  return { data, loading };
+  return { data, isLoading };
 }
 
 export function useTasks() {

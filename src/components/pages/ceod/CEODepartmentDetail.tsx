@@ -138,7 +138,7 @@ View detailed report: ${window.location.href}
 
   return (
     <CEODashboardLayout>
-      <div className="space-y-6">
+      <div className="w-full space-y-6">
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-center gap-3 mb-2">

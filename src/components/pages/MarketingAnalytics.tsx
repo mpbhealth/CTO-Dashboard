@@ -113,30 +113,30 @@ export default function MarketingAnalytics() {
   const aggregated = aggregateMetrics(metrics);
   const trafficSourcesData = getTrafficSourceData(metrics);
 
-  // Generate KPIs from real data
+  // Generate KPIs from real data with proper null safety
   const marketingKPIs = aggregated ? [
-    { 
-      title: 'Total Sessions', 
-      value: aggregated.sessions.toLocaleString(), 
-      change: '+12.3%', // Would calculate from previous period
+    {
+      title: 'Total Sessions',
+      value: (aggregated.sessions || 0).toLocaleString(),
+      change: '+12.3%',
       trend: 'up' as const
     },
-    { 
-      title: 'Unique Users', 
-      value: aggregated.users.toLocaleString(), 
-      change: '+8.7%', 
+    {
+      title: 'Unique Users',
+      value: (aggregated.users || 0).toLocaleString(),
+      change: '+8.7%',
       trend: 'up' as const
     },
-    { 
-      title: 'Conversion Rate', 
-      value: `${aggregated.conversionRate.toFixed(1)}%`, 
-      change: '+0.8%', 
+    {
+      title: 'Conversion Rate',
+      value: `${(aggregated.conversionRate || 0).toFixed(1)}%`,
+      change: '+0.8%',
       trend: 'up' as const
     },
-    { 
-      title: 'Bounce Rate', 
-      value: `${aggregated.avgBounceRate.toFixed(1)}%`, 
-      change: '-2.1%', 
+    {
+      title: 'Bounce Rate',
+      value: `${(aggregated.avgBounceRate || 0).toFixed(1)}%`,
+      change: '-2.1%',
       trend: 'down' as const
     },
   ] : [
@@ -373,7 +373,7 @@ export default function MarketingAnalytics() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="w-full space-y-8">
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
@@ -1101,15 +1101,15 @@ export default function MarketingAnalytics() {
                 {finalTrafficSourcesData.map((source) => (
                   <div key={source.source} className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
-                      <div 
-                        className="w-3 h-3 rounded-full" 
+                      <div
+                        className="w-3 h-3 rounded-full"
                         style={{ backgroundColor: source.color }}
                       ></div>
                       <span className="text-sm text-slate-700">{source.source}</span>
                     </div>
                     <div className="flex space-x-4">
                       <span className="text-sm font-medium text-slate-900">{source.percentage}%</span>
-                      <span className="text-sm text-slate-600">{source.sessions.toLocaleString()}</span>
+                      <span className="text-sm text-slate-600">{(source.sessions || 0).toLocaleString()}</span>
                     </div>
                   </div>
                 ))}
@@ -1134,24 +1134,28 @@ export default function MarketingAnalytics() {
               </div>
               
               <div className="space-y-4">
-                {topPagesData.map((page, index) => (
+                {topPagesData.length > 0 ? topPagesData.map((page, index) => (
                   <div key={index} className="p-3 border border-slate-100 rounded-lg hover:bg-slate-50 transition-colors">
                     <div className="flex justify-between items-center mb-2">
                       <h4 className="font-medium text-slate-900">{page.url}</h4>
-                      <span className="text-sm font-medium text-pink-600">{page.pageviews.toLocaleString()}</span>
+                      <span className="text-sm font-medium text-pink-600">{(page.pageviews || 0).toLocaleString()}</span>
                     </div>
                     <div className="flex items-center text-sm text-slate-500 space-x-4">
                       <div className="flex items-center space-x-1">
                         <Clock className="w-3 h-3" />
-                        <span>{page.avgTime}</span>
+                        <span>{page.avgTime || '0:00'}</span>
                       </div>
                       <div className="flex items-center space-x-1">
                         <TrendingUp className="w-3 h-3" />
-                        <span>Bounce: {page.bounceRate}</span>
+                        <span>Bounce: {page.bounceRate || '0%'}</span>
                       </div>
                     </div>
                   </div>
-                ))}
+                )) : (
+                  <div className="text-center py-8 text-slate-500">
+                    <p>No page data available</p>
+                  </div>
+                )}
               </div>
             </motion.div>
           </div>
@@ -1187,7 +1191,7 @@ export default function MarketingAnalytics() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">
-                  {campaignPerformanceData.map((campaign, index) => (
+                  {campaignPerformanceData.length > 0 ? campaignPerformanceData.map((campaign, index) => (
                     <tr key={index} className="hover:bg-slate-50 transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center space-x-3">
@@ -1197,16 +1201,22 @@ export default function MarketingAnalytics() {
                           <span className="font-medium text-slate-900">{campaign.campaign}</span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-sm text-slate-900">{campaign.visitors.toLocaleString()}</td>
-                      <td className="px-6 py-4 text-sm text-slate-900">{campaign.conversions.toLocaleString()}</td>
-                      <td className="px-6 py-4 text-sm font-medium text-emerald-600">${campaign.revenue.toLocaleString()}</td>
+                      <td className="px-6 py-4 text-sm text-slate-900">{(campaign.visitors || 0).toLocaleString()}</td>
+                      <td className="px-6 py-4 text-sm text-slate-900">{(campaign.conversions || 0).toLocaleString()}</td>
+                      <td className="px-6 py-4 text-sm font-medium text-emerald-600">${(campaign.revenue || 0).toLocaleString()}</td>
                       <td className="px-6 py-4">
                         <span className="inline-flex px-2 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
-                          {campaign.roi}%
+                          {campaign.roi || 0}%
                         </span>
                       </td>
                     </tr>
-                  ))}
+                  )) : (
+                    <tr>
+                      <td colSpan={5} className="px-6 py-8 text-center text-slate-500">
+                        No campaign data available
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
@@ -1312,15 +1322,21 @@ export default function MarketingAnalytics() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
-                    {topPagesData.map((page, index) => (
+                    {topPagesData.length > 0 ? topPagesData.map((page, index) => (
                       <tr key={index} className="text-sm">
                         <td className="py-3 text-slate-900 font-medium">{page.url}</td>
-                        <td className="py-3 text-slate-700">{page.pageviews.toLocaleString()}</td>
-                        <td className="py-3 text-slate-700">{page.avgTime}</td>
-                        <td className="py-3 text-slate-700">{page.bounceRate}</td>
+                        <td className="py-3 text-slate-700">{(page.pageviews || 0).toLocaleString()}</td>
+                        <td className="py-3 text-slate-700">{page.avgTime || '0:00'}</td>
+                        <td className="py-3 text-slate-700">{page.bounceRate || '0%'}</td>
                         <td className="py-3 text-slate-700">{Math.round(30 + Math.random() * 30)}%</td>
                       </tr>
-                    ))}
+                    )) : (
+                      <tr>
+                        <td colSpan={5} className="py-6 text-center text-slate-500">
+                          No page data available
+                        </td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -1385,13 +1401,13 @@ export default function MarketingAnalytics() {
                       <div key={stage.stage}>
                         <div className="flex items-center justify-between mb-1">
                           <div className="flex items-center space-x-2">
-                            <div 
-                              className="w-3 h-3 rounded-full" 
+                            <div
+                              className="w-3 h-3 rounded-full"
                               style={{ backgroundColor: stage.color }}
                             ></div>
                             <span className="text-sm font-medium text-slate-700">{stage.stage}</span>
                           </div>
-                          <span className="text-sm font-medium text-slate-900">{stage.value.toLocaleString()}</span>
+                          <span className="text-sm font-medium text-slate-900">{(stage.value || 0).toLocaleString()}</span>
                         </div>
                         <div className="w-full h-8 bg-slate-100 rounded-md overflow-hidden mb-2">
                           <div 
@@ -1481,7 +1497,7 @@ export default function MarketingAnalytics() {
                 </div>
               </div>
               
-              {campaignPerformanceData.map((campaign, index) => (
+              {campaignPerformanceData.length > 0 ? campaignPerformanceData.map((campaign, index) => (
                 <div key={index} className="bg-slate-50 p-4 rounded-lg">
                   <div className="flex justify-between items-start mb-4">
                     <div>
@@ -1492,33 +1508,37 @@ export default function MarketingAnalytics() {
                       Active
                     </span>
                   </div>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div className="bg-white p-3 rounded-md">
                       <p className="text-xs text-slate-500 mb-1">Visitors</p>
-                      <p className="font-medium text-slate-900">{campaign.visitors.toLocaleString()}</p>
+                      <p className="font-medium text-slate-900">{(campaign.visitors || 0).toLocaleString()}</p>
                     </div>
                     <div className="bg-white p-3 rounded-md">
                       <p className="text-xs text-slate-500 mb-1">Conversions</p>
-                      <p className="font-medium text-slate-900">{campaign.conversions.toLocaleString()}</p>
+                      <p className="font-medium text-slate-900">{(campaign.conversions || 0).toLocaleString()}</p>
                     </div>
                     <div className="bg-white p-3 rounded-md">
                       <p className="text-xs text-slate-500 mb-1">Revenue</p>
-                      <p className="font-medium text-emerald-600">${campaign.revenue.toLocaleString()}</p>
+                      <p className="font-medium text-emerald-600">${(campaign.revenue || 0).toLocaleString()}</p>
                     </div>
                     <div className="bg-white p-3 rounded-md">
                       <p className="text-xs text-slate-500 mb-1">ROI</p>
-                      <p className="font-medium text-emerald-600">{campaign.roi}%</p>
+                      <p className="font-medium text-emerald-600">{campaign.roi || 0}%</p>
                     </div>
                   </div>
-                  
+
                   <div className="mt-3 pt-3 border-t border-slate-200 flex justify-end">
                     <button className="text-pink-600 hover:text-pink-800 text-sm font-medium">
                       View Details
                     </button>
                   </div>
                 </div>
-              ))}
+              )) : (
+                <div className="bg-slate-50 p-8 rounded-lg text-center text-slate-500">
+                  <p>No campaign data available</p>
+                </div>
+              )}
             </div>
           </div>
         </div>

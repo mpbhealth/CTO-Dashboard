@@ -60,13 +60,13 @@ export default function QuickLinks() {
 
   // Derive filtered links from current state
   const filteredLinks = links.filter(link => {
-    const matchesSearch = searchTerm === '' || 
-      link.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    const matchesSearch = searchTerm === '' ||
+      (link.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
       (link.description && link.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (link.url.toLowerCase().includes(searchTerm.toLowerCase()));
-    
+      ((link.url || '').toLowerCase().includes(searchTerm.toLowerCase()));
+
     const matchesCategory = selectedCategory === 'All' || link.category === selectedCategory;
-    
+
     return matchesSearch && matchesCategory;
   });
 
@@ -74,13 +74,13 @@ export default function QuickLinks() {
   const sortedFilteredLinks = [...filteredLinks].sort((a, b) => {
     switch (sortBy) {
       case 'name':
-        return a.name.localeCompare(b.name);
+        return (a.name || '').localeCompare(b.name || '');
       case 'category':
         return (a.category || '').localeCompare(b.category || '');
       case 'clicks':
         return (b.click_count || 0) - (a.click_count || 0);
       case 'date':
-        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
       default:
         return 0;
     }

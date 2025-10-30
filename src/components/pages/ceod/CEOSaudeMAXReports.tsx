@@ -85,7 +85,7 @@ export function CEOSaudeMAXReports() {
       monthlyData[monthKey] = (monthlyData[monthKey] || 0) + 1;
     });
     return Object.entries(monthlyData)
-      .sort(([a], [b]) => a.localeCompare(b))
+      .sort(([a], [b]) => (a || '').localeCompare(b || ''))
       .slice(-12)
       .map(([month, count]) => ({
         month: new Date(month + '-01').toLocaleDateString('en-US', { month: 'short', year: '2-digit' }),

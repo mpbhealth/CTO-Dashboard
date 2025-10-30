@@ -89,7 +89,7 @@ export function CTOOperations() {
       }
     });
     return Object.entries(monthCounts)
-      .sort(([a], [b]) => a.localeCompare(b))
+      .sort(([a], [b]) => (a || '').localeCompare(b || ''))
       .slice(-6)
       .map(([month, count]) => ({ month, count }));
   }, [filteredCancellations]);
@@ -274,7 +274,7 @@ export function CTOOperations() {
                             )}
                           </td>
                           <td className="px-4 py-3 text-sm font-bold text-red-600">
-                            ${cancellation.mrr_lost.toFixed(0)}
+                            ${(cancellation.mrr_lost || 0).toFixed(0)}
                           </td>
                         </tr>
                       ))

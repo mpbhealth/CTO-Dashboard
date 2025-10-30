@@ -170,7 +170,7 @@ export function CEOFinance() {
     });
 
     return Object.entries(monthlyData)
-      .sort(([a], [b]) => a.localeCompare(b))
+      .sort(([a], [b]) => (a || '').localeCompare(b || ''))
       .slice(-12)
       .map(([month, data]) => ({
         month: new Date(month + '-01').toLocaleDateString('en-US', { month: 'short', year: '2-digit' }),
@@ -223,7 +223,7 @@ export function CEOFinance() {
     });
 
     return Object.entries(monthlyFlow)
-      .sort(([a], [b]) => a.localeCompare(b))
+      .sort(([a], [b]) => (a || '').localeCompare(b || ''))
       .slice(-12)
       .map(([month, data]) => ({
         month: new Date(month + '-01').toLocaleDateString('en-US', { month: 'short' }),

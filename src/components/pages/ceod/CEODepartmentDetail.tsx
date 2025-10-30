@@ -70,7 +70,7 @@ Department: ${title}
 Total Uploads: ${stats.totalUploads}
 Completed: ${stats.completedUploads}
 Failed: ${stats.failedUploads}
-Success Rate: ${stats.successRate.toFixed(1)}%
+Success Rate: ${(stats.successRate || 0).toFixed(1)}%
 Total Rows Imported: ${stats.totalRowsImported}
 
 View detailed report: ${window.location.href}
@@ -194,7 +194,7 @@ View detailed report: ${window.location.href}
               <CheckCircle className="text-green-600" size={20} />
               <span className="text-xs font-medium text-gray-500">SUCCESS</span>
             </div>
-            <div className="text-2xl font-bold text-gray-900">{stats.successRate.toFixed(1)}%</div>
+            <div className="text-2xl font-bold text-gray-900">{(stats.successRate || 0).toFixed(1)}%</div>
             <div className="text-sm text-gray-500">{stats.completedUploads} completed</div>
           </div>
 

@@ -76,15 +76,40 @@ BEGIN
 END $$;
 
 -- Add new columns to notes table
-ALTER TABLE notes
-  ADD COLUMN IF NOT EXISTS owner_role text CHECK (owner_role IN ('ceo', 'cto')),
-  ADD COLUMN IF NOT EXISTS created_for_role text CHECK (created_for_role IN ('ceo', 'cto')),
-  ADD COLUMN IF NOT EXISTS is_shared boolean DEFAULT false,
-  ADD COLUMN IF NOT EXISTS is_collaborative boolean DEFAULT false,
-  ADD COLUMN IF NOT EXISTS title text;
+DO $$
+BEGIN
+  -- Add owner_role if not exists
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'notes' AND column_name = 'owner_role') THEN
+    ALTER TABLE notes ADD COLUMN owner_role text CHECK (owner_role IN ('ceo', 'cto'));
+  END IF;
 
--- Update title column to allow null but prefer content preview if no title
-ALTER TABLE notes ALTER COLUMN title DROP NOT NULL;
+  -- Add created_for_role if not exists
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'notes' AND column_name = 'created_for_role') THEN
+    ALTER TABLE notes ADD COLUMN created_for_role text CHECK (created_for_role IN ('ceo', 'cto'));
+  END IF;
+
+  -- Add is_shared if not exists
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'notes' AND column_name = 'is_shared') THEN
+    ALTER TABLE notes ADD COLUMN is_shared boolean DEFAULT false;
+  END IF;
+
+  -- Add is_collaborative if not exists
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'notes' AND column_name = 'is_collaborative') THEN
+    ALTER TABLE notes ADD COLUMN is_collaborative boolean DEFAULT false;
+  END IF;
+
+  -- Add title if not exists (some migrations may have already added it)
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'notes' AND column_name = 'title') THEN
+    ALTER TABLE notes ADD COLUMN title text;
+  END IF;
+
+  -- Safely drop NOT NULL constraint from title if it exists
+  BEGIN
+    ALTER TABLE notes ALTER COLUMN title DROP NOT NULL;
+  EXCEPTION WHEN OTHERS THEN
+    NULL; -- Ignore error if constraint doesn't exist
+  END;
+END $$;
 
 -- Ensure created_by is not null
 ALTER TABLE notes ALTER COLUMN created_by SET NOT NULL;

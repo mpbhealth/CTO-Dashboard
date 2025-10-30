@@ -77,6 +77,13 @@ export default function NotepadWithSharing({
       setSaving(true);
       setError(null);
 
+      console.log('[NotepadWithSharing] Creating note:', {
+        dashboardRole,
+        creationMode,
+        contentLength: content.length,
+        hasTitle: !!title
+      });
+
       if (creationMode === 'for-other') {
         await createNote(content, {
           title: title || undefined,
@@ -99,8 +106,18 @@ export default function NotepadWithSharing({
         setContent('');
         setTitle('');
       }
+
+      console.log('[NotepadWithSharing] Note created successfully');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save note');
+      console.error('[NotepadWithSharing] Error creating note:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Failed to save note';
+      setError(errorMessage);
+
+      // Show detailed error in console
+      if (err instanceof Error && err.message.includes('column')) {
+        console.error('[NotepadWithSharing] Database schema error - migration may not be applied');
+        console.error('[NotepadWithSharing] Please run the migration: supabase/migrations/20251031000001_create_note_sharing_system.sql');
+      }
     } finally {
       setSaving(false);
     }

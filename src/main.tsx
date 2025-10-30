@@ -38,9 +38,11 @@ function ErrorBoundary({ children }: { children: React.ReactNode }) {
       }
 
       Environment.error('Application error caught:', event.error);
-      setHasError(true);
-      setError(event.error);
-      setErrorInfo(event.error?.stack || 'No stack trace available');
+      setTimeout(() => {
+        setHasError(true);
+        setError(event.error);
+        setErrorInfo(event.error?.stack || 'No stack trace available');
+      }, 0);
     };
 
     const handleRejection = (event: PromiseRejectionEvent) => {
@@ -49,9 +51,11 @@ function ErrorBoundary({ children }: { children: React.ReactNode }) {
       }
 
       Environment.error('Unhandled promise rejection:', event.reason);
-      setHasError(true);
-      setError(new Error(event.reason));
-      setErrorInfo(event.reason?.stack || String(event.reason));
+      setTimeout(() => {
+        setHasError(true);
+        setError(new Error(event.reason));
+        setErrorInfo(event.reason?.stack || String(event.reason));
+      }, 0);
     };
 
     window.addEventListener('error', handleError);

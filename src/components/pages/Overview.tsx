@@ -372,13 +372,13 @@ export default function Overview() {
                 <div>
                   <p className="text-sm text-slate-600">Open Tickets</p>
                   <p className="text-2xl font-bold text-pink-600 mt-1">
-                    {ticketStats.open_tickets}
+                    {ticketStats?.open_tickets ?? 0}
                   </p>
                 </div>
                 <Ticket className="w-8 h-8 text-pink-400" />
               </div>
               <p className="text-xs text-slate-500 mt-2">
-                {ticketStats.in_progress_tickets} in progress
+                {ticketStats?.in_progress_tickets ?? 0} in progress
               </p>
             </div>
 
@@ -387,13 +387,13 @@ export default function Overview() {
                 <div>
                   <p className="text-sm text-slate-600">Avg Resolution</p>
                   <p className="text-2xl font-bold text-green-600 mt-1">
-                    {ticketStats.avg_resolution_time_hours.toFixed(1)}h
+                    {(ticketStats?.avg_resolution_time_hours ?? 0).toFixed(1)}h
                   </p>
                 </div>
                 <Clock className="w-8 h-8 text-green-400" />
               </div>
               <p className="text-xs text-slate-500 mt-2">
-                {ticketStats.resolved_tickets} resolved
+                {ticketStats?.resolved_tickets ?? 0} resolved
               </p>
             </div>
 
@@ -402,7 +402,7 @@ export default function Overview() {
                 <div>
                   <p className="text-sm text-slate-600">SLA Compliance</p>
                   <p className="text-2xl font-bold text-purple-600 mt-1">
-                    {ticketStats.sla_compliance_percentage.toFixed(0)}%
+                    {(ticketStats?.sla_compliance_percentage ?? 0).toFixed(0)}%
                   </p>
                 </div>
                 <CheckCircle2 className="w-8 h-8 text-purple-400" />
@@ -417,7 +417,7 @@ export default function Overview() {
                 <div>
                   <p className="text-sm text-slate-600">Critical Tickets</p>
                   <p className="text-2xl font-bold text-red-600 mt-1">
-                    {ticketStats.tickets_by_priority.critical + ticketStats.tickets_by_priority.urgent}
+                    {((ticketStats?.tickets_by_priority?.critical ?? 0) + (ticketStats?.tickets_by_priority?.urgent ?? 0))}
                   </p>
                 </div>
                 <AlertTriangle className="w-8 h-8 text-red-400" />

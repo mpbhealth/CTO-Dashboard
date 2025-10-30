@@ -799,8 +799,9 @@ export default function EmployeePerformance() {
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <button
                               type="button"
-                              onClick={() => {/* TODO: Implement KPI details modal */}}
+                              onClick={() => alert('KPI details: ' + kpi.name)}
                               className="text-pink-600 hover:text-pink-900 underline"
+                              title={`View details for ${kpi.name}`}
                             >
                               Details
                             </button>

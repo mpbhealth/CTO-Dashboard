@@ -30,20 +30,23 @@ Deno.serve(async (req: Request) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      throw new Error('No authorization header');
-    }
-
-    const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-
-    if (authError || !user) {
-      throw new Error('Unauthorized');
-    }
-
     const requestData: UploadRequest = await req.json();
     const { department, data, metadata, orgId } = requestData;
+
+    let userId = 'anonymous';
+    const authHeader = req.headers.get('Authorization');
+
+    if (authHeader) {
+      const token = authHeader.replace('Bearer ', '');
+      const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+      if (user && !authError) {
+        userId = user.id;
+      }
+    }
+
+    if (orgId !== 'public-upload' && userId === 'anonymous') {
+      throw new Error('Unauthorized - authentication required for non-public uploads');
+    }
 
     if (!department || !data || !Array.isArray(data) || data.length === 0) {
       throw new Error('Invalid request data');
@@ -55,7 +58,7 @@ Deno.serve(async (req: Request) => {
     const uploadRecord = {
       id: uploadId,
       org_id: orgId,
-      uploaded_by: user.id,
+      uploaded_by: userId,
       department,
       file_name: metadata.fileName,
       file_size: metadata.fileSize,

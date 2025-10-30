@@ -83,6 +83,14 @@ export default function FileUpload({
     });
 
     try {
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+
+      if (!supabaseUrl || supabaseUrl === 'undefined') {
+        setErr("File upload is not configured. Please set up Supabase environment variables.");
+        setBusy(false);
+        return;
+      }
+
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         setErr("You must be logged in to upload files");
@@ -90,7 +98,7 @@ export default function FileUpload({
         return;
       }
 
-      const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/file-upload`;
+      const apiUrl = `${supabaseUrl}/functions/v1/file-upload`;
 
       xhr.open("POST", apiUrl);
       xhr.setRequestHeader("Authorization", `Bearer ${session.access_token}`);

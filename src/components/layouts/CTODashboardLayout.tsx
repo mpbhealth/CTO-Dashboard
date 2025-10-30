@@ -1,5 +1,5 @@
 import { ReactNode, useEffect } from 'react';
-import { Link, useLocation, Navigate } from 'react-router-dom';
+import { Link, useLocation, Navigate, useNavigate } from 'react-router-dom';
 import {
   Home,
   FileText,
@@ -10,7 +10,7 @@ import {
   LogOut
 } from 'lucide-react';
 import { useCurrentProfile } from '../../hooks/useDualDashboard';
-import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../contexts/AuthContext';
 import { DashboardViewToggle } from '../ui/DashboardViewToggle';
 import { ViewingContextBadge } from '../ui/ViewingContextBadge';
 
@@ -20,6 +20,8 @@ interface CTODashboardLayoutProps {
 
 export function CTODashboardLayout({ children }: CTODashboardLayoutProps) {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { signOut } = useAuth();
   const { data: profile, isLoading } = useCurrentProfile();
 
   useEffect(() => {
@@ -54,15 +56,11 @@ export function CTODashboardLayout({ children }: CTODashboardLayoutProps) {
 
   const handleSignOut = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        console.error('Error signing out:', error);
-        throw error;
-      }
-      window.location.href = '/login';
+      await signOut();
+      navigate('/login');
     } catch (error) {
       console.error('Error signing out:', error);
-      window.location.href = '/login';
+      navigate('/login');
     }
   };
 

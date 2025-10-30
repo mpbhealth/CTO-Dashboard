@@ -92,7 +92,7 @@ Deno.serve(async (req: Request) => {
       try {
         let processedRow: Record<string, unknown> = {
           org_id: orgId,
-          uploaded_by: user.id,
+          uploaded_by: userId,
           upload_batch_id: batchId,
           sheet_name: metadata.fileName.replace(/\.(csv|xlsx)$/i, ''),
           created_at: new Date().toISOString(),

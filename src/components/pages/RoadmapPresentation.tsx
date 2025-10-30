@@ -124,12 +124,14 @@ export default function RoadmapPresentation() {
 
   const generatePresentation = () => {
     const presentationData = generatePresentationData(roadmapItems);
-    
+
+    const slides = presentationData?.slides || [];
+
     const newPresentation: PresentationConfig = {
       title: 'MPB Health Technology Roadmap',
       author: 'Vinnie R. Tannous, CTO',
       theme: selectedTheme,
-      slides: presentationData.slides.map((slide, index) => ({
+      slides: slides.map((slide, index) => ({
         ...slide,
         graphics: GraphicsUtils.generateDefaultGraphics(slide.layout, selectedTheme),
         background: {
@@ -139,8 +141,8 @@ export default function RoadmapPresentation() {
         }
       })),
       metadata: {
-        totalSlides: presentationData.slides.length,
-        estimatedDuration: presentationData.slides.length * 2, // 2 minutes per slide
+        totalSlides: slides.length,
+        estimatedDuration: slides.length * 2,
         lastModified: new Date().toISOString()
       }
     };

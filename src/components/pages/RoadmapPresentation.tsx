@@ -562,9 +562,9 @@ export default function RoadmapPresentation() {
       </div>
 
       {/* Main Layout */}
-      <div className="grid grid-cols-4 gap-6">
+      <div className="flex gap-6">
         {/* Slide Navigation */}
-        <div className="col-span-1 space-y-4">
+        <div className="w-80 flex-shrink-0 space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold text-slate-900">Slides</h3>
             <button
@@ -584,7 +584,7 @@ export default function RoadmapPresentation() {
         </div>
 
         {/* Slide Editor/Preview */}
-        <div className="col-span-3">
+        <div className="flex-1 min-w-0">
           {isPreviewMode ? (
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
               <div className="flex items-center justify-between mb-6">

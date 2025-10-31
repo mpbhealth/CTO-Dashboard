@@ -1,9 +1,22 @@
 import { useState } from 'react';
-import { FileText, Download, Plus, Calendar, Users } from 'lucide-react';
+import { FileText, Download, Plus, Calendar, Users, X } from 'lucide-react';
 import { CEODashboardLayout } from '../../layouts/CEODashboardLayout';
 
+interface BoardPacket {
+  id: string;
+  title: string;
+  date: string;
+  status: string;
+  sections: string[];
+  lastModified: string;
+}
+
 export function CEOBoardPacket() {
-  const [packets] = useState([
+  const [showNewPacketModal, setShowNewPacketModal] = useState(false);
+  const [newPacketTitle, setNewPacketTitle] = useState('');
+  const [newPacketDate, setNewPacketDate] = useState('');
+  const [selectedTemplate, setSelectedTemplate] = useState('');
+  const [packets, setPackets] = useState<BoardPacket[]>([
     {
       id: '1',
       title: 'Q4 2025 Board Meeting',
@@ -31,9 +44,21 @@ export function CEOBoardPacket() {
   ]);
 
   const [templates] = useState([
-    { name: 'Quarterly Board Meeting', sections: 8, icon: Calendar },
-    { name: 'Special Meeting', sections: 5, icon: Users },
-    { name: 'Annual Review', sections: 12, icon: FileText },
+    {
+      name: 'Quarterly Board Meeting',
+      sections: ['Executive Summary', 'Financial Summary', 'Key Metrics', 'Strategic Initiatives', 'Risk Analysis', 'Q&A', 'Action Items', 'Next Steps'],
+      icon: Calendar
+    },
+    {
+      name: 'Special Meeting',
+      sections: ['Meeting Purpose', 'Background', 'Key Discussion Points', 'Action Items', 'Next Steps'],
+      icon: Users
+    },
+    {
+      name: 'Annual Review',
+      sections: ['Year in Review', 'Financial Performance', 'Key Achievements', 'Market Position', 'Strategic Goals', 'Risk Assessment', 'Budget Overview', 'Organizational Updates', 'Technology Roadmap', 'Compliance Update', 'Q&A', 'Looking Ahead'],
+      icon: FileText
+    },
   ]);
 
   const getStatusColor = (status: string) => {
@@ -45,6 +70,36 @@ export function CEOBoardPacket() {
     }
   };
 
+  const handleCreatePacket = () => {
+    if (!newPacketTitle || !newPacketDate) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
+    const template = templates.find(t => t.name === selectedTemplate);
+    const sections = template?.sections || ['Executive Summary', 'Financial Summary', 'Key Metrics', 'Action Items'];
+
+    const newPacket: BoardPacket = {
+      id: String(packets.length + 1),
+      title: newPacketTitle,
+      date: newPacketDate,
+      status: 'Draft',
+      sections: sections,
+      lastModified: new Date().toISOString().split('T')[0],
+    };
+
+    setPackets([newPacket, ...packets]);
+    setShowNewPacketModal(false);
+    setNewPacketTitle('');
+    setNewPacketDate('');
+    setSelectedTemplate('');
+  };
+
+  const handleUseTemplate = (templateName: string) => {
+    setSelectedTemplate(templateName);
+    setShowNewPacketModal(true);
+  };
+
   return (
     <div className="w-full space-y-6">
         <div className="flex items-center justify-between">
@@ -52,7 +107,10 @@ export function CEOBoardPacket() {
             <h1 className="text-3xl font-bold text-gray-900">Board Packet Builder</h1>
             <p className="text-gray-600 mt-1">Create comprehensive board meeting materials</p>
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-lg hover:opacity-90 transition-opacity font-medium shadow-md">
+          <button
+            onClick={() => setShowNewPacketModal(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-lg hover:opacity-90 transition-opacity font-medium shadow-md"
+          >
             <Plus size={18} />
             New Packet
           </button>
@@ -132,8 +190,11 @@ export function CEOBoardPacket() {
                 <div key={template.name} className="bg-white rounded-xl shadow-sm border p-6 hover:shadow-md transition-shadow cursor-pointer">
                   <Icon size={32} className="text-pink-600 mb-3" />
                   <h3 className="font-semibold text-gray-900 mb-2">{template.name}</h3>
-                  <p className="text-sm text-gray-500">{template.sections} sections included</p>
-                  <button className="mt-4 w-full px-4 py-2 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-lg hover:opacity-90 transition-opacity text-sm font-medium shadow-md">
+                  <p className="text-sm text-gray-500">{template.sections.length} sections included</p>
+                  <button
+                    onClick={() => handleUseTemplate(template.name)}
+                    className="mt-4 w-full px-4 py-2 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-lg hover:opacity-90 transition-opacity text-sm font-medium shadow-md"
+                  >
                     Use Template
                   </button>
                 </div>
@@ -141,6 +202,107 @@ export function CEOBoardPacket() {
             })}
           </div>
         </div>
+
+        {showNewPacketModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">Create New Board Packet</h2>
+                <button
+                  onClick={() => {
+                    setShowNewPacketModal(false);
+                    setNewPacketTitle('');
+                    setNewPacketDate('');
+                    setSelectedTemplate('');
+                  }}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Packet Title <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={newPacketTitle}
+                    onChange={(e) => setNewPacketTitle(e.target.value)}
+                    placeholder="e.g., Q1 2026 Board Meeting"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Meeting Date <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    value={newPacketDate}
+                    onChange={(e) => setNewPacketDate(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Template
+                  </label>
+                  <select
+                    value={selectedTemplate}
+                    onChange={(e) => setSelectedTemplate(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent outline-none"
+                  >
+                    <option value="">Custom (No Template)</option>
+                    {templates.map((template) => (
+                      <option key={template.name} value={template.name}>
+                        {template.name} ({template.sections.length} sections)
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {selectedTemplate && (
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <p className="text-sm font-medium text-gray-700 mb-2">Included Sections:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {templates
+                        .find(t => t.name === selectedTemplate)
+                        ?.sections.map((section) => (
+                          <span key={section} className="px-2 py-1 bg-white rounded text-xs text-gray-700 border">
+                            {section}
+                          </span>
+                        ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex gap-3 mt-6">
+                <button
+                  onClick={() => {
+                    setShowNewPacketModal(false);
+                    setNewPacketTitle('');
+                    setNewPacketDate('');
+                    setSelectedTemplate('');
+                  }}
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleCreatePacket}
+                  className="flex-1 px-4 py-2 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-lg hover:opacity-90 transition-opacity font-medium shadow-md"
+                >
+                  Create Packet
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
     </div>
   );
 }

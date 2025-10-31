@@ -165,11 +165,49 @@ function useCareerDevelopmentPlans(employeeId?: string) {
   return { data, isLoading };
 }
 
+function useProvideFeedback() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const provideFeedback = useCallback(async (feedback: {
+    employee_id: string;
+    feedback_type: string;
+    content: string;
+    is_anonymous?: boolean;
+  }) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const { error: feedbackError } = await supabase
+        .from('employee_feedback')
+        .insert([{
+          employee_id: feedback.employee_id,
+          feedback_from: feedback.is_anonymous ? 'Anonymous' : 'Current User',
+          feedback_type: feedback.feedback_type,
+          content: feedback.content,
+          feedback_date: new Date().toISOString()
+        }]);
+
+      if (feedbackError) throw feedbackError;
+      return { success: true };
+    } catch (err: any) {
+      setError(err.message);
+      return { success: false, error: err.message };
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  return { provideFeedback, isLoading, error };
+}
+
 export function usePerformanceSystem() {
   return {
     useEmployeeReviews,
     useEmployeeFeedback,
     useEmployeeKpis,
-    useCareerDevelopmentPlans
+    useCareerDevelopmentPlans,
+    useProvideFeedback
   };
 }

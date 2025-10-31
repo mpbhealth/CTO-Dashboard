@@ -51,8 +51,8 @@ export function CEODashboardLayout({ children }: CEODashboardLayoutProps) {
         </button>
       )}
 
-      <main className={`flex-1 min-h-screen overflow-y-auto overflow-x-hidden transition-all duration-300 ${
-        isSidebarExpanded ? 'md:ml-80' : isMobile ? 'ml-0' : 'md:ml-20'
+      <main className={`flex-1 min-h-screen overflow-y-auto overflow-x-hidden transition-all duration-300 pl-0 ${
+        isSidebarExpanded ? 'md:pl-80' : isMobile ? '' : 'md:pl-20'
       }`}>
         <div className="w-full max-w-[1920px] mx-auto px-6 sm:px-8 lg:px-12 py-10">
           {children}

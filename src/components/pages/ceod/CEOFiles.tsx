@@ -112,16 +112,18 @@ export function CEOFiles() {
                   file:mr-4 file:py-2 file:px-4
                   file:rounded-lg file:border-0
                   file:text-sm file:font-medium
-                  file:bg-gradient-to-r file:from-[#1a3d97] file:to-[#00A896]
+                  file:bg-gradient-to-r file:from-pink-500 file:to-pink-600
                   file:text-white
                   hover:file:opacity-90
-                  file:cursor-pointer"
+                  file:cursor-pointer
+                  file:transition-opacity
+                  file:shadow-md"
               />
             </div>
             <button
               onClick={handleUpload}
               disabled={!selectedFile || isUploading}
-              className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed shadow-md font-medium"
             >
               <Upload size={18} />
               {isUploading ? 'Uploading...' : 'Upload'}
@@ -129,7 +131,7 @@ export function CEOFiles() {
           </div>
           {selectedFile && (
             <div className="mt-3 text-sm text-gray-600">
-              Selected: {selectedFile.name} ({formatFileSize(selectedFile.size)})
+              Selected: <span className="font-medium text-pink-600">{selectedFile.name}</span> ({formatFileSize(selectedFile.size)})
             </div>
           )}
         </div>

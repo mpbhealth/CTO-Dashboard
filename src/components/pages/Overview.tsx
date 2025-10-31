@@ -1,32 +1,6 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import {
-  Users,
-  Building2,
-  Calendar,
-  Plus,
-  Edit,
-  Trash2,
-  TrendingUp,
-  TrendingDown,
-  DollarSign,
-  Shield,
-  Activity,
-  Briefcase,
-  CheckCircle2,
-  AlertTriangle,
-  Server,
-  Code,
-  Target,
-  Clock,
-  FileText,
-  BarChart3,
-  PieChart,
-  Zap,
-  Package,
-  GitBranch,
-  Ticket,
-} from 'lucide-react';
+import { Users, Building2, Calendar, Plus, CreditCard as Edit, Trash2, TrendingUp, TrendingDown, DollarSign, Shield, Activity, Briefcase, CheckCircle2, AlertTriangle, Server, Code, Target, Clock, FileText, BarChart3, PieChart, Zap, Package, GitBranch, Ticket } from 'lucide-react';
 import {
   LineChart,
   Line,

@@ -285,7 +285,7 @@ export default function ITSupport() {
               <RefreshCw className="w-8 h-8 text-slate-400 animate-spin mx-auto" />
               <p className="text-slate-600 mt-2">Loading tickets...</p>
             </div>
-          ) : tickets.length === 0 ? (
+          ) : !tickets || tickets.length === 0 ? (
             <div className="p-12 text-center">
               <Ticket className="w-16 h-16 text-slate-300 mx-auto" />
               <p className="text-slate-600 mt-4">No tickets found</p>

@@ -41,7 +41,7 @@ export function useTicketStats() {
   useEffect(() => {
     async function fetchStats() {
       try {
-        const { data: tickets, error: ticketsError } = await supabase.from('tickets').select('*');
+        const { data: tickets, error: ticketsError } = await supabase.from('tickets_cache').select('*');
 
         if (ticketsError) throw ticketsError;
 
@@ -116,7 +116,7 @@ export function useTicketTrends(days: number = 30) {
         daysAgo.setDate(daysAgo.getDate() - days);
 
         const { data: tickets, error: ticketsError } = await supabase
-          .from('tickets')
+          .from('tickets_cache')
           .select('*')
           .gte('created_at', daysAgo.toISOString())
           .order('created_at', { ascending: true });
@@ -162,7 +162,7 @@ export function useTickets() {
     try {
       setLoading(true);
       const { data: tickets, error: ticketsError } = await supabase
-        .from('tickets')
+        .from('tickets_cache')
         .select('*')
         .order('created_at', { ascending: false });
 
@@ -181,7 +181,7 @@ export function useTickets() {
 
   const addTicket = async (ticket: any) => {
     try {
-      const { error } = await supabase.from('tickets').insert([ticket]);
+      const { error } = await supabase.from('tickets_cache').insert([ticket]);
       if (error) throw error;
       await fetchData();
     } catch (err: any) {
@@ -191,7 +191,7 @@ export function useTickets() {
 
   const updateTicket = async (id: string, updates: any) => {
     try {
-      const { error } = await supabase.from('tickets').update(updates).eq('id', id);
+      const { error } = await supabase.from('tickets_cache').update(updates).eq('id', id);
       if (error) throw error;
       await fetchData();
     } catch (err: any) {
@@ -201,7 +201,7 @@ export function useTickets() {
 
   const deleteTicket = async (id: string) => {
     try {
-      const { error } = await supabase.from('tickets').delete().eq('id', id);
+      const { error } = await supabase.from('tickets_cache').delete().eq('id', id);
       if (error) throw error;
       await fetchData();
     } catch (err: any) {

@@ -126,7 +126,7 @@ export function useAuditLog() {
     async function fetchAuditLog() {
       try {
         const { data: logs, error } = await supabase
-          .from('audit_log')
+          .from('audit_logs')
           .select('*')
           .order('created_at', { ascending: false });
 

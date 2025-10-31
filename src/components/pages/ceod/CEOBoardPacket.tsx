@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import { FileText, Download, Plus, Calendar, Users, X } from 'lucide-react';
+import { FileText, Download, Plus, Calendar, Users, X, Edit } from 'lucide-react';
 import { CEODashboardLayout } from '../../layouts/CEODashboardLayout';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 interface BoardPacket {
   id: string;
@@ -100,6 +102,214 @@ export function CEOBoardPacket() {
     setShowNewPacketModal(true);
   };
 
+  const handleExportWord = (packet: BoardPacket) => {
+    const content = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>${packet.title}</title>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              line-height: 1.6;
+              max-width: 800px;
+              margin: 0 auto;
+              padding: 40px;
+            }
+            h1 {
+              color: #ec4899;
+              border-bottom: 3px solid #ec4899;
+              padding-bottom: 10px;
+            }
+            h2 {
+              color: #1f2937;
+              margin-top: 30px;
+              border-bottom: 1px solid #e5e7eb;
+              padding-bottom: 8px;
+            }
+            .metadata {
+              background: #f9fafb;
+              padding: 15px;
+              border-radius: 8px;
+              margin: 20px 0;
+            }
+            .metadata-item {
+              margin: 5px 0;
+            }
+            .section {
+              margin: 25px 0;
+              padding: 15px;
+              border-left: 4px solid #ec4899;
+              background: #fef2f2;
+            }
+            .section-title {
+              font-weight: bold;
+              color: #1f2937;
+              margin-bottom: 10px;
+            }
+            .status {
+              display: inline-block;
+              padding: 5px 12px;
+              border-radius: 20px;
+              font-size: 14px;
+              font-weight: bold;
+            }
+            .status-draft {
+              background: #fef3c7;
+              color: #92400e;
+            }
+            .status-review {
+              background: #fce7f3;
+              color: #9f1239;
+            }
+            .status-published {
+              background: #d1fae5;
+              color: #065f46;
+            }
+          </style>
+        </head>
+        <body>
+          <h1>${packet.title}</h1>
+
+          <div class="metadata">
+            <div class="metadata-item"><strong>Meeting Date:</strong> ${packet.date}</div>
+            <div class="metadata-item"><strong>Status:</strong> <span class="status status-${packet.status.toLowerCase().replace(' ', '-')}">${packet.status}</span></div>
+            <div class="metadata-item"><strong>Last Modified:</strong> ${packet.lastModified}</div>
+            <div class="metadata-item"><strong>Total Sections:</strong> ${packet.sections.length}</div>
+          </div>
+
+          <h2>Board Packet Contents</h2>
+
+          ${packet.sections.map((section, index) => `
+            <div class="section">
+              <div class="section-title">${index + 1}. ${section}</div>
+              <p style="color: #6b7280; font-style: italic;">
+                [Content for ${section} will be added here. This section should include relevant data,
+                analysis, and recommendations for board review.]
+              </p>
+            </div>
+          `).join('')}
+
+          <h2>Action Items</h2>
+          <div class="section">
+            <p>• Review all sections before the board meeting</p>
+            <p>• Prepare questions for the Q&A session</p>
+            <p>• Submit feedback by ${new Date(new Date(packet.date).getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}</p>
+          </div>
+
+          <h2>Next Steps</h2>
+          <div class="section">
+            <p>1. Finalize all section content</p>
+            <p>2. Circulate to board members for review</p>
+            <p>3. Schedule pre-meeting briefings if needed</p>
+            <p>4. Confirm attendance and logistics</p>
+          </div>
+
+          <hr style="margin-top: 40px; border: none; border-top: 1px solid #e5e7eb;">
+          <p style="text-align: center; color: #6b7280; font-size: 12px;">
+            Generated on ${new Date().toLocaleDateString()} | MPB Health Board Portal
+          </p>
+        </body>
+      </html>
+    `;
+
+    const blob = new Blob([content], { type: 'application/msword' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${packet.title.replace(/[^a-z0-9]/gi, '_')}_Board_Packet.doc`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleExportPDF = (packet: BoardPacket) => {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 20;
+    let yPos = 20;
+
+    doc.setFillColor(236, 72, 153);
+    doc.rect(0, 0, pageWidth, 15, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text(packet.title, margin, 10);
+
+    doc.setTextColor(0, 0, 0);
+    yPos = 25;
+
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.setFillColor(249, 250, 251);
+    doc.rect(margin - 5, yPos, pageWidth - 2 * margin + 10, 25, 'F');
+
+    yPos += 7;
+    doc.text(`Meeting Date: ${packet.date}`, margin, yPos);
+    yPos += 6;
+    doc.text(`Status: ${packet.status}`, margin, yPos);
+    yPos += 6;
+    doc.text(`Last Modified: ${packet.lastModified}`, margin, yPos);
+    yPos += 6;
+    doc.text(`Total Sections: ${packet.sections.length}`, margin, yPos);
+
+    yPos += 15;
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Board Packet Contents', margin, yPos);
+
+    yPos += 10;
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+
+    packet.sections.forEach((section, index) => {
+      if (yPos > 270) {
+        doc.addPage();
+        yPos = 20;
+      }
+
+      doc.setFont('helvetica', 'bold');
+      doc.text(`${index + 1}. ${section}`, margin, yPos);
+      yPos += 6;
+
+      doc.setFont('helvetica', 'italic');
+      doc.setTextColor(107, 114, 128);
+      const sectionText = `[Content for ${section} will be added here]`;
+      const lines = doc.splitTextToSize(sectionText, pageWidth - 2 * margin);
+      doc.text(lines, margin + 5, yPos);
+      yPos += lines.length * 5 + 8;
+      doc.setTextColor(0, 0, 0);
+    });
+
+    if (yPos > 240) {
+      doc.addPage();
+      yPos = 20;
+    }
+
+    yPos += 5;
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Action Items', margin, yPos);
+    yPos += 8;
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text('• Review all sections before the board meeting', margin, yPos);
+    yPos += 6;
+    doc.text('• Prepare questions for the Q&A session', margin, yPos);
+    yPos += 6;
+    const reviewDate = new Date(new Date(packet.date).getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+    doc.text(`• Submit feedback by ${reviewDate}`, margin, yPos);
+
+    doc.setFontSize(8);
+    doc.setTextColor(107, 114, 128);
+    const footerText = `Generated on ${new Date().toLocaleDateString()} | MPB Health Board Portal`;
+    doc.text(footerText, pageWidth / 2, 285, { align: 'center' });
+
+    doc.save(`${packet.title.replace(/[^a-z0-9]/gi, '_')}_Board_Packet.pdf`);
+  };
+
   return (
     <div className="w-full space-y-6">
         <div className="flex items-center justify-between">
@@ -168,10 +378,17 @@ export function CEOBoardPacket() {
                   ))}
                 </div>
                 <div className="flex gap-2">
-                  <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
-                    Edit
+                  <button
+                    onClick={() => handleExportWord(packet)}
+                    className="flex items-center gap-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+                  >
+                    <FileText size={16} />
+                    Export Word
                   </button>
-                  <button className="flex items-center gap-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
+                  <button
+                    onClick={() => handleExportPDF(packet)}
+                    className="flex items-center gap-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+                  >
                     <Download size={16} />
                     Export PDF
                   </button>

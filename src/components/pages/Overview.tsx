@@ -254,7 +254,7 @@ export default function Overview() {
   };
 
   return (
-    <div className="w-full h-full px-6 py-6 space-y-6">
+    <div className="w-full h-full p-4 space-y-4">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}

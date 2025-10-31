@@ -67,16 +67,8 @@ export function useNotes(options: UseNotesOptions) {
       .eq('owner_role', dashboardRole)
       .order('created_at', { ascending: false });
 
-<<<<<<< HEAD
-      if (fetchError) throw fetchError;
-      return data || [];
-    } catch (error) {
-      throw error;
-    }
-=======
     if (fetchError) throw fetchError;
     return data || [];
->>>>>>> c72084a4f45ec10e51891910f182cf3718a8c0d2
   };
 
   const fetchSharedNotes = async () => {
@@ -96,16 +88,8 @@ export function useNotes(options: UseNotesOptions) {
       .eq('note_shares.shared_with_user_id', user.id)
       .order('created_at', { ascending: false });
 
-<<<<<<< HEAD
-      if (fetchError) throw fetchError;
-      return data || [];
-    } catch (error) {
-      throw error;
-    }
-=======
     if (fetchError) throw fetchError;
     return data || [];
->>>>>>> c72084a4f45ec10e51891910f182cf3718a8c0d2
   };
 
   const fetchNotifications = async () => {
@@ -121,16 +105,8 @@ export function useNotes(options: UseNotesOptions) {
       .order('created_at', { ascending: false })
       .limit(20);
 
-<<<<<<< HEAD
-      if (fetchError) throw fetchError;
-      return data || [];
-    } catch (error) {
-      throw error;
-    }
-=======
     if (fetchError) throw fetchError;
     return data || [];
->>>>>>> c72084a4f45ec10e51891910f182cf3718a8c0d2
   };
 
   const fetchAllNotes = async () => {
@@ -219,21 +195,6 @@ export function useNotes(options: UseNotesOptions) {
 
     if (insertError) throw insertError;
 
-<<<<<<< HEAD
-      if (options?.shareImmediately && options?.createdForRole) {
-        await shareNoteWithRole(
-          data.id,
-          options.createdForRole,
-          options.permissionLevel || 'view',
-          options.shareMessage
-        );
-      }
-
-      await fetchAllNotes();
-      return data;
-    } catch (error) {
-      throw error;
-=======
     if (options?.shareImmediately && options?.createdForRole) {
       await shareNoteWithRole(
         data.id,
@@ -241,7 +202,6 @@ export function useNotes(options: UseNotesOptions) {
         options.permissionLevel || 'view',
         options.shareMessage
       );
->>>>>>> c72084a4f45ec10e51891910f182cf3718a8c0d2
     }
 
     await fetchAllNotes();
@@ -302,33 +262,8 @@ export function useNotes(options: UseNotesOptions) {
       .eq('note_id', noteId)
       .eq('shared_by_user_id', user.id);
 
-<<<<<<< HEAD
-      if (userId) {
-        query = query.eq('shared_with_user_id', userId);
-      }
-
-      const { error: deleteError } = await query;
-      if (deleteError) throw deleteError;
-
-      const { count } = await supabase
-        .from('note_shares')
-        .select('*', { count: 'exact', head: true })
-        .eq('note_id', noteId);
-
-      if (count === 0) {
-        await supabase
-          .from('notes')
-          .update({ is_shared: false, is_collaborative: false })
-          .eq('id', noteId);
-      }
-
-      await fetchAllNotes();
-    } catch (error) {
-      throw error;
-=======
     if (userId) {
       query = query.eq('shared_with_user_id', userId);
->>>>>>> c72084a4f45ec10e51891910f182cf3718a8c0d2
     }
 
     const { error: deleteError } = await query;
@@ -385,14 +320,7 @@ export function useNotes(options: UseNotesOptions) {
 
     if (updateError) throw updateError;
 
-<<<<<<< HEAD
-      await fetchAllNotes();
-    } catch (error) {
-      throw error;
-    }
-=======
     await fetchAllNotes();
->>>>>>> c72084a4f45ec10e51891910f182cf3718a8c0d2
   };
 
   const unreadCount = notifications.filter(n => !n.is_read).length;

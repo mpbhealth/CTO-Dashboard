@@ -61,7 +61,7 @@ export function useEmployeeProfiles() {
         const { data: employees, error: empError } = await supabase
           .from('employee_profiles')
           .select('*')
-          .order('name', { ascending: true });
+          .order('last_name', { ascending: true });
 
         if (empError) throw empError;
         setData(employees || []);

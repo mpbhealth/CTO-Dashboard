@@ -53,7 +53,7 @@ function useEmployeeReviews(employeeId?: string) {
     async function fetchReviews() {
       try {
         setIsLoading(true);
-        let query = supabase.from('performance_reviews').select('*').order('review_date', { ascending: false });
+        let query = supabase.from('performance_reviews').select('*').order('review_period_start', { ascending: false });
 
         if (employeeId) {
           query = query.eq('employee_id', employeeId);
@@ -113,7 +113,7 @@ function useEmployeeKpis(employeeId?: string) {
     async function fetchKpis() {
       try {
         setIsLoading(true);
-        let query = supabase.from('employee_kpis').select('*').order('measurement_date', { ascending: false });
+        let query = supabase.from('employee_kpis').select('*').order('period_start', { ascending: false });
 
         if (employeeId) {
           query = query.eq('employee_id', employeeId);

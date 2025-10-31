@@ -34,11 +34,11 @@ if (import.meta.env.DEV && !isSupabaseConfigured) {
   });
 }
 
-// Production validation - fail fast if misconfigured
+// Production validation - warn but don't crash
 if (import.meta.env.PROD && !isSupabaseConfigured) {
-  const errorMsg = 'CRITICAL: Supabase is not configured in production environment';
+  const errorMsg = 'WARNING: Supabase is not configured in production environment';
   console.error('[Supabase]', errorMsg);
-  throw new Error(errorMsg);
+  console.error('[Supabase] Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your deployment environment');
 }
 
 // Create client without type parameter to avoid import errors

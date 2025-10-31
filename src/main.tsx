@@ -13,6 +13,7 @@ import './index.css';
 import './lib/diagnostics';
 import './lib/whiteScreenDiagnostics';
 import { Environment } from './lib/environment';
+import { isSupabaseConfigured } from './lib/supabase';
 import React from 'react';
 
 // Create a client for React Query
@@ -187,10 +188,112 @@ if ('serviceWorker' in navigator && !Environment.isStackBlitz()) {
   });
 }
 
+// Configuration Check Component
+function ConfigurationCheck({ children }: { children: React.ReactNode }) {
+  if (!isSupabaseConfigured && import.meta.env.PROD) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
+        <div className="max-w-2xl w-full bg-white rounded-2xl shadow-2xl overflow-hidden">
+          <div className="bg-gradient-to-r from-pink-600 to-rose-600 p-8 text-white">
+            <div className="flex items-center space-x-4">
+              <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold">Configuration Required</h1>
+                <p className="text-pink-100 mt-1">Database connection not configured</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-8 space-y-6">
+            <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <h3 className="text-sm font-medium text-yellow-800">Action Required</h3>
+                  <p className="mt-1 text-sm text-yellow-700">
+                    Your MPB Health Dashboard requires Supabase configuration to function properly.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h2 className="text-lg font-semibold text-slate-900 mb-3">Setup Instructions</h2>
+              <ol className="space-y-3 text-sm text-slate-600">
+                <li className="flex items-start">
+                  <span className="flex-shrink-0 w-6 h-6 bg-pink-100 text-pink-600 rounded-full flex items-center justify-center font-semibold text-xs mr-3 mt-0.5">1</span>
+                  <span>Log in to your deployment platform (Netlify, Vercel, etc.)</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="flex-shrink-0 w-6 h-6 bg-pink-100 text-pink-600 rounded-full flex items-center justify-center font-semibold text-xs mr-3 mt-0.5">2</span>
+                  <span>Navigate to your site's environment variables settings</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="flex-shrink-0 w-6 h-6 bg-pink-100 text-pink-600 rounded-full flex items-center justify-center font-semibold text-xs mr-3 mt-0.5">3</span>
+                  <span>Add the following environment variables:</span>
+                </li>
+              </ol>
+            </div>
+
+            <div className="bg-slate-900 rounded-lg p-4 space-y-2">
+              <div className="font-mono text-xs">
+                <div className="text-slate-400"># Required Variables</div>
+                <div className="text-green-400">VITE_SUPABASE_URL</div>
+                <div className="text-slate-500 ml-4">Your Supabase project URL</div>
+                <div className="text-green-400 mt-2">VITE_SUPABASE_ANON_KEY</div>
+                <div className="text-slate-500 ml-4">Your Supabase anonymous key</div>
+              </div>
+            </div>
+
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <h3 className="font-semibold text-blue-900 text-sm mb-2 flex items-center">
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Where to find these values
+              </h3>
+              <ol className="text-xs text-blue-800 space-y-1 ml-6 list-decimal">
+                <li>Go to <a href="https://supabase.com/dashboard" target="_blank" rel="noopener noreferrer" className="underline">supabase.com/dashboard</a></li>
+                <li>Select your project</li>
+                <li>Click on "Settings" → "API"</li>
+                <li>Copy the "Project URL" and "anon/public" key</li>
+              </ol>
+            </div>
+
+            <div className="pt-4 border-t border-slate-200">
+              <button
+                onClick={() => window.location.reload()}
+                className="w-full bg-pink-600 hover:bg-pink-700 text-white px-6 py-3 rounded-lg transition-colors font-medium shadow-sm"
+              >
+                I've Added the Variables - Reload Page
+              </button>
+            </div>
+
+            <p className="text-xs text-slate-500 text-center">
+              Need help? Contact your system administrator or check the deployment documentation.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return <>{children}</>;
+}
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
+      <ConfigurationCheck>
+        <QueryClientProvider client={queryClient}>
         <BrowserRouter
           future={{
             v7_startTransition: true,
@@ -222,6 +325,7 @@ createRoot(document.getElementById('root')!).render(
           </AuthProvider>
         </BrowserRouter>
       </QueryClientProvider>
+      </ConfigurationCheck>
     </ErrorBoundary>
   </StrictMode>
 );

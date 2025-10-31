@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 
 export interface PerformanceReview {
@@ -15,61 +15,161 @@ export interface PerformanceReview {
   updated_at: string;
 }
 
-export function usePerformanceSystem() {
-  const [reviews, setReviews] = useState<PerformanceReview[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export interface EmployeeFeedback {
+  id: string;
+  employee_id: string;
+  feedback_from: string;
+  feedback_date: string;
+  feedback_type: string;
+  content: string;
+  created_at: string;
+}
 
-  const fetchReviews = async () => {
-    try {
-      setLoading(true);
-      const { data, error: reviewError } = await supabase
-        .from('performance_reviews')
-        .select('*')
-        .order('review_date', { ascending: false });
+export interface EmployeeKpi {
+  id: string;
+  employee_id: string;
+  kpi_name: string;
+  target_value: number;
+  actual_value: number;
+  measurement_date: string;
+  created_at: string;
+}
 
-      if (reviewError) throw reviewError;
-      setReviews(data || []);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+export interface CareerDevelopmentPlan {
+  id: string;
+  employee_id: string;
+  goal: string;
+  timeline: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+}
+
+function useEmployeeReviews(employeeId?: string) {
+  const [data, setData] = useState<PerformanceReview[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    async function fetchReviews() {
+      try {
+        setIsLoading(true);
+        let query = supabase.from('performance_reviews').select('*').order('review_date', { ascending: false });
+
+        if (employeeId) {
+          query = query.eq('employee_id', employeeId);
+        }
+
+        const { data: reviews, error } = await query;
+        if (error) throw error;
+        setData(reviews || []);
+      } catch (err) {
+        console.error('Error fetching reviews:', err);
+        setData([]);
+      } finally {
+        setIsLoading(false);
+      }
+    }
     fetchReviews();
-  }, []);
+  }, [employeeId]);
 
-  const addReview = async (review: Partial<PerformanceReview>) => {
-    try {
-      const { error } = await supabase.from('performance_reviews').insert([review]);
-      if (error) throw error;
-      await fetchReviews();
-    } catch (err: any) {
-      throw new Error(err.message);
+  return { data, isLoading };
+}
+
+function useEmployeeFeedback(employeeId?: string) {
+  const [data, setData] = useState<EmployeeFeedback[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchFeedback() {
+      try {
+        setIsLoading(true);
+        let query = supabase.from('employee_feedback').select('*').order('feedback_date', { ascending: false });
+
+        if (employeeId) {
+          query = query.eq('employee_id', employeeId);
+        }
+
+        const { data: feedback, error } = await query;
+        if (error) throw error;
+        setData(feedback || []);
+      } catch (err) {
+        console.error('Error fetching feedback:', err);
+        setData([]);
+      } finally {
+        setIsLoading(false);
+      }
     }
-  };
+    fetchFeedback();
+  }, [employeeId]);
 
-  const updateReview = async (id: string, updates: Partial<PerformanceReview>) => {
-    try {
-      const { error } = await supabase.from('performance_reviews').update(updates).eq('id', id);
-      if (error) throw error;
-      await fetchReviews();
-    } catch (err: any) {
-      throw new Error(err.message);
+  return { data, isLoading };
+}
+
+function useEmployeeKpis(employeeId?: string) {
+  const [data, setData] = useState<EmployeeKpi[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchKpis() {
+      try {
+        setIsLoading(true);
+        let query = supabase.from('employee_kpis').select('*').order('measurement_date', { ascending: false });
+
+        if (employeeId) {
+          query = query.eq('employee_id', employeeId);
+        }
+
+        const { data: kpis, error } = await query;
+        if (error) throw error;
+        setData(kpis || []);
+      } catch (err) {
+        console.error('Error fetching KPIs:', err);
+        setData([]);
+      } finally {
+        setIsLoading(false);
+      }
     }
-  };
+    fetchKpis();
+  }, [employeeId]);
 
-  const deleteReview = async (id: string) => {
-    try {
-      const { error } = await supabase.from('performance_reviews').delete().eq('id', id);
-      if (error) throw error;
-      await fetchReviews();
-    } catch (err: any) {
-      throw new Error(err.message);
+  return { data, isLoading };
+}
+
+function useCareerDevelopmentPlans(employeeId?: string) {
+  const [data, setData] = useState<CareerDevelopmentPlan[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchPlans() {
+      try {
+        setIsLoading(true);
+        let query = supabase.from('career_development_plans').select('*').order('created_at', { ascending: false });
+
+        if (employeeId) {
+          query = query.eq('employee_id', employeeId);
+        }
+
+        const { data: plans, error } = await query;
+        if (error) throw error;
+        setData(plans || []);
+      } catch (err) {
+        console.error('Error fetching career plans:', err);
+        setData([]);
+      } finally {
+        setIsLoading(false);
+      }
     }
-  };
+    fetchPlans();
+  }, [employeeId]);
 
-  return { reviews, loading, error, refetch: fetchReviews, addReview, updateReview, deleteReview };
+  return { data, isLoading };
+}
+
+export function usePerformanceSystem() {
+  return {
+    useEmployeeReviews,
+    useEmployeeFeedback,
+    useEmployeeKpis,
+    useCareerDevelopmentPlans
+  };
 }

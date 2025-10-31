@@ -1,5 +1,4 @@
 import { useState, useMemo } from 'react';
-import { CEODashboardLayout } from '../../layouts/CEODashboardLayout';
 import { ShoppingCart, Download, TrendingUp, DollarSign, Users, Target, Award } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 import { useQuery } from '@tanstack/react-query';
@@ -344,3 +343,4 @@ export function CEOSalesReports() {
     </div>
   );
 }
+

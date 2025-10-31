@@ -8,7 +8,6 @@ import {
   FileText,
   Upload,
 } from 'lucide-react';
-import { CEODashboardLayout } from '../../layouts/CEODashboardLayout';
 import { useCurrentProfile, useResources, useWorkspace } from '../../../hooks/useDualDashboard';
 import { ShareModal } from '../../modals/ShareModal';
 import { CEOErrorBoundary } from '../../ceo/ErrorBoundary';
@@ -300,3 +299,4 @@ export function CEOHome() {
     </div>
   );
 }
+

@@ -1,7 +1,5 @@
 import { useState } from 'react';
 import { Target, Plus, TrendingUp, Calendar, DollarSign } from 'lucide-react';
-import { CEODashboardLayout } from '../../layouts/CEODashboardLayout';
-
 export function CEOMarketingPlanner() {
   const [campaigns] = useState([
     {
@@ -146,3 +144,4 @@ export function CEOMarketingPlanner() {
     
   );
 }
+

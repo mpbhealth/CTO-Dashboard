@@ -1,5 +1,4 @@
 import { useState, useMemo } from 'react';
-import { CEODashboardLayout } from '../../layouts/CEODashboardLayout';
 import { FileText, Download, Search, Calendar, User, Tag } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 import { useQuery } from '@tanstack/react-query';
@@ -242,3 +241,4 @@ export function CEOConciergeNotes() {
     </div>
   );
 }
+

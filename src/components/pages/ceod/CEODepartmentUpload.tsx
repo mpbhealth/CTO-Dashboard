@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { CEODashboardLayout } from '../../layouts/CEODashboardLayout';
 import { Upload, FileSpreadsheet, Download, Info, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 import Papa from 'papaparse';
@@ -221,7 +220,6 @@ export function CEODepartmentUpload() {
   };
 
   return (
-    <CEODashboardLayout>
       <div className="w-full space-y-6">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
@@ -426,6 +424,6 @@ export function CEODepartmentUpload() {
           </div>
         </div>
       </div>
-    </CEODashboardLayout>
-  );
+    );
 }
+

@@ -1,6 +1,5 @@
 import { useState, useRef } from 'react';
 import { FileText, Download, Plus, Calendar, Users, X, Edit, Bold, Italic, Underline, List, ListOrdered, AlignLeft, AlignCenter, AlignRight, Save, Type } from 'lucide-react';
-import { CEODashboardLayout } from '../../layouts/CEODashboardLayout';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
@@ -772,3 +771,4 @@ export function CEOBoardPacket() {
     </div>
   );
 }
+

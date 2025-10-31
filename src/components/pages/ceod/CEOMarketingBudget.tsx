@@ -1,7 +1,5 @@
 import { useState } from 'react';
 import { DollarSign, TrendingUp, ArrowUpRight, ArrowDownRight } from 'lucide-react';
-import { CEODashboardLayout } from '../../layouts/CEODashboardLayout';
-
 export function CEOMarketingBudget() {
   const [budgetData] = useState([
     { channel: 'Digital Ads', budget: 35000, spent: 28400, roi: 3.2, leads: 1240 },
@@ -112,3 +110,4 @@ export function CEOMarketingBudget() {
     
   );
 }
+

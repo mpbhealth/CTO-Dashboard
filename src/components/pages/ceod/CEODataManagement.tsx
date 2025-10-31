@@ -1,5 +1,4 @@
 import { useState, useMemo } from 'react';
-import { CEODashboardLayout } from '../../layouts/CEODashboardLayout';
 import { Database, Upload, FileSpreadsheet, RefreshCw, History, CheckCircle, AlertCircle, Link as LinkIcon, Copy, Filter, Calendar, Share2 } from 'lucide-react';
 import { CEODataImporter } from '../../ui/CEODataImporter';
 import { useCEODataImport } from '../../../hooks/useCEODataImport';
@@ -133,7 +132,6 @@ export function CEODataManagement() {
   };
 
   return (
-    <CEODashboardLayout>
       <div className="space-y-6">
         <div className="flex flex-col gap-4">
           <div>
@@ -507,6 +505,6 @@ export function CEODataManagement() {
           </div>
         )}
       </div>
-    </CEODashboardLayout>
-  );
+    );
 }
+

@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { CEODashboardLayout } from '../../layouts/CEODashboardLayout';
 import { FileText, Upload, Download, Share2, Trash2, Eye } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -203,3 +202,4 @@ export function CEOFiles() {
     </div>
   );
 }
+

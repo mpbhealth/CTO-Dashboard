@@ -1,5 +1,4 @@
 import { useState, useMemo } from 'react';
-import { CEODashboardLayout } from '../../layouts/CEODashboardLayout';
 import { Headphones, Download, Filter, TrendingUp, Users, Award, Target, Calendar } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 import { useQuery } from '@tanstack/react-query';
@@ -106,16 +105,13 @@ export function CEOSaudeMAXReports() {
 
   if (isLoading) {
     return (
-      <CEODashboardLayout>
         <div className="flex items-center justify-center min-h-96">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#a855f7]"></div>
         </div>
-      </CEODashboardLayout>
-    );
+      );
   }
 
   return (
-    <CEODashboardLayout>
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
@@ -346,6 +342,6 @@ export function CEOSaudeMAXReports() {
           />
         )}
       </div>
-    </CEODashboardLayout>
-  );
+    );
 }
+

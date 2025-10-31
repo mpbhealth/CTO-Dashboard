@@ -1,7 +1,5 @@
 import { useState } from 'react';
 import { Calendar, Plus, Filter } from 'lucide-react';
-import { CEODashboardLayout } from '../../layouts/CEODashboardLayout';
-
 export function CEOContentCalendar() {
   const [contentItems] = useState([
     { id: '1', date: '2025-10-25', type: 'Blog Post', title: 'Healthcare Navigation Tips', status: 'Published', assignee: 'Sarah K.' },
@@ -93,3 +91,4 @@ export function CEOContentCalendar() {
     
   );
 }
+

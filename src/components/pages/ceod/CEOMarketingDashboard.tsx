@@ -11,8 +11,6 @@ import {
   Mail,
   MousePointer,
 } from 'lucide-react';
-import { CEODashboardLayout } from '../../layouts/CEODashboardLayout';
-
 export function CEOMarketingDashboard() {
   const [activeTab, setActiveTab] = useState<'overview' | 'campaigns' | 'calendar' | 'budget' | 'assets'>('overview');
 
@@ -333,3 +331,4 @@ export function CEOMarketingDashboard() {
     
   );
 }
+

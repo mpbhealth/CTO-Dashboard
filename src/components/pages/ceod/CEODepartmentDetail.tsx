@@ -1,5 +1,4 @@
 import { useState, useMemo } from 'react';
-import { CEODashboardLayout } from '../../layouts/CEODashboardLayout';
 import { Filter, RefreshCw, Mail, MessageSquare, Download, CheckCircle, AlertCircle, Calendar, TrendingUp } from 'lucide-react';
 import { useDepartmentData } from '../../../hooks/useDepartmentData';
 import { useDepartmentNotes } from '../../../hooks/useDepartmentNotes';
@@ -137,7 +136,6 @@ View detailed report: ${window.location.href}
   };
 
   return (
-    <CEODashboardLayout>
       <div className="w-full space-y-6">
         <div className="flex items-start justify-between">
           <div>
@@ -372,6 +370,6 @@ View detailed report: ${window.location.href}
           </div>
         </div>
       </div>
-    </CEODashboardLayout>
-  );
+    );
 }
+

@@ -8,7 +8,6 @@ import {
   CheckCircle,
   Share2,
 } from 'lucide-react';
-import { CTODashboardLayout } from '../../layouts/CTODashboardLayout';
 import { useCurrentProfile, useResources, useWorkspace } from '../../../hooks/useDualDashboard';
 import { VisibilityBadge } from '../../ui/VisibilityBadge';
 import { ShareModal } from '../../modals/ShareModal';
@@ -63,7 +62,7 @@ export function CTOHome() {
   const isCEOUser = profile?.role === 'ceo' || profile?.role === 'admin';
 
   return (
-    <CTODashboardLayout>
+    <div className="w-full h-full">
       <div className="space-y-8">
         <div>
           {isCEOUser ? (
@@ -196,6 +195,6 @@ export function CTOHome() {
           onClose={() => setShareModalResource(null)}
         />
       )}
-    </CTODashboardLayout>
+    </div>
   );
 }

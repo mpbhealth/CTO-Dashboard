@@ -1,5 +1,4 @@
 import { useState, useMemo } from 'react';
-import { CTODashboardLayout } from '../../layouts/CTODashboardLayout';
 import { Activity, Download, TrendingDown, AlertTriangle, Users, DollarSign } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 import { useQuery } from '@tanstack/react-query';
@@ -96,18 +95,18 @@ export function CTOOperations() {
 
   if (isLoading) {
     return (
-      <CTODashboardLayout>
+      <div className="w-full h-full">
         <div className="space-y-6">
           <div className="flex items-center justify-center min-h-96">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600"></div>
           </div>
         </div>
-      </CTODashboardLayout>
+      </div>
     );
   }
 
   return (
-    <CTODashboardLayout>
+    <div className="w-full h-full">
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
@@ -320,6 +319,6 @@ export function CTOOperations() {
           />
         )}
       </div>
-    </CTODashboardLayout>
+    </div>
   );
 }

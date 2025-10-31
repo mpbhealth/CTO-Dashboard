@@ -59,13 +59,23 @@
             return;
           }
 
+          // Prevent logging errors from minified code initialization
+          if (e.message && e.message.includes('before initialization')) {
+            e.preventDefault();
+            return;
+          }
+
           if (!isStackBlitz || localStorage.getItem('debug') === 'true') {
-            console.error('[MPB Health] Global Error:', {
-              message: e.message,
-              filename: e.filename,
-              lineno: e.lineno,
-              colno: e.colno
-            });
+            try {
+              originalConsoleError.call(console, '[MPB Health] Global Error:', {
+                message: e.message || 'Unknown error',
+                filename: e.filename || 'Unknown',
+                lineno: e.lineno || 0,
+                colno: e.colno || 0
+              });
+            } catch (err) {
+              // Prevent recursive error logging
+            }
           }
         }, true);
 

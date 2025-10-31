@@ -228,7 +228,7 @@ export default function Overview() {
   };
 
   return (
-    <div className="w-full h-full p-4 space-y-4">
+    <div className="w-full space-y-6">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -270,7 +270,7 @@ export default function Overview() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.1 }}
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
       >
         <div className="bg-gradient-to-br from-sky-500 to-sky-700 p-6 rounded-xl shadow-lg text-white">
           <div className="flex items-center justify-between mb-4">
@@ -321,7 +321,7 @@ export default function Overview() {
           <BarChart3 className="w-6 h-6 mr-2 text-pink-600" />
           Key Performance Indicators
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {kpiData.map((kpi) => (
             <KPICard key={kpi.id} data={kpi} />
           ))}
@@ -340,7 +340,7 @@ export default function Overview() {
             <Ticket className="w-6 h-6 mr-2 text-pink-600" />
             IT Support Tickets
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
               <div className="flex items-center justify-between">
                 <div>
@@ -453,7 +453,7 @@ export default function Overview() {
       )}
 
       {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Organization Growth Trends */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
@@ -619,7 +619,7 @@ export default function Overview() {
       </div>
 
       {/* Company Info Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Team Directory */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -761,7 +761,7 @@ export default function Overview() {
       </div>
 
       {/* Financial Overview & Technology Health */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Financial Overview */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -879,7 +879,7 @@ export default function Overview() {
             {projects.length}
           </span>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {projects.slice(0, 6).map((project) => (
             <div
               key={project.id}

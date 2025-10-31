@@ -54,7 +54,7 @@ export function CEODashboardLayout({ children }: CEODashboardLayoutProps) {
       <main className={`flex-1 overflow-y-auto overflow-x-hidden transition-all duration-300 ${
         isSidebarExpanded ? 'md:ml-80' : isMobile ? 'ml-0' : 'md:ml-20'
       }`}>
-        <div className="w-full h-full">
+        <div className="w-full min-h-screen px-6 py-8">
           {children}
         </div>
       </main>

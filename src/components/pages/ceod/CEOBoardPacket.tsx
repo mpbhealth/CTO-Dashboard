@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { FileText, Download, Plus, Calendar, Users, X, Edit } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { FileText, Download, Plus, Calendar, Users, X, Edit, Bold, Italic, Underline, List, ListOrdered, AlignLeft, AlignCenter, AlignRight, Save, Type } from 'lucide-react';
 import { CEODashboardLayout } from '../../layouts/CEODashboardLayout';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
@@ -13,8 +13,21 @@ interface BoardPacket {
   lastModified: string;
 }
 
+interface SectionContent {
+  [sectionName: string]: string;
+}
+
 export function CEOBoardPacket() {
   const [showNewPacketModal, setShowNewPacketModal] = useState(false);
+  const [showEditorModal, setShowEditorModal] = useState(false);
+  const [editingPacket, setEditingPacket] = useState<BoardPacket | null>(null);
+  const [sectionContents, setSectionContents] = useState<SectionContent>({});
+  const [currentSection, setCurrentSection] = useState<string>('');
+  const [editorContent, setEditorContent] = useState('');
+  const [isBold, setIsBold] = useState(false);
+  const [isItalic, setIsItalic] = useState(false);
+  const [isUnderline, setIsUnderline] = useState(false);
+  const [fontSize, setFontSize] = useState('14');
   const [newPacketTitle, setNewPacketTitle] = useState('');
   const [newPacketDate, setNewPacketDate] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState('');
@@ -102,6 +115,53 @@ export function CEOBoardPacket() {
     setShowNewPacketModal(true);
   };
 
+  const handleEditPacket = (packet: BoardPacket) => {
+    setEditingPacket(packet);
+    const contents: SectionContent = {};
+    packet.sections.forEach(section => {
+      contents[section] = sectionContents[section] || '';
+    });
+    setSectionContents(contents);
+    setCurrentSection(packet.sections[0] || '');
+    setEditorContent(contents[packet.sections[0]] || '');
+    setShowEditorModal(true);
+  };
+
+  const handleSectionChange = (section: string) => {
+    setSectionContents(prev => ({
+      ...prev,
+      [currentSection]: editorContent
+    }));
+    setCurrentSection(section);
+    setEditorContent(sectionContents[section] || '');
+  };
+
+  const handleSaveEditor = () => {
+    setSectionContents(prev => ({
+      ...prev,
+      [currentSection]: editorContent
+    }));
+    setShowEditorModal(false);
+    setEditingPacket(null);
+  };
+
+  const editorRef = useRef<HTMLDivElement>(null);
+
+  const applyFormat = (command: string, value?: string) => {
+    document.execCommand(command, false, value);
+    if (editorRef.current) {
+      setEditorContent(editorRef.current.innerHTML);
+    }
+  };
+
+  const insertList = (ordered: boolean) => {
+    applyFormat(ordered ? 'insertOrderedList' : 'insertUnorderedList');
+  };
+
+  const setAlignment = (align: string) => {
+    applyFormat(`justify${align}`);
+  };
+
   const handleExportWord = (packet: BoardPacket) => {
     const content = `
       <!DOCTYPE html>
@@ -184,10 +244,9 @@ export function CEOBoardPacket() {
           ${packet.sections.map((section, index) => `
             <div class="section">
               <div class="section-title">${index + 1}. ${section}</div>
-              <p style="color: #6b7280; font-style: italic;">
-                [Content for ${section} will be added here. This section should include relevant data,
-                analysis, and recommendations for board review.]
-              </p>
+              <div style="margin-top: 10px;">
+                ${sectionContents[section] || '<p style="color: #6b7280; font-style: italic;">[Content for ' + section + ' will be added here. This section should include relevant data, analysis, and recommendations for board review.]</p>'}
+              </div>
             </div>
           `).join('')}
 
@@ -379,6 +438,13 @@ export function CEOBoardPacket() {
                 </div>
                 <div className="flex gap-2">
                   <button
+                    onClick={() => handleEditPacket(packet)}
+                    className="flex items-center gap-1 px-4 py-2 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-lg hover:opacity-90 transition-opacity text-sm font-medium shadow-md"
+                  >
+                    <Edit size={16} />
+                    Edit
+                  </button>
+                  <button
                     onClick={() => handleExportWord(packet)}
                     className="flex items-center gap-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
                   >
@@ -516,6 +582,189 @@ export function CEOBoardPacket() {
                 >
                   Create Packet
                 </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {showEditorModal && editingPacket && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-xl shadow-xl w-full max-w-6xl h-[90vh] flex flex-col">
+              <div className="flex items-center justify-between p-4 border-b">
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900">{editingPacket.title}</h2>
+                  <p className="text-sm text-gray-500">Editing Board Packet</p>
+                </div>
+                <button
+                  onClick={() => setShowEditorModal(false)}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+
+              <div className="flex flex-1 overflow-hidden">
+                <div className="w-64 border-r bg-gray-50 overflow-y-auto">
+                  <div className="p-4">
+                    <h3 className="text-sm font-semibold text-gray-700 mb-3">Sections</h3>
+                    <div className="space-y-1">
+                      {editingPacket.sections.map((section) => (
+                        <button
+                          key={section}
+                          onClick={() => handleSectionChange(section)}
+                          className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
+                            currentSection === section
+                              ? 'bg-pink-100 text-pink-700 font-medium'
+                              : 'hover:bg-gray-100 text-gray-700'
+                          }`}
+                        >
+                          {section}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex-1 flex flex-col">
+                  <div className="border-b bg-gray-50 p-2">
+                    <div className="flex items-center gap-1 flex-wrap">
+                      <select
+                        value={fontSize}
+                        onChange={(e) => {
+                          setFontSize(e.target.value);
+                          applyFormat('fontSize', e.target.value);
+                        }}
+                        className="px-2 py-1 border border-gray-300 rounded text-sm"
+                      >
+                        <option value="1">Small</option>
+                        <option value="3">Normal</option>
+                        <option value="5">Large</option>
+                        <option value="7">Extra Large</option>
+                      </select>
+
+                      <div className="h-6 w-px bg-gray-300 mx-1"></div>
+
+                      <button
+                        onClick={() => applyFormat('bold')}
+                        className={`p-2 rounded hover:bg-gray-200 transition-colors ${isBold ? 'bg-gray-200' : ''}`}
+                        title="Bold"
+                      >
+                        <Bold size={18} />
+                      </button>
+                      <button
+                        onClick={() => applyFormat('italic')}
+                        className={`p-2 rounded hover:bg-gray-200 transition-colors ${isItalic ? 'bg-gray-200' : ''}`}
+                        title="Italic"
+                      >
+                        <Italic size={18} />
+                      </button>
+                      <button
+                        onClick={() => applyFormat('underline')}
+                        className={`p-2 rounded hover:bg-gray-200 transition-colors ${isUnderline ? 'bg-gray-200' : ''}`}
+                        title="Underline"
+                      >
+                        <Underline size={18} />
+                      </button>
+
+                      <div className="h-6 w-px bg-gray-300 mx-1"></div>
+
+                      <button
+                        onClick={() => setAlignment('Left')}
+                        className="p-2 rounded hover:bg-gray-200 transition-colors"
+                        title="Align Left"
+                      >
+                        <AlignLeft size={18} />
+                      </button>
+                      <button
+                        onClick={() => setAlignment('Center')}
+                        className="p-2 rounded hover:bg-gray-200 transition-colors"
+                        title="Align Center"
+                      >
+                        <AlignCenter size={18} />
+                      </button>
+                      <button
+                        onClick={() => setAlignment('Right')}
+                        className="p-2 rounded hover:bg-gray-200 transition-colors"
+                        title="Align Right"
+                      >
+                        <AlignRight size={18} />
+                      </button>
+
+                      <div className="h-6 w-px bg-gray-300 mx-1"></div>
+
+                      <button
+                        onClick={() => insertList(false)}
+                        className="p-2 rounded hover:bg-gray-200 transition-colors"
+                        title="Bullet List"
+                      >
+                        <List size={18} />
+                      </button>
+                      <button
+                        onClick={() => insertList(true)}
+                        className="p-2 rounded hover:bg-gray-200 transition-colors"
+                        title="Numbered List"
+                      >
+                        <ListOrdered size={18} />
+                      </button>
+
+                      <div className="h-6 w-px bg-gray-300 mx-1"></div>
+
+                      <input
+                        type="color"
+                        onChange={(e) => applyFormat('foreColor', e.target.value)}
+                        className="w-8 h-8 rounded cursor-pointer"
+                        title="Text Color"
+                      />
+
+                      <input
+                        type="color"
+                        onChange={(e) => applyFormat('hiliteColor', e.target.value)}
+                        className="w-8 h-8 rounded cursor-pointer"
+                        title="Highlight Color"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex-1 overflow-y-auto p-6 bg-white">
+                    <div className="max-w-4xl mx-auto">
+                      <h3 className="text-2xl font-bold text-gray-900 mb-4">{currentSection}</h3>
+                      <div
+                        ref={editorRef}
+                        contentEditable
+                        onInput={(e) => setEditorContent(e.currentTarget.innerHTML)}
+                        dangerouslySetInnerHTML={{ __html: editorContent }}
+                        className="min-h-[400px] p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
+                        style={{
+                          lineHeight: '1.6',
+                          fontSize: '14px'
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="border-t p-4 bg-gray-50">
+                    <div className="flex items-center justify-between">
+                      <div className="text-sm text-gray-600">
+                        Section {editingPacket.sections.indexOf(currentSection) + 1} of {editingPacket.sections.length}
+                      </div>
+                      <div className="flex gap-3">
+                        <button
+                          onClick={() => setShowEditorModal(false)}
+                          className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={handleSaveEditor}
+                          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-lg hover:opacity-90 transition-opacity font-medium shadow-md"
+                        >
+                          <Save size={18} />
+                          Save Changes
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

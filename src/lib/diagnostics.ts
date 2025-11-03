@@ -20,8 +20,11 @@ export class ProductionDiagnostics {
       'Supabase configured:',
       !!(import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY),
     );
+    logger.log('Supabase URL:', import.meta.env.VITE_SUPABASE_URL ? '✓ Set' : '✗ Missing');
+    logger.log('Supabase Key:', import.meta.env.VITE_SUPABASE_ANON_KEY ? `✓ Set (${String(import.meta.env.VITE_SUPABASE_ANON_KEY).substring(0, 20)}...)` : '✗ Missing');
     logger.log('Document ready state:', document.readyState);
     logger.log('Root element:', !!document.getElementById('root'));
+    logger.log('Network status:', navigator.onLine ? 'Online' : 'Offline');
     logger.groupEnd();
   }
 
@@ -46,11 +49,7 @@ export class ProductionDiagnostics {
   }
 
   static async performHealthCheck() {
-    if (!Environment.shouldShowDebugLogs() && Environment.isStackBlitz()) {
-      return;
-    }
-
-    logger.group('Application Health Check');
+    logger.group('🏥 Application Health Check');
 
     try {
       const rootElement = document.getElementById('root');
@@ -72,8 +71,31 @@ export class ProductionDiagnostics {
         fetch: typeof fetch !== 'undefined',
         crypto: typeof crypto !== 'undefined',
         serviceWorker: 'serviceWorker' in navigator,
+        online: navigator.onLine,
       };
       logger.table(apiCheck);
+
+      if (import.meta.env.VITE_SUPABASE_URL) {
+        logger.group('🔌 Testing Supabase Connection');
+        try {
+          const testUrl = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/`;
+          const startTime = Date.now();
+          const response = await fetch(testUrl, {
+            method: 'HEAD',
+            headers: {
+              'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY || ''
+            }
+          });
+          const latency = Date.now() - startTime;
+          logger.log('Supabase reachable:', response.ok);
+          logger.log('Response status:', response.status);
+          logger.log(`Latency: ${latency}ms`);
+        } catch (error) {
+          logger.error('Supabase connection test failed', error);
+        }
+        logger.groupEnd();
+      }
+
     } catch (error) {
       logger.error('Health check failed', error);
     }
@@ -120,16 +142,26 @@ declare global {
   }
 }
 
-if (import.meta.env.PROD || Environment.shouldShowDebugLogs()) {
-  document.addEventListener('DOMContentLoaded', () => {
+// Initialize diagnostics after DOM is ready
+if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeDiagnostics);
+  } else {
+    // DOM is already ready
+    initializeDiagnostics();
+  }
+}
+
+function initializeDiagnostics() {
+  if (import.meta.env.PROD || Environment.shouldShowDebugLogs()) {
     ProductionDiagnostics.logEnvironment();
     ProductionDiagnostics.testAssetLoading();
 
     window.diagnose = ProductionDiagnostics.performHealthCheck;
     window.clearAllCaches = ProductionDiagnostics.clearAllCaches;
 
-    if (Environment.shouldShowDebugLogs()) {
-      logger.log('Debug tools available: diagnose(), clearAllCaches()');
-    }
-  });
+    logger.log('🛠️ Debug tools available: diagnose(), clearAllCaches()');
+  }
 }
+
+logger.info('Diagnostics module initialized');

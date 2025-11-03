@@ -10,11 +10,17 @@ import DualDashboardApp from './DualDashboardApp.tsx';
 import { PublicDepartmentUploadLanding } from './components/pages/public/PublicDepartmentUploadLanding.tsx';
 import { PublicDepartmentUpload } from './components/pages/public/PublicDepartmentUpload.tsx';
 import './index.css';
-import './lib/diagnostics';
-import './lib/whiteScreenDiagnostics';
 import { Environment } from './lib/environment';
 import { isSupabaseConfigured } from './lib/supabase';
 import React from 'react';
+
+// Load diagnostics asynchronously to avoid circular dependency issues
+if (typeof window !== 'undefined') {
+  Promise.all([
+    import('./lib/diagnostics'),
+    import('./lib/whiteScreenDiagnostics')
+  ]).catch(err => console.error('Failed to load diagnostics:', err));
+}
 
 // Create a client for React Query
 const queryClient = new QueryClient({

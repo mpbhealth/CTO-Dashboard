@@ -113,6 +113,8 @@ View detailed report: ${window.location.href}
   };
 
   const transformedNotes = useMemo(() => {
+    if (!notes) return [];
+
     return notes.map(note => ({
       id: note.id,
       content: note.note_content,

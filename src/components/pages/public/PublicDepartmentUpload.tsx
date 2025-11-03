@@ -97,16 +97,17 @@ export function PublicDepartmentUpload() {
 
   if (!config) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <div className="text-center max-w-md">
-          <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <AlertCircle className="w-10 h-10 text-red-600" />
+      <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-pink-50/30 flex items-center justify-center p-4 relative">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(236,72,153,0.03),transparent_50%),radial-gradient(circle_at_70%_60%,rgba(236,72,153,0.02),transparent_50%)] pointer-events-none" />
+        <div className="relative text-center max-w-md">
+          <div className="w-24 h-24 bg-gradient-to-br from-red-100 to-red-50 rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg">
+            <AlertCircle className="w-12 h-12 text-red-600" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Invalid Department</h1>
-          <p className="text-gray-600 mb-6">The specified department was not found. Please select a valid department from the portal.</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-3">Invalid Department</h1>
+          <p className="text-gray-600 mb-8 leading-relaxed">The specified department was not found. Please select a valid department from the portal.</p>
           <button
             onClick={() => navigate('/public/upload')}
-            className="px-6 py-3 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-lg hover:from-pink-600 hover:to-pink-700 transition-all font-medium shadow-sm"
+            className="px-8 py-4 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-xl hover:from-pink-600 hover:to-pink-700 hover:shadow-xl transition-all font-semibold shadow-lg hover:-translate-y-0.5"
           >
             Return to Department Selection
           </button>
@@ -241,8 +242,9 @@ export function PublicDepartmentUpload() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-10">
+    <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-pink-50/30 relative">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(236,72,153,0.03),transparent_50%),radial-gradient(circle_at_70%_60%,rgba(236,72,153,0.02),transparent_50%)] pointer-events-none" />
+      <div className="relative max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-10">
         <button
           onClick={() => navigate('/public/upload')}
           className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-8 transition-colors font-medium"
@@ -251,25 +253,25 @@ export function PublicDepartmentUpload() {
           <span>Back to Department Selection</span>
         </button>
 
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">{config.name} Data Upload</h1>
-          <p className="text-gray-600">Upload your CSV files to sync department data with the executive dashboard</p>
+        <div className="mb-10">
+          <h1 className="text-4xl font-bold text-gray-900 mb-3 tracking-tight">{config.name} Data Upload</h1>
+          <p className="text-lg text-gray-600">Upload your CSV files to sync department data with the executive dashboard</p>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 mb-6">
-          <div className="flex items-start justify-between mb-6">
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8 mb-8">
+          <div className="flex items-start justify-between mb-8">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-white border-2 border-gray-200 rounded-xl flex items-center justify-center">
-                <FileSpreadsheet className="text-gray-700" size={24} />
+              <div className="w-14 h-14 bg-gradient-to-br from-gray-50 to-white border-2 border-gray-200 rounded-2xl flex items-center justify-center shadow-sm">
+                <FileSpreadsheet className="text-gray-700" size={26} />
               </div>
               <div>
-                <h2 className="text-xl font-semibold text-gray-900">Upload Configuration</h2>
+                <h2 className="text-2xl font-semibold text-gray-900">Upload Configuration</h2>
                 <p className="text-sm text-gray-500">CSV file with {config.name.toLowerCase()} department data</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-pink-50 border border-pink-200 rounded-lg p-5 mb-6">
+          <div className="bg-gradient-to-br from-pink-50 to-pink-50/50 border border-pink-200/60 rounded-xl p-6 mb-8">
             <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
               <CheckCircle className="w-4 h-4 text-pink-600" />
               Required Fields
@@ -286,7 +288,7 @@ export function PublicDepartmentUpload() {
             </div>
           </div>
 
-          <div className="mb-6">
+          <div className="mb-8">
             <button
               onClick={handleDownloadTemplate}
               className="flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all font-medium shadow-sm"
@@ -296,7 +298,7 @@ export function PublicDepartmentUpload() {
             </button>
           </div>
 
-          <div className="border-2 border-dashed border-gray-300 rounded-xl p-12 text-center mb-6 hover:border-pink-500 hover:bg-pink-50/30 transition-all">
+          <div className="relative border-2 border-dashed border-gray-300 rounded-2xl p-12 text-center mb-8 hover:border-pink-400 hover:bg-gradient-to-br hover:from-pink-50/30 hover:to-pink-50/10 transition-all duration-300 group">
             <input
               type="file"
               accept=".csv"
@@ -305,10 +307,10 @@ export function PublicDepartmentUpload() {
               id="file-upload"
             />
             <label htmlFor="file-upload" className="cursor-pointer block">
-              <div className="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Upload className="w-8 h-8 text-pink-600" />
+              <div className="w-20 h-20 bg-gradient-to-br from-pink-100 to-pink-50 rounded-full flex items-center justify-center mx-auto mb-5 group-hover:shadow-lg group-hover:scale-110 transition-all duration-300">
+                <Upload className="w-10 h-10 text-pink-600" />
               </div>
-              <p className="text-lg font-semibold text-gray-900 mb-2">
+              <p className="text-xl font-semibold text-gray-900 mb-2">
                 {file ? file.name : 'Click to upload or drag and drop'}
               </p>
               <p className="text-sm text-gray-500">CSV files only • Max file size: 10MB</p>
@@ -316,10 +318,10 @@ export function PublicDepartmentUpload() {
           </div>
 
           {progress.status !== 'idle' && (
-            <div className={`rounded-lg p-5 mb-6 border ${
-              progress.status === 'success' ? 'bg-green-50 border-green-200' :
-              progress.status === 'error' ? 'bg-red-50 border-red-200' :
-              'bg-pink-50 border-pink-200'
+            <div className={`rounded-xl p-6 mb-8 border ${
+              progress.status === 'success' ? 'bg-gradient-to-br from-green-50 to-green-50/50 border-green-200' :
+              progress.status === 'error' ? 'bg-gradient-to-br from-red-50 to-red-50/50 border-red-200' :
+              'bg-gradient-to-br from-pink-50 to-pink-50/50 border-pink-200'
             }`}>
               <div className="flex items-start gap-3">
                 {progress.status === 'success' && <CheckCircle className="text-green-600 mt-0.5 flex-shrink-0" size={22} />}
@@ -348,27 +350,27 @@ export function PublicDepartmentUpload() {
           )}
 
           {parsedData.length > 0 && progress.status !== 'success' && (
-            <div className="flex gap-3">
+            <div className="flex gap-4">
               <button
                 onClick={() => setShowPreview(!showPreview)}
-                className="flex items-center gap-2 px-5 py-3 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all font-medium shadow-sm"
+                className="flex items-center gap-2 px-6 py-3 bg-white border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all font-semibold shadow-sm hover:shadow-md"
               >
-                <Eye size={18} />
+                <Eye size={20} />
                 <span>{showPreview ? 'Hide' : 'Show'} Preview</span>
               </button>
               <button
                 onClick={handleUpload}
                 disabled={progress.status === 'uploading'}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-lg hover:from-pink-600 hover:to-pink-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-sm"
+                className="flex-1 flex items-center justify-center gap-2 px-8 py-3 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-xl hover:from-pink-600 hover:to-pink-700 hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed font-semibold shadow-lg hover:-translate-y-0.5"
               >
-                <Upload size={18} />
+                <Upload size={20} />
                 <span>{progress.status === 'uploading' ? 'Uploading...' : 'Upload Data'}</span>
               </button>
             </div>
           )}
 
           {showPreview && parsedData.length > 0 && (
-            <div className="mt-6 border border-gray-200 rounded-lg overflow-hidden">
+            <div className="mt-8 border border-gray-200/60 rounded-xl overflow-hidden shadow-sm">
               <div className="bg-gray-50 px-5 py-3 border-b border-gray-200">
                 <h3 className="font-semibold text-gray-900 flex items-center gap-2">
                   <Eye size={16} className="text-gray-600" />
@@ -403,7 +405,7 @@ export function PublicDepartmentUpload() {
           )}
 
           {progress.status === 'success' && (
-            <div className="mt-6 text-center">
+            <div className="mt-8 text-center">
               <button
                 onClick={() => {
                   setFile(null);
@@ -411,7 +413,7 @@ export function PublicDepartmentUpload() {
                   setProgress({ status: 'idle', message: '' });
                   setShowPreview(false);
                 }}
-                className="px-6 py-3 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-lg hover:from-pink-600 hover:to-pink-700 transition-all font-medium shadow-sm"
+                className="px-8 py-4 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-xl hover:from-pink-600 hover:to-pink-700 hover:shadow-xl transition-all font-semibold shadow-lg hover:-translate-y-0.5"
               >
                 Upload Another File
               </button>
@@ -419,7 +421,7 @@ export function PublicDepartmentUpload() {
           )}
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-gray-200/50 p-8">
           <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
             <FileSpreadsheet size={18} className="text-gray-600" />
             Upload Guidelines

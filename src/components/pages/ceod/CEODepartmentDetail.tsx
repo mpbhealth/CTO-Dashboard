@@ -28,6 +28,8 @@ export function CEODepartmentDetail({
   const [dateRange, setDateRange] = useState<'7d' | '30d' | '90d' | 'all'>('30d');
 
   const filteredUploads = useMemo(() => {
+    if (!uploads) return [];
+
     let filtered = uploads;
 
     if (filterStatus) {
@@ -45,6 +47,8 @@ export function CEODepartmentDetail({
   }, [uploads, filterStatus, dateRange]);
 
   const chartData = useMemo(() => {
+    if (!uploads) return [];
+
     const last7Days = Array.from({ length: 7 }, (_, i) => {
       const date = new Date();
       date.setDate(date.getDate() - (6 - i));

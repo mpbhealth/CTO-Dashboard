@@ -38,13 +38,10 @@ export default defineConfig({
             if (id.includes('react') || id.includes('react-dom')) {
               return 'react-vendor';
             }
-            // Keep @supabase/supabase-js separate but after React
-            if (id.includes('@supabase/supabase-js')) {
-              return 'supabase-client';
-            }
-            // Other supabase packages
+            // FIX: Keep ALL Supabase packages together in ONE chunk to prevent circular dependencies
+            // This prevents the "Cannot access 'ae' before initialization" error in production
             if (id.includes('@supabase')) {
-              return 'supabase-deps';
+              return 'supabase-vendor';
             }
             // Router
             if (id.includes('react-router')) {

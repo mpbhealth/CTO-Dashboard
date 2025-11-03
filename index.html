@@ -110,8 +110,8 @@
               <button onclick="window.location.reload()" style="background: #ec4899; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 600;">
                 Reload Page
               </button>
-              <button onclick="console.log('Environment check:', {url: typeof import !== 'undefined' ? 'checking...' : 'unknown'}); alert('Check the Console tab (F12) for detailed logs')" style="background: #64748b; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 600;">
-                View Console
+              <button onclick="alert('Check the Console tab (F12) for detailed error logs.\n\nPress F12 or right-click and select Inspect.')" style="background: #64748b; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 600;">
+                Open Console
               </button>
             </div>
           </div>
@@ -141,10 +141,10 @@
           
           console.error('[MPB Health] Loading timeout - React did not mount within 10 seconds');
           console.error('[MPB Health] Check for JavaScript errors above');
-          console.log('[MPB Health] Environment check:', {
-            hasUrl: typeof import !== 'undefined' && import.meta && import.meta.env ? !!import.meta.env.VITE_SUPABASE_URL : 'Cannot check',
-            hasKey: typeof import !== 'undefined' && import.meta && import.meta.env ? !!import.meta.env.VITE_SUPABASE_ANON_KEY : 'Cannot check',
-            location: window.location.href
+          console.log('[MPB Health] Page info:', {
+            location: window.location.href,
+            readyState: document.readyState,
+            hasRoot: !!document.getElementById('root')
           });
         }
       }, 10000); // 10 second timeout

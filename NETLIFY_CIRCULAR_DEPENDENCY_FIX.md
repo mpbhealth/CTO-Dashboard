@@ -48,13 +48,18 @@ This ensures all Supabase-related code loads together without inter-chunk circul
 
 **File: `netlify.toml`**
 
-Added explicit NODE_ENV configuration:
+Maintained Node.js version configuration:
 
 ```toml
 [build.environment]
   NODE_VERSION = "20"
-  NODE_ENV = "production"
 ```
+
+**Important:** We do NOT set `NODE_ENV=production` in netlify.toml because:
+- It prevents `devDependencies` from installing
+- Vite (the build tool) is in devDependencies
+- Netlify automatically sets NODE_ENV during the build internally
+- Setting it explicitly breaks the build with "vite: not found" error
 
 ## Build Verification
 
@@ -118,8 +123,8 @@ npm run preview
 ## What Changed
 
 ### Modified Files
-- `vite.config.ts` - Updated chunk splitting strategy
-- `netlify.toml` - Added NODE_ENV variable
+- `vite.config.ts` - Updated chunk splitting strategy to consolidate Supabase packages
+- `netlify.toml` - Kept minimal configuration (removed NODE_ENV to allow devDependencies)
 
 ### Bundle Changes
 - **Before:** 2 Supabase chunks (client + deps) with circular dependencies

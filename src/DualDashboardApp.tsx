@@ -60,6 +60,13 @@ const CTOMarketingAnalytics = lazy(() => import('./components/pages/ctod/analyti
 
 const CEOHome = lazy(() => import('./components/pages/ceod/CEOHome').then(m => ({ default: m.CEOHome })));
 
+// CEO Analytics
+const CEOAnalyticsOverview = lazy(() => import('./components/pages/ceod/analytics/CEOAnalyticsOverview').then(m => ({ default: m.CEOAnalyticsOverview })));
+const CEOMemberEngagement = lazy(() => import('./components/pages/ceod/analytics/CEOMemberEngagement').then(m => ({ default: m.CEOMemberEngagement })));
+const CEOMemberRetention = lazy(() => import('./components/pages/ceod/analytics/CEOMemberRetention').then(m => ({ default: m.CEOMemberRetention })));
+const CEOAdvisorPerformance = lazy(() => import('./components/pages/ceod/analytics/CEOAdvisorPerformance').then(m => ({ default: m.CEOAdvisorPerformance })));
+const CEOMarketingAnalytics = lazy(() => import('./components/pages/ceod/analytics/CEOMarketingAnalytics').then(m => ({ default: m.CEOMarketingAnalytics })));
+
 // CEO Development & Planning
 const CEODevelopmentOverview = lazy(() => import('./components/pages/ceod/development/CEODevelopmentOverview').then(m => ({ default: m.CEODevelopmentOverview })));
 const CEOTechStack = lazy(() => import('./components/pages/ceod/development/CEOTechStack').then(m => ({ default: m.CEOTechStack })));
@@ -367,12 +374,12 @@ function DualDashboardContent() {
             <Route path="/ceod/home" element={<CEOOnly><CEODashboardLayout><CEOHome /></CEODashboardLayout></CEOOnly>} />
 
             {/* CEO Analytics Routes */}
-            <Route path="/ceod/analytics" element={<CEOOnly><CEODashboardLayout><Analytics /></CEODashboardLayout></CEOOnly>} />
-            <Route path="/ceod/analytics/overview" element={<CEOOnly><CEODashboardLayout><Analytics /></CEODashboardLayout></CEOOnly>} />
-            <Route path="/ceod/analytics/member-engagement" element={<CEOOnly><CEODashboardLayout><MemberEngagement /></CEODashboardLayout></CEOOnly>} />
-            <Route path="/ceod/analytics/member-retention" element={<CEOOnly><CEODashboardLayout><MemberRetention /></CEODashboardLayout></CEOOnly>} />
-            <Route path="/ceod/analytics/advisor-performance" element={<CEOOnly><CEODashboardLayout><AdvisorPerformance /></CEODashboardLayout></CEOOnly>} />
-            <Route path="/ceod/analytics/marketing" element={<CEOOnly><CEODashboardLayout><MarketingAnalytics /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/analytics" element={<CEOOnly><CEODashboardLayout><CEOAnalyticsOverview /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/analytics/overview" element={<CEOOnly><CEODashboardLayout><CEOAnalyticsOverview /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/analytics/member-engagement" element={<CEOOnly><CEODashboardLayout><CEOMemberEngagement /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/analytics/member-retention" element={<CEOOnly><CEODashboardLayout><CEOMemberRetention /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/analytics/advisor-performance" element={<CEOOnly><CEODashboardLayout><CEOAdvisorPerformance /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/analytics/marketing" element={<CEOOnly><CEODashboardLayout><CEOMarketingAnalytics /></CEODashboardLayout></CEOOnly>} />
 
             {/* CEO Development & Planning Routes */}
             <Route path="/ceod/development" element={<CEOOnly><CEODashboardLayout><CEODevelopmentOverview /></CEODashboardLayout></CEOOnly>} />

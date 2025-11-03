@@ -27,7 +27,7 @@ I've applied comprehensive fixes for the Netlify white screen issue. Here's what
 - `/health.json` - Simple health check endpoint
 
 ### 6. **Build Configuration** ✓
-- Specified Node 18 in `netlify.toml`
+- Specified Node 20 in `netlify.toml` and `.nvmrc` (required for Vite 7+)
 - Ensured consistent build environment
 
 ## 🎯 Next Steps
@@ -35,9 +35,11 @@ I've applied comprehensive fixes for the Netlify white screen issue. Here's what
 ### Step 1: Commit and Push
 ```bash
 git add .
-git commit -m "fix: netlify white screen - add diagnostics, redirects, and error handling"
+git commit -m "fix: netlify deployment - node 20, diagnostics, redirects, and error handling"
 git push
 ```
+
+**Important:** This fixes the Node.js version issue. Vite requires Node 20+, and we've set it in both `netlify.toml` and `.nvmrc`.
 
 ### Step 2: Verify Netlify Environment Variables
 Go to your Netlify dashboard and verify:
@@ -144,8 +146,9 @@ Share these with me:
 - ✅ `public/_redirects` - NEW
 - ✅ `public/diagnostics.html` - NEW  
 - ✅ `public/health.json` - NEW
+- ✅ `.nvmrc` - NEW (Node 20 specification)
 - ✅ `index.html` - Added loading spinner
-- ✅ `netlify.toml` - Added Node version
+- ✅ `netlify.toml` - Added Node 20 version
 - ✅ `src/main.tsx` - Enhanced error handling & logging
 - ✅ `NETLIFY_WHITE_SCREEN_FIX.md` - Full troubleshooting guide
 - ✅ `DEPLOY_NOW.md` - This file

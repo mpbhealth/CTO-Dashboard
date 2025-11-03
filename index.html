@@ -95,11 +95,26 @@
   <body>
     <div id="root">
       <!-- Initial loading indicator - will be replaced when React mounts -->
-      <div style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: #f8fafc; font-family: system-ui, sans-serif;">
-        <div style="text-align: center;">
+      <div id="initial-loader" style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: #f8fafc; font-family: system-ui, sans-serif;">
+        <div style="text-align: center; max-width: 500px; padding: 20px;">
           <div style="width: 48px; height: 48px; border: 3px solid #e2e8f0; border-top-color: #ec4899; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px;"></div>
-          <p style="color: #64748b; font-size: 14px;">Loading MPB Health Dashboard...</p>
+          <p id="loading-text" style="color: #64748b; font-size: 14px; font-weight: 500;">Loading MPB Health Dashboard...</p>
           <p style="color: #94a3b8; font-size: 12px; margin-top: 8px;">If this persists, check console (F12)</p>
+          <div id="timeout-message" style="display: none; margin-top: 24px; padding: 16px; background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 4px; text-align: left;">
+            <strong style="color: #92400e; display: block; margin-bottom: 8px;">⚠️ Loading is taking longer than expected</strong>
+            <p style="color: #78350f; font-size: 13px; margin-bottom: 12px;">This could indicate an issue with initialization.</p>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button onclick="window.location.href='/diagnostics.html'" style="background: #3b82f6; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 600;">
+                Run Diagnostics
+              </button>
+              <button onclick="window.location.reload()" style="background: #ec4899; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 600;">
+                Reload Page
+              </button>
+              <button onclick="console.log('Environment check:', {url: typeof import !== 'undefined' ? 'checking...' : 'unknown'}); alert('Check the Console tab (F12) for detailed logs')" style="background: #64748b; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 600;">
+                View Console
+              </button>
+            </div>
+          </div>
         </div>
       </div>
       <style>
@@ -108,6 +123,33 @@
         }
       </style>
     </div>
+    
+    <script>
+      // Loading timeout - show error message if React doesn't mount within 10 seconds
+      setTimeout(function() {
+        var loader = document.getElementById('initial-loader');
+        var timeoutMsg = document.getElementById('timeout-message');
+        var loadingText = document.getElementById('loading-text');
+        
+        // Only show timeout if initial loader is still visible
+        if (loader && loader.style.display !== 'none') {
+          if (timeoutMsg) timeoutMsg.style.display = 'block';
+          if (loadingText) {
+            loadingText.textContent = 'Loading timeout - React may have failed to initialize';
+            loadingText.style.color = '#dc2626';
+          }
+          
+          console.error('[MPB Health] Loading timeout - React did not mount within 10 seconds');
+          console.error('[MPB Health] Check for JavaScript errors above');
+          console.log('[MPB Health] Environment check:', {
+            hasUrl: typeof import !== 'undefined' && import.meta && import.meta.env ? !!import.meta.env.VITE_SUPABASE_URL : 'Cannot check',
+            hasKey: typeof import !== 'undefined' && import.meta && import.meta.env ? !!import.meta.env.VITE_SUPABASE_ANON_KEY : 'Cannot check',
+            location: window.location.href
+          });
+        }
+      }, 10000); // 10 second timeout
+    </script>
+    
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

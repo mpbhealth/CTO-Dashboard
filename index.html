@@ -150,6 +150,24 @@
       }, 10000); // 10 second timeout
     </script>
     
+    <script type="module">
+      // Fallback boot: if the main module doesn't mount the app quickly,
+      // attempt a manual dynamic import of the built bundle to surface errors.
+      const tryBoot = async () => {
+        const loader = document.getElementById('initial-loader');
+        if (!loader || loader.style.display === 'none') return; // app likely mounted
+        const mainModule = document.querySelector('script[type="module"][src^="/assets/index-"]');
+        if (!mainModule) return; // dev mode or not built yet
+        try {
+          console.warn('[Boot Fallback] Attempting manual import of app bundle:', mainModule.getAttribute('src'));
+          await import(mainModule.getAttribute('src'));
+        } catch (e) {
+          console.error('[Boot Fallback] Manual import failed:', e);
+        }
+      };
+      // Give the primary module a head start; then try fallback if still not mounted
+      setTimeout(tryBoot, 3000);
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

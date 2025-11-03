@@ -176,6 +176,7 @@ function ErrorBoundary({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+// Service Worker registration (optional - won't break if missing)
 if ('serviceWorker' in navigator && !Environment.isStackBlitz()) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js')
@@ -183,8 +184,20 @@ if ('serviceWorker' in navigator && !Environment.isStackBlitz()) {
         Environment.log('Service Worker registered successfully', registration);
       })
       .catch((registrationError) => {
-        Environment.warn('Service Worker registration failed', registrationError);
+        // Service worker failure should not prevent app from loading
+        Environment.warn('Service Worker registration failed (non-critical)', registrationError);
       });
+  });
+}
+
+// Production environment check logging
+if (import.meta.env.PROD) {
+  console.log('[MPB Health] Production build initialized');
+  console.log('[MPB Health] Supabase configured:', isSupabaseConfigured);
+  console.log('[MPB Health] Environment check:', {
+    hasUrl: !!import.meta.env.VITE_SUPABASE_URL,
+    hasKey: !!import.meta.env.VITE_SUPABASE_ANON_KEY,
+    mode: import.meta.env.MODE,
   });
 }
 
@@ -320,43 +333,93 @@ function ConfigurationCheck({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <ErrorBoundary>
-      <ConfigurationCheck>
-        <QueryClientProvider client={queryClient}>
-        <BrowserRouter
-          future={{
-            v7_startTransition: true,
-            v7_relativeSplatPath: true
-          }}
-        >
-          <AuthProvider>
-            <Routes>
-              {/* Login Route */}
-              <Route path="/login" element={<Login onLoginSuccess={() => {}} />} />
+// Ensure root element exists before mounting
+const rootElement = document.getElementById('root');
+if (!rootElement) {
+  throw new Error('Failed to find root element. The DOM may not have loaded properly.');
+}
 
-              {/* Auth Callback Route */}
-              <Route path="/auth/callback" element={<AuthCallback />} />
+// Log app initialization
+console.log('[MPB Health] Initializing React application...');
 
-              {/* Public Department Upload Routes - No Auth Required */}
-              <Route path="/public/upload" element={<PublicDepartmentUploadLanding />} />
-              <Route path="/public/upload/:department" element={<PublicDepartmentUpload />} />
+try {
+  createRoot(rootElement).render(
+    <StrictMode>
+      <ErrorBoundary>
+        <ConfigurationCheck>
+          <QueryClientProvider client={queryClient}>
+          <BrowserRouter
+            future={{
+              v7_startTransition: true,
+              v7_relativeSplatPath: true
+            }}
+          >
+            <AuthProvider>
+              <Routes>
+                {/* Login Route */}
+                <Route path="/login" element={<Login onLoginSuccess={() => {}} />} />
 
-              {/* All Dashboard Routes - Handles /ceod, /ctod, /shared, and legacy routes */}
-              <Route
-                path="/*"
-                element={
-                  <ProtectedRoute>
-                    <DualDashboardApp />
-                  </ProtectedRoute>
-                }
-              />
-            </Routes>
-          </AuthProvider>
-        </BrowserRouter>
-      </QueryClientProvider>
-      </ConfigurationCheck>
-    </ErrorBoundary>
-  </StrictMode>
-);
+                {/* Auth Callback Route */}
+                <Route path="/auth/callback" element={<AuthCallback />} />
+
+                {/* Public Department Upload Routes - No Auth Required */}
+                <Route path="/public/upload" element={<PublicDepartmentUploadLanding />} />
+                <Route path="/public/upload/:department" element={<PublicDepartmentUpload />} />
+
+                {/* All Dashboard Routes - Handles /ceod, /ctod, /shared, and legacy routes */}
+                <Route
+                  path="/*"
+                  element={
+                    <ProtectedRoute>
+                      <DualDashboardApp />
+                    </ProtectedRoute>
+                  }
+                />
+              </Routes>
+            </AuthProvider>
+          </BrowserRouter>
+        </QueryClientProvider>
+        </ConfigurationCheck>
+      </ErrorBoundary>
+    </StrictMode>
+  );
+  console.log('[MPB Health] React application mounted successfully');
+} catch (error) {
+  console.error('[MPB Health] Fatal error during React mount:', error);
+  // Display error directly in the DOM if React fails to mount
+  if (rootElement) {
+    rootElement.innerHTML = `
+      <div style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: #fee2e2; padding: 20px; font-family: system-ui, sans-serif;">
+        <div style="max-width: 600px; background: white; padding: 32px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.1);">
+          <h1 style="color: #dc2626; margin-bottom: 16px;">⚠️ Application Failed to Start</h1>
+          <p style="color: #64748b; margin-bottom: 16px;">
+            The MPB Health Dashboard failed to initialize. This could be due to:
+          </p>
+          <ul style="color: #64748b; margin-left: 20px; margin-bottom: 24px;">
+            <li>Missing or invalid environment variables</li>
+            <li>Network connectivity issues</li>
+            <li>Browser compatibility problems</li>
+          </ul>
+          <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 16px; margin-bottom: 24px;">
+            <strong>Error:</strong><br>
+            <code style="color: #dc2626; font-size: 12px;">${error instanceof Error ? error.message : String(error)}</code>
+          </div>
+          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <button onclick="window.location.href='/diagnostics.html'" style="background: #3b82f6; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+              Run Diagnostics
+            </button>
+            <button onclick="window.location.reload()" style="background: #ec4899; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+              Reload Page
+            </button>
+            <button onclick="console.log('Error details:', ${JSON.stringify(error)}); alert('Check browser console (F12) for details')" style="background: #64748b; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+              Show Console
+            </button>
+          </div>
+          <p style="color: #94a3b8; font-size: 12px; margin-top: 24px;">
+            Press F12 to open Developer Tools and check the Console for detailed error information.
+          </p>
+        </div>
+      </div>
+    `;
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "status": "ok",
+  "app": "MPB Health CTO Dashboard",
+  "timestamp": "build-time",
+  "env_check": {
+    "vite_url": "should_be_set",
+    "vite_key": "should_be_set"
+  }
+}
+

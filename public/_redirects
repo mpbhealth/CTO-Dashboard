@@ -1,1 +1,12 @@
-/*    /index.html   200
+# Netlify SPA routing redirects
+# This ensures all routes are served by index.html for client-side routing
+
+# Don't redirect these static files
+/assets/*  200
+/favicon.svg  200
+/manifest.json  200
+/robots.txt  200
+/sw.js  200
+
+# Redirect all other routes to index.html for SPA routing
+/*  /index.html  200

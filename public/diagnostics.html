@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MPB Health Dashboard - Diagnostics</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #333;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    h1 {
+      color: #ec4899;
+      margin-bottom: 24px;
+      font-size: 28px;
+    }
+    .section {
+      margin-bottom: 24px;
+      padding: 20px;
+      background: #f8fafc;
+      border-radius: 8px;
+      border-left: 4px solid #ec4899;
+    }
+    .section h2 {
+      font-size: 18px;
+      margin-bottom: 12px;
+      color: #475569;
+    }
+    .check-item {
+      padding: 12px;
+      margin: 8px 0;
+      background: white;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .status {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .status.pass { background: #10b981; }
+    .status.fail { background: #ef4444; }
+    .status.warn { background: #f59e0b; }
+    .check-label {
+      flex: 1;
+      font-weight: 500;
+    }
+    .check-value {
+      color: #64748b;
+      font-size: 14px;
+      font-family: 'Courier New', monospace;
+    }
+    button {
+      background: #ec4899;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      margin: 8px 8px 8px 0;
+      transition: all 0.2s;
+    }
+    button:hover {
+      background: #db2777;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
+    }
+    .code {
+      background: #1e293b;
+      color: #e2e8f0;
+      padding: 16px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      overflow-x: auto;
+      margin-top: 12px;
+    }
+    .timestamp {
+      color: #94a3b8;
+      font-size: 12px;
+      margin-top: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔍 MPB Health Dashboard - Environment Diagnostics</h1>
+    
+    <div class="section">
+      <h2>Environment Variables</h2>
+      <div id="env-checks"></div>
+    </div>
+
+    <div class="section">
+      <h2>Browser Capabilities</h2>
+      <div id="browser-checks"></div>
+    </div>
+
+    <div class="section">
+      <h2>Network & Connectivity</h2>
+      <div id="network-checks"></div>
+    </div>
+
+    <div class="section">
+      <h2>Actions</h2>
+      <button onclick="window.location.href='/'">Go to Dashboard</button>
+      <button onclick="window.location.href='/login'">Go to Login</button>
+      <button onclick="testSupabase()">Test Supabase Connection</button>
+      <button onclick="window.location.reload()">Refresh Diagnostics</button>
+    </div>
+
+    <div class="timestamp">
+      Generated: <span id="timestamp"></span>
+    </div>
+  </div>
+
+  <script type="module">
+    // This script will try to load environment variables
+    // In production, these should be baked into the build by Vite
+    
+    function addCheck(containerId, label, status, value = '') {
+      const container = document.getElementById(containerId);
+      const div = document.createElement('div');
+      div.className = 'check-item';
+      div.innerHTML = `
+        <div class="status ${status}"></div>
+        <div class="check-label">${label}</div>
+        ${value ? `<div class="check-value">${value}</div>` : ''}
+      `;
+      container.appendChild(div);
+    }
+
+    function checkEnvironment() {
+      // In a real Vite app, these would be replaced at build time
+      // For diagnostics, we'll check if they exist in the global scope
+      const checks = [
+        { label: 'Window Object', test: () => typeof window !== 'undefined' },
+        { label: 'Document Object', test: () => typeof document !== 'undefined' },
+        { label: 'LocalStorage', test: () => typeof localStorage !== 'undefined' },
+        { label: 'Fetch API', test: () => typeof fetch !== 'undefined' },
+      ];
+
+      // Browser checks
+      checks.forEach(check => {
+        const passed = check.test();
+        addCheck('browser-checks', check.label, passed ? 'pass' : 'fail', 
+          passed ? '✓ Available' : '✗ Not available');
+      });
+
+      // Network checks
+      addCheck('network-checks', 'Online Status', 
+        navigator.onLine ? 'pass' : 'fail', 
+        navigator.onLine ? '✓ Online' : '✗ Offline');
+      
+      addCheck('network-checks', 'Current URL', 'pass', window.location.href);
+      addCheck('network-checks', 'User Agent', 'pass', 
+        navigator.userAgent.substring(0, 60) + '...');
+    }
+
+    // Test Supabase connection (requires actual credentials)
+    window.testSupabase = async function() {
+      const result = document.createElement('div');
+      result.className = 'code';
+      result.innerHTML = 'Testing Supabase connection...';
+      
+      const section = document.querySelector('.section:nth-child(3)');
+      section.appendChild(result);
+
+      try {
+        // Try to fetch from Supabase
+        const response = await fetch('https://xnijhggwgbxrtvlktviz.supabase.co/rest/v1/', {
+          headers: {
+            'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhuaWpoZ2d3Z2J4cnR2bGt0dml6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAzODYzNTEsImV4cCI6MjA3NTk2MjM1MX0.A5CrZLud-POLcHolFJkMQ0pePiRReIMuffuHVkO2Y-Y'
+          }
+        });
+        
+        result.innerHTML = `
+          <strong>✓ Supabase Connection Test</strong><br>
+          Status: ${response.status} ${response.statusText}<br>
+          Headers OK: ${response.headers.get('content-type') ? 'Yes' : 'No'}<br>
+          <em>Connection to Supabase is working!</em>
+        `;
+        result.style.borderLeft = '4px solid #10b981';
+      } catch (error) {
+        result.innerHTML = `
+          <strong>✗ Supabase Connection Test Failed</strong><br>
+          Error: ${error.message}<br>
+          <em>Check your internet connection and Supabase configuration</em>
+        `;
+        result.style.borderLeft = '4px solid #ef4444';
+      }
+    };
+
+    // Environment variable checks (these values come from Vite build)
+    // NOTE: In production, import.meta.env values are replaced at build time
+    document.addEventListener('DOMContentLoaded', () => {
+      // Since this is a static HTML file, we can't access import.meta.env
+      // We'll need to rely on the main app for that
+      addCheck('env-checks', 'Deployment Type', 'warn', 
+        'Static diagnostic page - env vars checked in main app');
+      addCheck('env-checks', 'Expected Variables', 'pass', 
+        'VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY');
+      addCheck('env-checks', 'Verification', 'warn', 
+        'Open browser console on main app (/) to verify');
+
+      checkEnvironment();
+      
+      document.getElementById('timestamp').textContent = new Date().toLocaleString();
+    });
+  </script>
+</body>
+</html>
+

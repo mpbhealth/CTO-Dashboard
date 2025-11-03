@@ -59,12 +59,6 @@
             return;
           }
 
-          // Prevent logging errors from minified code initialization
-          if (e.message && e.message.includes('before initialization')) {
-            e.preventDefault();
-            return;
-          }
-
           if (!isStackBlitz || localStorage.getItem('debug') === 'true') {
             try {
               originalConsoleError.call(console, '[MPB Health] Global Error:', {

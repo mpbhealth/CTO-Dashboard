@@ -192,14 +192,11 @@ if ('serviceWorker' in navigator && !Environment.isStackBlitz()) {
 function ConfigurationCheck({ children }: { children: React.ReactNode }) {
   if (!isSupabaseConfigured && import.meta.env.PROD) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-emerald-900 via-teal-800 to-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
-        {/* Animated background pattern */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute inset-0" style={{
-            backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0)',
-            backgroundSize: '48px 48px'
-          }} />
-        </div>
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
+        {/* Background Pattern - matching login page */}
+        <div className="absolute inset-0 opacity-20" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+        }} />
 
         <div className="max-w-2xl w-full relative">
           {/* Glass morphism card */}

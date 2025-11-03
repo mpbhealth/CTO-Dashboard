@@ -59,7 +59,10 @@ export function useResources(filters?: { workspaceId?: string }) {
 
         const { data, error } = await query;
 
-        if (error) throw error;
+        if (error) {
+          console.error('Error fetching resources:', error);
+          return [];
+        }
         return data || [];
       } catch (error) {
         console.error('Error fetching resources:', error);
@@ -68,6 +71,8 @@ export function useResources(filters?: { workspaceId?: string }) {
     },
     staleTime: 5 * 60 * 1000,
     enabled: !filters?.workspaceId || !!filters.workspaceId,
+    retry: 1,
+    retryDelay: 2000,
   });
 }
 

@@ -70,11 +70,11 @@ export function CEODepartmentDetail({
     const subject = encodeURIComponent(`${title} Department Report`);
     const body = encodeURIComponent(`
 Department: ${title}
-Total Uploads: ${stats.totalUploads}
-Completed: ${stats.completedUploads}
-Failed: ${stats.failedUploads}
-Success Rate: ${(stats.successRate || 0).toFixed(1)}%
-Total Rows Imported: ${stats.totalRowsImported}
+Total Uploads: ${stats?.totalUploads ?? 0}
+Completed: ${stats?.completedUploads ?? 0}
+Failed: ${stats?.failedUploads ?? 0}
+Success Rate: ${(stats?.successRate ?? 0).toFixed(1)}%
+Total Rows Imported: ${stats?.totalRowsImported ?? 0}
 
 View detailed report: ${window.location.href}
     `);
@@ -141,6 +141,18 @@ View detailed report: ${window.location.href}
     await deleteNote.mutateAsync(id);
   };
 
+  if (isLoading) {
+    return (
+      <div className="w-full h-96 flex items-center justify-center">
+        <div className="text-center">
+          <RefreshCw className="w-12 h-12 text-pink-500 mx-auto mb-4 animate-spin" />
+          <p className="text-lg font-medium text-gray-700">Loading {title} data...</p>
+          <p className="text-sm text-gray-500 mt-2">Please wait while we fetch your department information</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
       <div className="w-full space-y-6">
         <div className="flex items-start justify-between">
@@ -189,7 +201,7 @@ View detailed report: ${window.location.href}
               <TrendingUp className={color} size={20} />
               <span className="text-xs font-medium text-gray-500">TOTAL</span>
             </div>
-            <div className="text-2xl font-bold text-gray-900">{stats.totalUploads}</div>
+            <div className="text-2xl font-bold text-gray-900">{stats?.totalUploads ?? 0}</div>
             <div className="text-sm text-gray-500">Uploads</div>
           </div>
 
@@ -198,8 +210,8 @@ View detailed report: ${window.location.href}
               <CheckCircle className="text-green-600" size={20} />
               <span className="text-xs font-medium text-gray-500">SUCCESS</span>
             </div>
-            <div className="text-2xl font-bold text-gray-900">{(stats.successRate || 0).toFixed(1)}%</div>
-            <div className="text-sm text-gray-500">{stats.completedUploads} completed</div>
+            <div className="text-2xl font-bold text-gray-900">{(stats?.successRate ?? 0).toFixed(1)}%</div>
+            <div className="text-sm text-gray-500">{stats?.completedUploads ?? 0} completed</div>
           </div>
 
           <div className="bg-white rounded-lg border border-gray-200 p-4">
@@ -207,7 +219,7 @@ View detailed report: ${window.location.href}
               <AlertCircle className="text-red-600" size={20} />
               <span className="text-xs font-medium text-gray-500">FAILED</span>
             </div>
-            <div className="text-2xl font-bold text-gray-900">{stats.failedUploads}</div>
+            <div className="text-2xl font-bold text-gray-900">{stats?.failedUploads ?? 0}</div>
             <div className="text-sm text-gray-500">Errors</div>
           </div>
 
@@ -216,7 +228,7 @@ View detailed report: ${window.location.href}
               <Calendar className={color} size={20} />
               <span className="text-xs font-medium text-gray-500">ROWS</span>
             </div>
-            <div className="text-2xl font-bold text-gray-900">{stats.totalRowsImported.toLocaleString()}</div>
+            <div className="text-2xl font-bold text-gray-900">{(stats?.totalRowsImported ?? 0).toLocaleString()}</div>
             <div className="text-sm text-gray-500">Imported</div>
           </div>
         </div>
@@ -242,9 +254,9 @@ View detailed report: ${window.location.href}
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Status Distribution</h3>
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={[
-                { name: 'Completed', value: stats.completedUploads, fill: '#10b981' },
-                { name: 'Failed', value: stats.failedUploads, fill: '#ef4444' },
-                { name: 'Pending', value: stats.pendingUploads, fill: '#f59e0b' },
+                { name: 'Completed', value: stats?.completedUploads ?? 0, fill: '#10b981' },
+                { name: 'Failed', value: stats?.failedUploads ?? 0, fill: '#ef4444' },
+                { name: 'Pending', value: stats?.pendingUploads ?? 0, fill: '#f59e0b' },
               ]}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />

@@ -167,44 +167,75 @@ export default function Login({ onLoginSuccess }: LoginProps) {
 
   if (!isSupabaseConfigured && !selectedRole) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
-        <div className="absolute inset-0 opacity-20" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+      <div className="min-h-screen bg-gradient-to-br from-black via-slate-900 to-slate-800 flex items-center justify-center p-4 relative overflow-hidden">
+        {/* Premium Background Pattern */}
+        <div className="absolute inset-0 opacity-5" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M0 0h40v40H0z'/%3E%3Cpath d='M40 40h40v40H40z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
         }}></div>
+
+        {/* Ambient Lighting Effects */}
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-gradient-to-br from-blue-500/10 to-cyan-500/5 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-gradient-to-br from-amber-500/10 to-yellow-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="relative w-full max-w-4xl"
+          className="relative w-full max-w-5xl"
         >
-          <div className="bg-amber-500/10 border-2 border-amber-500 rounded-2xl p-6 mb-8">
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-amber-600/10 backdrop-blur-xl border-2 border-amber-500/30 rounded-2xl p-6 mb-10 shadow-2xl"
+          >
             <div className="flex items-center space-x-4">
-              <svg className="w-8 h-8 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+              <div className="flex-shrink-0 w-12 h-12 bg-amber-500/20 rounded-xl flex items-center justify-center border border-amber-500/30">
+                <svg className="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
               <div>
-                <h2 className="text-xl font-bold text-amber-300">Demo Mode Available</h2>
-                <p className="text-amber-100 text-sm">Supabase is not configured. Select a role to explore the dashboard in demo mode.</p>
+                <h2 className="text-xl font-bold text-amber-300 mb-1">Demo Mode Available</h2>
+                <p className="text-amber-100/80 text-sm leading-relaxed">Supabase is not configured. Select a role to explore the dashboard with sample data.</p>
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="text-center mb-12">
+          <div className="text-center mb-16">
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.5 }}
-              className="w-20 h-20 bg-gradient-to-br from-slate-600 to-slate-700 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-2xl"
+              transition={{ duration: 0.5, type: "spring", stiffness: 200 }}
+              className="flex justify-center mb-8"
             >
-              <Building2 className="w-10 h-10 text-white" />
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-amber-500/20 rounded-3xl blur-2xl group-hover:blur-3xl transition-all duration-500"></div>
+                <div className="relative bg-gradient-to-br from-slate-900/90 via-slate-800/90 to-slate-900/90 backdrop-blur-xl rounded-3xl p-6 border-2 border-white/10 shadow-2xl">
+                  <img
+                    src="/0001MPB.Health-Logo-png-1.png"
+                    alt="MPB Health"
+                    className="h-20 w-auto"
+                  />
+                </div>
+              </div>
             </motion.div>
-            <h1 className="text-4xl font-bold text-white mb-3">
-              Welcome to MPB Health
-            </h1>
-            <p className="text-slate-300 text-lg">
+            <motion.h1
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="text-5xl font-bold text-white mb-4 tracking-tight"
+            >
+              Welcome to <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent">MPB Health</span>
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="text-slate-300 text-lg font-medium"
+            >
               Select your role to continue in demo mode
-            </p>
+            </motion.p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-6">
@@ -287,32 +318,56 @@ export default function Login({ onLoginSuccess }: LoginProps) {
 
   if (!selectedRole) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
-        <div className="absolute inset-0 opacity-20" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+      <div className="min-h-screen bg-gradient-to-br from-black via-slate-900 to-slate-800 flex items-center justify-center p-4 relative overflow-hidden">
+        {/* Premium Background Pattern */}
+        <div className="absolute inset-0 opacity-5" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M0 0h40v40H0z'/%3E%3Cpath d='M40 40h40v40H40z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
         }}></div>
+
+        {/* Ambient Lighting Effects */}
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-gradient-to-br from-blue-500/10 to-cyan-500/5 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-gradient-to-br from-amber-500/10 to-yellow-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="relative w-full max-w-4xl"
+          className="relative w-full max-w-5xl"
         >
-          <div className="text-center mb-12">
+          <div className="text-center mb-16">
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.5 }}
-              className="w-20 h-20 bg-gradient-to-br from-slate-600 to-slate-700 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-2xl"
+              transition={{ duration: 0.5, type: "spring", stiffness: 200 }}
+              className="flex justify-center mb-8"
             >
-              <Building2 className="w-10 h-10 text-white" />
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-amber-500/20 rounded-3xl blur-2xl group-hover:blur-3xl transition-all duration-500"></div>
+                <div className="relative bg-gradient-to-br from-slate-900/90 via-slate-800/90 to-slate-900/90 backdrop-blur-xl rounded-3xl p-6 border-2 border-white/10 shadow-2xl">
+                  <img
+                    src="/0001MPB.Health-Logo-png-1.png"
+                    alt="MPB Health"
+                    className="h-20 w-auto"
+                  />
+                </div>
+              </div>
             </motion.div>
-            <h1 className="text-4xl font-bold text-white mb-3">
-              Welcome to MPB Health
-            </h1>
-            <p className="text-slate-300 text-lg">
-              Select your role to continue
-            </p>
+            <motion.h1
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="text-5xl font-bold text-white mb-4 tracking-tight"
+            >
+              Welcome to <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent">MPB Health</span>
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="text-slate-300 text-lg font-medium"
+            >
+              Select your role to access the executive portal
+            </motion.p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-6">

@@ -97,14 +97,16 @@ export function PublicDepartmentUpload() {
 
   if (!config) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 flex items-center justify-center p-4">
-        <div className="text-center">
-          <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="text-center max-w-md">
+          <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <AlertCircle className="w-10 h-10 text-red-600" />
+          </div>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Invalid Department</h1>
-          <p className="text-gray-600 mb-6">The specified department was not found.</p>
+          <p className="text-gray-600 mb-6">The specified department was not found. Please select a valid department from the portal.</p>
           <button
             onClick={() => navigate('/public/upload')}
-            className="px-6 py-3 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors"
+            className="px-6 py-3 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-lg hover:from-pink-600 hover:to-pink-700 transition-all font-medium shadow-sm"
           >
             Return to Department Selection
           </button>
@@ -239,35 +241,46 @@ export function PublicDepartmentUpload() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-10">
         <button
           onClick={() => navigate('/public/upload')}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-8 transition-colors"
+          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-8 transition-colors font-medium"
         >
           <ArrowLeft size={20} />
           <span>Back to Department Selection</span>
         </button>
 
-        <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
-          <div className="flex items-center gap-4 mb-6">
-            <div className={`w-16 h-16 bg-gradient-to-br from-${config.color}-500 to-${config.color}-600 rounded-xl flex items-center justify-center shadow-lg`}>
-              <FileSpreadsheet className="text-white" size={32} />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">{config.name} Data Upload</h1>
-              <p className="text-gray-600">Upload CSV files with your department data</p>
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">{config.name} Data Upload</h1>
+          <p className="text-gray-600">Upload your CSV files to sync department data with the executive dashboard</p>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 mb-6">
+          <div className="flex items-start justify-between mb-6">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-white border-2 border-gray-200 rounded-xl flex items-center justify-center">
+                <FileSpreadsheet className="text-gray-700" size={24} />
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold text-gray-900">Upload Configuration</h2>
+                <p className="text-sm text-gray-500">CSV file with {config.name.toLowerCase()} department data</p>
+              </div>
             </div>
           </div>
 
-          <div className="bg-pink-50 border border-pink-200 rounded-lg p-4 mb-6">
-            <h3 className="font-semibold text-pink-900 mb-2">Required Fields</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+          <div className="bg-pink-50 border border-pink-200 rounded-lg p-5 mb-6">
+            <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+              <CheckCircle className="w-4 h-4 text-pink-600" />
+              Required Fields
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {config.fields.map((field) => (
-                <div key={field.key} className="text-sm text-pink-800">
+                <div key={field.key} className="text-sm text-gray-700 flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-pink-500" />
                   <span className="font-medium">{field.label}</span>
-                  {field.required && <span className="text-red-500 ml-1">*</span>}
-                  <span className="text-pink-600 ml-2">({field.type})</span>
+                  {field.required && <span className="text-red-500">*</span>}
+                  <span className="text-gray-500">({field.type})</span>
                 </div>
               ))}
             </div>
@@ -276,14 +289,14 @@ export function PublicDepartmentUpload() {
           <div className="mb-6">
             <button
               onClick={handleDownloadTemplate}
-              className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+              className="flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all font-medium shadow-sm"
             >
               <Download size={18} />
               <span>Download CSV Template</span>
             </button>
           </div>
 
-          <div className="border-2 border-dashed border-gray-300 rounded-xl p-12 text-center mb-6 hover:border-pink-400 transition-colors">
+          <div className="border-2 border-dashed border-gray-300 rounded-xl p-12 text-center mb-6 hover:border-pink-500 hover:bg-pink-50/30 transition-all">
             <input
               type="file"
               accept=".csv"
@@ -291,26 +304,28 @@ export function PublicDepartmentUpload() {
               className="hidden"
               id="file-upload"
             />
-            <label htmlFor="file-upload" className="cursor-pointer">
-              <Upload className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <p className="text-lg font-medium text-gray-900 mb-2">
+            <label htmlFor="file-upload" className="cursor-pointer block">
+              <div className="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Upload className="w-8 h-8 text-pink-600" />
+              </div>
+              <p className="text-lg font-semibold text-gray-900 mb-2">
                 {file ? file.name : 'Click to upload or drag and drop'}
               </p>
-              <p className="text-sm text-gray-500">CSV files only</p>
+              <p className="text-sm text-gray-500">CSV files only • Max file size: 10MB</p>
             </label>
           </div>
 
           {progress.status !== 'idle' && (
-            <div className={`rounded-lg p-4 mb-6 ${
-              progress.status === 'success' ? 'bg-green-50 border border-green-200' :
-              progress.status === 'error' ? 'bg-red-50 border border-red-200' :
-              'bg-pink-50 border border-pink-200'
+            <div className={`rounded-lg p-5 mb-6 border ${
+              progress.status === 'success' ? 'bg-green-50 border-green-200' :
+              progress.status === 'error' ? 'bg-red-50 border-red-200' :
+              'bg-pink-50 border-pink-200'
             }`}>
               <div className="flex items-start gap-3">
-                {progress.status === 'success' && <CheckCircle className="text-green-600 mt-1" size={20} />}
-                {progress.status === 'error' && <AlertCircle className="text-red-600 mt-1" size={20} />}
+                {progress.status === 'success' && <CheckCircle className="text-green-600 mt-0.5 flex-shrink-0" size={22} />}
+                {progress.status === 'error' && <AlertCircle className="text-red-600 mt-0.5 flex-shrink-0" size={22} />}
                 <div className="flex-1">
-                  <p className={`font-medium ${
+                  <p className={`font-semibold text-sm ${
                     progress.status === 'success' ? 'text-green-900' :
                     progress.status === 'error' ? 'text-red-900' :
                     'text-pink-900'
@@ -318,9 +333,12 @@ export function PublicDepartmentUpload() {
                     {progress.message}
                   </p>
                   {progress.errors && progress.errors.length > 0 && (
-                    <ul className="mt-2 text-sm text-red-700 list-disc list-inside">
+                    <ul className="mt-3 space-y-1 text-sm text-red-700">
                       {progress.errors.map((error, idx) => (
-                        <li key={idx}>{error}</li>
+                        <li key={idx} className="flex items-start gap-2">
+                          <span className="text-red-500 mt-0.5">•</span>
+                          <span>{error}</span>
+                        </li>
                       ))}
                     </ul>
                   )}
@@ -330,10 +348,10 @@ export function PublicDepartmentUpload() {
           )}
 
           {parsedData.length > 0 && progress.status !== 'success' && (
-            <div className="flex gap-4">
+            <div className="flex gap-3">
               <button
                 onClick={() => setShowPreview(!showPreview)}
-                className="flex items-center gap-2 px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                className="flex items-center gap-2 px-5 py-3 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all font-medium shadow-sm"
               >
                 <Eye size={18} />
                 <span>{showPreview ? 'Hide' : 'Show'} Preview</span>
@@ -341,7 +359,7 @@ export function PublicDepartmentUpload() {
               <button
                 onClick={handleUpload}
                 disabled={progress.status === 'uploading'}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg hover:from-blue-700 hover:to-cyan-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-lg hover:from-pink-600 hover:to-pink-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-sm"
               >
                 <Upload size={18} />
                 <span>{progress.status === 'uploading' ? 'Uploading...' : 'Upload Data'}</span>
@@ -351,25 +369,28 @@ export function PublicDepartmentUpload() {
 
           {showPreview && parsedData.length > 0 && (
             <div className="mt-6 border border-gray-200 rounded-lg overflow-hidden">
-              <div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
-                <h3 className="font-semibold text-gray-900">Data Preview (First 5 rows)</h3>
+              <div className="bg-gray-50 px-5 py-3 border-b border-gray-200">
+                <h3 className="font-semibold text-gray-900 flex items-center gap-2">
+                  <Eye size={16} className="text-gray-600" />
+                  Data Preview (First 5 rows)
+                </h3>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead className="bg-gray-100">
                     <tr>
                       {Object.keys(parsedData[0] || {}).map((key) => (
-                        <th key={key} className="px-4 py-2 text-left font-medium text-gray-700">
+                        <th key={key} className="px-5 py-3 text-left font-semibold text-gray-700 whitespace-nowrap">
                           {key}
                         </th>
                       ))}
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-200">
+                  <tbody className="divide-y divide-gray-200 bg-white">
                     {parsedData.slice(0, 5).map((row, idx) => (
-                      <tr key={idx} className="hover:bg-gray-50">
+                      <tr key={idx} className="hover:bg-pink-50/30 transition-colors">
                         {Object.values(row).map((value: any, cellIdx) => (
-                          <td key={cellIdx} className="px-4 py-2 text-gray-900">
+                          <td key={cellIdx} className="px-5 py-3 text-gray-900 whitespace-nowrap">
                             {String(value)}
                           </td>
                         ))}
@@ -390,7 +411,7 @@ export function PublicDepartmentUpload() {
                   setProgress({ status: 'idle', message: '' });
                   setShowPreview(false);
                 }}
-                className="px-6 py-3 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors"
+                className="px-6 py-3 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-lg hover:from-pink-600 hover:to-pink-700 transition-all font-medium shadow-sm"
               >
                 Upload Another File
               </button>
@@ -398,23 +419,26 @@ export function PublicDepartmentUpload() {
           )}
         </div>
 
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <h3 className="font-semibold text-gray-900 mb-3">Upload Guidelines</h3>
-          <ul className="space-y-2 text-sm text-gray-600">
-            <li className="flex items-start gap-2">
-              <CheckCircle className="text-green-500 mt-0.5 flex-shrink-0" size={16} />
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <FileSpreadsheet size={18} className="text-gray-600" />
+            Upload Guidelines
+          </h3>
+          <ul className="space-y-3 text-sm text-gray-600">
+            <li className="flex items-start gap-3">
+              <CheckCircle className="text-green-500 mt-0.5 flex-shrink-0" size={18} />
               <span>Ensure your CSV file includes all required fields marked with *</span>
             </li>
-            <li className="flex items-start gap-2">
-              <CheckCircle className="text-green-500 mt-0.5 flex-shrink-0" size={16} />
+            <li className="flex items-start gap-3">
+              <CheckCircle className="text-green-500 mt-0.5 flex-shrink-0" size={18} />
               <span>Date fields should be in YYYY-MM-DD format</span>
             </li>
-            <li className="flex items-start gap-2">
-              <CheckCircle className="text-green-500 mt-0.5 flex-shrink-0" size={16} />
+            <li className="flex items-start gap-3">
+              <CheckCircle className="text-green-500 mt-0.5 flex-shrink-0" size={18} />
               <span>Boolean fields should be true/false</span>
             </li>
-            <li className="flex items-start gap-2">
-              <CheckCircle className="text-green-500 mt-0.5 flex-shrink-0" size={16} />
+            <li className="flex items-start gap-3">
+              <CheckCircle className="text-green-500 mt-0.5 flex-shrink-0" size={18} />
               <span>Numbers should not include currency symbols or commas</span>
             </li>
           </ul>

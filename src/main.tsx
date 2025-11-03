@@ -200,13 +200,13 @@ function ConfigurationCheck({ children }: { children: React.ReactNode }) {
 
         <div className="max-w-2xl w-full relative">
           {/* Glass morphism card */}
-          <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden border border-emerald-100/50">
+          <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden border border-white/20">
             {/* Header with gradient */}
-            <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 p-8 text-white relative overflow-hidden">
-              <div className="absolute inset-0 opacity-30">
+            <div className="bg-gradient-to-r from-pink-600 to-rose-600 p-8 text-white relative overflow-hidden">
+              <div className="absolute inset-0 opacity-20">
                 <div className="absolute inset-0" style={{
-                  backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.3) 1px, transparent 0)',
-                  backgroundSize: '32px 32px'
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+                  backgroundSize: '60px 60px'
                 }} />
               </div>
               <div className="flex items-center space-x-4 relative">
@@ -218,7 +218,7 @@ function ConfigurationCheck({ children }: { children: React.ReactNode }) {
                 </div>
                 <div>
                   <h1 className="text-3xl font-bold tracking-tight">Configuration Required</h1>
-                  <p className="text-emerald-50 mt-1 text-sm">Database connection setup needed</p>
+                  <p className="text-pink-50 mt-1 text-sm">Database connection setup needed</p>
                 </div>
               </div>
             </div>
@@ -244,53 +244,53 @@ function ConfigurationCheck({ children }: { children: React.ReactNode }) {
               {/* Setup instructions */}
               <div>
                 <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center">
-                  <span className="w-1 h-6 bg-gradient-to-b from-emerald-500 to-teal-500 rounded-full mr-3"></span>
+                  <span className="w-1 h-6 bg-gradient-to-b from-pink-500 to-rose-500 rounded-full mr-3"></span>
                   Setup Instructions
                 </h2>
                 <ol className="space-y-4 text-sm text-slate-700">
                   <li className="flex items-start group">
-                    <span className="flex-shrink-0 w-7 h-7 bg-gradient-to-br from-emerald-500 to-teal-600 text-white rounded-lg flex items-center justify-center font-bold text-xs mr-3 mt-0.5 shadow-md group-hover:scale-110 transition-transform">1</span>
+                    <span className="flex-shrink-0 w-7 h-7 bg-gradient-to-br from-pink-600 to-rose-600 text-white rounded-lg flex items-center justify-center font-bold text-xs mr-3 mt-0.5 shadow-md group-hover:scale-110 transition-transform">1</span>
                     <span className="pt-0.5">Log in to your deployment platform (Netlify, Vercel, etc.)</span>
                   </li>
                   <li className="flex items-start group">
-                    <span className="flex-shrink-0 w-7 h-7 bg-gradient-to-br from-emerald-500 to-teal-600 text-white rounded-lg flex items-center justify-center font-bold text-xs mr-3 mt-0.5 shadow-md group-hover:scale-110 transition-transform">2</span>
+                    <span className="flex-shrink-0 w-7 h-7 bg-gradient-to-br from-pink-600 to-rose-600 text-white rounded-lg flex items-center justify-center font-bold text-xs mr-3 mt-0.5 shadow-md group-hover:scale-110 transition-transform">2</span>
                     <span className="pt-0.5">Navigate to your site's environment variables settings</span>
                   </li>
                   <li className="flex items-start group">
-                    <span className="flex-shrink-0 w-7 h-7 bg-gradient-to-br from-emerald-500 to-teal-600 text-white rounded-lg flex items-center justify-center font-bold text-xs mr-3 mt-0.5 shadow-md group-hover:scale-110 transition-transform">3</span>
+                    <span className="flex-shrink-0 w-7 h-7 bg-gradient-to-br from-pink-600 to-rose-600 text-white rounded-lg flex items-center justify-center font-bold text-xs mr-3 mt-0.5 shadow-md group-hover:scale-110 transition-transform">3</span>
                     <span className="pt-0.5">Add the following environment variables:</span>
                   </li>
                 </ol>
               </div>
 
               {/* Code block */}
-              <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-xl p-5 shadow-lg border border-emerald-500/20">
+              <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-xl p-5 shadow-lg border border-pink-500/20">
                 <div className="font-mono text-xs space-y-3">
-                  <div className="text-emerald-400 font-semibold"># Required Variables</div>
+                  <div className="text-pink-400 font-semibold"># Required Variables</div>
                   <div>
-                    <div className="text-cyan-300 font-semibold">VITE_SUPABASE_URL</div>
+                    <div className="text-rose-300 font-semibold">VITE_SUPABASE_URL</div>
                     <div className="text-slate-400 ml-4 text-[10px]">→ Your Supabase project URL</div>
                   </div>
                   <div>
-                    <div className="text-cyan-300 font-semibold mt-2">VITE_SUPABASE_ANON_KEY</div>
+                    <div className="text-rose-300 font-semibold mt-2">VITE_SUPABASE_ANON_KEY</div>
                     <div className="text-slate-400 ml-4 text-[10px]">→ Your Supabase anonymous key</div>
                   </div>
                 </div>
               </div>
 
               {/* Info box */}
-              <div className="bg-gradient-to-r from-teal-50 to-emerald-50 border border-teal-200/60 rounded-xl p-4 shadow-sm">
-                <h3 className="font-bold text-teal-900 text-sm mb-3 flex items-center">
-                  <svg className="w-5 h-5 mr-2 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="bg-gradient-to-r from-blue-50 to-sky-50 border border-blue-200/60 rounded-xl p-4 shadow-sm">
+                <h3 className="font-bold text-blue-900 text-sm mb-3 flex items-center">
+                  <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                   Where to find these values
                 </h3>
-                <ol className="text-xs text-teal-900 space-y-2 ml-7 list-decimal">
-                  <li>Go to <a href="https://supabase.com/dashboard" target="_blank" rel="noopener noreferrer" className="font-semibold underline decoration-teal-400 hover:text-emerald-700 transition-colors">supabase.com/dashboard</a></li>
+                <ol className="text-xs text-blue-900 space-y-2 ml-7 list-decimal">
+                  <li>Go to <a href="https://supabase.com/dashboard" target="_blank" rel="noopener noreferrer" className="font-semibold underline decoration-blue-400 hover:text-sky-700 transition-colors">supabase.com/dashboard</a></li>
                   <li>Select your project</li>
-                  <li>Click on <span className="font-semibold text-emerald-700">Settings</span> → <span className="font-semibold text-emerald-700">API</span></li>
-                  <li>Copy the <span className="font-semibold text-emerald-700">Project URL</span> and <span className="font-semibold text-emerald-700">anon/public</span> key</li>
+                  <li>Click on <span className="font-semibold text-sky-700">Settings</span> → <span className="font-semibold text-sky-700">API</span></li>
+                  <li>Copy the <span className="font-semibold text-sky-700">Project URL</span> and <span className="font-semibold text-sky-700">anon/public</span> key</li>
                 </ol>
               </div>
 
@@ -298,7 +298,7 @@ function ConfigurationCheck({ children }: { children: React.ReactNode }) {
               <div className="pt-4 border-t border-slate-200">
                 <button
                   onClick={() => window.location.reload()}
-                  className="w-full bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-700 hover:via-teal-700 hover:to-cyan-700 text-white px-6 py-4 rounded-xl transition-all font-semibold shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center space-x-2"
+                  className="w-full bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white px-6 py-4 rounded-xl transition-all font-semibold shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center space-x-2"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />

@@ -119,6 +119,21 @@
     </div>
     
     <script>
+      // Force-disable any previously registered service workers and clear caches
+      // to prevent stale bundles from breaking app initialization.
+      (function() {
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.getRegistrations().then(regs => {
+            regs.forEach(r => r.unregister());
+          });
+        }
+        if ('caches' in window) {
+          caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
+        }
+      })();
+    </script>
+
+    <script>
       // Loading timeout - show error message if React doesn't mount within 10 seconds
       setTimeout(function() {
         var loader = document.getElementById('initial-loader');

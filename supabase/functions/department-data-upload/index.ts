@@ -67,6 +67,12 @@ Deno.serve(async (req: Request) => {
     const batchId = crypto.randomUUID();
     const uploadId = crypto.randomUUID();
 
+    console.log('[UPLOAD] Starting upload for department:', department);
+    console.log('[UPLOAD] Metadata:', JSON.stringify(metadata, null, 2));
+    console.log('[UPLOAD] Row count:', data.length);
+    console.log('[UPLOAD] User ID:', userId);
+    console.log('[UPLOAD] Org ID:', orgId);
+
     const uploadRecord = {
       id: uploadId,
       org_id: orgId,
@@ -150,30 +156,42 @@ Deno.serve(async (req: Request) => {
             break;
 
           case 'sales-leads':
+            const leadDate = row.Date || row.date || row.lead_date || row['Date'] || null;
+            const leadName = row.Name || row.name || row.lead_name || row['Name'] || null;
+            const leadSource = row.Source || row.source || row.lead_source || row['Source'] || null;
+            const leadStatus = row.Status || row.status || row.lead_status || row['Status'] || null;
+            const leadOwner = row['Lead Owner'] || row['lead owner'] || row['Lead owner'] || row.lead_owner || row['LEAD OWNER'] || null;
+            const groupLeadValue = row['Group Lead?'] || row['group lead?'] || row['Group lead?'] || row.group_lead || row.is_group_lead || row['GROUP LEAD?'] || 'FALSE';
+            const recentNotes = row['Recent Notes'] || row['recent notes'] || row['Recent notes'] || row.recent_notes || row['RECENT NOTES'] || null;
+
             processedRow = {
               ...processedRow,
               id: crypto.randomUUID(),
-              lead_date: row.Date || row.date || row.lead_date || null,
-              lead_name: row.Name || row.name || row.lead_name || null,
-              lead_source: row.Source || row.source || row.lead_source || null,
-              lead_status: row.Status || row.status || row.lead_status || null,
-              lead_owner: row['Lead Owner'] || row['lead owner'] || row.lead_owner || null,
-              is_group_lead: (row['Group Lead?'] || row['group lead?'] || row.group_lead || row.is_group_lead) === 'TRUE' ||
-                            (row['Group Lead?'] || row['group lead?'] || row.group_lead || row.is_group_lead) === true ||
-                            (row['Group Lead?'] || row['group lead?'] || row.group_lead || row.is_group_lead) === 'true',
-              recent_notes: row['Recent Notes'] || row['recent notes'] || row.recent_notes || null,
+              lead_date: leadDate,
+              lead_name: leadName,
+              lead_source: leadSource,
+              lead_status: leadStatus,
+              lead_owner: leadOwner,
+              is_group_lead: groupLeadValue === 'TRUE' || groupLeadValue === 'true' || groupLeadValue === true || groupLeadValue === 'Yes' || groupLeadValue === 'YES',
+              recent_notes: recentNotes,
             };
             break;
 
           case 'sales-cancelations':
+            const memberName = row['Name:'] || row['Name'] || row.Name || row.name || row.member_name || row['MEMBER NAME'] || null;
+            const cancelReason = row['Reason:'] || row['Reason'] || row.Reason || row.reason || row.cancelation_reason || row['CANCELATION REASON'] || null;
+            const membershipType = row['Membership:'] || row['Membership'] || row.Membership || row.membership || row.membership_type || row['MEMBERSHIP TYPE'] || null;
+            const advisorName = row['Advisor:'] || row['Advisor'] || row.Advisor || row.advisor || row.advisor_name || row['ADVISOR NAME'] || null;
+            const outcomeNotes = row['Outcome:'] || row['Outcome'] || row.Outcome || row.outcome || row.outcome_notes || row['OUTCOME NOTES'] || null;
+
             processedRow = {
               ...processedRow,
               id: crypto.randomUUID(),
-              member_name: row['Name:'] || row.Name || row.name || row.member_name || null,
-              cancelation_reason: row['Reason:'] || row.Reason || row.reason || row.cancelation_reason || null,
-              membership_type: row['Membership:'] || row.Membership || row.membership || row.membership_type || null,
-              advisor_name: row['Advisor:'] || row.Advisor || row.advisor || row.advisor_name || null,
-              outcome_notes: row['Outcome:'] || row.Outcome || row.outcome || row.outcome_notes || null,
+              member_name: memberName,
+              cancelation_reason: cancelReason,
+              membership_type: membershipType,
+              advisor_name: advisorName,
+              outcome_notes: outcomeNotes,
             };
             break;
 
@@ -227,7 +245,10 @@ Deno.serve(async (req: Request) => {
         rowsImported++;
       } catch (error) {
         rowsFailed++;
-        errors.push(`Row ${i + 1}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+        console.error(`[ROW ERROR] Row ${i + 1} failed:`, errorMsg);
+        console.error('[ROW DATA]', JSON.stringify(row, null, 2));
+        errors.push(`Row ${i + 1}: ${errorMsg}`);
       }
     }
 
@@ -257,14 +278,23 @@ Deno.serve(async (req: Request) => {
           break;
       }
 
+      console.log(`[INSERT] Inserting ${processedRecords.length} records into ${tableName}`);
+      console.log('[SAMPLE RECORD]', JSON.stringify(processedRecords[0], null, 2));
+
       const { error: insertError } = await supabase
         .from(tableName)
         .insert(processedRecords);
 
       if (insertError) {
-        console.error('Error inserting records:', insertError);
-        throw new Error('Failed to insert records');
+        console.error('[INSERT ERROR] Error inserting records:', insertError);
+        console.error('[INSERT ERROR] Table:', tableName);
+        console.error('[INSERT ERROR] Error code:', insertError.code);
+        console.error('[INSERT ERROR] Error message:', insertError.message);
+        console.error('[INSERT ERROR] Error details:', insertError.details);
+        throw new Error(`Failed to insert records: ${insertError.message} (Code: ${insertError.code})`);
       }
+
+      console.log(`[INSERT SUCCESS] Successfully inserted ${processedRecords.length} records`);
     }
 
     const { error: updateError } = await supabase

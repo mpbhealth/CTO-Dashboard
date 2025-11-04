@@ -1,8 +1,9 @@
 import { useState, useMemo } from 'react';
-import { ShoppingCart, Download, TrendingUp, DollarSign, Users, Target, Award, UserPlus, UserMinus, Phone } from 'lucide-react';
+import { ShoppingCart, Download, TrendingUp, DollarSign, Users, Target, Award, UserPlus, UserMinus, Phone, FileSpreadsheet, Eye } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 import { useQuery } from '@tanstack/react-query';
 import { ExportModal } from '../../modals/ExportModal';
+import { FileViewerModal } from '../../modals/FileViewerModal';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, FunnelChart, Funnel, LabelList } from 'recharts';
 
 interface SalesOrder {
@@ -52,6 +53,8 @@ export function CEOSalesReportsEnhanced() {
   const [selectedRep, setSelectedRep] = useState('');
   const [selectedChannel, setSelectedChannel] = useState('');
   const [showExportModal, setShowExportModal] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<any>(null);
+  const [fileData, setFileData] = useState<any[]>([]);
 
   const { data: orders = [], isLoading: ordersLoading } = useQuery({
     queryKey: ['sales_orders'],
@@ -93,6 +96,64 @@ export function CEOSalesReportsEnhanced() {
       return data as SalesCancelation[];
     },
   });
+
+  const { data: uploadedFiles = [] } = useQuery({
+    queryKey: ['department_uploads', 'sales'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('department_uploads')
+        .select('*')
+        .in('department', ['sales', 'sales-leads', 'sales-cancelations'])
+        .order('created_at', { ascending: false })
+        .limit(20);
+
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const handleViewFile = async (file: any) => {
+    setSelectedFile(file);
+
+    let tableName = '';
+    if (file.department === 'sales') tableName = 'sales_orders';
+    else if (file.department === 'sales-leads') tableName = 'sales_leads';
+    else if (file.department === 'sales-cancelations') tableName = 'sales_cancelations';
+
+    if (tableName) {
+      const { data } = await supabase
+        .from(tableName)
+        .select('*')
+        .limit(1000);
+
+      setFileData(data || []);
+    }
+  };
+
+  const handleDownloadFile = () => {
+    if (!fileData || fileData.length === 0) return;
+
+    const headers = Object.keys(fileData[0]);
+    const csvContent = [
+      headers.join(','),
+      ...fileData.map(row =>
+        headers.map(header => {
+          const value = row[header];
+          return typeof value === 'string' && value.includes(',')
+            ? `"${value}"`
+            : value;
+        }).join(',')
+      )
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = selectedFile?.file_name || 'export.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   const filteredOrders = useMemo(() => {
     return orders.filter((order) => {
@@ -567,6 +628,62 @@ export function CEOSalesReportsEnhanced() {
         </div>
       </div>
 
+      {uploadedFiles.length > 0 && (
+        <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <FileSpreadsheet size={20} className="text-[#1a3d97]" />
+            Uploaded Files
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {uploadedFiles.map((file: any) => (
+              <div
+                key={file.id}
+                className="border border-gray-200 rounded-lg p-4 hover:border-[#1a3d97] transition-colors"
+              >
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex-1">
+                    <h3 className="font-medium text-gray-900 text-sm truncate" title={file.file_name}>
+                      {file.file_name}
+                    </h3>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {new Date(file.created_at).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <span
+                    className={`px-2 py-1 text-xs font-medium rounded-full ${
+                      file.department === 'sales'
+                        ? 'bg-blue-100 text-blue-800'
+                        : file.department === 'sales-leads'
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-amber-100 text-amber-800'
+                    }`}
+                  >
+                    {file.department === 'sales'
+                      ? 'Orders'
+                      : file.department === 'sales-leads'
+                      ? 'Leads'
+                      : 'Cancelations'}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-xs text-gray-600 mb-3">
+                  <span>{file.row_count} rows</span>
+                  <span className={file.status === 'completed' ? 'text-green-600' : 'text-gray-500'}>
+                    {file.status}
+                  </span>
+                </div>
+                <button
+                  onClick={() => handleViewFile(file)}
+                  className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity text-sm"
+                >
+                  <Eye size={14} />
+                  View Data
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {showExportModal && (
         <ExportModal
           data={
@@ -578,6 +695,18 @@ export function CEOSalesReportsEnhanced() {
           }
           filename={`sales_${activeTab}`}
           onClose={() => setShowExportModal(false)}
+        />
+      )}
+
+      {selectedFile && (
+        <FileViewerModal
+          file={selectedFile}
+          data={fileData}
+          onClose={() => {
+            setSelectedFile(null);
+            setFileData([]);
+          }}
+          onDownload={handleDownloadFile}
         />
       )}
     </div>

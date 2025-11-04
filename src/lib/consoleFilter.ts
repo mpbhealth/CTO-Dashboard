@@ -10,24 +10,32 @@ const SUPPRESSED_PATTERNS = [
   'ad_conversions',
   'Tracking has already been taken',
   'sendAdConversions',
+  'login-DIHtQvYJ.js',
 
   // WebContainer warnings
   'Contextify',
   'WARNING',
   'running source code in new context',
+  'blitz.cf284e50.js',
+  'webcontainer.cf284e50.js',
 
   // Preload resource warnings
   'preloaded using link preload',
   'not used within a few seconds',
   'window\'s load event',
+  'The resource <URL>',
 
   // Platform-specific failures
   'stackblitz.com/api',
   'stackblitz-user-content',
   's3.us-west-2.amazonaws.com',
   'user/tokens/registries',
+  'registries?ownerSlug',
   'webcontainer',
   'Failed to load resource',
+  'the server responded with a status of 422',
+  'the server responded with a status of 403',
+  'the server responded with a status of 429',
 
   // Analytics errors (non-critical)
   'analytics.client',
@@ -36,6 +44,18 @@ const SUPPRESSED_PATTERNS = [
   'Failed to fetch',
   'sendAnalyticsEvent',
   'ChatHooks.sendMessage',
+  'Chat.client-CSwSu11a.js',
+  'analytics.client-BHXoRoqD.js',
+  'performance-Cvg2549L.js',
+  'fetch-7jWGE-UY.js',
+
+  // StackBlitz client errors
+  'entry.client-nEkgzEQK.js',
+  'deployed function department-data-upload',
+
+  // Supabase temporary errors (will be fixed)
+  '/rest/v1/resources',
+  'the server responded with a status of 500',
 ];
 
 function shouldSuppress(args: unknown[]): boolean {

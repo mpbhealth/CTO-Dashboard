@@ -14,8 +14,11 @@ interface UploadResult {
 const DEPARTMENT_OPTIONS = [
   { value: 'concierge', label: 'Concierge Team', description: 'Upload concierge interactions and support tickets' },
   { value: 'sales', label: 'Sales Team', description: 'Upload sales orders and pipeline data' },
+  { value: 'sales-leads', label: 'Sales Leads', description: 'Upload lead tracking and conversion data' },
+  { value: 'sales-cancelations', label: 'Sales Cancelations', description: 'Upload member cancelation reports' },
   { value: 'operations', label: 'Operations Team', description: 'Upload cancellations and churn data' },
   { value: 'finance', label: 'Finance Team', description: 'Upload financial records (AR, AP, Payouts)' },
+  { value: 'saudemax', label: 'SaudeMAX', description: 'Upload SaudeMAX program enrollment and metrics' },
 ];
 
 export function CEODepartmentUpload() {

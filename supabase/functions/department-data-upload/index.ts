@@ -46,13 +46,13 @@ Deno.serve(async (req: Request) => {
     const { department, data, metadata, orgId } = requestData;
 
     let userId = 'anonymous';
-    const authHeader = req.headers.get('Authorization');
+    const authHeader2 = req.headers.get('Authorization');
 
-    if (authHeader) {
-      const token = authHeader.replace('Bearer ', '');
-      const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-      if (user && !authError) {
-        userId = user.id;
+    if (authHeader2) {
+      const token2 = authHeader2.replace('Bearer ', '');
+      const { data: { user: user2 }, error: authError2 } = await supabase.auth.getUser(token2);
+      if (user2 && !authError2) {
+        userId = user2.id;
       }
     }
 

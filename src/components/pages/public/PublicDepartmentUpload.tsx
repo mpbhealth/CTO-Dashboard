@@ -27,7 +27,7 @@ const DEPARTMENT_CONFIG = {
     sampleData: 'occurred_at,member_id,agent_name,channel,result,duration_minutes,notes\n2024-01-15,M12345,John Smith,Phone,Resolved,15,Member called about billing\n2024-01-16,M12346,Jane Doe,Email,Pending,0,Follow-up required',
   },
   sales: {
-    name: 'Sales',
+    name: 'Sales Orders',
     color: 'blue',
     fields: [
       { key: 'Date', label: 'Date', type: 'text', required: true },
@@ -38,6 +38,32 @@ const DEPARTMENT_CONFIG = {
       { key: 'Group?', label: 'Group?', type: 'boolean', required: false },
     ],
     sampleData: 'Date,Name,Plan,Size,Agent,Group?\n10/1/2025,Russell Clark,Secure HSA,M+S,Misty Berryman,FALSE\n1-Oct,George J Thibault,Secure HSA,MO,Enrollment Website,FALSE\n2-Oct,Aryn e Graham,DIRECT,MO,Jonathan Masters,FALSE\n3-Oct,Rachel S Terrell,Secure HSA,MO,Wiley Long,FALSE',
+  },
+  'sales-leads': {
+    name: 'Sales Leads',
+    color: 'green',
+    fields: [
+      { key: 'Date', label: 'Date', type: 'text', required: true },
+      { key: 'Name', label: 'Name', type: 'text', required: true },
+      { key: 'Source', label: 'Source', type: 'text', required: true },
+      { key: 'Status', label: 'Status', type: 'text', required: true },
+      { key: 'Lead Owner', label: 'Lead Owner', type: 'text', required: true },
+      { key: 'Group Lead?', label: 'Group Lead?', type: 'boolean', required: false },
+      { key: 'Recent Notes', label: 'Recent Notes', type: 'text', required: false },
+    ],
+    sampleData: 'Date,Name,Source,Status,Lead Owner,Group Lead?,Recent Notes\n10/13/2025,Isaac Brown,Website Visit,In process,Leonardo Moraes,TRUE,List bill signed\n10/14/2025,Michelle Cristalli,Website Visit,In process,Leonardo Moraes,FALSE,Quoted on Premium Care\n21-Oct,Teresa Goodman,Referall,N/a,Tupac Manzanarez,FALSE,',
+  },
+  'sales-cancelations': {
+    name: 'Sales Cancelations',
+    color: 'amber',
+    fields: [
+      { key: 'Name:', label: 'Name', type: 'text', required: true },
+      { key: 'Reason:', label: 'Reason', type: 'text', required: true },
+      { key: 'Membership:', label: 'Membership', type: 'text', required: false },
+      { key: 'Advisor:', label: 'Advisor', type: 'text', required: false },
+      { key: 'Outcome:', label: 'Outcome', type: 'text', required: false },
+    ],
+    sampleData: 'Name:,Reason:,Membership:,Advisor:,Outcome:\nLisa Perry,Aging into Medicare,Secure HSA,Wiley Long,Left VM\nLaurie Boehk,Found more compehensive coverage,MEC + Eseentials,Karen Torsoe,Left VM\nMorgan Harris,Other,Care Plus,Cindy Gordon,Retained',
   },
   operations: {
     name: 'Operations',

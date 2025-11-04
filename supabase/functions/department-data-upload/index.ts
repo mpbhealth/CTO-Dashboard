@@ -7,7 +7,7 @@ const corsHeaders = {
 };
 
 interface UploadRequest {
-  department: 'concierge' | 'sales' | 'operations' | 'finance' | 'saudemax';
+  department: 'concierge' | 'sales' | 'sales-leads' | 'sales-cancelations' | 'operations' | 'finance' | 'saudemax';
   data: Array<Record<string, unknown>>;
   metadata: {
     fileName: string;
@@ -148,6 +148,34 @@ Deno.serve(async (req: Request) => {
             };
             break;
 
+          case 'sales-leads':
+            processedRow = {
+              ...processedRow,
+              id: crypto.randomUUID(),
+              lead_date: row.Date || row.date || row.lead_date || null,
+              lead_name: row.Name || row.name || row.lead_name || null,
+              lead_source: row.Source || row.source || row.lead_source || null,
+              lead_status: row.Status || row.status || row.lead_status || null,
+              lead_owner: row['Lead Owner'] || row['lead owner'] || row.lead_owner || null,
+              is_group_lead: (row['Group Lead?'] || row['group lead?'] || row.group_lead || row.is_group_lead) === 'TRUE' ||
+                            (row['Group Lead?'] || row['group lead?'] || row.group_lead || row.is_group_lead) === true ||
+                            (row['Group Lead?'] || row['group lead?'] || row.group_lead || row.is_group_lead) === 'true',
+              recent_notes: row['Recent Notes'] || row['recent notes'] || row.recent_notes || null,
+            };
+            break;
+
+          case 'sales-cancelations':
+            processedRow = {
+              ...processedRow,
+              id: crypto.randomUUID(),
+              member_name: row['Name:'] || row.Name || row.name || row.member_name || null,
+              cancelation_reason: row['Reason:'] || row.Reason || row.reason || row.cancelation_reason || null,
+              membership_type: row['Membership:'] || row.Membership || row.membership || row.membership_type || null,
+              advisor_name: row['Advisor:'] || row.Advisor || row.advisor || row.advisor_name || null,
+              outcome_notes: row['Outcome:'] || row.Outcome || row.outcome || row.outcome_notes || null,
+            };
+            break;
+
           case 'operations':
             processedRow = {
               ...processedRow,
@@ -210,6 +238,12 @@ Deno.serve(async (req: Request) => {
           break;
         case 'sales':
           tableName = 'stg_sales_orders';
+          break;
+        case 'sales-leads':
+          tableName = 'stg_sales_leads';
+          break;
+        case 'sales-cancelations':
+          tableName = 'stg_sales_cancelations';
           break;
         case 'operations':
           tableName = 'stg_plan_cancellations';

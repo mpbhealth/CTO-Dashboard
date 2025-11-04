@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Upload, FileSpreadsheet, Download, Info, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
+import { useAuth } from '../../../contexts/AuthContext';
 import Papa from 'papaparse';
 
 interface UploadResult {
@@ -22,6 +23,7 @@ const DEPARTMENT_OPTIONS = [
 ];
 
 export function CEODepartmentUpload() {
+  const { user, session, profile } = useAuth();
   const [selectedDepartment, setSelectedDepartment] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [dragActive, setDragActive] = useState(false);
@@ -76,19 +78,31 @@ export function CEODepartmentUpload() {
     setResult(null);
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        throw new Error('User not authenticated');
+      // Pre-flight auth validation using AuthContext
+      if (!user || !session || !profile) {
+        throw new Error('Authentication required. Please refresh the page and log in again.');
       }
 
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('org_id')
-        .eq('id', user.id)
-        .single();
+      if (!profile.org_id) {
+        throw new Error('Organization not found in profile. Please contact support.');
+      }
 
-      if (!profile) {
-        throw new Error('Profile not found');
+      // Refresh session to ensure token is valid
+      const { data: { session: freshSession }, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError || !freshSession) {
+        throw new Error('Session expired. Please refresh the page and log in again.');
+      }
+
+      setProgress(10);
+
+      // Validate session token is not expired
+      const now = Math.floor(Date.now() / 1000);
+      if (freshSession.expires_at && freshSession.expires_at < now) {
+        // Try to refresh the session
+        const { data: { session: refreshedSession }, error: refreshError } = await supabase.auth.refreshSession();
+        if (refreshError || !refreshedSession) {
+          throw new Error('Session expired and could not be refreshed. Please log in again.');
+        }
       }
 
       setProgress(20);
@@ -100,12 +114,17 @@ export function CEODepartmentUpload() {
           try {
             setProgress(40);
 
+            if (!results.data || results.data.length === 0) {
+              throw new Error('No data found in CSV file. Please check the file format.');
+            }
+
             const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
             const functionUrl = `${supabaseUrl}/functions/v1/department-data-upload`;
 
-            const { data: { session } } = await supabase.auth.getSession();
-            if (!session) {
-              throw new Error('No active session');
+            // Get fresh session one more time right before the upload
+            const { data: { session: uploadSession } } = await supabase.auth.getSession();
+            if (!uploadSession?.access_token) {
+              throw new Error('Session invalid. Please refresh the page and try again.');
             }
 
             setProgress(60);
@@ -115,13 +134,15 @@ export function CEODepartmentUpload() {
               fileName: file.name,
               fileSize: file.size,
               rowCount: results.data.length,
+              uploadedAt: new Date().toISOString(),
             };
 
             const response = await fetch(functionUrl, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${session.access_token}`,
+                'Authorization': `Bearer ${uploadSession.access_token}`,
+                'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
               },
               body: JSON.stringify({
                 department: selectedDepartment,
@@ -137,9 +158,19 @@ export function CEODepartmentUpload() {
               let errorMessage = 'Upload failed';
               try {
                 const errorData = await response.json();
-                errorMessage = errorData.error || errorMessage;
+                if (errorData.error) {
+                  errorMessage = errorData.error;
+                  // Provide more context for auth errors
+                  if (errorData.error.includes('session') || errorData.error.includes('auth')) {
+                    errorMessage = `Authentication error: ${errorData.error}. Please refresh the page and log in again.`;
+                  }
+                }
               } catch (e) {
-                errorMessage = `Upload failed with status ${response.status}`;
+                if (response.status === 401 || response.status === 403) {
+                  errorMessage = `Authentication failed (${response.status}). Please refresh the page and log in again.`;
+                } else {
+                  errorMessage = `Upload failed with status ${response.status}`;
+                }
               }
               throw new Error(errorMessage);
             }
@@ -154,7 +185,7 @@ export function CEODepartmentUpload() {
               success: false,
               rowsImported: 0,
               rowsFailed: 0,
-              errors: [error instanceof Error ? error.message : 'Unknown error'],
+              errors: [error instanceof Error ? error.message : 'Unknown error occurred during upload'],
             });
           } finally {
             setUploading(false);
@@ -166,7 +197,7 @@ export function CEODepartmentUpload() {
             success: false,
             rowsImported: 0,
             rowsFailed: 0,
-            errors: ['Failed to parse file'],
+            errors: ['Failed to parse CSV file. Please ensure it is properly formatted.'],
           });
           setUploading(false);
         },
@@ -177,7 +208,7 @@ export function CEODepartmentUpload() {
         success: false,
         rowsImported: 0,
         rowsFailed: 0,
-        errors: [error instanceof Error ? error.message : 'Unknown error'],
+        errors: [error instanceof Error ? error.message : 'Unknown error occurred'],
       });
       setUploading(false);
     }
@@ -239,6 +270,20 @@ export function CEODepartmentUpload() {
             Upload department data to populate CEO analytics dashboards
           </p>
         </div>
+
+        {(!user || !session || !profile) && (
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" />
+              <div className="text-sm text-amber-800">
+                <p className="font-medium mb-1">Authentication Required</p>
+                <p className="text-xs">
+                  You must be logged in to upload department data. Please refresh the page and log in again.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="bg-pink-50 border border-pink-200 rounded-lg p-4">
           <div className="flex items-start gap-3">
@@ -408,6 +453,18 @@ export function CEODepartmentUpload() {
                             </li>
                           )}
                         </ul>
+                      </div>
+                    )}
+
+                    {!result.success && file && (
+                      <div className="mt-4">
+                        <button
+                          onClick={handleUpload}
+                          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity text-sm font-medium"
+                        >
+                          <Upload size={16} />
+                          Retry Upload
+                        </button>
                       </div>
                     )}
                   </div>

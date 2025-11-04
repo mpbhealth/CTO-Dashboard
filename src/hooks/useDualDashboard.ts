@@ -47,32 +47,49 @@ export function useResources(filters?: { workspaceId?: string }) {
   return useQuery({
     queryKey: ['resources', filters?.workspaceId],
     queryFn: async () => {
+      if (!filters?.workspaceId) {
+        return [];
+      }
+
       try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+
         let query = supabase
           .from('resources')
           .select('*')
-          .order('created_at', { ascending: false });
+          .order('created_at', { ascending: false })
+          .abortSignal(controller.signal);
 
-        if (filters?.workspaceId) {
+        if (filters.workspaceId) {
           query = query.eq('workspace_id', filters.workspaceId);
         }
 
         const { data, error } = await query;
 
+        clearTimeout(timeoutId);
+
         if (error) {
+          if (error.code === 'PGRST116') {
+            return [];
+          }
           console.error('Error fetching resources:', error);
           return [];
         }
         return data || [];
       } catch (error) {
-        console.error('Error fetching resources:', error);
+        if (error instanceof Error && error.name === 'AbortError') {
+          console.error('Resources fetch timeout');
+        } else {
+          console.error('Error fetching resources:', error);
+        }
         return [];
       }
     },
     staleTime: 5 * 60 * 1000,
-    enabled: !filters?.workspaceId || !!filters.workspaceId,
-    retry: 1,
-    retryDelay: 2000,
+    enabled: !!filters?.workspaceId,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 

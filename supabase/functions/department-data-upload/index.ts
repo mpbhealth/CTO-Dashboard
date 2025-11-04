@@ -89,7 +89,8 @@ Deno.serve(async (req: Request) => {
 
     if (uploadError) {
       console.error('Error creating upload record:', uploadError);
-      throw new Error('Failed to create upload record');
+      console.error('Upload record data:', JSON.stringify(uploadRecord, null, 2));
+      throw new Error(`Failed to create upload record: ${uploadError.message} (Code: ${uploadError.code})`);
     }
 
     let rowsImported = 0;

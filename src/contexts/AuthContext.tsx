@@ -133,13 +133,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     fetchingRef.current = userId;
 
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
+
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .eq('id', userId)
-        .maybeSingle();
+        .eq('user_id', userId)
+        .maybeSingle()
+        .abortSignal(controller.signal);
 
-      if (error) throw error;
+      clearTimeout(timeoutId);
+
+      if (error) {
+        if (error.name === 'AbortError') {
+          logger.error('Profile fetch timeout - using cached or default data');
+          throw new Error('Profile fetch timeout');
+        }
+        throw error;
+      }
 
       if (data) {
         setProfile(data);
@@ -152,7 +164,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     } catch (error) {
       logger.error('Error fetching profile', error);
-      setProfile(null);
+      const diskCached = loadCachedProfile(userId);
+      if (diskCached) {
+        logger.warn('Using cached profile after fetch error');
+        setProfile(diskCached);
+        profileCache.current.set(userId, diskCached);
+      } else {
+        setProfile(null);
+      }
       setProfileReady(true);
     } finally {
       fetchingRef.current = null;

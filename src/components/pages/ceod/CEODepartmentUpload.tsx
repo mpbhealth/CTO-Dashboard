@@ -134,8 +134,14 @@ export function CEODepartmentUpload() {
             setProgress(80);
 
             if (!response.ok) {
-              const errorData = await response.json();
-              throw new Error(errorData.error || 'Upload failed');
+              let errorMessage = 'Upload failed';
+              try {
+                const errorData = await response.json();
+                errorMessage = errorData.error || errorMessage;
+              } catch (e) {
+                errorMessage = `Upload failed with status ${response.status}`;
+              }
+              throw new Error(errorMessage);
             }
 
             const uploadResult: UploadResult = await response.json();

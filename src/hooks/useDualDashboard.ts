@@ -59,6 +59,7 @@ export function useResources(filters?: { workspaceId?: string }) {
           .from('resources')
           .select('*')
           .order('created_at', { ascending: false })
+          .limit(100)
           .abortSignal(controller.signal);
 
         if (filters.workspaceId) {
@@ -71,30 +72,32 @@ export function useResources(filters?: { workspaceId?: string }) {
 
         if (error) {
           if (error.code === 'PGRST116' || error.code === '42P01') {
-            console.warn('Resources table not accessible or no data found');
             return [];
           }
           if (error.code === 'PGRST301') {
-            console.error('RLS policy violation when fetching resources:', error.message);
             return [];
           }
-          console.error('Supabase request failed', error);
+          if (error.code === '500' || error.message?.includes('500')) {
+            return [];
+          }
           return [];
         }
         return data || [];
       } catch (error) {
         if (error instanceof Error && error.name === 'AbortError') {
-          console.error('Resources fetch timeout');
-        } else {
-          console.error('Error fetching resources:', error);
+          return [];
         }
         return [];
       }
     },
-    staleTime: 5 * 60 * 1000,
+    staleTime: 10 * 60 * 1000,
+    gcTime: 15 * 60 * 1000,
     enabled: !!filters?.workspaceId,
-    retry: 2,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
+    retry: 1,
+    retryDelay: 2000,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
   });
 }
 

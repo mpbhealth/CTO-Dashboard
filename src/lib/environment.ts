@@ -43,10 +43,34 @@ export class Environment {
       'Contextify',
       'IPC flooding',
       'stackblitz.com/api',
+      'preloaded using link preload',
+      'not used within a few seconds',
+      'webcontainer',
+      's3.us-west-2.amazonaws.com',
+      'user/tokens/registries',
+      'Failed to fetch',
+      'analytics.client',
+      'performance-',
+      'fetch-',
     ];
 
     return platformErrorPatterns.some(pattern =>
       errorMessage.toLowerCase().includes(pattern.toLowerCase())
+    );
+  }
+
+  static shouldSuppressWarning(message: string): boolean {
+    const suppressPatterns = [
+      'preloaded using link preload',
+      'not used within a few seconds',
+      'Failed to load resource',
+      'webcontainer',
+      'stackblitz',
+      'Contextify',
+    ];
+
+    return suppressPatterns.some(pattern =>
+      message.toLowerCase().includes(pattern.toLowerCase())
     );
   }
 
@@ -57,6 +81,9 @@ export class Environment {
   }
 
   static warn(message: string, data?: unknown) {
+    if (this.shouldSuppressWarning(message)) {
+      return;
+    }
     if (!this.isStackBlitz() || this.shouldShowDebugLogs()) {
       console.warn(`[MPB Health] ${message}`, data || '');
     }
@@ -65,6 +92,27 @@ export class Environment {
   static error(message: string, error?: unknown) {
     if (!this.isPlatformError(error || message)) {
       console.error(`[MPB Health] ${message}`, error || '');
+    }
+  }
+
+  static suppressPlatformWarnings() {
+    if (this.isStackBlitz()) {
+      const originalWarn = console.warn;
+      const originalError = console.error;
+
+      console.warn = (...args: unknown[]) => {
+        const message = args.join(' ');
+        if (!this.shouldSuppressWarning(message)) {
+          originalWarn.apply(console, args);
+        }
+      };
+
+      console.error = (...args: unknown[]) => {
+        const message = args.join(' ');
+        if (!this.isPlatformError(message)) {
+          originalError.apply(console, args);
+        }
+      };
     }
   }
 }

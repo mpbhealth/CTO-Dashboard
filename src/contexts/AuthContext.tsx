@@ -108,7 +108,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const fetchProfile = useCallback(async (userId: string, skipCache = false) => {
+  const fetchProfile = useCallback(async (userId: string, skipCache = false, retryCount = 0) => {
     if (fetchingRef.current === userId) {
       return;
     }
@@ -150,6 +150,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           logger.error('Profile fetch timeout - using cached or default data');
           throw new Error('Profile fetch timeout');
         }
+
+        if (error.code === '403' || error.message?.includes('403')) {
+          if (retryCount < 2) {
+            logger.warn(`Auth 403 error, retrying... (attempt ${retryCount + 1})`);
+            fetchingRef.current = null;
+            await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
+            return fetchProfile(userId, skipCache, retryCount + 1);
+          }
+        }
+
         throw error;
       }
 

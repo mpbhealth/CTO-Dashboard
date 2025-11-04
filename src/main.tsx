@@ -16,19 +16,31 @@ import React from 'react';
 
 // Load diagnostics asynchronously to avoid circular dependency issues
 if (typeof window !== 'undefined') {
+  // Suppress platform-specific warnings immediately
+  Environment.suppressPlatformWarnings();
+
   Promise.all([
     import('./lib/diagnostics'),
     import('./lib/whiteScreenDiagnostics')
   ]).catch(err => console.error('Failed to load diagnostics:', err));
 }
 
-// Create a client for React Query
+// Create a client for React Query with optimized settings
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      refetchOnWindowFocus: false,
+      staleTime: 1000 * 60 * 10, // 10 minutes - data is fresh for 10 min
+      gcTime: 1000 * 60 * 15, // 15 minutes - cache persists for 15 min
+      refetchOnWindowFocus: false, // Don't refetch on window focus
+      refetchOnMount: false, // Don't refetch on component mount if data exists
+      refetchOnReconnect: false, // Don't refetch on reconnect
+      retry: 1, // Only retry once
+      retryDelay: 2000, // Wait 2 seconds before retry
+      networkMode: 'online', // Only run queries when online
+    },
+    mutations: {
       retry: 1,
+      retryDelay: 1000,
     },
   },
 });

@@ -26,6 +26,15 @@ export default defineConfig({
     assetsDir: 'assets',
     modulePreload: {
       polyfill: true,
+      resolveDependencies: (filename, deps) => {
+        // Reduce preload warnings by limiting preloaded dependencies
+        return deps.filter(dep => {
+          // Only preload critical chunks
+          return dep.includes('react-vendor') ||
+                 dep.includes('supabase-vendor') ||
+                 dep.includes('router');
+        });
+      },
     },
     rollupOptions: {
       output: {
@@ -47,11 +56,11 @@ export default defineConfig({
             if (id.includes('react-router')) {
               return 'router';
             }
-            // Charts
+            // Charts - lazy load
             if (id.includes('recharts')) {
               return 'charts';
             }
-            // UI libraries
+            // UI libraries - lazy load
             if (id.includes('framer-motion') || id.includes('lucide-react')) {
               return 'ui-libs';
             }

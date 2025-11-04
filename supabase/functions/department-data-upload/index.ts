@@ -128,13 +128,21 @@ Deno.serve(async (req: Request) => {
           case 'sales':
             processedRow = {
               ...processedRow,
-              staging_id: crypto.randomUUID(),
+              id: crypto.randomUUID(),
+
+              enrollment_date: row.Date || row.date || row.enrollment_date || null,
+              member_name: row.Name || row.name || row.member_name || null,
+              plan: row.Plan || row.plan || null,
+              family_size: row.Size || row.size || row.family_size || null,
+              rep: row.Agent || row.agent || row.rep || null,
+              is_group: (row['Group?'] || row.group || row.is_group) === 'TRUE' ||
+                        (row['Group?'] || row.group || row.is_group) === true ||
+                        (row['Group?'] || row.group || row.is_group) === 'true',
+
               order_date: row.order_date || null,
               order_id: row.order_id || null,
               member_id: row.member_id || null,
-              amount: row.amount ? Number(row.amount) : 0,
-              plan: row.plan || null,
-              rep: row.rep || null,
+              amount: row.amount || null,
               channel: row.channel || null,
               status: row.status || null,
             };

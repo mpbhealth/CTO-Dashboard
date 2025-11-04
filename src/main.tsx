@@ -1,3 +1,4 @@
+import './lib/consoleFilter';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
@@ -16,9 +17,6 @@ import React from 'react';
 
 // Load diagnostics asynchronously to avoid circular dependency issues
 if (typeof window !== 'undefined') {
-  // Suppress platform-specific warnings immediately
-  Environment.suppressPlatformWarnings();
-
   Promise.all([
     import('./lib/diagnostics'),
     import('./lib/whiteScreenDiagnostics')

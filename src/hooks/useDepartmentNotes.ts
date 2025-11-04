@@ -14,16 +14,28 @@ export function useDepartmentNotes(departmentId?: string) {
 
     try {
       setLoading(true);
+      setError(null);
+
       const { data: notes, error: notesError } = await supabase
         .from('department_notes')
         .select('*')
         .eq('department_id', departmentId)
         .order('created_at', { ascending: false });
 
-      if (notesError) throw notesError;
+      if (notesError) {
+        if (notesError.code === 'PGRST116' || notesError.code === '42P01') {
+          console.warn(`Department notes table not accessible: ${notesError.message}`);
+          setData([]);
+          return;
+        }
+        throw notesError;
+      }
+
       setData(notes || []);
     } catch (err: any) {
-      setError(err.message);
+      console.error('Error fetching department notes:', err);
+      setError(err.message || 'Failed to fetch department notes');
+      setData([]);
     } finally {
       setLoading(false);
     }

@@ -70,10 +70,15 @@ export function useResources(filters?: { workspaceId?: string }) {
         clearTimeout(timeoutId);
 
         if (error) {
-          if (error.code === 'PGRST116') {
+          if (error.code === 'PGRST116' || error.code === '42P01') {
+            console.warn('Resources table not accessible or no data found');
             return [];
           }
-          console.error('Error fetching resources:', error);
+          if (error.code === 'PGRST301') {
+            console.error('RLS policy violation when fetching resources:', error.message);
+            return [];
+          }
+          console.error('Supabase request failed', error);
           return [];
         }
         return data || [];

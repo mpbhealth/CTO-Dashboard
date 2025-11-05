@@ -22,10 +22,21 @@
 
   ## Security
   - All tables enable RLS with org_id scoping
-  - CEO and admin roles have INSERT permissions
+  - CEO, CTO and admin roles have INSERT permissions
   - Service role can bypass RLS for Edge Function operations
   - Policies prevent cross-org data access
 */
+
+-- ============================================================================
+-- PART 0: Ensure required extensions and indexes exist
+-- ============================================================================
+
+-- Ensure pgcrypto extension for gen_random_uuid()
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+-- Create helpful composite index for policy lookups if it doesn't exist
+CREATE INDEX IF NOT EXISTS idx_profiles_user_org_role
+  ON profiles(user_id, org_id, role);
 
 -- ============================================================================
 -- PART 1: Ensure all staging tables exist as TABLES (not views)
@@ -235,6 +246,9 @@ CREATE INDEX IF NOT EXISTS idx_stg_finance_records_batch ON stg_finance_records(
 CREATE INDEX IF NOT EXISTS idx_stg_saudemax_data_org ON stg_saudemax_data(org_id);
 CREATE INDEX IF NOT EXISTS idx_stg_saudemax_data_batch ON stg_saudemax_data(upload_batch_id);
 
+CREATE INDEX IF NOT EXISTS idx_stg_concierge_notes_org ON stg_concierge_notes(org_id);
+CREATE INDEX IF NOT EXISTS idx_stg_crm_leads_org ON stg_crm_leads(org_id);
+
 -- ============================================================================
 -- PART 3: Enable RLS on all staging tables
 -- ============================================================================
@@ -306,7 +320,7 @@ CREATE POLICY "stg_concierge_interactions_select"
       SELECT 1 FROM profiles
       WHERE profiles.user_id = auth.uid()
       AND profiles.org_id = stg_concierge_interactions.org_id
-      AND profiles.role IN ('ceo', 'admin')
+      AND profiles.role IN ('ceo', 'admin', 'cto')
       LIMIT 1
     )
   );
@@ -319,7 +333,7 @@ CREATE POLICY "stg_concierge_interactions_insert"
       SELECT 1 FROM profiles
       WHERE profiles.user_id = auth.uid()
       AND profiles.org_id = stg_concierge_interactions.org_id
-      AND profiles.role IN ('ceo', 'admin')
+      AND profiles.role IN ('ceo', 'admin', 'cto')
       LIMIT 1
     )
   );
@@ -333,7 +347,7 @@ CREATE POLICY "stg_sales_orders_select"
       SELECT 1 FROM profiles
       WHERE profiles.user_id = auth.uid()
       AND profiles.org_id = stg_sales_orders.org_id
-      AND profiles.role IN ('ceo', 'admin')
+      AND profiles.role IN ('ceo', 'admin', 'cto')
       LIMIT 1
     )
   );
@@ -346,7 +360,7 @@ CREATE POLICY "stg_sales_orders_insert"
       SELECT 1 FROM profiles
       WHERE profiles.user_id = auth.uid()
       AND profiles.org_id = stg_sales_orders.org_id
-      AND profiles.role IN ('ceo', 'admin')
+      AND profiles.role IN ('ceo', 'admin', 'cto')
       LIMIT 1
     )
   );
@@ -360,7 +374,7 @@ CREATE POLICY "stg_sales_leads_select"
       SELECT 1 FROM profiles
       WHERE profiles.user_id = auth.uid()
       AND profiles.org_id = stg_sales_leads.org_id
-      AND profiles.role IN ('ceo', 'admin')
+      AND profiles.role IN ('ceo', 'admin', 'cto')
       LIMIT 1
     )
   );
@@ -373,7 +387,7 @@ CREATE POLICY "stg_sales_leads_insert"
       SELECT 1 FROM profiles
       WHERE profiles.user_id = auth.uid()
       AND profiles.org_id = stg_sales_leads.org_id
-      AND profiles.role IN ('ceo', 'admin')
+      AND profiles.role IN ('ceo', 'admin', 'cto')
       LIMIT 1
     )
   );
@@ -387,7 +401,7 @@ CREATE POLICY "stg_sales_cancelations_select"
       SELECT 1 FROM profiles
       WHERE profiles.user_id = auth.uid()
       AND profiles.org_id = stg_sales_cancelations.org_id
-      AND profiles.role IN ('ceo', 'admin')
+      AND profiles.role IN ('ceo', 'admin', 'cto')
       LIMIT 1
     )
   );
@@ -400,7 +414,7 @@ CREATE POLICY "stg_sales_cancelations_insert"
       SELECT 1 FROM profiles
       WHERE profiles.user_id = auth.uid()
       AND profiles.org_id = stg_sales_cancelations.org_id
-      AND profiles.role IN ('ceo', 'admin')
+      AND profiles.role IN ('ceo', 'admin', 'cto')
       LIMIT 1
     )
   );
@@ -414,7 +428,7 @@ CREATE POLICY "stg_plan_cancellations_select"
       SELECT 1 FROM profiles
       WHERE profiles.user_id = auth.uid()
       AND profiles.org_id = stg_plan_cancellations.org_id
-      AND profiles.role IN ('ceo', 'admin')
+      AND profiles.role IN ('ceo', 'admin', 'cto')
       LIMIT 1
     )
   );
@@ -427,7 +441,7 @@ CREATE POLICY "stg_plan_cancellations_insert"
       SELECT 1 FROM profiles
       WHERE profiles.user_id = auth.uid()
       AND profiles.org_id = stg_plan_cancellations.org_id
-      AND profiles.role IN ('ceo', 'admin')
+      AND profiles.role IN ('ceo', 'admin', 'cto')
       LIMIT 1
     )
   );
@@ -441,7 +455,7 @@ CREATE POLICY "stg_finance_records_select"
       SELECT 1 FROM profiles
       WHERE profiles.user_id = auth.uid()
       AND profiles.org_id = stg_finance_records.org_id
-      AND profiles.role IN ('ceo', 'admin')
+      AND profiles.role IN ('ceo', 'admin', 'cto')
       LIMIT 1
     )
   );
@@ -454,7 +468,7 @@ CREATE POLICY "stg_finance_records_insert"
       SELECT 1 FROM profiles
       WHERE profiles.user_id = auth.uid()
       AND profiles.org_id = stg_finance_records.org_id
-      AND profiles.role IN ('ceo', 'admin')
+      AND profiles.role IN ('ceo', 'admin', 'cto')
       LIMIT 1
     )
   );
@@ -468,7 +482,7 @@ CREATE POLICY "stg_saudemax_data_select"
       SELECT 1 FROM profiles
       WHERE profiles.user_id = auth.uid()
       AND profiles.org_id = stg_saudemax_data.org_id
-      AND profiles.role IN ('ceo', 'admin')
+      AND profiles.role IN ('ceo', 'admin', 'cto')
       LIMIT 1
     )
   );
@@ -481,7 +495,7 @@ CREATE POLICY "stg_saudemax_data_insert"
       SELECT 1 FROM profiles
       WHERE profiles.user_id = auth.uid()
       AND profiles.org_id = stg_saudemax_data.org_id
-      AND profiles.role IN ('ceo', 'admin')
+      AND profiles.role IN ('ceo', 'admin', 'cto')
       LIMIT 1
     )
   );
@@ -495,7 +509,7 @@ CREATE POLICY "stg_concierge_notes_select"
       SELECT 1 FROM profiles
       WHERE profiles.user_id = auth.uid()
       AND profiles.org_id = stg_concierge_notes.org_id
-      AND profiles.role IN ('ceo', 'admin')
+      AND profiles.role IN ('ceo', 'admin', 'cto')
       LIMIT 1
     )
   );
@@ -508,7 +522,7 @@ CREATE POLICY "stg_concierge_notes_insert"
       SELECT 1 FROM profiles
       WHERE profiles.user_id = auth.uid()
       AND profiles.org_id = stg_concierge_notes.org_id
-      AND profiles.role IN ('ceo', 'admin')
+      AND profiles.role IN ('ceo', 'admin', 'cto')
       LIMIT 1
     )
   );
@@ -522,7 +536,7 @@ CREATE POLICY "stg_crm_leads_select"
       SELECT 1 FROM profiles
       WHERE profiles.user_id = auth.uid()
       AND profiles.org_id = stg_crm_leads.org_id
-      AND profiles.role IN ('ceo', 'admin')
+      AND profiles.role IN ('ceo', 'admin', 'cto')
       LIMIT 1
     )
   );
@@ -535,7 +549,7 @@ CREATE POLICY "stg_crm_leads_insert"
       SELECT 1 FROM profiles
       WHERE profiles.user_id = auth.uid()
       AND profiles.org_id = stg_crm_leads.org_id
-      AND profiles.role IN ('ceo', 'admin')
+      AND profiles.role IN ('ceo', 'admin', 'cto')
       LIMIT 1
     )
   );

@@ -42,11 +42,30 @@ CREATE INDEX IF NOT EXISTS idx_profiles_user_org_role
 -- PART 1: Ensure all staging tables exist as TABLES (not views)
 -- ============================================================================
 
--- Drop any existing views with these names to prevent conflicts
-DROP VIEW IF EXISTS stg_concierge_interactions CASCADE;
-DROP VIEW IF EXISTS stg_sales_orders CASCADE;
-DROP VIEW IF EXISTS stg_sales_leads CASCADE;
-DROP VIEW IF EXISTS stg_sales_cancelations CASCADE;
+-- Drop any existing views or tables with these names to prevent conflicts
+-- Use DO block to handle both views and tables gracefully
+DO $$
+BEGIN
+  -- Drop stg_concierge_interactions if it's a view
+  IF EXISTS (SELECT 1 FROM information_schema.views WHERE table_name = 'stg_concierge_interactions') THEN
+    DROP VIEW stg_concierge_interactions CASCADE;
+  END IF;
+
+  -- Drop stg_sales_orders if it's a view
+  IF EXISTS (SELECT 1 FROM information_schema.views WHERE table_name = 'stg_sales_orders') THEN
+    DROP VIEW stg_sales_orders CASCADE;
+  END IF;
+
+  -- Drop stg_sales_leads if it's a view
+  IF EXISTS (SELECT 1 FROM information_schema.views WHERE table_name = 'stg_sales_leads') THEN
+    DROP VIEW stg_sales_leads CASCADE;
+  END IF;
+
+  -- Drop stg_sales_cancelations if it's a view
+  IF EXISTS (SELECT 1 FROM information_schema.views WHERE table_name = 'stg_sales_cancelations') THEN
+    DROP VIEW stg_sales_cancelations CASCADE;
+  END IF;
+END $$;
 
 -- Create stg_concierge_interactions as a TABLE
 CREATE TABLE IF NOT EXISTS stg_concierge_interactions (

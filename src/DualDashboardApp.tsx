@@ -104,6 +104,7 @@ const CEODataManagement = lazy(() => import('./components/pages/ceod/CEODataMana
 const CEOFinance = lazy(() => import('./components/pages/ceod/CEOFinance').then(m => ({ default: m.CEOFinance })));
 const CEODepartmentUpload = lazy(() => import('./components/pages/ceod/CEODepartmentUpload').then(m => ({ default: m.CEODepartmentUpload })));
 const CEODepartmentUploadPortal = lazy(() => import('./components/pages/ceod/CEODepartmentUploadPortal').then(m => ({ default: m.CEODepartmentUploadPortal })));
+const CEOConciergeUpload = lazy(() => import('./components/pages/ceod/CEOConciergeUpload').then(m => ({ default: m.CEOConciergeUpload })));
 const CEOConciergeTrackingReports = lazy(() => import('./components/pages/ceod/CEOConciergeTrackingReports').then(m => ({ default: m.CEOConciergeTrackingReports })));
 const CEOFinanceSnapshot = lazy(() => import('./components/pages/ceod/CEOFinanceSnapshot').then(m => ({ default: m.CEOFinanceSnapshot })));
 const CEOOperationsDashboard = lazy(() => import('./components/pages/ceod/CEOOperationsDashboard').then(m => ({ default: m.CEOOperationsDashboard })));
@@ -424,6 +425,7 @@ function DualDashboardContent() {
             <Route path="/ceod/saudemax/reports" element={<CEOOnly><CEODashboardLayout><CEOSaudeMAXReports /></CEODashboardLayout></CEOOnly>} />
             <Route path="/ceod/upload-portal" element={<CEOOnly><CEODashboardLayout><CEODepartmentUploadPortal /></CEODashboardLayout></CEOOnly>} />
             <Route path="/ceod/upload" element={<CEOOnly><CEODashboardLayout><CEODepartmentUpload /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/concierge-upload" element={<CEOOnly><CEODashboardLayout><CEOConciergeUpload /></CEODashboardLayout></CEOOnly>} />
             <Route path="/ceod/files" element={<CEOOnly><CEODashboardLayout><CEOFiles /></CEODashboardLayout></CEOOnly>} />
             <Route path="/ceod/data" element={<CEOOnly><CEODashboardLayout><CEODataManagement /></CEODashboardLayout></CEOOnly>} />
             <Route path="/ceod/departments/concierge" element={<CEOOnly><CEODashboardLayout><CEODepartmentConcierge /></CEODashboardLayout></CEOOnly>} />

@@ -36,7 +36,6 @@ export function CEOHome() {
     if (profile?.role) {
       document.documentElement.dataset.role = profile.role;
     }
-    console.log('CEOHome mounted - Profile:', profile?.display_name);
   }, [profile]);
 
   const LoadingFallback = () => (

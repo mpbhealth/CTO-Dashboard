@@ -27,18 +27,26 @@ if (typeof window !== 'undefined') {
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 10, // 10 minutes - data is fresh for 10 min
-      gcTime: 1000 * 60 * 15, // 15 minutes - cache persists for 15 min
+      staleTime: 1000 * 60 * 5, // 5 minutes - data is fresh for 5 min
+      gcTime: 1000 * 60 * 30, // 30 minutes - cache persists longer
       refetchOnWindowFocus: false, // Don't refetch on window focus
       refetchOnMount: false, // Don't refetch on component mount if data exists
-      refetchOnReconnect: false, // Don't refetch on reconnect
-      retry: 1, // Only retry once
-      retryDelay: 2000, // Wait 2 seconds before retry
+      refetchOnReconnect: true, // Refetch on reconnect (user came back online)
+      retry: (failureCount, error: any) => {
+        // Don't retry on 404s or auth errors
+        if (error?.status === 404 || error?.status === 401 || error?.status === 403) {
+          return false;
+        }
+        // Retry up to 2 times for other errors
+        return failureCount < 2;
+      },
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000), // Exponential backoff
       networkMode: 'online', // Only run queries when online
     },
     mutations: {
       retry: 1,
       retryDelay: 1000,
+      networkMode: 'online',
     },
   },
 });

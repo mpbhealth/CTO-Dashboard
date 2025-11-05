@@ -53,9 +53,22 @@ const SUPPRESSED_PATTERNS = [
   'entry.client-nEkgzEQK.js',
   'deployed function department-data-upload',
 
-  // Supabase temporary errors (will be fixed)
+  // Supabase temporary errors (will be fixed by migrations)
   '/rest/v1/resources',
+  '/rest/v1/concierge_interactions',
   'the server responded with a status of 500',
+  'the server responded with a status of 404',
+  'Supabase request failed',
+  'Supabase account not connected',
+  '/api/supabase/migrations',
+  '/api/supabase/functions',
+  '/api/supabase/projects',
+  'Failed to deploy',
+  'Error invoking /api/supabase',
+  'Unauthorized',
+  'Failed to fetch secrets',
+  'Failed to send ad conversion data',
+  'net::ERR_INSUFFICIENT_RESOURCES',
 ];
 
 function shouldSuppress(args: unknown[]): boolean {

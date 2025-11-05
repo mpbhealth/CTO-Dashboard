@@ -412,13 +412,46 @@ export function CEOConciergeUpload() {
             </div>
 
             <div className="bg-blue-50 rounded-xl border border-blue-200 p-6">
+              <h3 className="text-lg font-semibold text-blue-900 mb-3">Sample Files</h3>
+              <p className="text-sm text-blue-800 mb-3">
+                Download sample CSV files to test the upload system:
+              </p>
+              <div className="space-y-2">
+                <a
+                  href="/sample-uploads/concierge-report-sample.csv"
+                  download
+                  className="flex items-center gap-2 text-sm text-blue-700 hover:text-blue-900 hover:underline"
+                >
+                  <Download className="w-4 h-4" />
+                  Concierge Report Sample
+                </a>
+                <a
+                  href="/sample-uploads/cancelation-reports-sample.csv"
+                  download
+                  className="flex items-center gap-2 text-sm text-blue-700 hover:text-blue-900 hover:underline"
+                >
+                  <Download className="w-4 h-4" />
+                  Cancelation Reports Sample
+                </a>
+                <a
+                  href="/sample-uploads/leads-reports-sample.csv"
+                  download
+                  className="flex items-center gap-2 text-sm text-blue-700 hover:text-blue-900 hover:underline"
+                >
+                  <Download className="w-4 h-4" />
+                  Leads Reports Sample
+                </a>
+              </div>
+            </div>
+
+            <div className="bg-blue-50 rounded-xl border border-blue-200 p-6">
               <h3 className="text-lg font-semibold text-blue-900 mb-3">Need Help?</h3>
               <ul className="space-y-2 text-sm text-blue-800">
+                <li>• Download a sample file above to test</li>
                 <li>• Select the report type that matches your CSV file</li>
                 <li>• Ensure your CSV follows the expected format</li>
                 <li>• Check the format details for each report type</li>
                 <li>• Files are validated before import</li>
-                <li>• View detailed errors if upload fails</li>
               </ul>
             </div>
           </div>

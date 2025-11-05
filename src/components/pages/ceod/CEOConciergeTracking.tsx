@@ -1,8 +1,9 @@
 import { useState, useMemo } from 'react';
-import { MessageSquare, Download, Filter, Calendar, User, TrendingUp, Clock, CheckCircle } from 'lucide-react';
+import { MessageSquare, Download, Filter, Calendar, User, TrendingUp, Clock, CheckCircle, FileSpreadsheet, Eye } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 import { useQuery } from '@tanstack/react-query';
 import { ExportModal } from '../../modals/ExportModal';
+import { FileViewerModal } from '../../modals/FileViewerModal';
 
 interface ConciergeInteraction {
   staging_id: string;
@@ -22,6 +23,8 @@ export function CEOConciergeTracking() {
   const [selectedChannel, setSelectedChannel] = useState('');
   const [selectedResult, setSelectedResult] = useState('');
   const [showExportModal, setShowExportModal] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<any>(null);
+  const [fileData, setFileData] = useState<any[]>([]);
 
   const { data: interactions = [], isLoading } = useQuery({
     queryKey: ['concierge_interactions'],
@@ -36,6 +39,69 @@ export function CEOConciergeTracking() {
       return data as ConciergeInteraction[];
     },
   });
+
+  const { data: uploadedFiles = [] } = useQuery({
+    queryKey: ['department_uploads', 'concierge'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('department_uploads')
+        .select('*')
+        .in('department', ['concierge', 'concierge-weekly', 'concierge-daily', 'concierge-after-hours'])
+        .order('created_at', { ascending: false })
+        .limit(20);
+
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const handleViewFile = async (file: any) => {
+    setSelectedFile(file);
+
+    let tableName = '';
+    if (file.department === 'concierge' || file.subdepartment === 'weekly') {
+      tableName = 'stg_concierge_weekly_metrics';
+    } else if (file.subdepartment === 'daily') {
+      tableName = 'stg_concierge_daily_interactions';
+    } else if (file.subdepartment === 'after_hours') {
+      tableName = 'stg_concierge_after_hours';
+    }
+
+    if (tableName) {
+      const { data } = await supabase
+        .from(tableName)
+        .select('*')
+        .eq('upload_batch_id', file.batch_id)
+        .limit(1000);
+
+      setFileData(data || []);
+    }
+  };
+
+  const handleDownloadFile = () => {
+    if (!fileData || fileData.length === 0) return;
+
+    const headers = Object.keys(fileData[0]);
+    const csvContent = [
+      headers.join(','),
+      ...fileData.map(row =>
+        headers.map(header => {
+          const value = row[header];
+          return typeof value === 'string' && value.includes(',')
+            ? `"${value}"`
+            : value;
+        }).join(',')
+      )
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = selectedFile?.file_name || 'concierge_export.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   const filteredInteractions = useMemo(() => {
     return interactions.filter((interaction) => {
@@ -334,11 +400,67 @@ export function CEOConciergeTracking() {
           </div>
         </div>
 
+        {uploadedFiles.length > 0 && (
+          <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <FileSpreadsheet size={20} className="text-[#1a3d97]" />
+              Uploaded Files
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {uploadedFiles.map((file: any) => (
+                <div
+                  key={file.id}
+                  className="border border-gray-200 rounded-lg p-4 hover:border-[#1a3d97] transition-colors"
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex-1">
+                      <h3 className="font-medium text-gray-900 text-sm truncate" title={file.file_name}>
+                        {file.file_name}
+                      </h3>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {new Date(file.created_at).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <span className="px-2 py-1 text-xs font-medium rounded-full bg-[#1a3d97] text-white">
+                      {file.subdepartment ? file.subdepartment.replace('_', ' ') : 'Concierge'}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-xs text-gray-600 mb-3">
+                    <span>{file.row_count || 0} rows</span>
+                    <span className={file.status === 'completed' ? 'text-green-600' : 'text-gray-500'}>
+                      {file.status}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => handleViewFile(file)}
+                    className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity text-sm"
+                  >
+                    <Eye size={14} />
+                    View Data
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
       {showExportModal && (
         <ExportModal
           data={filteredInteractions}
           filename="concierge_tracking"
           onClose={() => setShowExportModal(false)}
+        />
+      )}
+
+      {selectedFile && (
+        <FileViewerModal
+          file={selectedFile}
+          data={fileData}
+          onClose={() => {
+            setSelectedFile(null);
+            setFileData([]);
+          }}
+          onDownload={handleDownloadFile}
         />
       )}
     </div>

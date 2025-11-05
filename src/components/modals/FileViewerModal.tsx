@@ -6,6 +6,7 @@ interface FileViewerModalProps {
     id: string;
     file_name: string;
     department: string;
+    subdepartment?: string;
     row_count: number;
     uploaded_by: string;
     created_at: string;
@@ -25,7 +26,32 @@ export function FileViewerModal({ file, data, onClose, onDownload }: FileViewerM
   const endIdx = startIdx + rowsPerPage;
   const currentData = data.slice(startIdx, endIdx);
 
-  const columns = data.length > 0 ? Object.keys(data[0]) : [];
+  const allColumns = data.length > 0 ? Object.keys(data[0]) : [];
+
+  const hiddenColumns = ['id', 'staging_id', 'upload_batch_id', 'org_id', 'uploaded_by', 'imported_at'];
+  const columns = allColumns.filter(col => !hiddenColumns.includes(col));
+
+  const getDepartmentBadgeColor = (dept: string) => {
+    switch(dept?.toLowerCase()) {
+      case 'sales':
+      case 'sales-leads':
+      case 'sales-cancelations':
+        return 'bg-blue-100 text-blue-800';
+      case 'concierge':
+      case 'concierge-weekly':
+      case 'concierge-daily':
+      case 'concierge-after-hours':
+        return 'bg-[#1a3d97] text-white';
+      case 'finance':
+        return 'bg-green-100 text-green-800';
+      case 'operations':
+        return 'bg-red-100 text-red-800';
+      case 'saudemax':
+        return 'bg-purple-100 text-purple-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -46,7 +72,10 @@ export function FileViewerModal({ file, data, onClose, onDownload }: FileViewerM
                   <User size={14} />
                   {file.uploaded_by}
                 </span>
-                <span className="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
+                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getDepartmentBadgeColor(file.subdepartment || file.department)}`}>
+                  {file.subdepartment ? file.subdepartment.replace('_', ' ').replace('-', ' ') : file.department}
+                </span>
+                <span className="px-2 py-0.5 bg-gray-100 text-gray-800 rounded-full text-xs font-medium">
                   {file.row_count} rows
                 </span>
               </div>

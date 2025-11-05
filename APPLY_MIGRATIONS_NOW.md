@@ -1,7 +1,10 @@
-# 🚀 Apply Database Migrations - Critical Fix
+# Apply Migrations Now - 5 Minute Guide
 
-## Current Status
-Your dashboard is experiencing **500/404 errors** because critical database tables are missing. The migrations are ready to deploy!
+## Current Console Errors
+
+You're seeing these errors because two database tables don't exist yet:
+- ❌ `500 Internal Server Error` on `/rest/v1/resources`
+- ❌ `404 Not Found` on `/rest/v1/concierge_interactions`
 
 ## What's Wrong?
 The console shows:

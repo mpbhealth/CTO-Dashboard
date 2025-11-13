@@ -2,7 +2,6 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
   base: '/',
@@ -19,29 +18,63 @@ export default defineConfig({
   },
   optimizeDeps: {
     exclude: ['lucide-react'],
+    include: ['@supabase/supabase-js'],
   },
   build: {
     outDir: 'dist',
     sourcemap: true,
     assetsDir: 'assets',
+    modulePreload: {
+      polyfill: true,
+      resolveDependencies: (filename, deps) => {
+        // Reduce preload warnings by limiting preloaded dependencies
+        return deps.filter(dep => {
+          // Only preload critical chunks
+          return dep.includes('react-vendor') ||
+                 dep.includes('supabase-vendor') ||
+                 dep.includes('router');
+        });
+      },
+    },
     rollupOptions: {
       output: {
         assetFileNames: 'assets/[name]-[hash][extname]',
         chunkFileNames: 'assets/[name]-[hash].js',
         entryFileNames: 'assets/[name]-[hash].js',
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-          supabase: ['@supabase/supabase-js'],
-          charts: ['recharts'],
-          utils: ['framer-motion', 'lucide-react']
-        }
-      }
-    }
+        manualChunks: (id) => {
+          if (id.includes('node_modules')) {
+            // Keep React and React-DOM together - CRITICAL for proper initialization
+            if (id.includes('react') || id.includes('react-dom')) {
+              return 'react-vendor';
+            }
+            // FIX: Keep ALL Supabase packages together in ONE chunk to prevent circular dependencies
+            // This prevents the "Cannot access 'ae' before initialization" error in production
+            if (id.includes('@supabase')) {
+              return 'supabase-vendor';
+            }
+            // Router
+            if (id.includes('react-router')) {
+              return 'router';
+            }
+            // Charts - lazy load
+            if (id.includes('recharts')) {
+              return 'charts';
+            }
+            // UI libraries - lazy load
+            if (id.includes('framer-motion') || id.includes('lucide-react')) {
+              return 'ui-libs';
+            }
+            // Everything else
+            return 'vendor';
+          }
+        },
+      },
+    },
   },
   server: {
     headers: {
       'Cross-Origin-Embedder-Policy': 'credentialless',
-      'Cross-Origin-Opener-Policy': 'same-origin'
-    }
-  }
+      'Cross-Origin-Opener-Policy': 'same-origin',
+    },
+  },
 });

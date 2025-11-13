@@ -1,27 +1,45 @@
 import { createClient } from '@supabase/supabase-js';
-import { Database } from '../types/database';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// Fallback values for development/demo mode
-const defaultUrl = 'https://demo.supabase.co';
-const defaultKey = 'demo-key';
+// Validate that environment variables are properly configured
+const isValidUrl = supabaseUrl &&
+  supabaseUrl.startsWith('https://') &&
+  !supabaseUrl.includes('demo.supabase.co') &&
+  supabaseUrl.includes('supabase.co');
 
-// Use environment variables if available, otherwise use demo values
-const finalUrl = supabaseUrl || defaultUrl;
-const finalKey = supabaseAnonKey || defaultKey;
+const isValidKey = supabaseAnonKey &&
+  supabaseAnonKey.length > 20 &&
+  supabaseAnonKey !== 'demo-key';
 
-// Development-only configuration logging
-if (import.meta.env.DEV) {
-  console.log('Supabase Configuration:', {
+// Export configuration status for components to use
+export const isSupabaseConfigured = !!(isValidUrl && isValidKey);
+
+// Use dummy values if not configured to prevent API calls
+const finalUrl = isSupabaseConfigured ? supabaseUrl : 'https://placeholder.supabase.co';
+const finalKey = isSupabaseConfigured ? supabaseAnonKey : 'placeholder-key';
+
+// Use direct console logging to avoid circular dependencies during module initialization
+if (import.meta.env.DEV && !isSupabaseConfigured) {
+  console.warn('[Supabase] Not configured - using placeholder values');
+} else if (import.meta.env.DEV && typeof localStorage !== 'undefined' && localStorage.getItem('debug') === 'true') {
+  console.log('[Supabase] Configuration:', {
+    configured: isSupabaseConfigured,
     hasUrl: !!supabaseUrl,
+    hasValidUrl: isValidUrl,
     hasKey: !!supabaseAnonKey,
-    usingFallback: !supabaseUrl || !supabaseAnonKey
+    hasValidKey: isValidKey,
+    mode: isSupabaseConfigured ? 'production' : 'demo'
   });
 }
 
-export const supabase = createClient<Database>(finalUrl, finalKey);
+// Production validation - warn but don't crash
+if (import.meta.env.PROD && !isSupabaseConfigured) {
+  const errorMsg = 'WARNING: Supabase is not configured in production environment';
+  console.error('[Supabase]', errorMsg);
+  console.error('[Supabase] Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your deployment environment');
+}
 
-// Export configuration status for components to use
-export const isSupabaseConfigured = !!(supabaseUrl && supabaseAnonKey);
+// Create client without type parameter to avoid import errors
+export const supabase = createClient(finalUrl, finalKey);

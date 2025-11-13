@@ -15,6 +15,18 @@
   "prefer_related_applications": false,
   "icons": [
     {
+      "src": "/icons/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    },
+    {
       "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 72 72'%3E%3Crect width='72' height='72' fill='%234F46E5'/%3E%3Cpath d='M18 36L27 27L36 36L54 18L63 27L36 54L18 36Z' fill='white'/%3E%3C/svg%3E",
       "sizes": "72x72",
       "type": "image/png",

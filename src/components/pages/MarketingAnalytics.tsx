@@ -25,7 +25,7 @@ import {
   Users,
   LineChart
 } from 'lucide-react';
-import AddPropertyForm from '../ui/AddPropertyForm';
+import AddMarketingPropertyModal from '../modals/AddMarketingPropertyModal';
 import ExportDropdown from '../ui/ExportDropdown';
 import { 
   LineChart as RechartsLineChart, 
@@ -113,30 +113,30 @@ export default function MarketingAnalytics() {
   const aggregated = aggregateMetrics(metrics);
   const trafficSourcesData = getTrafficSourceData(metrics);
 
-  // Generate KPIs from real data
+  // Generate KPIs from real data with proper null safety
   const marketingKPIs = aggregated ? [
-    { 
-      title: 'Total Sessions', 
-      value: aggregated.sessions.toLocaleString(), 
-      change: '+12.3%', // Would calculate from previous period
+    {
+      title: 'Total Sessions',
+      value: (aggregated.sessions || 0).toLocaleString(),
+      change: '+12.3%',
       trend: 'up' as const
     },
-    { 
-      title: 'Unique Users', 
-      value: aggregated.users.toLocaleString(), 
-      change: '+8.7%', 
+    {
+      title: 'Unique Users',
+      value: (aggregated.users || 0).toLocaleString(),
+      change: '+8.7%',
       trend: 'up' as const
     },
-    { 
-      title: 'Conversion Rate', 
-      value: `${aggregated.conversionRate.toFixed(1)}%`, 
-      change: '+0.8%', 
+    {
+      title: 'Conversion Rate',
+      value: `${(aggregated.conversionRate || 0).toFixed(1)}%`,
+      change: '+0.8%',
       trend: 'up' as const
     },
-    { 
-      title: 'Bounce Rate', 
-      value: `${aggregated.avgBounceRate.toFixed(1)}%`, 
-      change: '-2.1%', 
+    {
+      title: 'Bounce Rate',
+      value: `${(aggregated.avgBounceRate || 0).toFixed(1)}%`,
+      change: '-2.1%',
       trend: 'down' as const
     },
   ] : [
@@ -326,7 +326,7 @@ export default function MarketingAnalytics() {
   if (propertiesLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-pink-600"></div>
       </div>
     );
   }
@@ -373,7 +373,7 @@ export default function MarketingAnalytics() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="w-full space-y-8">
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
@@ -387,7 +387,7 @@ export default function MarketingAnalytics() {
             <select
               value={selectedPropertyId || ''}
               onChange={(e) => setSelectedPropertyId(e.target.value)}
-              className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
             >
               <option value="">Select Property</option>
               {properties.map(property => (
@@ -401,7 +401,7 @@ export default function MarketingAnalytics() {
           <select
             value={timeRange}
             onChange={(e) => setTimeRange(e.target.value)}
-            className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
           >
             {timeRanges.map(range => (
               <option key={range.value} value={range.value}>{range.label}</option>
@@ -410,7 +410,7 @@ export default function MarketingAnalytics() {
           
           <button
             onClick={() => setIsAddPropertyModalOpen(true)}
-            className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
+            className="flex items-center space-x-2 px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg transition-colors"
           >
             <Plus className="w-4 h-4" />
             <span>Add Property</span>
@@ -465,7 +465,7 @@ export default function MarketingAnalytics() {
                       href={selectedProperty.website_url} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="hover:text-indigo-600 transition-colors"
+                      className="hover:text-pink-600 transition-colors"
                     >
                       {selectedProperty.website_url}
                       <ExternalLink className="w-3 h-3 inline ml-1" />
@@ -522,10 +522,10 @@ export default function MarketingAnalytics() {
         <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-3">
-              <Filter className="w-5 h-5 text-indigo-600" />
+              <Filter className="w-5 h-5 text-pink-600" />
               <h3 className="text-lg font-semibold text-slate-900">Advanced Filters</h3>
               {hasActiveFilters && (
-                <span className="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full text-xs font-medium">
+                <span className="px-2 py-1 bg-pink-100 text-pink-800 rounded-full text-xs font-medium">
                   {(sourceFilter ? 1 : 0) + (conversionFilter ? 1 : 0)} active
                 </span>
               )}
@@ -552,7 +552,7 @@ export default function MarketingAnalytics() {
               <select
                 value={sourceFilter}
                 onChange={(e) => setSourceFilter(e.target.value)}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
               >
                 {trafficSources.map(source => (
                   <option key={source.value} value={source.value}>{source.label}</option>
@@ -570,7 +570,7 @@ export default function MarketingAnalytics() {
               <select
                 value={conversionFilter}
                 onChange={(e) => setConversionFilter(e.target.value)}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
               >
                 {conversionTypes.map(conversion => (
                   <option key={conversion.value} value={conversion.value}>{conversion.label}</option>
@@ -604,7 +604,7 @@ export default function MarketingAnalytics() {
           </p>
           <button
             onClick={() => setIsAddPropertyModalOpen(true)}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg inline-flex items-center space-x-2 transition-colors"
+            className="bg-pink-600 hover:bg-pink-700 text-white px-6 py-3 rounded-lg inline-flex items-center space-x-2 transition-colors"
           >
             <Plus className="w-5 h-5" />
             <span>Add Your First Property</span>
@@ -664,8 +664,8 @@ export default function MarketingAnalytics() {
             <div className="border border-slate-200 rounded-lg p-4">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <BarChart3 className="w-5 h-5 text-blue-600" />
+                  <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center">
+                    <BarChart3 className="w-5 h-5 text-pink-600" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-slate-900">Google Analytics 4</h3>
@@ -695,7 +695,7 @@ export default function MarketingAnalytics() {
                       />
                       <div className="flex space-x-2">
                         <button 
-                          className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm flex items-center space-x-1"
+                          className="px-3 py-1 bg-pink-600 hover:bg-pink-700 text-white rounded-lg text-sm flex items-center space-x-1"
                           onClick={connectGoogleAnalytics}
                           disabled={isConnecting || !gaCredentials.measurementId}
                         >
@@ -712,7 +712,7 @@ export default function MarketingAnalytics() {
                     </div>
                   ) : (
                     <button 
-                      className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm transition-colors disabled:opacity-50"
+                      className="px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg text-sm transition-colors disabled:opacity-50"
                       onClick={() => setShowGAForm(true)}
                       disabled={isConnecting}
                     >
@@ -736,7 +736,7 @@ export default function MarketingAnalytics() {
                         placeholder="G-XXXXXXXXXX"
                         value={gaFormData.analytics_key}
                         onChange={(e) => setGAFormData({ ...gaFormData, analytics_key: e.target.value })}
-                        className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-pink-500"
                       />
                     </div>
                     <div>
@@ -748,7 +748,7 @@ export default function MarketingAnalytics() {
                         placeholder="123456789"
                         value={gaFormData.view_id}
                         onChange={(e) => setGAFormData({ ...gaFormData, view_id: e.target.value })}
-                        className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-pink-500"
                       />
                     </div>
                     <div className="flex items-center justify-end space-x-2 pt-2">
@@ -765,7 +765,7 @@ export default function MarketingAnalytics() {
                       <button
                         onClick={connectGoogleAnalytics}
                         disabled={isConnecting}
-                        className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm transition-colors disabled:opacity-50"
+                        className="px-3 py-1 bg-pink-600 hover:bg-pink-700 text-white rounded text-sm transition-colors disabled:opacity-50"
                       >
                         {isConnecting ? 'Connecting...' : 'Connect'}
                       </button>
@@ -782,8 +782,8 @@ export default function MarketingAnalytics() {
             <div className="border border-slate-200 rounded-lg p-4">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <LineChart className="w-5 h-5 text-blue-600" />
+                  <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center">
+                    <LineChart className="w-5 h-5 text-pink-600" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-slate-900">Facebook Pixel</h3>
@@ -806,7 +806,7 @@ export default function MarketingAnalytics() {
                       />
                       <div className="flex space-x-2">
                         <button 
-                          className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm flex items-center space-x-1"
+                          className="px-3 py-1 bg-pink-600 hover:bg-pink-700 text-white rounded-lg text-sm flex items-center space-x-1"
                           onClick={connectFacebook}
                           disabled={isConnecting || !fbCredentials.pixelId}
                         >
@@ -823,7 +823,7 @@ export default function MarketingAnalytics() {
                     </div>
                   ) : (
                     <button 
-                      className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm transition-colors disabled:opacity-50"
+                      className="px-3 py-1 bg-pink-600 hover:bg-pink-700 text-white rounded-lg text-sm transition-colors disabled:opacity-50"
                       onClick={() => setShowFBForm(true)}
                       disabled={isConnecting}
                     >
@@ -877,7 +877,7 @@ export default function MarketingAnalytics() {
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center space-x-2 py-2 px-1 border-b-2 font-medium text-sm ${
                     activeTab === tab.id
-                      ? 'border-indigo-500 text-indigo-600'
+                      ? 'border-pink-500 text-pink-600'
                       : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
                   }`}
                 >
@@ -974,7 +974,7 @@ export default function MarketingAnalytics() {
               <div className="flex justify-center space-x-4">
                 <button
                   onClick={() => setShowGAForm(true)}
-                  className="inline-flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                  className="inline-flex items-center space-x-2 bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-pink-700 transition-colors"
                 >
                   <Globe className="h-4 w-4" />
                   <span>Connect Google Analytics</span>
@@ -998,8 +998,8 @@ export default function MarketingAnalytics() {
           >
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <Globe className="w-5 h-5 text-blue-600" />
+                <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center">
+                  <Globe className="w-5 h-5 text-pink-600" />
                 </div>
                 <div>
                   <h2 className="text-lg font-semibold text-slate-900">Website Traffic</h2>
@@ -1101,15 +1101,15 @@ export default function MarketingAnalytics() {
                 {finalTrafficSourcesData.map((source) => (
                   <div key={source.source} className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
-                      <div 
-                        className="w-3 h-3 rounded-full" 
+                      <div
+                        className="w-3 h-3 rounded-full"
                         style={{ backgroundColor: source.color }}
                       ></div>
                       <span className="text-sm text-slate-700">{source.source}</span>
                     </div>
                     <div className="flex space-x-4">
                       <span className="text-sm font-medium text-slate-900">{source.percentage}%</span>
-                      <span className="text-sm text-slate-600">{source.sessions.toLocaleString()}</span>
+                      <span className="text-sm text-slate-600">{(source.sessions || 0).toLocaleString()}</span>
                     </div>
                   </div>
                 ))}
@@ -1134,24 +1134,28 @@ export default function MarketingAnalytics() {
               </div>
               
               <div className="space-y-4">
-                {topPagesData.map((page, index) => (
+                {topPagesData.length > 0 ? topPagesData.map((page, index) => (
                   <div key={index} className="p-3 border border-slate-100 rounded-lg hover:bg-slate-50 transition-colors">
                     <div className="flex justify-between items-center mb-2">
                       <h4 className="font-medium text-slate-900">{page.url}</h4>
-                      <span className="text-sm font-medium text-blue-600">{page.pageviews.toLocaleString()}</span>
+                      <span className="text-sm font-medium text-pink-600">{(page.pageviews || 0).toLocaleString()}</span>
                     </div>
                     <div className="flex items-center text-sm text-slate-500 space-x-4">
                       <div className="flex items-center space-x-1">
                         <Clock className="w-3 h-3" />
-                        <span>{page.avgTime}</span>
+                        <span>{page.avgTime || '0:00'}</span>
                       </div>
                       <div className="flex items-center space-x-1">
                         <TrendingUp className="w-3 h-3" />
-                        <span>Bounce: {page.bounceRate}</span>
+                        <span>Bounce: {page.bounceRate || '0%'}</span>
                       </div>
                     </div>
                   </div>
-                ))}
+                )) : (
+                  <div className="text-center py-8 text-slate-500">
+                    <p>No page data available</p>
+                  </div>
+                )}
               </div>
             </motion.div>
           </div>
@@ -1187,26 +1191,32 @@ export default function MarketingAnalytics() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">
-                  {campaignPerformanceData.map((campaign, index) => (
+                  {campaignPerformanceData.length > 0 ? campaignPerformanceData.map((campaign, index) => (
                     <tr key={index} className="hover:bg-slate-50 transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center space-x-3">
-                          <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
-                            <Zap className="w-4 h-4 text-indigo-600" />
+                          <div className="w-8 h-8 bg-pink-100 rounded-lg flex items-center justify-center">
+                            <Zap className="w-4 h-4 text-pink-600" />
                           </div>
                           <span className="font-medium text-slate-900">{campaign.campaign}</span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-sm text-slate-900">{campaign.visitors.toLocaleString()}</td>
-                      <td className="px-6 py-4 text-sm text-slate-900">{campaign.conversions.toLocaleString()}</td>
-                      <td className="px-6 py-4 text-sm font-medium text-emerald-600">${campaign.revenue.toLocaleString()}</td>
+                      <td className="px-6 py-4 text-sm text-slate-900">{(campaign.visitors || 0).toLocaleString()}</td>
+                      <td className="px-6 py-4 text-sm text-slate-900">{(campaign.conversions || 0).toLocaleString()}</td>
+                      <td className="px-6 py-4 text-sm font-medium text-emerald-600">${(campaign.revenue || 0).toLocaleString()}</td>
                       <td className="px-6 py-4">
                         <span className="inline-flex px-2 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
-                          {campaign.roi}%
+                          {campaign.roi || 0}%
                         </span>
                       </td>
                     </tr>
-                  ))}
+                  )) : (
+                    <tr>
+                      <td colSpan={5} className="px-6 py-8 text-center text-slate-500">
+                        No campaign data available
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
@@ -1312,15 +1322,21 @@ export default function MarketingAnalytics() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
-                    {topPagesData.map((page, index) => (
+                    {topPagesData.length > 0 ? topPagesData.map((page, index) => (
                       <tr key={index} className="text-sm">
                         <td className="py-3 text-slate-900 font-medium">{page.url}</td>
-                        <td className="py-3 text-slate-700">{page.pageviews.toLocaleString()}</td>
-                        <td className="py-3 text-slate-700">{page.avgTime}</td>
-                        <td className="py-3 text-slate-700">{page.bounceRate}</td>
+                        <td className="py-3 text-slate-700">{(page.pageviews || 0).toLocaleString()}</td>
+                        <td className="py-3 text-slate-700">{page.avgTime || '0:00'}</td>
+                        <td className="py-3 text-slate-700">{page.bounceRate || '0%'}</td>
                         <td className="py-3 text-slate-700">{Math.round(30 + Math.random() * 30)}%</td>
                       </tr>
-                    ))}
+                    )) : (
+                      <tr>
+                        <td colSpan={5} className="py-6 text-center text-slate-500">
+                          No page data available
+                        </td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -1330,15 +1346,15 @@ export default function MarketingAnalytics() {
                 <p className="text-slate-700 text-sm mb-2">Top user paths through your website</p>
                 <div className="flex items-center justify-center">
                   <div className="flex items-center">
-                    <div className="px-4 py-2 bg-blue-100 text-blue-800 rounded-lg text-sm">
+                    <div className="px-4 py-2 bg-pink-100 text-pink-800 rounded-lg text-sm">
                       Homepage
                     </div>
                     <div className="w-8 h-1 bg-slate-300"></div>
-                    <div className="px-4 py-2 bg-blue-100 text-blue-800 rounded-lg text-sm">
+                    <div className="px-4 py-2 bg-pink-100 text-pink-800 rounded-lg text-sm">
                       Products
                     </div>
                     <div className="w-8 h-1 bg-slate-300"></div>
-                    <div className="px-4 py-2 bg-blue-100 text-blue-800 rounded-lg text-sm">
+                    <div className="px-4 py-2 bg-pink-100 text-pink-800 rounded-lg text-sm">
                       Product Details
                     </div>
                     <div className="w-8 h-1 bg-slate-300"></div>
@@ -1385,13 +1401,13 @@ export default function MarketingAnalytics() {
                       <div key={stage.stage}>
                         <div className="flex items-center justify-between mb-1">
                           <div className="flex items-center space-x-2">
-                            <div 
-                              className="w-3 h-3 rounded-full" 
+                            <div
+                              className="w-3 h-3 rounded-full"
                               style={{ backgroundColor: stage.color }}
                             ></div>
                             <span className="text-sm font-medium text-slate-700">{stage.stage}</span>
                           </div>
-                          <span className="text-sm font-medium text-slate-900">{stage.value.toLocaleString()}</span>
+                          <span className="text-sm font-medium text-slate-900">{(stage.value || 0).toLocaleString()}</span>
                         </div>
                         <div className="w-full h-8 bg-slate-100 rounded-md overflow-hidden mb-2">
                           <div 
@@ -1475,13 +1491,13 @@ export default function MarketingAnalytics() {
                   <button className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm transition-colors">
                     Filter
                   </button>
-                  <button className="px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm transition-colors">
+                  <button className="px-3 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg text-sm transition-colors">
                     New Campaign
                   </button>
                 </div>
               </div>
               
-              {campaignPerformanceData.map((campaign, index) => (
+              {campaignPerformanceData.length > 0 ? campaignPerformanceData.map((campaign, index) => (
                 <div key={index} className="bg-slate-50 p-4 rounded-lg">
                   <div className="flex justify-between items-start mb-4">
                     <div>
@@ -1492,33 +1508,37 @@ export default function MarketingAnalytics() {
                       Active
                     </span>
                   </div>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div className="bg-white p-3 rounded-md">
                       <p className="text-xs text-slate-500 mb-1">Visitors</p>
-                      <p className="font-medium text-slate-900">{campaign.visitors.toLocaleString()}</p>
+                      <p className="font-medium text-slate-900">{(campaign.visitors || 0).toLocaleString()}</p>
                     </div>
                     <div className="bg-white p-3 rounded-md">
                       <p className="text-xs text-slate-500 mb-1">Conversions</p>
-                      <p className="font-medium text-slate-900">{campaign.conversions.toLocaleString()}</p>
+                      <p className="font-medium text-slate-900">{(campaign.conversions || 0).toLocaleString()}</p>
                     </div>
                     <div className="bg-white p-3 rounded-md">
                       <p className="text-xs text-slate-500 mb-1">Revenue</p>
-                      <p className="font-medium text-emerald-600">${campaign.revenue.toLocaleString()}</p>
+                      <p className="font-medium text-emerald-600">${(campaign.revenue || 0).toLocaleString()}</p>
                     </div>
                     <div className="bg-white p-3 rounded-md">
                       <p className="text-xs text-slate-500 mb-1">ROI</p>
-                      <p className="font-medium text-emerald-600">{campaign.roi}%</p>
+                      <p className="font-medium text-emerald-600">{campaign.roi || 0}%</p>
                     </div>
                   </div>
-                  
+
                   <div className="mt-3 pt-3 border-t border-slate-200 flex justify-end">
-                    <button className="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
+                    <button className="text-pink-600 hover:text-pink-800 text-sm font-medium">
                       View Details
                     </button>
                   </div>
                 </div>
-              ))}
+              )) : (
+                <div className="bg-slate-50 p-8 rounded-lg text-center text-slate-500">
+                  <p>No campaign data available</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -1536,8 +1556,8 @@ export default function MarketingAnalytics() {
                 <div className="bg-slate-50 p-4 rounded-lg">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                        <BarChart3 className="w-5 h-5 text-blue-600" />
+                      <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center">
+                        <BarChart3 className="w-5 h-5 text-pink-600" />
                       </div>
                       <div>
                         <h4 className="font-medium text-slate-900">Google Analytics 4</h4>
@@ -1545,7 +1565,7 @@ export default function MarketingAnalytics() {
                       </div>
                     </div>
                     <button 
-                      className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm transition-colors"
+                      className="px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg text-sm transition-colors"
                       onClick={() => setShowGAForm(true)}
                     >
                       Configure
@@ -1607,7 +1627,7 @@ export default function MarketingAnalytics() {
                       </div>
                       <div className="flex justify-between items-center p-2 bg-white rounded-md">
                         <div className="flex items-center space-x-2">
-                          <Users className="w-4 h-4 text-blue-600" />
+                          <Users className="w-4 h-4 text-pink-600" />
                           <span className="text-sm text-slate-900">Account Creation</span>
                         </div>
                         <span className="px-2 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs">Active</span>
@@ -1637,14 +1657,14 @@ export default function MarketingAnalytics() {
                             <p className="font-medium text-slate-900">Weekly Performance</p>
                             <p className="text-xs text-slate-500">Sent every Monday at 8:00 AM</p>
                           </div>
-                          <button className="text-indigo-600 hover:text-indigo-800 text-sm">Edit</button>
+                          <button className="text-pink-600 hover:text-pink-800 text-sm">Edit</button>
                         </div>
                         <div className="flex justify-between items-center p-3 bg-white rounded-md">
                           <div>
                             <p className="font-medium text-slate-900">Monthly Summary</p>
                             <p className="text-xs text-slate-500">Sent on the 1st at 8:00 AM</p>
                           </div>
-                          <button className="text-indigo-600 hover:text-indigo-800 text-sm">Edit</button>
+                          <button className="text-pink-600 hover:text-pink-800 text-sm">Edit</button>
                         </div>
                       </div>
                     </div>
@@ -1682,7 +1702,7 @@ export default function MarketingAnalytics() {
       )}
 
       {/* Add Property Modal */}
-      <AddPropertyForm
+      <AddMarketingPropertyModal
         isOpen={isAddPropertyModalOpen}
         onClose={() => setIsAddPropertyModalOpen(false)}
         onSuccess={handleAddPropertySuccess}

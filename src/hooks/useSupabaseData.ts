@@ -1,122 +1,50 @@
 import { useState, useEffect } from 'react';
-import { supabase, isSupabaseConfigured } from '../lib/supabase';
-import { Database } from '../types/database';
-
-type Tables = Database['public']['Tables'];
+import { supabase } from '../lib/supabase';
 
 export function useKPIData() {
-  const [data, setData] = useState<Tables['kpi_data']['Row'][]>([]);
+  const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      
-      // If Supabase is not configured, return mock data
-      if (!isSupabaseConfigured) {
-        console.warn('Supabase not configured - returning mock KPI data');
-        setData([
-          { id: '1', title: 'Daily Active Users', value: '4,827', change: '+8.3%', trend: 'up', created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-          { id: '2', title: 'Monthly Revenue', value: '$487,250', change: '+12.3%', trend: 'up', created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-          { id: '3', title: 'Customer Satisfaction', value: '4.7/5', change: '+0.3', trend: 'up', created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-          { id: '4', title: 'User Retention', value: '89.4%', change: '+2.1%', trend: 'up', created_at: new Date().toISOString(), updated_at: new Date().toISOString() }
-        ]);
-        return;
-      }
-      
-      const { data: kpiData, error } = await supabase
-        .from('kpi_data')
-        .select('*')
-        .order('created_at', { ascending: true });
-
-      if (error) throw error;
-      setData(kpiData || []);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load KPI data');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
-    fetchData();
+    async function fetchKPIs() {
+      try {
+        const { data: kpis, error: kpiError } = await supabase
+          .from('kpis')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (kpiError) throw kpiError;
+        setData(kpis || []);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchKPIs();
   }, []);
 
-  return { data, loading, error, refetch: fetchData };
+  return { data, loading, error };
 }
 
-export function useTechStack() {
-  const [data, setData] = useState<Tables['tech_stack']['Row'][]>([]);
+export function useTeamMembers() {
+  const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = async () => {
     try {
       setLoading(true);
-      
-      // If Supabase is not configured, return mock data
-      if (!isSupabaseConfigured) {
-        console.warn('Supabase not configured - returning mock tech stack data');
-        setData([
-          { id: '1', name: 'React', category: 'Frontend', version: '18.3.0', owner: 'CTO Team', status: 'Active', notes: 'UI Library', created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-          { id: '2', name: 'TypeScript', category: 'Language', version: '5.6.3', owner: 'CTO Team', status: 'Active', notes: 'Type-safe JavaScript', created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-          { id: '3', name: 'Vite', category: 'Build Tool', version: '7.1.7', owner: 'CTO Team', status: 'Active', notes: 'Fast build tool', created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-          { id: '4', name: 'Supabase', category: 'Database', version: '2.39.0', owner: 'CTO Team', status: 'Active', notes: 'Backend as a Service', created_at: new Date().toISOString(), updated_at: new Date().toISOString() }
-        ]);
-        return;
-      }
-      
-      const { data: techData, error } = await supabase
-        .from('tech_stack')
+      const { data: members, error: membersError } = await supabase
+        .from('team_members')
         .select('*')
         .order('name', { ascending: true });
 
-      if (error) throw error;
-      setData(techData || []);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  return { data, loading, error, refetch: fetchData };
-}
-
-export function useRoadmapItems() {
-  const [data, setData] = useState<Tables['roadmap_items']['Row'][]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      
-      // If Supabase is not configured, return mock data
-      if (!isSupabaseConfigured) {
-        console.warn('Supabase not configured - returning mock roadmap data');
-        setData([
-          { id: '1', title: 'Phase 1: Foundation', quarter: 'Q1 2024', status: 'Complete', priority: 'High', owner: 'CTO Team', department: 'Engineering', dependencies: [], description: 'Set up core infrastructure and security', created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-          { id: '2', title: 'Phase 2: Enhancement', quarter: 'Q2 2024', status: 'In Progress', priority: 'High', owner: 'CTO Team', department: 'Engineering', dependencies: ['1'], description: 'Improve user experience and performance', created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-          { id: '3', title: 'Phase 3: Expansion', quarter: 'Q3 2024', status: 'Backlog', priority: 'Medium', owner: 'CTO Team', department: 'Engineering', dependencies: ['2'], description: 'Add new features and integrations', created_at: new Date().toISOString(), updated_at: new Date().toISOString() }
-        ]);
-        return;
-      }
-      
-      const { data: roadmapData, error } = await supabase
-        .from('roadmap_items')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setData(roadmapData || []);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      if (membersError) throw membersError;
+      setData(members || []);
+    } catch (err: any) {
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -130,228 +58,136 @@ export function useRoadmapItems() {
 }
 
 export function useProjects() {
-  const [data, setData] = useState<Tables['projects']['Row'][]>([]);
+  const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      
-      // If Supabase is not configured, return mock data
-      if (!isSupabaseConfigured) {
-        console.warn('Supabase not configured - returning mock projects data');
-        setData([
-          { id: '1', name: 'CTO Dashboard v2', description: 'Executive dashboard for technology oversight', status: 'Building', team: ['CTO Team'], github_link: 'https://github.com/omnivurse/CTODashboard_v2', monday_link: '', website_url: 'http://localhost:5173/', progress: 85, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-          { id: '2', name: 'CSV Enrollment Transformer', description: 'Data transformation utility for MPB Health', status: 'Live', team: ['CTO Team'], github_link: 'https://github.com/omnivurse/CTODashboard_v2/tree/main/csv-enrollment-transformer', monday_link: '', website_url: '', progress: 100, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-          { id: '3', name: 'Security Audit 2024', description: 'Comprehensive security review and improvements', status: 'Live', team: ['CTO Team'], github_link: '', monday_link: '', website_url: '', progress: 100, created_at: new Date().toISOString(), updated_at: new Date().toISOString() }
-        ]);
-        return;
-      }
-      
-      const { data: projectData, error } = await supabase
-        .from('projects')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setData(projectData || []);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchData();
+    async function fetchProjects() {
+      try {
+        const { data: projects, error: projectsError } = await supabase
+          .from('projects')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (projectsError) throw projectsError;
+        setData(projects || []);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProjects();
   }, []);
 
-  return { data, loading, error, refetch: fetchData };
+  return { data, loading, error };
 }
 
-export function useVendors() {
-  const [data, setData] = useState<Tables['vendors']['Row'][]>([]);
+export function useRoadmapItems() {
+  const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      
-      // If Supabase is not configured, return mock data
-      if (!isSupabaseConfigured) {
-        console.warn('Supabase not configured - returning mock vendors data');
-        // Using minimal mock data to avoid type issues
-        setData([]);
-        return;
-      }
-      
-      const { data: vendorData, error } = await supabase
-        .from('vendors')
-        .select('*')
-        .order('name', { ascending: true });
-
-      if (error) throw error;
-      setData(vendorData || []);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchData();
+    async function fetchRoadmapItems() {
+      try {
+        const { data: items, error: itemsError } = await supabase
+          .from('roadmap_items')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (itemsError) throw itemsError;
+        setData(items || []);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchRoadmapItems();
   }, []);
 
-  return { data, loading, error, refetch: fetchData };
+  return { data, loading, error };
 }
 
-export function useAIAgents() {
-  const [data, setData] = useState<Tables['ai_agents']['Row'][]>([]);
+export function useTechStack() {
+  const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      
-      // If Supabase is not configured, return mock data
-      if (!isSupabaseConfigured) {
-        console.warn('Supabase not configured - returning mock AI agents data');
-        setData([]);
-        return;
-      }
-      
-      const { data: agentData, error } = await supabase
-        .from('ai_agents')
-        .select('*')
-        .order('name', { ascending: true });
-
-      if (error) throw error;
-      setData(agentData || []);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchData();
+    async function fetchTechStack() {
+      try {
+        const { data: tech, error: techError } = await supabase
+          .from('tech_stack')
+          .select('*')
+          .order('name', { ascending: true });
+
+        if (techError) throw techError;
+        setData(tech || []);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchTechStack();
   }, []);
 
-  return { data, loading, error, refetch: fetchData };
-}
-
-export function useAPIStatuses() {
-  const [data, setData] = useState<Tables['api_statuses']['Row'][]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      
-      // If Supabase is not configured, return mock data
-      if (!isSupabaseConfigured) {
-        console.warn('Supabase not configured - returning mock API status data');
-        setData([]);
-        return;
-      }
-      
-      const { data: apiData, error } = await supabase
-        .from('api_statuses')
-        .select('*')
-        .order('name', { ascending: true });
-
-      if (error) throw error;
-      setData(apiData || []);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  return { data, loading, error, refetch: fetchData };
+  return { data, loading, error };
 }
 
 export function useDeploymentLogs() {
-  const [data, setData] = useState<Tables['deployment_logs']['Row'][]>([]);
+  const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      
-      // If Supabase is not configured, return mock data
-      if (!isSupabaseConfigured) {
-        console.warn('Supabase not configured - returning mock deployment logs data');
-        setData([]);
-        return;
-      }
-      
-      const { data: deploymentData, error } = await supabase
-        .from('deployment_logs')
-        .select('*')
-        .order('timestamp', { ascending: false });
-
-      if (error) throw error;
-      setData(deploymentData || []);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchData();
+    async function fetchDeployments() {
+      try {
+        const { data: deployments, error: deploymentsError } = await supabase
+          .from('deployment_logs')
+          .select('*')
+          .order('deployed_at', { ascending: false });
+
+        if (deploymentsError) throw deploymentsError;
+        setData(deployments || []);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchDeployments();
   }, []);
 
-  return { data, loading, error, refetch: fetchData };
+  return { data, loading, error };
 }
 
-export function useTeamMembers() {
-  const [data, setData] = useState<Tables['team_members']['Row'][]>([]);
+export function useAIAgents() {
+  const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      
-      // If Supabase is not configured, return mock data
-      if (!isSupabaseConfigured) {
-        console.warn('Supabase not configured - returning mock team members data');
-        setData([]);
-        return;
-      }
-      
-      const { data: teamData, error } = await supabase
-        .from('team_members')
-        .select('*')
-        .order('name', { ascending: true });
-
-      if (error) throw error;
-      setData(teamData || []);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchData();
+    async function fetchAIAgents() {
+      try {
+        const { data: agents, error: agentsError } = await supabase
+          .from('ai_agents')
+          .select('*')
+          .order('name', { ascending: true });
+
+        if (agentsError) throw agentsError;
+        setData(agents || []);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchAIAgents();
   }, []);
 
-  return { data, loading, error, refetch: fetchData };
+  return { data, loading, error };
 }

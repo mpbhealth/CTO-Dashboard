@@ -124,12 +124,14 @@ export default function RoadmapPresentation() {
 
   const generatePresentation = () => {
     const presentationData = generatePresentationData(roadmapItems);
-    
+
+    const slides = presentationData?.slides || [];
+
     const newPresentation: PresentationConfig = {
       title: 'MPB Health Technology Roadmap',
       author: 'Vinnie R. Tannous, CTO',
       theme: selectedTheme,
-      slides: presentationData.slides.map((slide, index) => ({
+      slides: slides.map((slide, index) => ({
         ...slide,
         graphics: GraphicsUtils.generateDefaultGraphics(slide.layout, selectedTheme),
         background: {
@@ -139,8 +141,8 @@ export default function RoadmapPresentation() {
         }
       })),
       metadata: {
-        totalSlides: presentationData.slides.length,
-        estimatedDuration: presentationData.slides.length * 2, // 2 minutes per slide
+        totalSlides: slides.length,
+        estimatedDuration: slides.length * 2,
         lastModified: new Date().toISOString()
       }
     };
@@ -253,7 +255,7 @@ export default function RoadmapPresentation() {
         className={`
           relative p-4 rounded-lg border-2 cursor-pointer transition-all duration-200
           ${selectedSlide === index 
-            ? 'border-indigo-500 bg-indigo-50' 
+            ? 'border-pink-500 bg-pink-50' 
             : 'border-slate-200 bg-white hover:border-slate-300'
           }
         `}
@@ -290,7 +292,7 @@ export default function RoadmapPresentation() {
                 e.stopPropagation();
                 handleSlideEdit(index);
               }}
-              className="p-1 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
+              className="p-1 text-slate-400 hover:text-pink-600 hover:bg-pink-50 rounded transition-colors"
               type="button"
               aria-label={`Edit slide ${index + 1}`}
               title={`Edit slide ${index + 1}`}
@@ -457,7 +459,7 @@ export default function RoadmapPresentation() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-pink-600"></div>
       </div>
     );
   }
@@ -508,7 +510,7 @@ export default function RoadmapPresentation() {
           <button
             onClick={handleExportToPowerPoint}
             disabled={isExporting}
-            className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors disabled:opacity-50"
+            className="flex items-center space-x-2 px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg transition-colors disabled:opacity-50"
           >
             {isExporting ? (
               <>
@@ -544,7 +546,7 @@ export default function RoadmapPresentation() {
               className={`
                 p-3 rounded-lg border-2 transition-all duration-200 text-left
                 ${selectedTheme === key 
-                  ? 'border-indigo-500 bg-indigo-50' 
+                  ? 'border-pink-500 bg-pink-50' 
                   : 'border-slate-200 bg-white hover:border-slate-300'
                 }
               `}
@@ -560,14 +562,14 @@ export default function RoadmapPresentation() {
       </div>
 
       {/* Main Layout */}
-      <div className="grid grid-cols-4 gap-6">
+      <div className="flex gap-6">
         {/* Slide Navigation */}
-        <div className="col-span-1 space-y-4">
+        <div className="w-80 flex-shrink-0 space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold text-slate-900">Slides</h3>
             <button
               onClick={handleAddSlide}
-              className="p-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
+              className="p-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg transition-colors"
               title="Add new slide"
               type="button"
               aria-label="Add new slide"
@@ -582,7 +584,7 @@ export default function RoadmapPresentation() {
         </div>
 
         {/* Slide Editor/Preview */}
-        <div className="col-span-3">
+        <div className="flex-1 min-w-0">
           {isPreviewMode ? (
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
               <div className="flex items-center justify-between mb-6">
@@ -675,7 +677,7 @@ export default function RoadmapPresentation() {
                 <div className="flex items-center space-x-3">
                   <button
                     onClick={() => handleSlideEdit(selectedSlide)}
-                    className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
+                    className="flex items-center space-x-2 px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg transition-colors"
                   >
                     <Edit className="w-4 h-4" />
                     <span>Edit Slide</span>
@@ -732,7 +734,7 @@ export default function RoadmapPresentation() {
                     ...editingSlide,
                     content: { ...editingSlide.content, title: e.target.value }
                   })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
                 />
               </div>
 
@@ -752,7 +754,7 @@ export default function RoadmapPresentation() {
                       }
                     })}
                     rows={6}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
                     placeholder="Enter each bullet point on a new line"
                   />
                 </div>
@@ -770,7 +772,7 @@ export default function RoadmapPresentation() {
                 </button>
                 <button
                   onClick={() => handleSaveSlide(editingSlide)}
-                  className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
+                  className="flex items-center space-x-2 px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg transition-colors"
                 >
                   <Save className="w-4 h-4" />
                   <span>Save Changes</span>

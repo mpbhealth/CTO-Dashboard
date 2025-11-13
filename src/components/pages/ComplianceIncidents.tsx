@@ -47,7 +47,7 @@ const ComplianceIncidents: React.FC = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent" />
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-pink-600 border-t-transparent" />
       </div>
     );
   }
@@ -84,7 +84,7 @@ const ComplianceIncidents: React.FC = () => {
               placeholder="Search incidents..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-pink-500"
             />
           </div>
           <div className="flex items-center space-x-2">
@@ -122,9 +122,9 @@ const ComplianceIncidents: React.FC = () => {
             {incidents.filter(i => i.severity === 'high').length}
           </p>
         </div>
-        <div className="bg-blue-50 rounded-lg border-2 border-blue-200 p-4">
+        <div className="bg-pink-50 rounded-lg border-2 border-pink-200 p-4">
           <p className="text-sm text-gray-600">Breaches</p>
-          <p className="text-2xl font-bold text-blue-800">
+          <p className="text-2xl font-bold text-pink-800">
             {incidents.filter(i => i.is_breach).length}
           </p>
         </div>
@@ -173,7 +173,7 @@ const ComplianceIncidents: React.FC = () => {
                       {incident.severity && <SeverityChip severity={incident.severity} />}
                     </td>
                     <td className="px-6 py-4">
-                      <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
+                      <span className="px-2 py-1 text-xs rounded-full bg-pink-100 text-pink-800">
                         {incident.status}
                       </span>
                     </td>
@@ -270,7 +270,7 @@ const ComplianceIncidents: React.FC = () => {
                   id="is_breach"
                   checked={newIncident.is_breach}
                   onChange={(e) => setNewIncident({ ...newIncident, is_breach: e.target.checked })}
-                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  className="rounded border-gray-300 text-pink-600 focus:ring-blue-500"
                 />
                 <label htmlFor="is_breach" className="text-sm font-medium text-gray-700">
                   This may be a breach (PHI compromised)

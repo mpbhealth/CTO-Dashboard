@@ -60,7 +60,7 @@ const ComplianceBAAs: React.FC = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent" />
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-pink-600 border-t-transparent" />
       </div>
     );
   }
@@ -71,7 +71,7 @@ const ComplianceBAAs: React.FC = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center space-x-2">
-            <FileCheck className="w-8 h-8 text-blue-600" />
+            <FileCheck className="w-8 h-8 text-pink-600" />
             <span>Business Associate Agreements</span>
           </h1>
           <p className="text-gray-600 mt-1">
@@ -80,7 +80,7 @@ const ComplianceBAAs: React.FC = () => {
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          className="flex items-center space-x-2 px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700"
         >
           <Plus className="w-5 h-5" />
           <span>Add BAA</span>
@@ -352,7 +352,7 @@ const ComplianceBAAs: React.FC = () => {
                   id="auto_renews"
                   checked={newBAA.auto_renews}
                   onChange={(e) => setNewBAA({ ...newBAA, auto_renews: e.target.checked })}
-                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  className="rounded border-gray-300 text-pink-600 focus:ring-blue-500"
                 />
                 <label htmlFor="auto_renews" className="text-sm font-medium text-gray-700">
                   Auto-renews
@@ -383,7 +383,7 @@ const ComplianceBAAs: React.FC = () => {
                 <button
                   type="submit"
                   disabled={createBAA.isPending}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300"
+                  className="px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 disabled:bg-gray-300"
                 >
                   {createBAA.isPending ? 'Adding...' : 'Add BAA'}
                 </button>

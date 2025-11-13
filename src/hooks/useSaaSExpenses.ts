@@ -1,56 +1,61 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 
-export interface SaaSExpense {
-  id: string;
-  department: string;
-  application: string;
-  description: string | null;
-  cost_monthly: number;
-  cost_annual: number;
-  platform: string | null;
-  url: string | null;
-  renewal_date: string | null;
-  notes: string | null;
-  source_sheet: string;
-  created_at: string;
-  updated_at: string;
-  created_by: string | null;
+interface SaaSMetrics {
+  totalMonthly: number;
+  totalAnnual: number;
+  totalTools: number;
+  totalDepartments: number;
+  renewingNext30Days: number;
 }
-
-export interface SaaSExpenseCreateData {
-  department: string;
-  application: string;
-  description?: string;
-  cost_monthly: number;
-  cost_annual: number;
-  platform?: string;
-  url?: string;
-  renewal_date?: string;
-  notes?: string;
-  source_sheet?: string;
-}
-
-export type SaaSExpenseUpdateData = Partial<SaaSExpenseCreateData>;
 
 export function useSaaSExpenses() {
-  const [data, setData] = useState<SaaSExpense[]>([]);
+  const [data, setData] = useState<any[]>([]);
+  const [metrics, setMetrics] = useState<SaaSMetrics>({
+    totalMonthly: 0,
+    totalAnnual: 0,
+    totalTools: 0,
+    totalDepartments: 0,
+    renewingNext30Days: 0,
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = async () => {
     try {
       setLoading(true);
-      const { data: expenses, error } = await supabase
+      const { data: expenses, error: expensesError } = await supabase
         .from('saas_expenses')
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      setData(expenses || []);
-    } catch (err) {
-      console.error('Error fetching SaaS expenses:', err);
-      setError(err instanceof Error ? err.message : 'Failed to load SaaS expenses');
+      if (expensesError) throw expensesError;
+
+      const expenseData = expenses || [];
+      setData(expenseData);
+
+      const totalMonthly = expenseData.reduce((sum, e) => sum + (e.cost_monthly || 0), 0);
+      const totalAnnual = expenseData.reduce((sum, e) => sum + (e.cost_annual || 0), 0);
+      const totalTools = expenseData.length;
+      const departments = new Set(expenseData.map(e => e.department)).size;
+
+      const now = new Date();
+      const thirtyDaysFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+      const renewingNext30Days = expenseData.filter(e => {
+        if (!e.renewal_date) return false;
+        const renewalDate = new Date(e.renewal_date);
+        return renewalDate >= now && renewalDate <= thirtyDaysFromNow;
+      }).length;
+
+      setMetrics({
+        totalMonthly,
+        totalAnnual,
+        totalTools,
+        totalDepartments: departments,
+        renewingNext30Days,
+      });
+    } catch (err: any) {
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -60,111 +65,58 @@ export function useSaaSExpenses() {
     fetchData();
   }, []);
 
-  const addExpense = async (expenseData: SaaSExpenseCreateData) => {
+  const addExpense = async (expense: any) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('User not authenticated');
-
-      const { data, error } = await supabase
-        .from('saas_expenses')
-        .insert([{
-          ...expenseData,
-          created_by: user.id
-        }])
-        .select()
-        .single();
-
+      const { error } = await supabase.from('saas_expenses').insert([expense]);
       if (error) throw error;
       await fetchData();
-      return { success: true, data };
-    } catch (err) {
-      return { success: false, error: err instanceof Error ? err.message : 'An error occurred' };
+    } catch (err: any) {
+      throw new Error(err.message);
     }
   };
 
-  const updateExpense = async (id: string, updates: SaaSExpenseUpdateData) => {
+  const updateExpense = async (id: string, updates: any) => {
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('saas_expenses')
-        .update({
-          ...updates,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', id)
-        .select()
-        .single();
-
+        .update(updates)
+        .eq('id', id);
       if (error) throw error;
       await fetchData();
-      return { success: true, data };
-    } catch (err) {
-      return { success: false, error: err instanceof Error ? err.message : 'An error occurred' };
+    } catch (err: any) {
+      throw new Error(err.message);
     }
   };
 
   const deleteExpense = async (id: string) => {
     try {
-      const { error } = await supabase
-        .from('saas_expenses')
-        .delete()
-        .eq('id', id);
-
+      const { error } = await supabase.from('saas_expenses').delete().eq('id', id);
       if (error) throw error;
       await fetchData();
-      return { success: true };
-    } catch (err) {
-      return { success: false, error: err instanceof Error ? err.message : 'An error occurred' };
+    } catch (err: any) {
+      throw new Error(err.message);
     }
   };
 
-  const bulkImport = async (expenses: Omit<SaaSExpense, 'id' | 'created_at' | 'updated_at' | 'created_by'>[]) => {
+  const bulkImport = async (expenses: any[]) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('User not authenticated');
-
-      const expensesWithUser = expenses.map(expense => ({
-        ...expense,
-        created_by: user.id,
-        source_sheet: expense.source_sheet || 'csv_import'
-      }));
-
-      const { data, error } = await supabase
-        .from('saas_expenses')
-        .insert(expensesWithUser)
-        .select();
-
+      const { error } = await supabase.from('saas_expenses').insert(expenses);
       if (error) throw error;
       await fetchData();
-      return { success: true, data, count: data?.length || 0 };
-    } catch (err) {
-      return { success: false, error: err instanceof Error ? err.message : 'An error occurred' };
+    } catch (err: any) {
+      throw new Error(err.message);
     }
-  };
-
-  // Calculate metrics
-  const metrics = {
-    totalMonthly: data.reduce((sum, expense) => sum + (expense.cost_monthly || 0), 0),
-    totalAnnual: data.reduce((sum, expense) => sum + (expense.cost_annual || 0), 0),
-    totalTools: data.length,
-    totalDepartments: new Set(data.map(expense => expense.department)).size,
-    renewingNext30Days: data.filter(expense => {
-      if (!expense.renewal_date) return false;
-      const renewalDate = new Date(expense.renewal_date);
-      const thirtyDaysFromNow = new Date();
-      thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
-      return renewalDate >= new Date() && renewalDate <= thirtyDaysFromNow;
-    }).length
   };
 
   return {
     data,
+    metrics,
     loading,
     error,
-    metrics,
     refetch: fetchData,
     addExpense,
     updateExpense,
     deleteExpense,
-    bulkImport
+    bulkImport,
   };
 }

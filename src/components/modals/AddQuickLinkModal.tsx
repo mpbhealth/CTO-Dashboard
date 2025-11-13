@@ -167,13 +167,13 @@ export default function AddQuickLinkModal({
       : formData.category || 'Uncategorized';
     
     return (
-      <div className="p-6 bg-white rounded-xl border-2 border-indigo-200">
+      <div className="p-6 bg-white rounded-xl border-2 border-pink-200">
         <h2 className="text-lg font-semibold text-slate-900 mb-4">Link Preview</h2>
         
         <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center text-2xl">
+              <div className="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center text-2xl">
                 {previewIcon}
               </div>
               <div>
@@ -191,7 +191,7 @@ export default function AddQuickLinkModal({
             <div className="flex items-center space-x-2 text-xs text-slate-500">
               <span>0 views</span>
             </div>
-            <button className="flex items-center space-x-1 text-indigo-600 text-sm">
+            <button className="flex items-center space-x-1 text-pink-600 text-sm">
               <span>Open</span>
             </button>
           </div>
@@ -207,8 +207,8 @@ export default function AddQuickLinkModal({
       <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-slate-200">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-              <Link2 className="w-5 h-5 text-indigo-600" />
+            <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center">
+              <Link2 className="w-5 h-5 text-pink-600" />
             </div>
             <h2 className="text-xl font-semibold text-slate-900">
               {isPreview ? 'Preview Quick Link' : 'Add New Quick Link'}
@@ -237,7 +237,7 @@ export default function AddQuickLinkModal({
               <button
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg flex items-center space-x-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-pink-600 hover:bg-pink-700 text-white px-6 py-2 rounded-lg flex items-center space-x-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? (
                   <>
@@ -274,7 +274,7 @@ export default function AddQuickLinkModal({
                   value={formData.name}
                   onChange={handleInputChange}
                   className={`w-full px-3 py-2 border ${
-                    errors.name ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-slate-300 focus:ring-indigo-500 focus:border-indigo-500'
+                    errors.name ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-slate-300 focus:ring-sky-500 focus:border-pink-500'
                   } rounded-lg`}
                   placeholder="e.g., Supabase Dashboard"
                 />
@@ -294,7 +294,7 @@ export default function AddQuickLinkModal({
                   value={formData.url}
                   onChange={handleInputChange}
                   className={`w-full px-3 py-2 border ${
-                    errors.url ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-slate-300 focus:ring-indigo-500 focus:border-indigo-500'
+                    errors.url ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-slate-300 focus:ring-sky-500 focus:border-pink-500'
                   } rounded-lg`}
                   placeholder="https://app.supabase.com"
                 />
@@ -313,7 +313,7 @@ export default function AddQuickLinkModal({
                   value={formData.description}
                   onChange={handleInputChange}
                   rows={3}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
                   placeholder="Brief description of this resource"
                 />
               </div>
@@ -327,7 +327,7 @@ export default function AddQuickLinkModal({
                   name="icon"
                   value={formData.icon}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
                 >
                   <option value="">Select an icon</option>
                   {iconOptions.map(icon => (
@@ -345,7 +345,7 @@ export default function AddQuickLinkModal({
                   name="category"
                   value={formData.category}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
                 >
                   {categoryOptions.map(cat => (
                     <option key={cat.value} value={cat.value}>{cat.label}</option>
@@ -365,7 +365,7 @@ export default function AddQuickLinkModal({
                     value={formData.customCategory}
                     onChange={handleInputChange}
                     className={`w-full px-3 py-2 border ${
-                      errors.customCategory ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-slate-300 focus:ring-indigo-500 focus:border-indigo-500'
+                      errors.customCategory ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-slate-300 focus:ring-sky-500 focus:border-pink-500'
                     } rounded-lg`}
                     placeholder="e.g., Development Tools"
                   />
@@ -396,7 +396,7 @@ export default function AddQuickLinkModal({
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg flex items-center space-x-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-pink-600 hover:bg-pink-700 text-white px-6 py-2 rounded-lg flex items-center space-x-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? (
                   <>

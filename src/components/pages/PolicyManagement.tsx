@@ -1,22 +1,23 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  FileText, 
-  Plus, 
-  Search, 
+import {
+  FileText,
+  Plus,
+  Search,
   Filter,
-  Download, 
+  Download,
   Edit,
-  Trash2, 
+  Trash2,
   Calendar,
   Tag,
   CheckCircle,
   Clock,
-  AlertCircle, 
+  AlertCircle,
   User,
   X,
   History,
-  Eye
+  Eye,
+  Building2
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { usePolicyDocuments } from '../../hooks/useOrganizationalData';
@@ -160,7 +161,7 @@ Last Updated: ${new Date(policy.updated_at).toLocaleDateString()}
       case 'archived':
         return 'bg-slate-100 text-slate-800';
       default: // draft
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-pink-100 text-pink-800';
     }
   };
 
@@ -197,7 +198,7 @@ Last Updated: ${new Date(policy.updated_at).toLocaleDateString()}
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-pink-600"></div>
       </div>
     );
   }
@@ -223,7 +224,7 @@ Last Updated: ${new Date(policy.updated_at).toLocaleDateString()}
         </div>
         <button
           onClick={() => setIsAddModalOpen(true)}
-          className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
+          className="flex items-center space-x-2 px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg transition-colors"
         >
           <Plus className="w-4 h-4" />
           <span>Add Policy</span>
@@ -239,7 +240,7 @@ Last Updated: ${new Date(policy.updated_at).toLocaleDateString()}
             placeholder="Search policies by title, content, or tags..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
           />
           {searchTerm && (
             <button 
@@ -255,7 +256,7 @@ Last Updated: ${new Date(policy.updated_at).toLocaleDateString()}
           <select
             value={selectedType}
             onChange={(e) => setSelectedType(e.target.value)}
-            className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
           >
             <option value="all">All Categories</option>
             <option value="policy">HR Policies</option>
@@ -268,7 +269,7 @@ Last Updated: ${new Date(policy.updated_at).toLocaleDateString()}
           <select
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
-            className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
           >
             <option value="all">All Statuses</option>
             <option value="draft">Draft</option>
@@ -280,7 +281,7 @@ Last Updated: ${new Date(policy.updated_at).toLocaleDateString()}
           <select
             value={selectedDepartment}
             onChange={(e) => setSelectedDepartment(e.target.value)}
-            className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
           >
             <option value="all">All Departments</option>
             {departments?.map(dept => (
@@ -307,7 +308,7 @@ Last Updated: ${new Date(policy.updated_at).toLocaleDateString()}
                   <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
                     policy.status === 'approved' ? 'bg-emerald-100' : 
                     policy.status === 'review' ? 'bg-amber-100' : 
-                    policy.status === 'archived' ? 'bg-slate-100' : 'bg-blue-100'
+                    policy.status === 'archived' ? 'bg-slate-100' : 'bg-pink-100'
                   }`}>
                     {getStatusIcon(policy.status)}
                   </div>
@@ -330,7 +331,7 @@ Last Updated: ${new Date(policy.updated_at).toLocaleDateString()}
                 <div className="flex items-center space-x-3">
                   <button
                     onClick={() => setExpandedPolicy(expandedPolicy === policy.id ? null : policy.id)}
-                    className="px-3 py-1.5 text-indigo-600 hover:bg-indigo-50 rounded-lg text-sm transition-colors"
+                    className="px-3 py-1.5 text-pink-600 hover:bg-pink-50 rounded-lg text-sm transition-colors"
                   >
                     {expandedPolicy === policy.id ? 'Collapse' : 'View Details'}
                   </button>
@@ -350,13 +351,13 @@ Last Updated: ${new Date(policy.updated_at).toLocaleDateString()}
                     </button>
                     <button
                       onClick={() => viewPolicyHistory(policy)}
-                      className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      className="p-2 text-slate-400 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition-colors"
                       title="View policy history"
                     >
                       <History className="w-4 h-4" />
                     </button>
                     <button
-                      className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                      className="p-2 text-slate-400 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition-colors"
                       title="Edit policy"
                     >
                       <Edit className="w-4 h-4" />
@@ -454,7 +455,7 @@ Last Updated: ${new Date(policy.updated_at).toLocaleDateString()}
           </p>
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg inline-flex items-center space-x-2 transition-colors"
+            className="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg inline-flex items-center space-x-2 transition-colors"
           >
             <Plus className="w-4 h-4" />
             <span>Create New Policy</span>
@@ -468,8 +469,8 @@ Last Updated: ${new Date(policy.updated_at).toLocaleDateString()}
           <div className="bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-6 border-b border-slate-200">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <History className="w-5 h-5 text-blue-600" />
+                <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center">
+                  <History className="w-5 h-5 text-pink-600" />
                 </div>
                 <h2 className="text-xl font-semibold text-slate-900">
                   Policy History: {selectedPolicyForHistory.title}
@@ -518,7 +519,7 @@ Last Updated: ${new Date(policy.updated_at).toLocaleDateString()}
                     <div className="flex items-center space-x-2">
                       <button
                         onClick={() => alert(`Viewing version ${version.version}`)}
-                        className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                        className="p-2 text-slate-400 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition-colors"
                         title="View this version"
                       >
                         <Eye className="w-4 h-4" />

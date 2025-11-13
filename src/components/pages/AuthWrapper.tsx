@@ -1,99 +1,218 @@
-import { useState, useEffect } from 'react';
-import { supabase, isSupabaseConfigured } from '../../lib/supabase';
+import { useState, useEffect, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { isSupabaseConfigured } from '../../lib/supabase';
+import { useAuth } from '../../contexts/AuthContext';
 import Login from './Login';
-import { User } from '@supabase/supabase-js';
 
 interface AuthWrapperProps {
   children: React.ReactNode;
 }
 
+const AUTH_TIMEOUT_MS = 15000;
+const PROFILE_TIMEOUT_MS = 10000;
+
 export default function AuthWrapper({ children }: AuthWrapperProps) {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { user, profile, loading: authLoading } = useAuth();
+  const [loadingMessage, setLoadingMessage] = useState('Checking authentication...');
   const [error, setError] = useState<string | null>(null);
+  const [timedOut, setTimedOut] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const authTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const profileTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const redirectAttemptedRef = useRef(false);
 
   useEffect(() => {
-    // If Supabase is not configured, skip auth and show demo mode
     if (!isSupabaseConfigured) {
-      console.warn('Supabase not configured - running in demo mode');
-      setUser({ id: 'demo-user', email: 'demo@example.com' } as User);
-      setLoading(false);
+      console.warn('[AuthWrapper] Supabase not configured - running in demo mode');
+      setTimedOut(false);
       return;
     }
 
-    // Get initial session
-    const getSession = async () => {
-      try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        if (error) throw error;
-        setUser(session?.user ?? null);
-      } catch (err) {
-        console.error('Auth error:', err);
-        setError(err instanceof Error ? err.message : 'Authentication failed');
-        // In case of auth error, continue in demo mode
-        setUser({ id: 'demo-user', email: 'demo@example.com' } as User);
-      } finally {
-        setLoading(false);
+    if (authLoading) {
+      setLoadingMessage('Checking authentication...');
+      setTimedOut(false);
+
+      if (!authTimeoutRef.current) {
+        authTimeoutRef.current = setTimeout(() => {
+          console.error('[AuthWrapper] Auth loading timeout exceeded');
+          setTimedOut(true);
+          setError('Authentication check is taking too long. Please refresh the page or check your connection.');
+        }, AUTH_TIMEOUT_MS);
       }
-    };
+      return;
+    } else {
+      if (authTimeoutRef.current) {
+        clearTimeout(authTimeoutRef.current);
+        authTimeoutRef.current = null;
+      }
+    }
 
-    getSession();
+    if (user && !profile) {
+      setLoadingMessage('Loading your profile...');
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        try {
-          setUser(session?.user ?? null);
-        } catch (err) {
-          console.error('Auth state change error:', err);
-          setUser({ id: 'demo-user', email: 'demo@example.com' } as User);
-        } finally {
-          setLoading(false);
+      if (!profileTimeoutRef.current) {
+        profileTimeoutRef.current = setTimeout(() => {
+          console.error('[AuthWrapper] Profile loading timeout exceeded');
+          setTimedOut(true);
+          setError('Profile loading is taking too long. This may indicate a database permission issue. Please try signing out and back in.');
+        }, PROFILE_TIMEOUT_MS);
+      }
+      return;
+    } else {
+      if (profileTimeoutRef.current) {
+        clearTimeout(profileTimeoutRef.current);
+        profileTimeoutRef.current = null;
+      }
+    }
+
+    if (user && profile && !redirectAttemptedRef.current) {
+      setLoadingMessage('Redirecting to your dashboard...');
+      redirectAttemptedRef.current = true;
+
+      const currentPath = location.pathname;
+      const isCEOPath = currentPath.startsWith('/ceod');
+      const isCTOPath = currentPath.startsWith('/ctod');
+      const isSharedPath = currentPath.startsWith('/shared');
+      const isRootPath = currentPath === '/' || currentPath === '';
+      const isLoginPath = currentPath.startsWith('/login');
+      const isAuthCallbackPath = currentPath.startsWith('/auth/callback');
+
+      console.log('[AuthWrapper] Route check:', { currentPath, role: profile.role, isCEOPath, isCTOPath, isSharedPath, isRootPath });
+
+      if (profile.role === 'ceo') {
+        if (isCTOPath || isRootPath || isLoginPath || isAuthCallbackPath) {
+          console.log('[AuthWrapper] Redirecting CEO to /ceod/home from:', currentPath);
+          setTimeout(() => {
+            navigate('/ceod/home', { replace: true });
+            redirectAttemptedRef.current = false;
+          }, 100);
+        } else {
+          redirectAttemptedRef.current = false;
+        }
+      } else {
+        if (isCEOPath) {
+          console.log(`[AuthWrapper] Redirecting ${profile.role} to /ctod/home from:`, currentPath);
+          setTimeout(() => {
+            navigate('/ctod/home', { replace: true });
+            redirectAttemptedRef.current = false;
+          }, 100);
+        } else if (isRootPath || isLoginPath || isAuthCallbackPath) {
+          console.log(`[AuthWrapper] Redirecting ${profile.role} to /ctod/home from root/login`);
+          setTimeout(() => {
+            navigate('/ctod/home', { replace: true });
+            redirectAttemptedRef.current = false;
+          }, 100);
+        } else {
+          redirectAttemptedRef.current = false;
         }
       }
-    );
+    }
 
-    return () => subscription.unsubscribe();
-  }, []);
+    return () => {
+      if (authTimeoutRef.current) {
+        clearTimeout(authTimeoutRef.current);
+        authTimeoutRef.current = null;
+      }
+      if (profileTimeoutRef.current) {
+        clearTimeout(profileTimeoutRef.current);
+        profileTimeoutRef.current = null;
+      }
+    };
+  }, [user, profile, authLoading, location.pathname, navigate]);
 
-  const handleLoginSuccess = () => {
-    // The auth state change listener will handle updating the user state
-  };
-
-  if (loading) {
+  if (authLoading && !timedOut) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-          <p className="text-slate-600">Loading...</p>
+        <div className="text-center max-w-md px-6">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-pink-600 mx-auto mb-4"></div>
+          <p className="text-slate-600 font-medium text-lg">{loadingMessage}</p>
+          <p className="text-slate-400 text-sm mt-2">Please wait...</p>
+          <div className="mt-6 p-4 bg-pink-50 rounded-lg text-left">
+            <p className="text-xs text-pink-700 mb-2">If loading takes too long:</p>
+            <ul className="text-xs text-pink-600 space-y-1">
+              <li>• Check your internet connection</li>
+              <li>• Verify Supabase configuration</li>
+              <li>• Clear browser cache and try again</li>
+            </ul>
+          </div>
         </div>
       </div>
     );
   }
 
-  // Show error state but allow demo mode access
+  if (timedOut) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="text-center max-w-md p-6 bg-white rounded-xl shadow-lg border border-amber-200">
+          <div className="text-amber-600 mb-4 text-4xl">⏱️</div>
+          <h2 className="text-xl font-bold text-slate-900 mb-2">Authentication Timeout</h2>
+          <p className="text-slate-600 mb-6">{error || 'Authentication is taking longer than expected.'}</p>
+          <div className="space-y-3">
+            <button
+              onClick={() => {
+                setTimedOut(false);
+                setError(null);
+                redirectAttemptedRef.current = false;
+                window.location.reload();
+              }}
+              className="w-full bg-pink-600 hover:bg-pink-700 text-white px-4 py-3 rounded-lg transition-colors font-medium"
+            >
+              Reload and Try Again
+            </button>
+            <button
+              onClick={() => {
+                localStorage.clear();
+                sessionStorage.clear();
+                document.cookie.split(';').forEach(c => {
+                  document.cookie = c.replace(/^ +/, '').replace(/=.*/, '=;expires=' + new Date().toUTCString() + ';path=/');
+                });
+                window.location.href = '/';
+              }}
+              className="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-3 rounded-lg transition-colors font-medium"
+            >
+              Clear All Data & Restart
+            </button>
+          </div>
+          <div className="mt-6 p-4 bg-slate-50 rounded-lg text-left">
+            <p className="text-xs text-slate-600 font-semibold mb-2">Debug Information:</p>
+            <div className="text-xs text-slate-500 space-y-1">
+              <p>• User authenticated: {user ? 'Yes' : 'No'}</p>
+              <p>• Profile loaded: {profile ? 'Yes' : 'No'}</p>
+              <p>• Current path: {location.pathname}</p>
+              <p>• Supabase configured: {isSupabaseConfigured ? 'Yes' : 'No'}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (error && !user) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="text-center max-w-md p-6">
-          <div className="text-red-600 mb-4">⚠️ Authentication Error</div>
-          <p className="text-slate-600 mb-4">{error}</p>
-          <button
-            onClick={() => {
-              setError(null);
-              setUser({ id: 'demo-user', email: 'demo@example.com' } as User);
-            }}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors"
-          >
-            Continue in Demo Mode
-          </button>
+        <div className="text-center max-w-md p-6 bg-white rounded-xl shadow-lg border border-red-200">
+          <div className="text-red-600 mb-4 text-4xl">⚠️</div>
+          <h2 className="text-xl font-bold text-slate-900 mb-2">Authentication Error</h2>
+          <p className="text-slate-600 mb-6">{error}</p>
+          <div className="space-y-3">
+            <button
+              onClick={() => {
+                setError(null);
+                window.location.reload();
+              }}
+              className="w-full bg-pink-600 hover:bg-pink-700 text-white px-4 py-3 rounded-lg transition-colors font-medium"
+            >
+              Try Again
+            </button>
+          </div>
         </div>
       </div>
     );
   }
 
   if (!user) {
-    return <Login onLoginSuccess={handleLoginSuccess} />;
+    return <Login onLoginSuccess={() => console.log('[AuthWrapper] Login success')} />;
   }
 
   return <>{children}</>;

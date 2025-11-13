@@ -1,0 +1,673 @@
+{
+  "workbooks": [
+    {
+      "workbook": "Concierge Report",
+      "sheets": [
+        {
+          "sheet": "Weekly Report",
+          "rows": 242,
+          "columns": [
+            "10.17.25-10.23.25",
+            "Ace",
+            "Adam",
+            "Tupac",
+            "Unnamed: 4",
+            "Unnamed: 5"
+          ]
+        },
+        {
+          "sheet": "Night Time Calls",
+          "rows": 39,
+          "columns": [
+            "09.18.25",
+            "Unnamed: 1",
+            "Unnamed: 2"
+          ]
+        },
+        {
+          "sheet": "After 8 PM EST CALLS",
+          "rows": 2,
+          "columns": [
+            "Sep 18, 2025, 8:36:53 pm",
+            "KASSING EMILY (+16025016607)",
+            "Unnamed: 2"
+          ]
+        }
+      ]
+    },
+    {
+      "workbook": "Cancelation Reports",
+      "sheets": [
+        {
+          "sheet": "September",
+          "rows": 34,
+          "columns": [
+            "Name:",
+            "Reason:",
+            "Membership:",
+            "Advisor:",
+            "Outcome:"
+          ]
+        },
+        {
+          "sheet": "November",
+          "rows": 56,
+          "columns": [
+            "Name:",
+            "Reason:",
+            "Membership:",
+            "Advisor:",
+            "Outcome:"
+          ]
+        },
+        {
+          "sheet": "October",
+          "rows": 61,
+          "columns": [
+            "Name:",
+            "Reason:",
+            "Membership:",
+            "Advisor:",
+            "Outcome:"
+          ]
+        },
+        {
+          "sheet": "December",
+          "rows": 76,
+          "columns": [
+            "Name:",
+            "Reason:",
+            "Membership:",
+            "Advisor:",
+            "Outcome:"
+          ]
+        },
+        {
+          "sheet": "January",
+          "rows": 50,
+          "columns": [
+            "Name:",
+            "Reason:",
+            "Membership:",
+            "Advisor:",
+            "Outcome:"
+          ]
+        },
+        {
+          "sheet": "February",
+          "rows": 41,
+          "columns": [
+            "Name:",
+            "Reason:",
+            "Membership:",
+            "Advisor:",
+            "Outcome:"
+          ]
+        },
+        {
+          "sheet": "March",
+          "rows": 17,
+          "columns": [
+            "Name:",
+            "Reason:",
+            "Membership:",
+            "Advisor:",
+            "Outcome:"
+          ]
+        },
+        {
+          "sheet": "April ",
+          "rows": 8,
+          "columns": [
+            "Name:",
+            "Reason:",
+            "Membership:",
+            "Advisor:",
+            "Outcome:"
+          ]
+        },
+        {
+          "sheet": "May 25",
+          "rows": 30,
+          "columns": [
+            "Name:",
+            "Reason:",
+            "Membership:",
+            "Advisor:",
+            "Outcome:"
+          ]
+        },
+        {
+          "sheet": "June",
+          "rows": 28,
+          "columns": [
+            "Name:",
+            "Reason:",
+            "Membership:",
+            "Advisor:",
+            "Outcome:"
+          ]
+        },
+        {
+          "sheet": "July",
+          "rows": 32,
+          "columns": [
+            "Name:",
+            "Reason:",
+            "Membership:",
+            "Advisor:",
+            "Outcome:",
+            "Unnamed: 5"
+          ]
+        },
+        {
+          "sheet": "August",
+          "rows": 46,
+          "columns": [
+            "Name:",
+            "Reason:",
+            "Membership:",
+            "Advisor:",
+            "Outcome:",
+            "Unnamed: 5",
+            "Unnamed: 6"
+          ]
+        },
+        {
+          "sheet": "September 2025",
+          "rows": 52,
+          "columns": [
+            "Name:",
+            "Reason:",
+            "Membership:",
+            "Advisor:",
+            "Outcome:",
+            "Unnamed: 5"
+          ]
+        },
+        {
+          "sheet": "October 2025",
+          "rows": 27,
+          "columns": [
+            "Name:",
+            "Reason:",
+            "Membership:",
+            "Advisor:",
+            "Outcome:"
+          ]
+        }
+      ]
+    },
+    {
+      "workbook": "Leads Reports",
+      "sheets": [
+        {
+          "sheet": "October 2025",
+          "rows": 101,
+          "columns": [
+            "Date",
+            "Name",
+            "Source",
+            "Status",
+            "Lead Owner",
+            "Group Lead?",
+            "Recent Notes"
+          ]
+        }
+      ]
+    },
+    {
+      "workbook": "Sales Report",
+      "sheets": [
+        {
+          "sheet": "October",
+          "rows": 115,
+          "columns": [
+            "Date",
+            "Name",
+            "Plan",
+            "Size",
+            "Agent",
+            "Group?"
+          ]
+        }
+      ]
+    }
+  ],
+  "staging_tables": {
+    "Concierge Report::Weekly Report": [
+      {
+        "name": "10_17_25_10_23_25",
+        "type": "varchar(26)"
+      },
+      {
+        "name": "ace",
+        "type": "timestamptz"
+      },
+      {
+        "name": "adam",
+        "type": "timestamptz"
+      },
+      {
+        "name": "tupac",
+        "type": "timestamptz"
+      },
+      {
+        "name": "unnamed_4",
+        "type": "varchar(194)"
+      },
+      {
+        "name": "unnamed_5",
+        "type": "timestamptz"
+      }
+    ],
+    "Concierge Report::Night Time Calls": [
+      {
+        "name": "09_18_25",
+        "type": "timestamptz"
+      },
+      {
+        "name": "unnamed_1",
+        "type": "varchar(30)"
+      },
+      {
+        "name": "unnamed_2",
+        "type": "varchar(39)"
+      }
+    ],
+    "Concierge Report::After 8 PM EST CALLS": [
+      {
+        "name": "sep_18_2025_8_36_53_pm",
+        "type": "varchar(24)"
+      },
+      {
+        "name": "kassing_emily_16025016607",
+        "type": "varchar(27)"
+      },
+      {
+        "name": "unnamed_2",
+        "type": "text"
+      }
+    ],
+    "Cancelation Reports::September": [
+      {
+        "name": "name",
+        "type": "varchar(18)"
+      },
+      {
+        "name": "reason",
+        "type": "varchar(43)"
+      },
+      {
+        "name": "membership",
+        "type": "varchar(46)"
+      },
+      {
+        "name": "advisor",
+        "type": "varchar(17)"
+      },
+      {
+        "name": "outcome",
+        "type": "varchar(171)"
+      }
+    ],
+    "Cancelation Reports::November": [
+      {
+        "name": "name",
+        "type": "varchar(19)"
+      },
+      {
+        "name": "reason",
+        "type": "varchar(42)"
+      },
+      {
+        "name": "membership",
+        "type": "varchar(22)"
+      },
+      {
+        "name": "advisor",
+        "type": "varchar(16)"
+      },
+      {
+        "name": "outcome",
+        "type": "text"
+      }
+    ],
+    "Cancelation Reports::October": [
+      {
+        "name": "name",
+        "type": "varchar(18)"
+      },
+      {
+        "name": "reason",
+        "type": "varchar(39)"
+      },
+      {
+        "name": "membership",
+        "type": "varchar(25)"
+      },
+      {
+        "name": "advisor",
+        "type": "varchar(17)"
+      },
+      {
+        "name": "outcome",
+        "type": "text"
+      }
+    ],
+    "Cancelation Reports::December": [
+      {
+        "name": "name",
+        "type": "varchar(25)"
+      },
+      {
+        "name": "reason",
+        "type": "varchar(61)"
+      },
+      {
+        "name": "membership",
+        "type": "varchar(27)"
+      },
+      {
+        "name": "advisor",
+        "type": "varchar(17)"
+      },
+      {
+        "name": "outcome",
+        "type": "text"
+      }
+    ],
+    "Cancelation Reports::January": [
+      {
+        "name": "name",
+        "type": "varchar(16)"
+      },
+      {
+        "name": "reason",
+        "type": "varchar(36)"
+      },
+      {
+        "name": "membership",
+        "type": "varchar(16)"
+      },
+      {
+        "name": "advisor",
+        "type": "varchar(30)"
+      },
+      {
+        "name": "outcome",
+        "type": "text"
+      }
+    ],
+    "Cancelation Reports::February": [
+      {
+        "name": "name",
+        "type": "varchar(28)"
+      },
+      {
+        "name": "reason",
+        "type": "varchar(51)"
+      },
+      {
+        "name": "membership",
+        "type": "varchar(17)"
+      },
+      {
+        "name": "advisor",
+        "type": "varchar(19)"
+      },
+      {
+        "name": "outcome",
+        "type": "text"
+      }
+    ],
+    "Cancelation Reports::March": [
+      {
+        "name": "name",
+        "type": "varchar(19)"
+      },
+      {
+        "name": "reason",
+        "type": "varchar(36)"
+      },
+      {
+        "name": "membership",
+        "type": "varchar(32)"
+      },
+      {
+        "name": "advisor",
+        "type": "varchar(17)"
+      },
+      {
+        "name": "outcome",
+        "type": "varchar(218)"
+      }
+    ],
+    "Cancelation Reports::April ": [
+      {
+        "name": "name",
+        "type": "varchar(20)"
+      },
+      {
+        "name": "reason",
+        "type": "varchar(33)"
+      },
+      {
+        "name": "membership",
+        "type": "varchar(18)"
+      },
+      {
+        "name": "advisor",
+        "type": "varchar(18)"
+      },
+      {
+        "name": "outcome",
+        "type": "varchar(134)"
+      }
+    ],
+    "Cancelation Reports::May 25": [
+      {
+        "name": "name",
+        "type": "varchar(20)"
+      },
+      {
+        "name": "reason",
+        "type": "varchar(47)"
+      },
+      {
+        "name": "membership",
+        "type": "varchar(16)"
+      },
+      {
+        "name": "advisor",
+        "type": "varchar(17)"
+      },
+      {
+        "name": "outcome",
+        "type": "varchar(182)"
+      }
+    ],
+    "Cancelation Reports::June": [
+      {
+        "name": "name",
+        "type": "varchar(18)"
+      },
+      {
+        "name": "reason",
+        "type": "varchar(36)"
+      },
+      {
+        "name": "membership",
+        "type": "varchar(12)"
+      },
+      {
+        "name": "advisor",
+        "type": "varchar(17)"
+      },
+      {
+        "name": "outcome",
+        "type": "text"
+      }
+    ],
+    "Cancelation Reports::July": [
+      {
+        "name": "name",
+        "type": "varchar(23)"
+      },
+      {
+        "name": "reason",
+        "type": "varchar(42)"
+      },
+      {
+        "name": "membership",
+        "type": "varchar(23)"
+      },
+      {
+        "name": "advisor",
+        "type": "varchar(17)"
+      },
+      {
+        "name": "outcome",
+        "type": "varchar(169)"
+      },
+      {
+        "name": "unnamed_5",
+        "type": "varchar(5)"
+      }
+    ],
+    "Cancelation Reports::August": [
+      {
+        "name": "name",
+        "type": "varchar(24)"
+      },
+      {
+        "name": "reason",
+        "type": "varchar(37)"
+      },
+      {
+        "name": "membership",
+        "type": "varchar(24)"
+      },
+      {
+        "name": "advisor",
+        "type": "varchar(17)"
+      },
+      {
+        "name": "outcome",
+        "type": "varchar(222)"
+      },
+      {
+        "name": "unnamed_5",
+        "type": "varchar(5)"
+      },
+      {
+        "name": "unnamed_6",
+        "type": "varchar(5)"
+      }
+    ],
+    "Cancelation Reports::September 2025": [
+      {
+        "name": "name",
+        "type": "varchar(22)"
+      },
+      {
+        "name": "reason",
+        "type": "varchar(37)"
+      },
+      {
+        "name": "membership",
+        "type": "varchar(29)"
+      },
+      {
+        "name": "advisor",
+        "type": "varchar(17)"
+      },
+      {
+        "name": "outcome",
+        "type": "text"
+      },
+      {
+        "name": "unnamed_5",
+        "type": "varchar(5)"
+      }
+    ],
+    "Cancelation Reports::October 2025": [
+      {
+        "name": "name",
+        "type": "varchar(23)"
+      },
+      {
+        "name": "reason",
+        "type": "varchar(36)"
+      },
+      {
+        "name": "membership",
+        "type": "varchar(16)"
+      },
+      {
+        "name": "advisor",
+        "type": "varchar(17)"
+      },
+      {
+        "name": "outcome",
+        "type": "varchar(133)"
+      }
+    ],
+    "Leads Reports::October 2025": [
+      {
+        "name": "date",
+        "type": "timestamptz"
+      },
+      {
+        "name": "name",
+        "type": "varchar(18)"
+      },
+      {
+        "name": "source",
+        "type": "varchar(15)"
+      },
+      {
+        "name": "status",
+        "type": "varchar(13)"
+      },
+      {
+        "name": "lead_owner",
+        "type": "varchar(16)"
+      },
+      {
+        "name": "group_lead",
+        "type": "varchar(5)"
+      },
+      {
+        "name": "recent_notes",
+        "type": "varchar(105)"
+      }
+    ],
+    "Sales Report::October": [
+      {
+        "name": "date",
+        "type": "timestamptz"
+      },
+      {
+        "name": "name",
+        "type": "varchar(29)"
+      },
+      {
+        "name": "plan",
+        "type": "varchar(14)"
+      },
+      {
+        "name": "size",
+        "type": "varchar(3)"
+      },
+      {
+        "name": "agent",
+        "type": "varchar(18)"
+      },
+      {
+        "name": "group",
+        "type": "varchar(5)"
+      }
+    ]
+  }
+}

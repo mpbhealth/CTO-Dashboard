@@ -1,59 +1,61 @@
-// Production diagnostics utility
+import { Environment } from './environment';
+import { logger } from './logger';
+
 export class ProductionDiagnostics {
   static logEnvironment() {
-    console.group('Production Environment Check');
-    console.log('Build time:', import.meta.env.VITE_BUILD_TIME || 'Unknown');
-    console.log('Environment:', import.meta.env.MODE);
-    console.log('Base URL:', import.meta.env.BASE_URL);
-    console.log(
+    if (!Environment.shouldShowDebugLogs() && !import.meta.env.PROD) {
+      return;
+    }
+
+    if (Environment.isStackBlitz()) {
+      logger.info('Running in StackBlitz/WebContainer environment');
+      return;
+    }
+
+    logger.group('Production Environment Check');
+    logger.log('Build time:', import.meta.env.VITE_BUILD_TIME || 'Unknown');
+    logger.log('Environment:', import.meta.env.MODE);
+    logger.log('Base URL:', import.meta.env.BASE_URL);
+    logger.log(
       'Supabase configured:',
       !!(import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY),
     );
-    console.log('Document ready state:', document.readyState);
-    console.log('Root element:', !!document.getElementById('root'));
-    console.groupEnd();
+    logger.log('Supabase URL:', import.meta.env.VITE_SUPABASE_URL ? '✓ Set' : '✗ Missing');
+    logger.log('Supabase Key:', import.meta.env.VITE_SUPABASE_ANON_KEY ? `✓ Set (${String(import.meta.env.VITE_SUPABASE_ANON_KEY).substring(0, 20)}...)` : '✗ Missing');
+    logger.log('Document ready state:', document.readyState);
+    logger.log('Root element:', !!document.getElementById('root'));
+    logger.log('Network status:', navigator.onLine ? 'Online' : 'Offline');
+    logger.groupEnd();
   }
 
   static testAssetLoading() {
-    console.group('Asset Loading Test');
+    if (!Environment.shouldShowDebugLogs()) {
+      return;
+    }
 
-    // Test if main CSS loaded
+    logger.group('Asset Loading Test');
+
     const hasStyles = Array.from(document.styleSheets).some(
       sheet => sheet.href?.includes('assets/index-') || sheet.href?.includes('main.'),
     );
-    console.log('CSS loaded:', hasStyles);
+    logger.log('CSS loaded:', hasStyles);
 
-    // Test if main JS loaded
     const hasMainJS = Array.from(document.scripts).some(
       script => script.src?.includes('assets/index-') || script.src?.includes('main.'),
     );
-    console.log('Main JS loaded:', hasMainJS);
+    logger.log('Main JS loaded:', hasMainJS);
 
-    // Check for common missing assets
-    const checkImage = (src: string) => {
-      const img = new Image();
-      img.onload = () => console.log(`Icon loaded: ${src}`);
-      img.onerror = () => console.warn(`Icon failed to load: ${src}`);
-      img.src = src;
-    };
-
-    // Run image checks for core favicons/icons if they exist
-    const iconPaths = ['favicon.ico', '/icons/icon-192.png', '/icons/icon-512.png'];
-    iconPaths.forEach(checkImage);
-
-    console.groupEnd();
+    logger.groupEnd();
   }
 
   static async performHealthCheck() {
-    console.group('Application Health Check');
+    logger.group('🏥 Application Health Check');
 
     try {
-      // Check if React is working
       const rootElement = document.getElementById('root');
-      console.log('Root element exists:', !!rootElement);
-      console.log('Root has content:', rootElement?.innerHTML.length || 0);
+      logger.log('Root element exists:', !!rootElement);
+      logger.log('Root has content:', rootElement?.innerHTML.length || 0);
 
-      // Check if environment variables are accessible
       const envCheck = {
         hasSupabaseUrl: !!import.meta.env.VITE_SUPABASE_URL,
         hasSupabaseKey: !!import.meta.env.VITE_SUPABASE_ANON_KEY,
@@ -61,69 +63,105 @@ export class ProductionDiagnostics {
         dev: import.meta.env.DEV,
         prod: import.meta.env.PROD,
       };
-      console.table(envCheck);
+      logger.table(envCheck);
 
-      // Test basic browser APIs
       const apiCheck = {
         localStorage: typeof localStorage !== 'undefined',
         sessionStorage: typeof sessionStorage !== 'undefined',
         fetch: typeof fetch !== 'undefined',
         crypto: typeof crypto !== 'undefined',
         serviceWorker: 'serviceWorker' in navigator,
+        online: navigator.onLine,
       };
-      console.table(apiCheck);
+      logger.table(apiCheck);
+
+      if (import.meta.env.VITE_SUPABASE_URL) {
+        logger.group('🔌 Testing Supabase Connection');
+        try {
+          const testUrl = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/`;
+          const startTime = Date.now();
+          const response = await fetch(testUrl, {
+            method: 'HEAD',
+            headers: {
+              'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY || ''
+            }
+          });
+          const latency = Date.now() - startTime;
+          logger.log('Supabase reachable:', response.ok);
+          logger.log('Response status:', response.status);
+          logger.log(`Latency: ${latency}ms`);
+        } catch (error) {
+          logger.error('Supabase connection test failed', error);
+        }
+        logger.groupEnd();
+      }
+
     } catch (error) {
-      console.error('Health check failed:', error);
+      logger.error('Health check failed', error);
     }
 
-    console.groupEnd();
+    logger.groupEnd();
   }
 
   static clearAllCaches() {
-    console.group('Cache Clearing');
+    logger.group('Cache Clearing');
 
-    // Clear service worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.getRegistrations().then(registrations => {
-        console.log(`Unregistering ${registrations.length} service workers`);
+        logger.log(`Unregistering ${registrations.length} service workers`);
         registrations.forEach(registration => registration.unregister());
       });
     }
 
-    // Clear all caches
     if ('caches' in window) {
       caches.keys().then(cacheNames => {
-        console.log(`Deleting ${cacheNames.length} cache entries:`, cacheNames);
+        logger.log(`Deleting ${cacheNames.length} cache entries:`, cacheNames);
         cacheNames.forEach(cacheName => caches.delete(cacheName));
       });
     }
 
-    // Clear storage
     try {
       localStorage.clear();
       sessionStorage.clear();
-      console.log('Storage cleared');
+      logger.log('Storage cleared');
     } catch (error) {
-      console.warn('Could not clear storage:', error);
+      logger.warn('Could not clear storage', { error });
     }
 
-    console.groupEnd();
-    console.log('All caches cleared. Reloading page...');
+    logger.groupEnd();
+    logger.log('All caches cleared. Reloading page...');
 
     setTimeout(() => window.location.reload(), 1000);
   }
 }
 
-// Auto-run diagnostics in production
-if (import.meta.env.PROD) {
-  document.addEventListener('DOMContentLoaded', () => {
+declare global {
+  interface Window {
+    diagnose: () => Promise<void>;
+    clearAllCaches: () => void;
+  }
+}
+
+// Initialize diagnostics after DOM is ready
+if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeDiagnostics);
+  } else {
+    // DOM is already ready
+    initializeDiagnostics();
+  }
+}
+
+function initializeDiagnostics() {
+  if (import.meta.env.PROD || Environment.shouldShowDebugLogs()) {
     ProductionDiagnostics.logEnvironment();
     ProductionDiagnostics.testAssetLoading();
 
-    // Add global diagnostic functions for debugging
-    (window as any).diagnose = ProductionDiagnostics.performHealthCheck;
-    (window as any).clearAllCaches = ProductionDiagnostics.clearAllCaches;
+    window.diagnose = ProductionDiagnostics.performHealthCheck;
+    window.clearAllCaches = ProductionDiagnostics.clearAllCaches;
 
-    console.log('Debug tools available: diagnose(), clearAllCaches()');
-  });
+    logger.log('🛠️ Debug tools available: diagnose(), clearAllCaches()');
+  }
 }
+
+logger.info('Diagnostics module initialized');

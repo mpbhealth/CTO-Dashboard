@@ -231,8 +231,8 @@ ${formData.compliance_measures}
       <div className="bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-slate-200">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-              <FileText className="w-5 h-5 text-indigo-600" />
+            <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center">
+              <FileText className="w-5 h-5 text-pink-600" />
             </div>
             <h2 className="text-xl font-semibold text-slate-900">
               {isPreviewing ? 'Preview Policy' : 'Add New Policy Document'}
@@ -252,7 +252,7 @@ ${formData.compliance_measures}
               <h1 className="text-2xl font-bold text-slate-900 mb-4">{formData.title}</h1>
               
               <div className="flex flex-wrap gap-3 mb-6">
-                <div className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+                <div className="px-3 py-1 bg-pink-100 text-pink-800 rounded-full text-sm font-medium">
                   {policyCategories.find(cat => cat.value === formData.document_type)?.label || formData.document_type}
                 </div>
                 <div className="px-3 py-1 bg-slate-100 text-slate-800 rounded-full text-sm font-medium">
@@ -262,7 +262,7 @@ ${formData.compliance_measures}
                   Status: {formData.status}
                 </div>
                 {formData.department_id && (
-                  <div className="px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm font-medium">
+                  <div className="px-3 py-1 bg-pink-100 text-pink-800 rounded-full text-sm font-medium">
                     {departments.find(d => d.id === formData.department_id)?.name || 'Department'}
                   </div>
                 )}
@@ -321,7 +321,7 @@ ${formData.compliance_measures}
               <button
                 onClick={(e) => handleSubmit(e, true)}
                 disabled={isSubmitting}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
+                className="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
               >
                 Save as Draft
               </button>
@@ -361,7 +361,7 @@ ${formData.compliance_measures}
                       required
                       value={formData.title}
                       onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
                       placeholder="e.g., Remote Work Policy"
                     />
                   </div>
@@ -377,7 +377,7 @@ ${formData.compliance_measures}
                       required
                       value={formData.document_number}
                       onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
                       placeholder="e.g., POL-HR-001"
                     />
                   </div>
@@ -393,7 +393,7 @@ ${formData.compliance_measures}
                       required
                       value={formData.version}
                       onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
                       placeholder="e.g., 1.0"
                     />
                   </div>
@@ -408,7 +408,7 @@ ${formData.compliance_measures}
                       required
                       value={formData.document_type}
                       onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
                     >
                       {policyCategories.map(category => (
                         <option key={category.value} value={category.value}>{category.label}</option>
@@ -425,7 +425,7 @@ ${formData.compliance_measures}
                       name="department_id"
                       value={formData.department_id}
                       onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
                     >
                       <option value="">Select Department</option>
                       {departments.map(dept => (
@@ -444,7 +444,7 @@ ${formData.compliance_measures}
                       name="effective_date"
                       value={formData.effective_date}
                       onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
                     />
                   </div>
 
@@ -458,7 +458,7 @@ ${formData.compliance_measures}
                       name="review_date"
                       value={formData.review_date}
                       onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
                     />
                   </div>
 
@@ -470,7 +470,7 @@ ${formData.compliance_measures}
                       id="review_cycle"
                       name="review_cycle"
                       onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
                     >
                       <option value="">Select Review Cycle</option>
                       {reviewCycles.map(cycle => (
@@ -496,7 +496,7 @@ ${formData.compliance_measures}
                       required
                       value={formData.content}
                       onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
                       placeholder="Provide a comprehensive description of the policy..."
                     />
                   </div>
@@ -512,7 +512,7 @@ ${formData.compliance_measures}
                       required
                       value={formData.key_requirements}
                       onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
                       placeholder="Bullet point list of key requirements and rules..."
                     />
                     <p className="text-xs text-slate-500 mt-1">Enter each point on a new line</p>
@@ -529,7 +529,7 @@ ${formData.compliance_measures}
                       required
                       value={formData.affected_roles}
                       onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
                       placeholder="List the departments and roles this policy affects..."
                     />
                   </div>
@@ -545,7 +545,7 @@ ${formData.compliance_measures}
                       required
                       value={formData.compliance_measures}
                       onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
                       placeholder="Describe how compliance with this policy will be measured and enforced..."
                     />
                   </div>
@@ -560,7 +560,7 @@ ${formData.compliance_measures}
                       name="tags"
                       value={formData.tags}
                       onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
                       placeholder="Enter tags separated by commas (e.g., HR, Security, Onboarding)"
                     />
                     <p className="text-xs text-slate-500 mt-1">Separate multiple tags with commas</p>
@@ -585,7 +585,7 @@ ${formData.compliance_measures}
                     <p className="text-xs text-slate-500 mb-4">
                       Accepted formats: PDF, DOC, DOCX, XLS, XLSX (Max 10MB)
                     </p>
-                    <label className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors cursor-pointer">
+                    <label className="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg transition-colors cursor-pointer">
                       <span>Select Files</span>
                       <input
                         type="file"
@@ -620,7 +620,7 @@ ${formData.compliance_measures}
                             <div className="mt-1">
                               <div className="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
                                 <div 
-                                  className="h-full bg-indigo-600 rounded-full"
+                                  className="h-full bg-pink-600 rounded-full"
                                   style={{ width: `${uploadProgress[file.name] || 0}%` }}
                                 ></div>
                               </div>
@@ -654,7 +654,7 @@ ${formData.compliance_measures}
                     Required Approver(s)
                   </label>
                   <select
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
                     multiple
                   >
                     {approvers.map(approver => (
@@ -672,7 +672,7 @@ ${formData.compliance_measures}
                   </label>
                   <select
                     multiple
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
                     onChange={handleEmployeeSelect}
                     value={selectedEmployees}
                   >
@@ -695,7 +695,7 @@ ${formData.compliance_measures}
                     name="share_emails"
                     value={formData.share_emails}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
                     placeholder="Enter email addresses separated by commas"
                   />
                   <p className="text-xs text-slate-500 mt-1">Separate multiple emails with commas</p>
@@ -711,7 +711,7 @@ ${formData.compliance_measures}
                     rows={2}
                     value={formData.message}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
                     placeholder="Add an optional message to include when sharing this policy..."
                   />
                 </div>
@@ -725,7 +725,7 @@ ${formData.compliance_measures}
                     className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
                       shareSuccess
                         ? 'bg-emerald-100 text-emerald-800'
-                        : 'bg-blue-600 hover:bg-blue-700 text-white'
+                        : 'bg-pink-600 hover:bg-pink-700 text-white'
                     } disabled:opacity-50 disabled:cursor-not-allowed`}
                   >
                     {shareSuccess ? (
@@ -769,7 +769,7 @@ ${formData.compliance_measures}
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg flex items-center space-x-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-pink-600 hover:bg-pink-700 text-white px-6 py-2 rounded-lg flex items-center space-x-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Save className="w-4 h-4" />
                 <span>{isSubmitting ? 'Saving...' : 'Save as Draft'}</span>

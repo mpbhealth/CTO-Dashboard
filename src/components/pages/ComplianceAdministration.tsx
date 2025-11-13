@@ -60,7 +60,7 @@ const ComplianceAdministration: React.FC = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent" />
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-pink-600 border-t-transparent" />
       </div>
     );
   }
@@ -71,7 +71,7 @@ const ComplianceAdministration: React.FC = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center space-x-2">
-            <FileText className="w-8 h-8 text-blue-600" />
+            <FileText className="w-8 h-8 text-pink-600" />
             <span>Administration & Governance</span>
           </h1>
           <p className="text-gray-600 mt-1">
@@ -80,7 +80,7 @@ const ComplianceAdministration: React.FC = () => {
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          className="flex items-center space-x-2 px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700"
         >
           <Plus className="w-5 h-5" />
           <span>Create Document</span>
@@ -97,7 +97,7 @@ const ComplianceAdministration: React.FC = () => {
               placeholder="Search documents..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-pink-500"
             />
           </div>
           <div className="flex items-center space-x-2">
@@ -130,9 +130,9 @@ const ComplianceAdministration: React.FC = () => {
             {docs.filter(d => d.status === 'approved').length}
           </p>
         </div>
-        <div className="bg-blue-50 rounded-lg border-2 border-blue-200 p-4">
+        <div className="bg-pink-50 rounded-lg border-2 border-pink-200 p-4">
           <p className="text-sm text-gray-600">In Review</p>
-          <p className="text-2xl font-bold text-blue-800">
+          <p className="text-2xl font-bold text-pink-800">
             {docs.filter(d => d.status === 'in_review').length}
           </p>
         </div>
@@ -195,7 +195,7 @@ const ComplianceAdministration: React.FC = () => {
                     <td className="px-6 py-4">
                       <div className="flex space-x-2">
                         <button
-                          className="p-1 text-blue-600 hover:bg-blue-50 rounded"
+                          className="p-1 text-pink-600 hover:bg-pink-50 rounded"
                           title="View"
                         >
                           <Eye className="w-4 h-4" />
@@ -305,7 +305,7 @@ const ComplianceAdministration: React.FC = () => {
                 <button
                   type="submit"
                   disabled={createDoc.isPending}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300"
+                  className="px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 disabled:bg-gray-300"
                 >
                   {createDoc.isPending ? 'Creating...' : 'Create Document'}
                 </button>

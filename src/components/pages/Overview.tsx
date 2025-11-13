@@ -1,31 +1,6 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import {
-  Users,
-  Building2,
-  Calendar,
-  Plus,
-  Edit,
-  Trash2,
-  TrendingUp,
-  TrendingDown,
-  DollarSign,
-  Shield,
-  Activity,
-  Briefcase,
-  CheckCircle2,
-  AlertTriangle,
-  Server,
-  Code,
-  Target,
-  Clock,
-  FileText,
-  BarChart3,
-  PieChart,
-  Zap,
-  Package,
-  GitBranch,
-} from 'lucide-react';
+import { Users, Building2, Calendar, Plus, CreditCard as Edit, Trash2, TrendingUp, TrendingDown, DollarSign, Shield, Activity, Briefcase, CheckCircle2, AlertTriangle, Server, Code, Target, Clock, FileText, BarChart3, PieChart, Zap, Package, GitBranch, Ticket } from 'lucide-react';
 import {
   LineChart,
   Line,
@@ -48,6 +23,7 @@ import KPICard from '../ui/KPICard';
 import { useKPIData, useTeamMembers, useProjects } from '../../hooks/useSupabaseData';
 import { useDepartments, useEmployeeProfiles, useDepartmentMetrics } from '../../hooks/useOrganizationalData';
 import { useSaaSExpenses } from '../../hooks/useSaaSExpenses';
+import { useTicketStats, useTicketTrends } from '../../hooks/useTickets';
 import { useEnrollmentData } from '../../hooks/useEnrollmentData';
 import { useAudits } from '../../hooks/useComplianceData';
 import AddTeamMemberModal from '../modals/AddTeamMemberModal';
@@ -57,7 +33,7 @@ import { Database } from '../../types/database';
 
 type TeamMember = Database['public']['Tables']['team_members']['Row'];
 
-const COLORS = ['#6366F1', '#EC4899', '#10B981', '#F59E0B', '#8B5CF6', '#14B8A6', '#F97316', '#06B6D4'];
+const COLORS = ['#06B6D4', '#EC4899', '#10B981', '#F59E0B', '#14B8A6', '#F97316', '#0EA5E9', '#F43F5E'];
 
 export default function Overview() {
   const { data: kpiData = [], loading: kpiLoading, error: kpiError } = useKPIData();
@@ -73,6 +49,8 @@ export default function Overview() {
   } = useSaaSExpenses();
   const { data: enrollments = [], loading: enrollmentsLoading } = useEnrollmentData();
   const { data: audits = [], loading: auditsLoading } = useAudits();
+  const { stats: ticketStats, loading: ticketStatsLoading } = useTicketStats();
+  const { trends: ticketTrends, loading: ticketTrendsLoading } = useTicketTrends(10);
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -178,7 +156,7 @@ export default function Overview() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="flex flex-col items-center space-y-4">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-4 border-indigo-600"></div>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-4 border-pink-600"></div>
           <p className="text-slate-600 font-medium">Loading company insights...</p>
         </div>
       </div>
@@ -239,7 +217,7 @@ export default function Overview() {
       case 'Live':
         return 'text-emerald-600 bg-emerald-50';
       case 'Building':
-        return 'text-blue-600 bg-blue-50';
+        return 'text-pink-600 bg-pink-50';
       case 'Planning':
         return 'text-purple-600 bg-purple-50';
       case 'On Hold':
@@ -250,7 +228,7 @@ export default function Overview() {
   };
 
   return (
-    <div className="space-y-8 pb-8">
+    <div className="w-full space-y-6">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -268,7 +246,7 @@ export default function Overview() {
             <select
               value={timeRange}
               onChange={(e) => setTimeRange(e.target.value)}
-              className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent"
               aria-label="Select time range"
             >
               <option value="7d">Last 7 days</option>
@@ -278,7 +256,7 @@ export default function Overview() {
             </select>
             <button
               onClick={() => window.location.reload()}
-              className="p-2 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+              className="p-2 text-slate-600 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition-colors"
               title="Refresh data"
             >
               <Activity className="w-5 h-5" />
@@ -292,15 +270,15 @@ export default function Overview() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.1 }}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
       >
-        <div className="bg-gradient-to-br from-indigo-500 to-indigo-700 p-6 rounded-xl shadow-lg text-white">
+        <div className="bg-gradient-to-br from-sky-500 to-sky-700 p-6 rounded-xl shadow-lg text-white">
           <div className="flex items-center justify-between mb-4">
             <Building2 className="w-10 h-10 opacity-80" />
             <span className="text-3xl font-bold">{orgMetrics.departments}</span>
           </div>
           <h3 className="text-lg font-semibold">Active Departments</h3>
-          <p className="text-indigo-100 text-sm mt-1">{orgMetrics.totalHeadcount} total employees</p>
+          <p className="text-sky-100 text-sm mt-1">{orgMetrics.totalHeadcount} total employees</p>
         </div>
 
         <div className="bg-gradient-to-br from-emerald-500 to-emerald-700 p-6 rounded-xl shadow-lg text-white">
@@ -314,13 +292,13 @@ export default function Overview() {
           <p className="text-emerald-100 text-sm mt-1">{orgMetrics.activeEnrollments} active enrollments</p>
         </div>
 
-        <div className="bg-gradient-to-br from-purple-500 to-purple-700 p-6 rounded-xl shadow-lg text-white">
+        <div className="bg-gradient-to-br from-pink-500 to-pink-700 p-6 rounded-xl shadow-lg text-white">
           <div className="flex items-center justify-between mb-4">
             <Briefcase className="w-10 h-10 opacity-80" />
             <span className="text-3xl font-bold">{orgMetrics.activeProjects}</span>
           </div>
           <h3 className="text-lg font-semibold">Active Projects</h3>
-          <p className="text-purple-100 text-sm mt-1">{orgMetrics.completedProjects} completed</p>
+          <p className="text-pink-100 text-sm mt-1">{orgMetrics.completedProjects} completed</p>
         </div>
 
         <div className="bg-gradient-to-br from-amber-500 to-amber-700 p-6 rounded-xl shadow-lg text-white">
@@ -340,18 +318,142 @@ export default function Overview() {
         transition={{ duration: 0.5, delay: 0.2 }}
       >
         <h2 className="text-2xl font-bold text-slate-900 mb-4 flex items-center">
-          <BarChart3 className="w-6 h-6 mr-2 text-indigo-600" />
+          <BarChart3 className="w-6 h-6 mr-2 text-pink-600" />
           Key Performance Indicators
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {kpiData.map((kpi) => (
             <KPICard key={kpi.id} data={kpi} />
           ))}
         </div>
       </motion.div>
 
+      {/* IT Support Tickets Section */}
+      {ticketStats && !ticketStatsLoading && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="mt-8"
+        >
+          <h2 className="text-2xl font-bold text-slate-900 mb-4 flex items-center">
+            <Ticket className="w-6 h-6 mr-2 text-pink-600" />
+            IT Support Tickets
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-slate-600">Open Tickets</p>
+                  <p className="text-2xl font-bold text-pink-600 mt-1">
+                    {ticketStats?.open_tickets ?? 0}
+                  </p>
+                </div>
+                <Ticket className="w-8 h-8 text-pink-400" />
+              </div>
+              <p className="text-xs text-slate-500 mt-2">
+                {ticketStats?.in_progress_tickets ?? 0} in progress
+              </p>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-slate-600">Avg Resolution</p>
+                  <p className="text-2xl font-bold text-green-600 mt-1">
+                    {(ticketStats?.avg_resolution_time_hours ?? 0).toFixed(1)}h
+                  </p>
+                </div>
+                <Clock className="w-8 h-8 text-green-400" />
+              </div>
+              <p className="text-xs text-slate-500 mt-2">
+                {ticketStats?.resolved_tickets ?? 0} resolved
+              </p>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-slate-600">SLA Compliance</p>
+                  <p className="text-2xl font-bold text-teal-600 mt-1">
+                    {(ticketStats?.sla_compliance_percentage ?? 0).toFixed(0)}%
+                  </p>
+                </div>
+                <CheckCircle2 className="w-8 h-8 text-teal-400" />
+              </div>
+              <p className="text-xs text-slate-500 mt-2">
+                Meeting service levels
+              </p>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-slate-600">Critical Tickets</p>
+                  <p className="text-2xl font-bold text-red-600 mt-1">
+                    {((ticketStats?.tickets_by_priority?.critical ?? 0) + (ticketStats?.tickets_by_priority?.urgent ?? 0))}
+                  </p>
+                </div>
+                <AlertTriangle className="w-8 h-8 text-red-400" />
+              </div>
+              <p className="text-xs text-slate-500 mt-2">
+                Requires immediate attention
+              </p>
+            </div>
+          </div>
+
+          {/* IT Support Growth Trends */}
+          {!ticketTrendsLoading && ticketTrends.length > 0 && (
+            <div className="mt-6 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+              <h3 className="text-lg font-semibold text-slate-900 mb-4">Ticket Trends</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={ticketTrends}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
+                  <XAxis
+                    dataKey="month"
+                    stroke="#64748B"
+                    style={{ fontSize: '12px' }}
+                  />
+                  <YAxis
+                    stroke="#64748B"
+                    style={{ fontSize: '12px' }}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: 'white',
+                      border: '1px solid #E2E8F0',
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                    }}
+                  />
+                  <Legend />
+                  <Line
+                    type="monotone"
+                    dataKey="total"
+                    stroke="#6366F1"
+                    strokeWidth={2}
+                    dot={{ fill: '#6366F1', strokeWidth: 2, r: 4 }}
+                    activeDot={{ r: 6 }}
+                    name="Projects"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="resolved"
+                    stroke="#10B981"
+                    strokeWidth={2}
+                    dot={{ fill: '#10B981', strokeWidth: 2, r: 4 }}
+                    activeDot={{ r: 6 }}
+                    name="Employees"
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          )}
+        </motion.div>
+      )}
+
       {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Organization Growth Trends */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
@@ -361,31 +463,38 @@ export default function Overview() {
         >
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-slate-900 flex items-center">
-              <TrendingUp className="w-5 h-5 mr-2 text-indigo-600" />
+              <TrendingUp className="w-5 h-5 mr-2 text-pink-600" />
               Growth Trends
             </h3>
           </div>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={280}>
             <AreaChart data={trendData}>
               <defs>
                 <linearGradient id="colorProjects" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#6366F1" stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor="#6366F1" stopOpacity={0}/>
+                  <stop offset="5%" stopColor="#06B6D4" stopOpacity={0.8}/>
+                  <stop offset="95%" stopColor="#06B6D4" stopOpacity={0}/>
                 </linearGradient>
                 <linearGradient id="colorEmployees" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#10B981" stopOpacity={0.8}/>
                   <stop offset="95%" stopColor="#10B981" stopOpacity={0}/>
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip />
+              <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
+              <XAxis dataKey="month" style={{ fontSize: '12px' }} />
+              <YAxis style={{ fontSize: '12px' }} />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: 'white',
+                  border: '1px solid #E2E8F0',
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                }}
+              />
               <Legend />
               <Area
                 type="monotone"
                 dataKey="projects"
-                stroke="#6366F1"
+                stroke="#06B6D4"
                 fillOpacity={1}
                 fill="url(#colorProjects)"
                 name="Projects"
@@ -411,19 +520,19 @@ export default function Overview() {
         >
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-slate-900 flex items-center">
-              <PieChart className="w-5 h-5 mr-2 text-indigo-600" />
+              <PieChart className="w-5 h-5 mr-2 text-pink-600" />
               Team Distribution
             </h3>
           </div>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={280}>
             <RechartsPieChart>
               <Pie
                 data={departmentDistribution}
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                outerRadius={80}
+                label={({ name, percent }) => `${name.length > 12 ? name.substring(0, 10) + '...' : name} ${(percent * 100).toFixed(0)}%`}
+                outerRadius={85}
                 fill="#8884d8"
                 dataKey="value"
               >
@@ -445,19 +554,31 @@ export default function Overview() {
         >
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-slate-900 flex items-center">
-              <DollarSign className="w-5 h-5 mr-2 text-indigo-600" />
+              <DollarSign className="w-5 h-5 mr-2 text-pink-600" />
               Budget Allocation by Department
             </h3>
           </div>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={280}>
             <BarChart data={budgetAllocation}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} />
-              <YAxis />
+              <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
+              <XAxis
+                dataKey="name"
+                angle={-45}
+                textAnchor="end"
+                height={90}
+                style={{ fontSize: '11px' }}
+              />
+              <YAxis style={{ fontSize: '12px' }} />
               <Tooltip
                 formatter={(value: number) => `$${value.toLocaleString()}`}
+                contentStyle={{
+                  backgroundColor: 'white',
+                  border: '1px solid #E2E8F0',
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                }}
               />
-              <Bar dataKey="budget" fill="#6366F1" name="Budget" />
+              <Bar dataKey="budget" fill="#06B6D4" name="Budget" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </motion.div>
@@ -471,11 +592,11 @@ export default function Overview() {
         >
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-slate-900 flex items-center">
-              <GitBranch className="w-5 h-5 mr-2 text-indigo-600" />
+              <GitBranch className="w-5 h-5 mr-2 text-pink-600" />
               Project Portfolio Status
             </h3>
           </div>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={280}>
             <RechartsPieChart>
               <Pie
                 data={projectStatusData}
@@ -483,7 +604,7 @@ export default function Overview() {
                 cy="50%"
                 labelLine={false}
                 label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                outerRadius={80}
+                outerRadius={85}
                 fill="#8884d8"
                 dataKey="value"
               >
@@ -498,7 +619,7 @@ export default function Overview() {
       </div>
 
       {/* Company Info Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Team Directory */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -508,22 +629,22 @@ export default function Overview() {
         >
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-2">
-              <Users className="w-5 h-5 text-indigo-600" />
+              <Users className="w-5 h-5 text-pink-600" />
               <h2 className="text-xl font-semibold text-slate-900">Team Directory</h2>
-              <span className="bg-indigo-100 text-indigo-700 text-xs font-semibold px-2 py-1 rounded-full">
+              <span className="bg-pink-100 text-pink-700 text-xs font-semibold px-2 py-1 rounded-full">
                 {teamMembers.length}
               </span>
             </div>
             <button
               onClick={() => setIsAddModalOpen(true)}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-lg flex items-center space-x-2 transition-colors text-sm"
+              className="bg-pink-600 hover:bg-pink-700 text-white px-3 py-2 rounded-lg flex items-center space-x-2 transition-colors text-sm"
             >
               <Plus className="w-4 h-4" />
               <span>Add Member</span>
             </button>
           </div>
-          
-          <div className="space-y-3 max-h-96 overflow-y-auto">
+
+          <div className="space-y-3 max-h-[32rem] overflow-y-auto pr-2">
             {teamMembers.length === 0 ? (
               <div className="text-center py-8 text-slate-500">
                 <Users className="w-12 h-12 mx-auto mb-2 opacity-50" />
@@ -536,8 +657,8 @@ export default function Overview() {
                   className="flex items-center justify-between p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors"
                 >
                   <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
-                      <span className="text-sm font-medium text-indigo-600">
+                    <div className="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center">
+                      <span className="text-sm font-medium text-pink-600">
                         {member.name.split(' ').map(n => n[0]).join('')}
                       </span>
                     </div>
@@ -557,7 +678,7 @@ export default function Overview() {
                     <div className="flex items-center space-x-1">
                       <button
                         onClick={() => handleEditMember(member)}
-                        className="p-1 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
+                        className="p-1 text-slate-400 hover:text-pink-600 hover:bg-pink-50 rounded transition-colors"
                         title="Edit team member"
                       >
                         <Edit className="w-4 h-4" />
@@ -585,13 +706,13 @@ export default function Overview() {
           className="bg-white p-6 rounded-xl shadow-sm border border-slate-200"
         >
           <div className="flex items-center space-x-2 mb-4">
-            <Building2 className="w-5 h-5 text-indigo-600" />
+            <Building2 className="w-5 h-5 text-pink-600" />
             <h2 className="text-xl font-semibold text-slate-900">Departments</h2>
-            <span className="bg-indigo-100 text-indigo-700 text-xs font-semibold px-2 py-1 rounded-full">
+            <span className="bg-pink-100 text-pink-700 text-xs font-semibold px-2 py-1 rounded-full">
               {departments.filter(d => d.is_active).length}
             </span>
           </div>
-          <div className="space-y-3 max-h-96 overflow-y-auto">
+          <div className="space-y-3 max-h-[32rem] overflow-y-auto pr-2">
             {departments.filter(d => d.is_active).length === 0 ? (
               <div className="text-center py-8 text-slate-500">
                 <Building2 className="w-12 h-12 mx-auto mb-2 opacity-50" />
@@ -604,7 +725,7 @@ export default function Overview() {
                 .map((dept) => (
                   <div
                     key={dept.id}
-                    className="flex items-center justify-between p-4 border border-slate-200 rounded-lg hover:border-indigo-300 hover:shadow-sm transition-all"
+                    className="flex items-center justify-between p-4 border border-slate-200 rounded-lg hover:border-pink-300 hover:shadow-sm transition-all"
                   >
                     <div className="flex-1">
                       <h3 className="font-semibold text-slate-900">{dept.name}</h3>
@@ -640,7 +761,7 @@ export default function Overview() {
       </div>
 
       {/* Financial Overview & Technology Health */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Financial Overview */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -649,7 +770,7 @@ export default function Overview() {
           className="bg-white p-6 rounded-xl shadow-sm border border-slate-200"
         >
           <div className="flex items-center space-x-2 mb-4">
-            <DollarSign className="w-5 h-5 text-indigo-600" />
+            <DollarSign className="w-5 h-5 text-pink-600" />
             <h2 className="text-xl font-semibold text-slate-900">Financial Overview</h2>
           </div>
           <div className="space-y-4">
@@ -672,14 +793,14 @@ export default function Overview() {
               </div>
               <Package className="w-8 h-8 text-amber-600" />
             </div>
-            <div className="flex items-center justify-between p-4 bg-indigo-50 rounded-lg">
+            <div className="flex items-center justify-between p-4 bg-pink-50 rounded-lg">
               <div>
                 <p className="text-sm text-slate-600">Total Dept Budget</p>
-                <p className="text-2xl font-bold text-indigo-700">
+                <p className="text-2xl font-bold text-pink-700">
                   ${(orgMetrics.totalBudget / 1000000).toFixed(2)}M
                 </p>
               </div>
-              <Briefcase className="w-8 h-8 text-indigo-600" />
+              <Briefcase className="w-8 h-8 text-pink-600" />
             </div>
             <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
               <div>
@@ -704,25 +825,25 @@ export default function Overview() {
           className="bg-white p-6 rounded-xl shadow-sm border border-slate-200"
         >
           <div className="flex items-center space-x-2 mb-4">
-            <Code className="w-5 h-5 text-indigo-600" />
+            <Code className="w-5 h-5 text-pink-600" />
             <h2 className="text-xl font-semibold text-slate-900">Technology Health</h2>
           </div>
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
+            <div className="flex items-center justify-between p-4 bg-pink-50 rounded-lg">
               <div>
                 <p className="text-sm text-slate-600">Active Projects</p>
-                <p className="text-2xl font-bold text-blue-700">{orgMetrics.activeProjects}</p>
+                <p className="text-2xl font-bold text-pink-700">{orgMetrics.activeProjects}</p>
                 <p className="text-xs text-slate-600 mt-1">{orgMetrics.completedProjects} completed</p>
               </div>
-              <Briefcase className="w-8 h-8 text-blue-600" />
+              <Briefcase className="w-8 h-8 text-pink-600" />
             </div>
-            <div className="flex items-center justify-between p-4 bg-purple-50 rounded-lg">
+            <div className="flex items-center justify-between p-4 bg-cyan-50 rounded-lg">
               <div>
                 <p className="text-sm text-slate-600">SaaS Applications</p>
-                <p className="text-2xl font-bold text-purple-700">{orgMetrics.saasTools}</p>
+                <p className="text-2xl font-bold text-cyan-700">{orgMetrics.saasTools}</p>
                 <p className="text-xs text-slate-600 mt-1">Technology stack</p>
               </div>
-              <Server className="w-8 h-8 text-purple-600" />
+              <Server className="w-8 h-8 text-cyan-600" />
             </div>
             <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
               <div>
@@ -752,21 +873,21 @@ export default function Overview() {
         className="bg-white p-6 rounded-xl shadow-sm border border-slate-200"
       >
         <div className="flex items-center space-x-2 mb-4">
-          <Briefcase className="w-5 h-5 text-indigo-600" />
+          <Briefcase className="w-5 h-5 text-pink-600" />
           <h2 className="text-xl font-semibold text-slate-900">Active Projects</h2>
-          <span className="bg-indigo-100 text-indigo-700 text-xs font-semibold px-2 py-1 rounded-full">
+          <span className="bg-pink-100 text-pink-700 text-xs font-semibold px-2 py-1 rounded-full">
             {projects.length}
           </span>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {projects.slice(0, 6).map((project) => (
             <div
               key={project.id}
-              className="border border-slate-200 rounded-lg p-4 hover:border-indigo-300 hover:shadow-sm transition-all"
+              className="border border-slate-200 rounded-lg p-4 hover:border-pink-300 hover:shadow-sm transition-all"
             >
-              <div className="flex items-start justify-between mb-2">
-                <h3 className="font-semibold text-slate-900 line-clamp-1">{project.name}</h3>
-                <span className={`text-xs px-2 py-1 rounded-full font-medium ${getProjectStatusColor(project.status)}`}>
+              <div className="flex items-start justify-between mb-2 gap-2">
+                <h3 className="font-semibold text-slate-900 line-clamp-1 flex-1 min-w-0">{project.name}</h3>
+                <span className={`text-xs px-2 py-1 rounded-full font-medium flex-shrink-0 ${getProjectStatusColor(project.status)}`}>
                   {project.status}
                 </span>
               </div>
@@ -780,7 +901,7 @@ export default function Overview() {
                 </div>
                 <div className="w-full bg-slate-200 rounded-full h-2 relative overflow-hidden">
                   <div
-                    className="bg-indigo-600 h-2 rounded-full transition-all absolute left-0 top-0"
+                    className="bg-pink-600 h-2 rounded-full transition-all absolute left-0 top-0"
                     style={{ width: `${project.progress}%` }}
                   />
                 </div>
@@ -798,7 +919,7 @@ export default function Overview() {
         className="bg-white p-6 rounded-xl shadow-sm border border-slate-200"
       >
         <div className="flex items-center space-x-2 mb-4">
-          <Clock className="w-5 h-5 text-indigo-600" />
+          <Clock className="w-5 h-5 text-pink-600" />
           <h2 className="text-xl font-semibold text-slate-900">Recent Activity</h2>
         </div>
         <div className="space-y-3">
@@ -841,15 +962,15 @@ export default function Overview() {
                 className="flex items-center space-x-3 p-3 hover:bg-slate-50 rounded-lg transition-colors"
               >
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                  className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
                     activity.type === 'project'
-                      ? 'bg-blue-100 text-blue-600'
+                      ? 'bg-pink-100 text-pink-600'
                       : activity.type === 'security'
                       ? 'bg-green-100 text-green-600'
                       : activity.type === 'team'
-                      ? 'bg-purple-100 text-purple-600'
+                      ? 'bg-sky-100 text-sky-600'
                       : activity.type === 'organization'
-                      ? 'bg-indigo-100 text-indigo-600'
+                      ? 'bg-pink-100 text-pink-600'
                       : 'bg-amber-100 text-amber-600'
                   }`}
                 >

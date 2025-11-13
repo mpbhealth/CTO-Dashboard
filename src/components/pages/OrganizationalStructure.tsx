@@ -45,7 +45,7 @@ export default function OrganizationalStructure() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-pink-600"></div>
       </div>
     );
   }
@@ -148,7 +148,7 @@ export default function OrganizationalStructure() {
             <input
               type="text"
               placeholder="Search departments, employees..."
-              className="pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -166,7 +166,7 @@ export default function OrganizationalStructure() {
           
           <button 
             onClick={handleAddDepartment}
-            className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors">
+            className="flex items-center space-x-2 px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg transition-colors">
             <Plus className="w-4 h-4" />
             <span>Add Department</span>
           </button>
@@ -177,8 +177,8 @@ export default function OrganizationalStructure() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
-              <Building2 className="w-6 h-6 text-indigo-600" />
+            <div className="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center">
+              <Building2 className="w-6 h-6 text-pink-600" />
             </div>
             <div>
               <p className="text-sm font-medium text-slate-600">Departments</p>
@@ -241,7 +241,7 @@ export default function OrganizationalStructure() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center space-x-2 py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
                   activeTab === tab.id
-                    ? 'border-indigo-500 text-indigo-600'
+                    ? 'border-pink-500 text-pink-600'
                     : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
                 }`}
               >
@@ -264,7 +264,7 @@ export default function OrganizationalStructure() {
                   onClick={toggleEditMode}
                   className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm ${
                     isEditMode 
-                      ? 'bg-indigo-600 text-white hover:bg-indigo-700' 
+                      ? 'bg-pink-600 text-white hover:bg-pink-700' 
                       : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                   }`}>
                   {isEditMode ? <Save className="w-4 h-4" /> : <Edit className="w-4 h-4" />}
@@ -328,7 +328,7 @@ export default function OrganizationalStructure() {
                         <div className="flex items-center space-x-2">
                           <div className="w-24 bg-slate-200 rounded-full h-2">
                             <div 
-                              className="bg-indigo-500 h-2 rounded-full transition-all duration-300"
+                              className="bg-pink-500 h-2 rounded-full transition-all duration-300"
                               style={{ width: `${percentage}%` }}
                             />
                           </div>
@@ -382,7 +382,7 @@ export default function OrganizationalStructure() {
           <div className="p-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-semibold text-slate-900">Department Workflows</h2>
-              <button className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors">
+              <button className="flex items-center space-x-2 px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg transition-colors">
                 <Plus className="w-4 h-4" />
                 <span>Create Workflow</span>
               </button>

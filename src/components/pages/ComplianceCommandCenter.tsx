@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   FileText,
   AlertTriangle,
@@ -20,11 +21,8 @@ import {
 import { TaskStatusChip, PriorityChip, SeverityChip } from '../compliance/ComplianceChips';
 import type { KPIData } from '../../types/compliance';
 
-interface ComplianceCommandCenterProps {
-  onTabChange?: (tab: string) => void;
-}
-
-const ComplianceCommandCenter: React.FC<ComplianceCommandCenterProps> = ({ onTabChange }) => {
+const ComplianceCommandCenter: React.FC = () => {
+  const navigate = useNavigate();
   const { data: stats, isLoading: statsLoading } = useComplianceDashboard();
   const { data: myTasks = [] } = useMyTasks();
   const { data: auditLog = [] } = useAuditLog();
@@ -86,7 +84,7 @@ const ComplianceCommandCenter: React.FC<ComplianceCommandCenterProps> = ({ onTab
       case 'error':
         return 'bg-red-50 border-red-200';
       case 'info':
-        return 'bg-blue-50 border-blue-200';
+        return 'bg-pink-50 border-pink-200';
       default:
         return 'bg-gray-50 border-gray-200';
     }
@@ -101,7 +99,7 @@ const ComplianceCommandCenter: React.FC<ComplianceCommandCenterProps> = ({ onTab
       case 'error':
         return 'text-red-800';
       case 'info':
-        return 'text-blue-800';
+        return 'text-pink-800';
       default:
         return 'text-gray-800';
     }
@@ -111,32 +109,38 @@ const ComplianceCommandCenter: React.FC<ComplianceCommandCenterProps> = ({ onTab
     {
       label: 'New Incident',
       icon: AlertTriangle,
-      tab: 'compliance/incidents',
+      route: '/ctod/compliance/incidents',
       color: 'bg-red-600 hover:bg-red-700',
     },
     {
       label: 'Log PHI Access',
       icon: Shield,
-      tab: 'compliance/phi-minimum',
-      color: 'bg-blue-600 hover:bg-blue-700',
+      route: '/ctod/compliance/phi-minimum',
+      color: 'bg-pink-600 hover:bg-pink-700',
     },
     {
       label: 'Create Policy',
       icon: FileText,
-      tab: 'compliance/administration',
+      route: '/ctod/compliance/administration',
       color: 'bg-green-600 hover:bg-green-700',
     },
     {
       label: 'Upload Evidence',
       icon: FileCheck,
-      tab: 'compliance/templates-tools',
-      color: 'bg-purple-600 hover:bg-purple-700',
+      route: '/ctod/compliance/templates-tools',
+      color: 'bg-orange-600 hover:bg-orange-700',
+    },
+    {
+      label: 'Employee Documents',
+      icon: FileText,
+      route: '/ctod/compliance/employee-documents',
+      color: 'bg-orange-600 hover:bg-orange-700',
     },
     {
       label: 'Record Training',
       icon: Users,
-      tab: 'compliance/training',
-      color: 'bg-indigo-600 hover:bg-indigo-700',
+      route: '/ctod/compliance/training',
+      color: 'bg-teal-600 hover:bg-teal-700',
     },
   ];
 
@@ -162,7 +166,7 @@ const ComplianceCommandCenter: React.FC<ComplianceCommandCenterProps> = ({ onTab
   if (statsLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent" />
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-pink-600 border-t-transparent" />
       </div>
     );
   }
@@ -174,7 +178,7 @@ const ComplianceCommandCenter: React.FC<ComplianceCommandCenterProps> = ({ onTab
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold mb-2">Compliance Command Center</h1>
-            <p className="text-blue-100">HIPAA Compliance Management System</p>
+            <p className="text-pink-100">HIPAA Compliance Management System</p>
           </div>
           <Shield className="w-16 h-16 opacity-50" />
         </div>
@@ -215,11 +219,11 @@ const ComplianceCommandCenter: React.FC<ComplianceCommandCenterProps> = ({ onTab
           <Activity className="w-5 h-5" />
           <span>Quick Actions</span>
         </h2>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
           {quickActions.map((action, idx) => (
             <button
               key={idx}
-              onClick={() => onTabChange?.(action.tab)}
+              onClick={() => navigate(action.route)}
               className={`${action.color} text-white rounded-lg p-4 flex flex-col items-center justify-center space-y-2 transition-all hover:scale-105`}
             >
               <action.icon className="w-6 h-6" />
@@ -240,8 +244,8 @@ const ComplianceCommandCenter: React.FC<ComplianceCommandCenterProps> = ({ onTab
               <span className="text-sm text-gray-500">({myTasks.length})</span>
             </h2>
             <button
-              onClick={() => onTabChange?.('compliance/tasks')}
-              className="text-sm text-blue-600 hover:text-blue-700"
+              onClick={() => navigate('/ctod/compliance/dashboard')}
+              className="text-sm text-pink-600 hover:text-pink-700"
             >
               View All
             </button>
@@ -316,7 +320,7 @@ const ComplianceCommandCenter: React.FC<ComplianceCommandCenterProps> = ({ onTab
                   key={log.id}
                   className="flex items-start space-x-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100"
                 >
-                  <div className="w-2 h-2 rounded-full bg-blue-600 mt-2" />
+                  <div className="w-2 h-2 rounded-full bg-pink-600 mt-2" />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-gray-900">
                       <span className="font-medium">{log.actor_email || 'System'}</span>{' '}
@@ -343,24 +347,25 @@ const ComplianceCommandCenter: React.FC<ComplianceCommandCenterProps> = ({ onTab
         <h2 className="text-lg font-semibold text-gray-900 mb-4">
           Compliance Sections
         </h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {[
-            { name: 'Administration & Governance', tab: 'compliance/administration', icon: FileText },
-            { name: 'Training & Awareness', tab: 'compliance/training', icon: Users },
-            { name: 'PHI & Minimum Necessary', tab: 'compliance/phi-minimum', icon: Shield },
-            { name: 'Technical Safeguards', tab: 'compliance/technical-safeguards', icon: Shield },
-            { name: 'Business Associates', tab: 'compliance/baas', icon: FileCheck },
-            { name: 'Incidents & Breaches', tab: 'compliance/incidents', icon: AlertTriangle },
-            { name: 'Audits & Monitoring', tab: 'compliance/audits', icon: Activity },
-            { name: 'Templates & Tools', tab: 'compliance/templates-tools', icon: FileText },
+            { name: 'Administration & Governance', route: '/ctod/compliance/administration', icon: FileText },
+            { name: 'Training & Awareness', route: '/ctod/compliance/training', icon: Users },
+            { name: 'PHI & Minimum Necessary', route: '/ctod/compliance/phi-minimum', icon: Shield },
+            { name: 'Technical Safeguards', route: '/ctod/compliance/technical-safeguards', icon: Shield },
+            { name: 'Business Associates', route: '/ctod/compliance/baas', icon: FileCheck },
+            { name: 'Incidents & Breaches', route: '/ctod/compliance/incidents', icon: AlertTriangle },
+            { name: 'Audits & Monitoring', route: '/ctod/compliance/audits', icon: Activity },
+            { name: 'Templates & Tools', route: '/ctod/compliance/templates-tools', icon: FileText },
+            { name: 'Employee Documents', route: '/ctod/compliance/employee-documents', icon: FileText },
           ].map((section, idx) => (
             <button
               key={idx}
-              onClick={() => onTabChange?.(section.tab)}
-              className="p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group text-left"
+              onClick={() => navigate(section.route)}
+              className="p-4 border-2 border-gray-200 rounded-lg hover:border-pink-500 hover:bg-pink-50 transition-all group text-left"
             >
-              <section.icon className="w-8 h-8 text-gray-400 group-hover:text-blue-600 mb-2" />
-              <h3 className="font-medium text-gray-900 text-sm group-hover:text-blue-600">
+              <section.icon className="w-8 h-8 text-gray-400 group-hover:text-pink-600 mb-2" />
+              <h3 className="font-medium text-gray-900 text-sm group-hover:text-pink-600">
                 {section.name}
               </h3>
             </button>

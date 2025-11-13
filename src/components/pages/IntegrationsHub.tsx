@@ -520,7 +520,7 @@ export default function IntegrationsHub() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-600"></div>
       </div>
     );
   }
@@ -546,7 +546,7 @@ export default function IntegrationsHub() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center space-x-2 py-2 px-1 border-b-2 font-medium text-sm ${
                   activeTab === tab.id
-                    ? 'border-blue-500 text-blue-600'
+                    ? 'border-pink-500 text-pink-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
@@ -567,7 +567,7 @@ export default function IntegrationsHub() {
               <h2 className="text-lg font-medium text-gray-900">API Credentials</h2>
               <button
                 onClick={() => setIsAddingSecret(true)}
-                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+                className="bg-pink-600 text-white px-4 py-2 rounded-md hover:bg-pink-700 transition-colors"
               >
                 Add Credential
               </button>
@@ -617,7 +617,7 @@ export default function IntegrationsHub() {
                   </button>
                   <button
                     type="submit"
-                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                    className="bg-pink-600 text-white px-4 py-2 rounded-md hover:bg-pink-700"
                   >
                     Save
                   </button>
@@ -629,7 +629,7 @@ export default function IntegrationsHub() {
               {secrets.map((secret) => (
                 <div key={secret.id}>
                   {editingSecretId === secret.id ? (
-                    <form onSubmit={(e) => handleUpdateSecret(secret.id, e)} className="p-4 border border-blue-300 rounded-lg bg-blue-50">
+                    <form onSubmit={(e) => handleUpdateSecret(secret.id, e)} className="p-4 border border-pink-300 rounded-lg bg-pink-50">
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-1">Service</label>
@@ -675,7 +675,7 @@ export default function IntegrationsHub() {
                         </button>
                         <button
                           type="submit"
-                          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                          className="bg-pink-600 text-white px-4 py-2 rounded-md hover:bg-pink-700"
                         >
                           Update
                         </button>
@@ -701,7 +701,7 @@ export default function IntegrationsHub() {
                         </button>
                         <button
                           onClick={() => startEditingSecret(secret)}
-                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
+                          className="p-2 text-pink-600 hover:bg-pink-50 rounded-md transition-colors"
                           title="Edit credential"
                         >
                           <Edit2 className="h-4 w-4" />
@@ -729,7 +729,7 @@ export default function IntegrationsHub() {
               <h2 className="text-lg font-medium text-gray-900">Webhook Configuration</h2>
               <button
                 onClick={() => setIsAddingWebhook(true)}
-                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+                className="bg-pink-600 text-white px-4 py-2 rounded-md hover:bg-pink-700 transition-colors"
               >
                 Add Webhook
               </button>
@@ -789,7 +789,7 @@ export default function IntegrationsHub() {
                   </button>
                   <button
                     type="submit"
-                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                    className="bg-pink-600 text-white px-4 py-2 rounded-md hover:bg-pink-700"
                   >
                     Save
                   </button>
@@ -801,7 +801,7 @@ export default function IntegrationsHub() {
               {webhooks.map((webhook) => (
                 <div key={webhook.id}>
                   {editingWebhookId === webhook.id ? (
-                    <form onSubmit={(e) => handleUpdateWebhook(webhook.id, e)} className="p-4 border border-blue-300 rounded-lg bg-blue-50">
+                    <form onSubmit={(e) => handleUpdateWebhook(webhook.id, e)} className="p-4 border border-pink-300 rounded-lg bg-pink-50">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-1">Event</label>
@@ -864,7 +864,7 @@ export default function IntegrationsHub() {
                         </button>
                         <button
                           type="submit"
-                          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                          className="bg-pink-600 text-white px-4 py-2 rounded-md hover:bg-pink-700"
                         >
                           Update
                         </button>
@@ -890,7 +890,7 @@ export default function IntegrationsHub() {
                         </button>
                         <button
                           onClick={() => startEditingWebhook(webhook)}
-                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
+                          className="p-2 text-pink-600 hover:bg-pink-50 rounded-md transition-colors"
                           title="Edit webhook"
                         >
                           <Edit2 className="h-4 w-4" />
@@ -918,7 +918,7 @@ export default function IntegrationsHub() {
               <h2 className="text-lg font-medium text-gray-900">SFTP/FTP Configuration</h2>
               <button
                 onClick={() => setIsAddingSFTP(true)}
-                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+                className="bg-pink-600 text-white px-4 py-2 rounded-md hover:bg-pink-700 transition-colors"
               >
                 Add SFTP Config
               </button>
@@ -999,7 +999,7 @@ export default function IntegrationsHub() {
                   </button>
                   <button
                     type="submit"
-                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                    className="bg-pink-600 text-white px-4 py-2 rounded-md hover:bg-pink-700"
                   >
                     Save
                   </button>
@@ -1011,7 +1011,7 @@ export default function IntegrationsHub() {
               {sftpConfigs.map((config) => (
                 <div key={config.id}>
                   {editingSFTPId === config.id ? (
-                    <form onSubmit={(e) => handleUpdateSFTP(config.id, e)} className="p-4 border border-blue-300 rounded-lg bg-blue-50">
+                    <form onSubmit={(e) => handleUpdateSFTP(config.id, e)} className="p-4 border border-pink-300 rounded-lg bg-pink-50">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
@@ -1097,7 +1097,7 @@ export default function IntegrationsHub() {
                         </button>
                         <button
                           type="submit"
-                          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                          className="bg-pink-600 text-white px-4 py-2 rounded-md hover:bg-pink-700"
                         >
                           Update
                         </button>
@@ -1124,7 +1124,7 @@ export default function IntegrationsHub() {
                         </button>
                         <button
                           onClick={() => startEditingSFTP(config)}
-                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
+                          className="p-2 text-pink-600 hover:bg-pink-50 rounded-md transition-colors"
                           title="Edit SFTP config"
                         >
                           <Edit2 className="h-4 w-4" />
@@ -1153,7 +1153,7 @@ export default function IntegrationsHub() {
               {!mondayConfig && (
                 <button
                   onClick={() => setIsAddingMonday(true)}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+                  className="bg-pink-600 text-white px-4 py-2 rounded-md hover:bg-pink-700 transition-colors"
                 >
                   Configure Monday.com
                 </button>
@@ -1214,7 +1214,7 @@ export default function IntegrationsHub() {
                   </button>
                   <button
                     type="submit"
-                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                    className="bg-pink-600 text-white px-4 py-2 rounded-md hover:bg-pink-700"
                   >
                     Save Configuration
                   </button>
@@ -1321,7 +1321,7 @@ export default function IntegrationsHub() {
               <div className="flex justify-end">
                 <button
                   type="submit"
-                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+                  className="bg-pink-600 text-white px-4 py-2 rounded-md hover:bg-pink-700 transition-colors"
                 >
                   Save Marketing Settings
                 </button>

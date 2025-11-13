@@ -10,6 +10,7 @@ import {
   Search, 
   Star, 
   TrendingUp, 
+  TrendingDown,
   Users, 
   CheckCircle,
   Award,
@@ -26,12 +27,35 @@ import {
   type PerformanceReview
 } from '../../hooks/usePerformanceSystem';
 
+interface EmployeeKpiMeasurement {
+  id: string;
+  employee_id: string;
+  name?: string;
+  metric_name?: string;
+  status?: 'above_target' | 'on_target' | 'below_target' | 'critical' | string;
+  measurement_date: string;
+  actual_value?: number;
+  target_value?: number;
+  unit?: string;
+  trend?: string;
+  description?: string;
+  value?: number;
+  kpi?: {
+    name?: string;
+    description?: string;
+    measurement_unit?: string;
+    target_value?: number;
+  };
+}
+
 export default function EmployeePerformance() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [selectedEmployee, setSelectedEmployee] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [reviewCycle, setReviewCycle] = useState('all');
+  const [activeKpi, setActiveKpi] = useState<EmployeeKpiMeasurement | null>(null);
+  const closeKpiModal = () => setActiveKpi(null);
   
   const { data: employees, loading: employeesLoading } = useEmployeeProfiles();
   
@@ -59,7 +83,7 @@ export default function EmployeePerformance() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-pink-600"></div>
       </div>
     );
   }
@@ -86,9 +110,10 @@ export default function EmployeePerformance() {
     : feedback;
   
   // Get employee KPIs
-  const employeeKpis = selectedEmployee
-    ? kpiMeasurements.filter(m => m.employee_id === selectedEmployee)
-    : kpiMeasurements;
+  const typedKpis = (kpiMeasurements as EmployeeKpiMeasurement[]);
+  const employeeKpis: EmployeeKpiMeasurement[] = selectedEmployee
+    ? typedKpis.filter(m => m.employee_id === selectedEmployee)
+    : typedKpis;
   
   // Get employee milestones
   const employeeMilestones = selectedEmployee
@@ -109,9 +134,9 @@ export default function EmployeePerformance() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'draft':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-pink-100 text-pink-800';
       case 'submitted':
-        return 'bg-indigo-100 text-indigo-800';
+        return 'bg-pink-100 text-pink-800';
       case 'under_review':
         return 'bg-amber-100 text-amber-800';
       case 'approved':
@@ -128,7 +153,7 @@ export default function EmployeePerformance() {
       case 'above_target':
         return 'text-emerald-500';
       case 'on_target':
-        return 'text-blue-500';
+        return 'text-pink-500';
       case 'below_target':
         return 'text-amber-500';
       case 'critical':
@@ -143,7 +168,7 @@ export default function EmployeePerformance() {
       case 'completed':
         return 'bg-emerald-100 text-emerald-800';
       case 'in_progress':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-pink-100 text-pink-800';
       case 'not_started':
         return 'bg-slate-100 text-slate-800';
       case 'deferred':
@@ -160,11 +185,11 @@ export default function EmployeePerformance() {
       case 'certification':
         return <Award className="w-4 h-4 text-purple-600" />;
       case 'training':
-        return <Briefcase className="w-4 h-4 text-blue-600" />;
+        return <Briefcase className="w-4 h-4 text-pink-600" />;
       case 'award':
         return <Star className="w-4 h-4 text-amber-600" />;
       case 'salary_adjustment':
-        return <BarChart className="w-4 h-4 text-indigo-600" />;
+        return <BarChart className="w-4 h-4 text-pink-600" />;
       default:
         return <Calendar className="w-4 h-4 text-slate-600" />;
     }
@@ -195,7 +220,7 @@ export default function EmployeePerformance() {
               placeholder="Search employees..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
             />
             {searchTerm && (
               <button 
@@ -215,7 +240,7 @@ export default function EmployeePerformance() {
             <span>Filter</span>
           </button>
           
-          <button className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors">
+          <button className="flex items-center space-x-2 px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg transition-colors">
             <Plus className="w-4 h-4" />
             <span>New Review</span>
           </button>
@@ -236,7 +261,7 @@ export default function EmployeePerformance() {
               <select
                 value={selectedEmployee || ''}
                 onChange={(e) => setSelectedEmployee(e.target.value || null)}
-                className="w-full md:w-64 px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full md:w-64 px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
               >
                 <option value="">All Employees</option>
                 {employees.map(emp => (
@@ -252,7 +277,7 @@ export default function EmployeePerformance() {
               <select
                 value={reviewCycle}
                 onChange={(e) => setReviewCycle(e.target.value)}
-                className="w-full md:w-48 px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full md:w-48 px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
               >
                 {reviewCycles.map(cycle => (
                   <option key={cycle} value={cycle}>
@@ -268,7 +293,7 @@ export default function EmployeePerformance() {
                 setReviewCycle('all');
                 setSearchTerm('');
               }}
-              className="text-indigo-600 hover:text-indigo-800 text-sm font-medium md:self-end"
+              className="text-pink-600 hover:text-pink-800 text-sm font-medium md:self-end"
             >
               Reset Filters
             </button>
@@ -287,7 +312,7 @@ export default function EmployeePerformance() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center space-x-2 py-2 px-1 border-b-2 font-medium text-sm ${
                   activeTab === tab.id
-                    ? 'border-indigo-500 text-indigo-600'
+                    ? 'border-pink-500 text-pink-600'
                     : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
                 }`}
               >
@@ -319,7 +344,7 @@ export default function EmployeePerformance() {
               <div className="bg-slate-50 p-6 rounded-xl">
                 <div className="flex items-center justify-between">
                   <h3 className="text-sm font-medium text-slate-500">Active Reviews</h3>
-                  <FileText className="w-5 h-5 text-indigo-500" />
+                  <FileText className="w-5 h-5 text-pink-500" />
                 </div>
                 <p className="mt-2 text-3xl font-semibold text-slate-900">
                   {reviews.filter(r => r.status !== 'approved' && r.status !== 'acknowledged').length}
@@ -346,7 +371,7 @@ export default function EmployeePerformance() {
               <div className="bg-slate-50 p-6 rounded-xl">
                 <div className="flex items-center justify-between">
                   <h3 className="text-sm font-medium text-slate-500">Recent Feedback</h3>
-                  <MessageSquare className="w-5 h-5 text-blue-500" />
+                  <MessageSquare className="w-5 h-5 text-pink-500" />
                 </div>
                 <p className="mt-2 text-3xl font-semibold text-slate-900">
                   {feedback.filter(f => {
@@ -390,8 +415,8 @@ export default function EmployeePerformance() {
                       const review = item as PerformanceReview;
                       return (
                         <div key={`review-${index}`} className="flex items-start space-x-4 p-4 hover:bg-slate-50 rounded-lg transition-colors">
-                          <div className="p-2 bg-blue-100 rounded-lg">
-                            <FileText className="w-5 h-5 text-blue-600" />
+                          <div className="p-2 bg-pink-100 rounded-lg">
+                            <FileText className="w-5 h-5 text-pink-600" />
                           </div>
                           <div className="flex-1">
                             <div className="flex items-center justify-between">
@@ -433,7 +458,7 @@ export default function EmployeePerformance() {
                               <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                                 feedbackItem.feedback_type === 'praise' ? 'bg-emerald-100 text-emerald-800' :
                                 feedbackItem.feedback_type === 'concern' ? 'bg-amber-100 text-amber-800' :
-                                feedbackItem.feedback_type === 'suggestion' ? 'bg-blue-100 text-blue-800' :
+                                feedbackItem.feedback_type === 'suggestion' ? 'bg-pink-100 text-pink-800' :
                                 'bg-slate-100 text-slate-800'
                               }`}>
                                 {feedbackItem.feedback_type}
@@ -506,15 +531,15 @@ export default function EmployeePerformance() {
                   <tbody className="bg-white divide-y divide-slate-200">
                     {filteredEmployees.slice(0, 5).map((employee) => {
                       const latestReview = reviews.find(r => r.employee_id === employee.id);
-                      const employeeKpis = kpiMeasurements.filter(k => k.employee_id === employee.id);
+                      const employeeKpisForSummary = typedKpis.filter(k => k.employee_id === employee.id);
                       const employeeGoals = goals.filter(g => g.employee_id === employee.id);
                       
                       return (
                         <tr key={employee.id} className="hover:bg-slate-50">
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center space-x-3">
-                              <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
-                                <span className="text-sm font-semibold text-indigo-600">
+                              <div className="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center">
+                                <span className="text-sm font-semibold text-pink-600">
                                   {employee.first_name[0]}{employee.last_name[0]}
                                 </span>
                               </div>
@@ -539,9 +564,9 @@ export default function EmployeePerformance() {
                             )}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            {employeeKpis.length > 0 ? (
+                            {employeeKpisForSummary.length > 0 ? (
                               <div>
-                                <div className="font-medium text-slate-900">{employeeKpis.length} KPIs</div>
+                                <div className="font-medium text-slate-900">{employeeKpisForSummary.length} KPIs</div>
                                 <div className="flex space-x-1 mt-1">
                                   <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
                                   <span className="w-2 h-2 rounded-full bg-amber-500"></span>
@@ -560,7 +585,7 @@ export default function EmployeePerformance() {
                                 </div>
                                 <div className="w-24 bg-slate-200 rounded-full h-1.5 mt-2">
                                   <div 
-                                    className="bg-indigo-600 h-1.5 rounded-full" 
+                                    className="bg-pink-600 h-1.5 rounded-full" 
                                     style={{ 
                                       width: `${Math.round((employeeGoals.filter(g => g.status === 'completed').length / employeeGoals.length) * 100)}%` 
                                     }}
@@ -574,7 +599,7 @@ export default function EmployeePerformance() {
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <div className="flex items-center space-x-3">
                               <button 
-                                className="text-indigo-600 hover:text-indigo-900"
+                                className="text-pink-600 hover:text-pink-900"
                                 onClick={() => {
                                   setSelectedEmployee(employee.id);
                                   setActiveTab('reviews');
@@ -606,7 +631,7 @@ export default function EmployeePerformance() {
                   : 'All Performance Reviews'}
               </h2>
               
-              <button className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors">
+              <button className="flex items-center space-x-2 px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg transition-colors">
                 <FilePlus className="w-4 h-4" />
                 <span>New Review</span>
               </button>
@@ -634,8 +659,8 @@ export default function EmployeePerformance() {
                       <div className="flex items-center space-x-2">
                         {review.overall_score && (
                           <div className="flex items-center space-x-1">
-                            <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center">
-                              <span className="font-semibold text-indigo-600">{review.overall_score}</span>
+                            <div className="w-8 h-8 rounded-full bg-pink-100 flex items-center justify-center">
+                              <span className="font-semibold text-pink-600">{review.overall_score}</span>
                             </div>
                             <span className="text-sm text-slate-600">/5</span>
                           </div>
@@ -662,7 +687,7 @@ export default function EmployeePerformance() {
                         </div>
                       </div>
                       
-                      <button className="flex items-center space-x-1 text-indigo-600 hover:text-indigo-800 text-sm font-medium">
+                      <button className="flex items-center space-x-1 text-pink-600 hover:text-pink-800 text-sm font-medium">
                         <span>View Details</span>
                         <ChevronRight className="w-4 h-4" />
                       </button>
@@ -679,7 +704,7 @@ export default function EmployeePerformance() {
                     ? "This employee doesn't have any performance reviews yet."
                     : "No performance reviews found with the current filter settings."}
                 </p>
-                <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg inline-flex items-center space-x-2 transition-colors">
+                <button className="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg inline-flex items-center space-x-2 transition-colors">
                   <FilePlus className="w-4 h-4" />
                   <span>Create New Review</span>
                 </button>
@@ -701,7 +726,7 @@ export default function EmployeePerformance() {
                   <RefreshCw className="w-4 h-4" />
                   <span>Refresh</span>
                 </button>
-                <button className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors">
+                <button className="flex items-center space-x-2 px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg transition-colors">
                   <Plus className="w-4 h-4" />
                   <span>Add KPI</span>
                 </button>
@@ -734,15 +759,15 @@ export default function EmployeePerformance() {
                     <p className="text-sm text-amber-700">KPIs below target level</p>
                   </div>
 
-                  <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                  <div className="p-4 bg-pink-50 border border-pink-200 rounded-lg">
                     <div className="flex items-center justify-between mb-1">
-                      <h3 className="font-medium text-blue-800">Total KPIs</h3>
-                      <BarChart className="w-5 h-5 text-blue-600" />
+                      <h3 className="font-medium text-pink-800">Total KPIs</h3>
+                      <BarChart className="w-5 h-5 text-pink-600" />
                     </div>
-                    <p className="text-2xl font-bold text-blue-900">
+                    <p className="text-2xl font-bold text-pink-900">
                       {employeeKpis.length}
                     </p>
-                    <p className="text-sm text-blue-700">Active KPI measurements</p>
+                    <p className="text-sm text-pink-700">Active KPI measurements</p>
                   </div>
                 </div>
 
@@ -797,7 +822,14 @@ export default function EmployeePerformance() {
                             {new Date(kpi.measurement_date).toLocaleDateString()}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <a href="#" className="text-indigo-600 hover:text-indigo-900">Details</a>
+                            <button
+                              type="button"
+                              onClick={() => setActiveKpi(kpi)}
+                              className="text-pink-600 hover:text-pink-900 underline"
+                              title={`View details for ${kpi.name}`}
+                            >
+                              Details
+                            </button>
                           </td>
                         </tr>
                       ))}
@@ -814,7 +846,7 @@ export default function EmployeePerformance() {
                     ? "This employee doesn't have any KPIs tracked yet."
                     : "No KPIs have been defined for your team yet."}
                 </p>
-                <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg inline-flex items-center space-x-2 transition-colors">
+                <button className="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg inline-flex items-center space-x-2 transition-colors">
                   <Plus className="w-4 h-4" />
                   <span>Define New KPI</span>
                 </button>
@@ -832,7 +864,7 @@ export default function EmployeePerformance() {
                   : '360° Feedback System'}
               </h2>
               
-              <button className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors">
+              <button className="flex items-center space-x-2 px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg transition-colors">
                 <MessageSquare className="w-4 h-4" />
                 <span>Provide Feedback</span>
               </button>
@@ -855,7 +887,7 @@ export default function EmployeePerformance() {
                     </div>
                   </div>
                   <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
-                    <div className="text-blue-600 mb-1">Suggestions</div>
+                    <div className="text-pink-600 mb-1">Suggestions</div>
                     <div className="text-2xl font-bold text-slate-900">
                       {employeeFeedback.filter(f => f.feedback_type === 'suggestion').length}
                     </div>
@@ -878,14 +910,14 @@ export default function EmployeePerformance() {
                             <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                               feedback.feedback_type === 'praise' ? 'bg-emerald-100 text-emerald-800' :
                               feedback.feedback_type === 'concern' ? 'bg-amber-100 text-amber-800' :
-                              feedback.feedback_type === 'suggestion' ? 'bg-blue-100 text-blue-800' :
+                              feedback.feedback_type === 'suggestion' ? 'bg-pink-100 text-pink-800' :
                               'bg-slate-100 text-slate-800'
                             }`}>
                               {feedback.feedback_type.charAt(0).toUpperCase() + feedback.feedback_type.slice(1)}
                             </span>
                             
                             <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                              feedback.visibility === 'public' ? 'bg-blue-100 text-blue-800' :
+                              feedback.visibility === 'public' ? 'bg-pink-100 text-pink-800' :
                               feedback.visibility === 'private' ? 'bg-purple-100 text-purple-800' :
                               'bg-slate-100 text-slate-800'
                             }`}>
@@ -955,7 +987,7 @@ export default function EmployeePerformance() {
                     ? "This employee hasn't received any feedback yet."
                     : "No feedback has been recorded in the system yet."}
                 </p>
-                <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg inline-flex items-center space-x-2 transition-colors">
+                <button className="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg inline-flex items-center space-x-2 transition-colors">
                   <MessageSquare className="w-4 h-4" />
                   <span>Provide Feedback</span>
                 </button>
@@ -974,7 +1006,7 @@ export default function EmployeePerformance() {
               </h2>
               
               <div className="flex items-center space-x-3">
-                <button className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors">
+                <button className="flex items-center space-x-2 px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg transition-colors">
                   <Plus className="w-4 h-4" />
                   <span>Add Milestone</span>
                 </button>
@@ -992,14 +1024,14 @@ export default function EmployeePerformance() {
                 {employeeMilestones.length > 0 ? (
                   <div className="relative pl-8 pb-4">
                     {/* Timeline Line */}
-                    <div className="absolute top-0 bottom-0 left-4 w-px bg-indigo-200"></div>
+                    <div className="absolute top-0 bottom-0 left-4 w-px bg-pink-200"></div>
                     
                     {/* Timeline Events */}
                     <div className="space-y-8">
                       {employeeMilestones.map((milestone) => (
                         <div key={milestone.id} className="relative">
                           {/* Timeline Dot */}
-                          <div className="absolute -left-8 mt-1.5 w-8 h-8 bg-indigo-100 border-4 border-white shadow rounded-full flex items-center justify-center z-10">
+                          <div className="absolute -left-8 mt-1.5 w-8 h-8 bg-pink-100 border-4 border-white shadow rounded-full flex items-center justify-center z-10">
                             {getMilestoneIcon(milestone.milestone_type)}
                           </div>
                           
@@ -1008,7 +1040,7 @@ export default function EmployeePerformance() {
                               <div>
                                 <div className="flex items-center space-x-2">
                                   <h4 className="font-medium text-slate-900">{milestone.title}</h4>
-                                  <span className="px-2 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                                  <span className="px-2 py-1 rounded-full text-xs font-medium bg-pink-100 text-pink-800">
                                     {milestone.milestone_type.replace('_', ' ')}
                                   </span>
                                 </div>
@@ -1089,7 +1121,7 @@ export default function EmployeePerformance() {
                               className={`h-2 rounded-full ${
                                 goal.status === 'completed' ? 'bg-emerald-500' : 
                                 goal.progress > 75 ? 'bg-emerald-500' : 
-                                goal.progress > 25 ? 'bg-blue-500' : 
+                                goal.progress > 25 ? 'bg-pink-500' : 
                                 'bg-amber-500'
                               }`}
                               style={{ width: `${goal.progress}%` }}
@@ -1101,7 +1133,7 @@ export default function EmployeePerformance() {
                           <div className="text-slate-500">
                             {goal.due_date ? `Due: ${new Date(goal.due_date).toLocaleDateString()}` : 'No due date'}
                           </div>
-                          <button className="text-indigo-600 hover:text-indigo-800 font-medium">
+                          <button className="text-pink-600 hover:text-pink-800 font-medium">
                             Update
                           </button>
                         </div>
@@ -1119,6 +1151,88 @@ export default function EmployeePerformance() {
           </div>
         )}
       </div>
+
+      {activeKpi && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+          <div className="w-full max-w-lg bg-white rounded-2xl shadow-xl border border-slate-200">
+            <div className="flex items-start justify-between border-b border-slate-200 px-6 py-4">
+              <div>
+                <h3 className="text-lg font-semibold text-slate-900">
+                  {activeKpi.kpi?.name || activeKpi.name || 'KPI Details'}
+                </h3>
+                <p className="text-sm text-slate-500 mt-1">
+                  Measured on {new Date(activeKpi.measurement_date).toLocaleString()}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={closeKpiModal}
+                className="text-slate-400 hover:text-slate-600 transition-colors"
+                aria-label="Close KPI details"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="px-6 py-5 space-y-5">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Status</span>
+                <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${getKpiStatusColor(activeKpi.status || 'on_target')}`}>
+                  {activeKpi.status === 'above_target' ? (
+                    <TrendingUp className="w-4 h-4" />
+                  ) : activeKpi.status === 'below_target' || activeKpi.status === 'critical' ? (
+                    <TrendingDown className="w-4 h-4" />
+                  ) : (
+                    <Target className="w-4 h-4" />
+                  )}
+                  <span>{activeKpi.status?.replace('_', ' ') || 'On Target'}</span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="rounded-lg border border-slate-200 p-4">
+                  <p className="text-xs uppercase font-semibold text-slate-500">Current Value</p>
+                  <p className="mt-2 text-lg font-semibold text-slate-900">
+                    {typeof activeKpi.value === 'number' ? activeKpi.value : 'N/A'}{' '}
+                    {activeKpi.kpi?.measurement_unit || activeKpi.unit || ''}
+                  </p>
+                </div>
+                <div className="rounded-lg border border-slate-200 p-4">
+                  <p className="text-xs uppercase font-semibold text-slate-500">Target</p>
+                  <p className="mt-2 text-lg font-semibold text-slate-900">
+                    {typeof activeKpi.kpi?.target_value === 'number' ? activeKpi.kpi.target_value : 'N/A'}{' '}
+                    {activeKpi.kpi?.measurement_unit || activeKpi.unit || ''}
+                  </p>
+                </div>
+              </div>
+
+              <div className="rounded-lg border border-slate-200 p-4 bg-slate-50">
+                <p className="text-xs uppercase font-semibold text-slate-500">Measured For</p>
+                <p className="mt-1 text-sm text-slate-700">{getEmployeeName(activeKpi.employee_id)}</p>
+              </div>
+
+              {(activeKpi.kpi?.description || activeKpi.description) && (
+                <div>
+                  <p className="text-xs uppercase font-semibold text-slate-500">Description</p>
+                  <p className="mt-2 text-sm text-slate-700 leading-relaxed">
+                    {activeKpi.kpi?.description || activeKpi.description}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4 bg-slate-50">
+              <button
+                type="button"
+                onClick={closeKpiModal}
+                className="px-4 py-2 text-sm font-semibold text-slate-600 hover:text-slate-800"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

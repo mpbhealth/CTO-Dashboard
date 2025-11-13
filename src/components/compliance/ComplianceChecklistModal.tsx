@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, CheckCircle2, Circle, AlertTriangle, Download } from 'lucide-react';
+import { X, CheckCircle2, AlertTriangle, Download } from 'lucide-react';
 
 interface ComplianceChecklistModalProps {
   isOpen: boolean;

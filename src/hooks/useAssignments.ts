@@ -1,108 +1,23 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { Assignment, AssignmentCreateData, AssignmentUpdateData } from '../types/Assignment';
-
 
 export function useAssignments() {
-  const [data, setData] = useState<Assignment[]>([]);
+  const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [currentUser, setCurrentUser] = useState<{ id: string; auth_user_id: string; email: string; full_name?: string } | null>(null);
 
   const fetchData = async () => {
     try {
       setLoading(true);
-      
-      // Get current user first
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        throw new Error('User not authenticated');
-      }
-      
-      // Ensure user record exists in users table
-      const { data: userRecord, error: userError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', user.id)
-        .single();
-      
-      if (userError && userError.code === 'PGRST116') {
-        // User doesn't exist, create them
-        const { data: newUser, error: createError } = await supabase
-          .from('users')
-          .insert([{
-            auth_user_id: user.id,
-            email: user.email || '',
-            full_name: user.user_metadata?.full_name || user.email || ''
-          }])
-          .select('id')
-          .single();
-        
-        if (createError) throw createError;
-        setCurrentUser(newUser);
-      } else if (userError) {
-        throw userError;
-      } else {
-        setCurrentUser(userRecord);
-      }
-      
-      // First, try to get assignments with user information
-      const { data: assignments, error } = await supabase
+      const { data: assignments, error: assignmentsError } = await supabase
         .from('assignments')
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      
-      // Then fetch user information separately for each assignment
-      const transformedAssignments = await Promise.all(
-        (assignments || []).map(async (assignment: any) => {
-          // Fetch project name if project_id exists
-          let projectName = null;
-          if (assignment.project_id) {
-            const { data: project } = await supabase
-              .from('projects')
-              .select('name')
-              .eq('id', assignment.project_id)
-              .single();
-            projectName = project?.name;
-          }
-
-          // Fetch user information if assigned_to exists
-          let employeeInfo = {
-            employee_email: null,
-            employee_name: null,
-            teams_user_id: null,
-          };
-          
-          if (assignment.assigned_to) {
-            const { data: user } = await supabase
-              .from('users')
-              .select('email, full_name')
-              .eq('id', assignment.assigned_to)
-              .single();
-            
-            if (user) {
-              employeeInfo = {
-                employee_email: user.email,
-                employee_name: user.full_name,
-                teams_user_id: null, // We'll add this column later
-              };
-            }
-          }
-
-          return {
-            ...assignment,
-            project_name: projectName,
-            ...employeeInfo,
-          };
-        })
-      );
-      
-      setData(transformedAssignments);
-    } catch (err) {
-      console.error('Error fetching assignments:', err);
-      setError(err instanceof Error ? err.message : 'Failed to load assignments. Please make sure you\'re connected to Supabase.');
+      if (assignmentsError) throw assignmentsError;
+      setData(assignments || []);
+    } catch (err: any) {
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -112,93 +27,35 @@ export function useAssignments() {
     fetchData();
   }, []);
 
-  const addAssignment = async (assignmentData: AssignmentCreateData) => {
+  const addAssignment = async (assignment: any) => {
     try {
-      // Get the user's ID from the users table
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('User not authenticated');
-      
-      const { data: userRecord } = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_user_id', user.id)
-        .single();
-      
-      if (!userRecord) throw new Error('User profile not found');
-      
-      const { data, error } = await supabase
-        .from('assignments')
-        .insert([{
-          ...assignmentData,
-          assigned_to: userRecord.id
-        }])
-        .select()
-        .single();
-      
+      const { error } = await supabase.from('assignments').insert([assignment]);
       if (error) throw error;
       await fetchData();
-      return { success: true, data };
-    } catch (err) {
-      return { success: false, error: err instanceof Error ? err.message : 'An error occurred' };
+    } catch (err: any) {
+      throw new Error(err.message);
     }
   };
 
-  const updateAssignment = async (id: string, updates: AssignmentUpdateData) => {
+  const updateAssignment = async (id: string, updates: any) => {
     try {
-      const { data, error } = await supabase
-        .from('assignments')
-        .update(updates)
-        .eq('id', id)
-        .select()
-        .single();
-      
+      const { error } = await supabase.from('assignments').update(updates).eq('id', id);
       if (error) throw error;
       await fetchData();
-      return { success: true, data };
-    } catch (err) {
-      return { success: false, error: err instanceof Error ? err.message : 'An error occurred' };
+    } catch (err: any) {
+      throw new Error(err.message);
     }
   };
 
   const deleteAssignment = async (id: string) => {
     try {
-      const { error } = await supabase
-        .from('assignments')
-        .delete()
-        .eq('id', id);
-      
+      const { error } = await supabase.from('assignments').delete().eq('id', id);
       if (error) throw error;
       await fetchData();
-      return { success: true };
-    } catch (err) {
-      return { success: false, error: err instanceof Error ? err.message : 'An error occurred' };
+    } catch (err: any) {
+      throw new Error(err.message);
     }
   };
 
-  const getAssignmentsByProject = async (projectId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('assignments')
-        .select('*')
-        .eq('project_id', projectId)
-        .order('created_at', { ascending: false });
-      
-      if (error) throw error;
-      return { success: true, data };
-    } catch (err) {
-      return { success: false, error: err instanceof Error ? err.message : 'An error occurred' };
-    }
-  };
-
-  return { 
-    data, 
-    loading, 
-    error, 
-    currentUser,
-    refetch: fetchData,
-    addAssignment,
-    updateAssignment,
-    deleteAssignment,
-    getAssignmentsByProject
-  };
+  return { data, loading, error, refetch: fetchData, addAssignment, updateAssignment, deleteAssignment };
 }

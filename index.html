@@ -2,70 +2,181 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" href="/favicon.ico" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16x16.png">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
-    <!-- PWA Manifest -->
+
     <link rel="manifest" href="/manifest.json" />
-    
-    <!-- Theme Color -->
-    <meta name="theme-color" content="#4F46E5" />
-    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#4F46E5" />
-    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1E1B4B" />
-    
-    <!-- Apple Touch Icon -->
-    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%234F46E5'/%3E%3Cpath d='M45 90L67.5 67.5L90 90L135 45L157.5 67.5L90 135L45 90Z' fill='white'/%3E%3C/svg%3E" />
-    <link rel="apple-touch-icon" sizes="152x152" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 152 152'%3E%3Crect width='152' height='152' fill='%234F46E5'/%3E%3Cpath d='M38 76L57 57L76 76L114 38L133 57L76 114L38 76Z' fill='white'/%3E%3C/svg%3E" />
-    <link rel="apple-touch-icon" sizes="180x180" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%234F46E5'/%3E%3Cpath d='M45 90L67.5 67.5L90 90L135 45L157.5 67.5L90 135L45 90Z' fill='white'/%3E%3C/svg%3E" />
-    
-    <!-- Apple PWA Meta Tags -->
+
+    <meta name="theme-color" content="#0ea5e9" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#0ea5e9" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#075985" />
+
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%230ea5e9'/%3E%3Cpath d='M45 90L67.5 67.5L90 90L135 45L157.5 67.5L90 135L45 90Z' fill='white'/%3E%3C/svg%3E" />
+
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="MPB Dashboard" />
-    
-    <!-- Microsoft Tiles -->
-    <meta name="msapplication-TileImage" content="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 144 144'%3E%3Crect width='144' height='144' fill='%234F46E5'/%3E%3Cpath d='M36 72L54 54L72 72L108 36L126 54L72 108L36 72Z' fill='white'/%3E%3C/svg%3E" />
-    <meta name="msapplication-TileColor" content="#4F46E5" />
-    <meta name="msapplication-config" content="/browserconfig.xml" />
-    
-    <!-- Additional Meta Tags for PWA -->
+
+    <meta name="msapplication-TileColor" content="#0ea5e9" />
+
     <meta name="application-name" content="MPB Health CTO Dashboard" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="format-detection" content="telephone=no" />
-    
+
     <title>MPB Health CTO Dashboard - Executive Technology Leadership</title>
     <meta name="description" content="Comprehensive executive dashboard for MPB Health's technology leadership team with analytics, project management, and organizational insights." />
-    
-    <!-- Production Debug Script -->
+
     <script>
-      console.log('=== MPB Health Dashboard Debug Info ===');
-      console.log('Environment checks:', {
-        hasRoot: !!document.getElementById('root'),
-        userAgent: navigator.userAgent.substring(0, 50),
-        url: window.location.href,
-        timestamp: new Date().toISOString()
-      });
-      
-      // Enhanced error capturing for production debugging
-      window.addEventListener('error', (e) => {
-        console.error('🔥 Global Error:', {
-          message: e.message,
-          filename: e.filename,
-          lineno: e.lineno,
-          colno: e.colno,
-          error: e.error
-        });
-      });
-      
-      window.addEventListener('unhandledrejection', (e) => {
-        console.error('🔥 Unhandled Promise Rejection:', e.reason);
-      });
+      (function() {
+        const isStackBlitz = window.location.hostname.includes('stackblitz') ||
+                            window.location.hostname.includes('webcontainer');
+
+        const platformErrorPatterns = [
+          'ad_conversions',
+          'Tracking has already been taken',
+          'sendAdConversions',
+          'Contextify',
+          'stackblitz.com/api'
+        ];
+
+        const isPlatformError = (message) => {
+          return platformErrorPatterns.some(pattern =>
+            String(message).toLowerCase().includes(pattern.toLowerCase())
+          );
+        };
+
+        const originalConsoleError = console.error;
+        console.error = function(...args) {
+          if (isStackBlitz && args.some(arg => isPlatformError(arg))) {
+            return;
+          }
+          originalConsoleError.apply(console, args);
+        };
+
+        window.addEventListener('error', (e) => {
+          if (isStackBlitz && isPlatformError(e.message)) {
+            e.preventDefault();
+            return;
+          }
+
+          if (!isStackBlitz || localStorage.getItem('debug') === 'true') {
+            try {
+              originalConsoleError.call(console, '[MPB Health] Global Error:', {
+                message: e.message || 'Unknown error',
+                filename: e.filename || 'Unknown',
+                lineno: e.lineno || 0,
+                colno: e.colno || 0
+              });
+            } catch (err) {
+              // Prevent recursive error logging
+            }
+          }
+        }, true);
+
+        window.addEventListener('unhandledrejection', (e) => {
+          if (isStackBlitz && isPlatformError(String(e.reason))) {
+            e.preventDefault();
+            return;
+          }
+
+          if (!isStackBlitz || localStorage.getItem('debug') === 'true') {
+            console.error('[MPB Health] Unhandled Promise Rejection:', e.reason);
+          }
+        }, true);
+      })();
     </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Initial loading indicator - will be replaced when React mounts -->
+      <div id="initial-loader" style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: #f8fafc; font-family: system-ui, sans-serif;">
+        <div style="text-align: center; max-width: 500px; padding: 20px;">
+          <div style="width: 48px; height: 48px; border: 3px solid #e2e8f0; border-top-color: #ec4899; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px;"></div>
+          <p id="loading-text" style="color: #64748b; font-size: 14px; font-weight: 500;">Loading MPB Health Dashboard...</p>
+          <p style="color: #94a3b8; font-size: 12px; margin-top: 8px;">If this persists, check console (F12)</p>
+          <div id="timeout-message" style="display: none; margin-top: 24px; padding: 16px; background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 4px; text-align: left;">
+            <strong style="color: #92400e; display: block; margin-bottom: 8px;">⚠️ Loading is taking longer than expected</strong>
+            <p style="color: #78350f; font-size: 13px; margin-bottom: 12px;">This could indicate an issue with initialization.</p>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button onclick="window.location.href='/diagnostics.html'" style="background: #3b82f6; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 600;">
+                Run Diagnostics
+              </button>
+              <button onclick="window.location.reload()" style="background: #ec4899; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 600;">
+                Reload Page
+              </button>
+              <button onclick="alert('Check the Console tab (F12) for detailed error logs.\n\nPress F12 or right-click and select Inspect.')" style="background: #64748b; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 600;">
+                Open Console
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <style>
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+      </style>
+    </div>
+    
+    <script>
+      // Force-disable any previously registered service workers and clear caches
+      // to prevent stale bundles from breaking app initialization.
+      (function() {
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.getRegistrations().then(regs => {
+            regs.forEach(r => r.unregister());
+          });
+        }
+        if ('caches' in window) {
+          caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
+        }
+      })();
+    </script>
+
+    <script>
+      // Loading timeout - show error message if React doesn't mount within 10 seconds
+      setTimeout(function() {
+        var loader = document.getElementById('initial-loader');
+        var timeoutMsg = document.getElementById('timeout-message');
+        var loadingText = document.getElementById('loading-text');
+        
+        // Only show timeout if initial loader is still visible
+        if (loader && loader.style.display !== 'none') {
+          if (timeoutMsg) timeoutMsg.style.display = 'block';
+          if (loadingText) {
+            loadingText.textContent = 'Loading timeout - React may have failed to initialize';
+            loadingText.style.color = '#dc2626';
+          }
+          
+          console.error('[MPB Health] Loading timeout - React did not mount within 10 seconds');
+          console.error('[MPB Health] Check for JavaScript errors above');
+          console.log('[MPB Health] Page info:', {
+            location: window.location.href,
+            readyState: document.readyState,
+            hasRoot: !!document.getElementById('root')
+          });
+        }
+      }, 10000); // 10 second timeout
+    </script>
+    
+    <script type="module">
+      // Fallback boot: if the main module doesn't mount the app quickly,
+      // attempt a manual dynamic import of the built bundle to surface errors.
+      const tryBoot = async () => {
+        const loader = document.getElementById('initial-loader');
+        if (!loader || loader.style.display === 'none') return; // app likely mounted
+        const mainModule = document.querySelector('script[type="module"][src^="/assets/index-"]');
+        if (!mainModule) return; // dev mode or not built yet
+        try {
+          console.warn('[Boot Fallback] Attempting manual import of app bundle:', mainModule.getAttribute('src'));
+          await import(mainModule.getAttribute('src'));
+        } catch (e) {
+          console.error('[Boot Fallback] Manual import failed:', e);
+        }
+      };
+      // Give the primary module a head start; then try fallback if still not mounted
+      setTimeout(tryBoot, 3000);
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -1,0 +1,2 @@
+record_type,enrollment_id,member_id,enrollment_date,program_name,enrollment_status,enrollment_source,premium_amount,renewal_date,status_date,new_status,reason,source_system
+enrollment,E001,,2023-01-15,MPB Essentials,active,agent:1234,$29.99,2024-01-15,,,,system1

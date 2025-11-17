@@ -101,7 +101,8 @@ export function useTasks() {
 
         if (error) throw error;
         setData(tasks || []);
-      } catch (error) {
+      } catch (_error) {
+        // Error silently handled - loading state will complete
       } finally {
         setLoading(false);
       }
@@ -130,7 +131,8 @@ export function useAuditLog() {
 
         if (error) throw error;
         setData(logs || []);
-      } catch (error) {
+      } catch (_error) {
+        // Error silently handled - loading state will complete
       } finally {
         setLoading(false);
       }
@@ -168,7 +170,8 @@ export function useComplianceDocs() {
 
       if (error) throw error;
       setData(docs || []);
-    } catch (error) {
+    } catch (_error) {
+      // Error silently handled - loading state will complete
     } finally {
       setLoading(false);
     }
@@ -216,7 +219,8 @@ export function usePHIAccessLogs() {
 
         if (error) throw error;
         setData(logs || []);
-      } catch (error) {
+      } catch (_error) {
+        // Error silently handled - loading state will complete
       } finally {
         setLoading(false);
       }
@@ -247,7 +251,8 @@ export function useIncidents() {
 
       if (error) throw error;
       setData(incidents || []);
-    } catch (error) {
+    } catch (_error) {
+      // Error silently handled - loading state will complete
     } finally {
       setLoading(false);
     }
@@ -281,7 +286,8 @@ export function useTrainings() {
 
         if (error) throw error;
         setData(trainings || []);
-      } catch (error) {
+      } catch (_error) {
+        // Error silently handled - loading state will complete
       } finally {
         setLoading(false);
       }
@@ -306,7 +312,8 @@ export function useTrainingAttendance() {
 
         if (error) throw error;
         setData(attendance || []);
-      } catch (error) {
+      } catch (_error) {
+        // Error silently handled - loading state will complete
       } finally {
         setLoading(false);
       }
@@ -330,7 +337,8 @@ export function useBAAs() {
 
       if (error) throw error;
       setData(baas || []);
-    } catch (error) {
+    } catch (_error) {
+      // Error silently handled - loading state will complete
     } finally {
       setLoading(false);
     }
@@ -363,7 +371,8 @@ export function useEmployeeDocuments() {
 
       if (error) throw error;
       setData(docs || []);
-    } catch (error) {
+    } catch (_error) {
+      // Error silently handled - loading state will complete
     } finally {
       setLoading(false);
     }
@@ -404,7 +413,8 @@ export function useAuditSchedules() {
 
         if (error) throw error;
         setData(schedules || []);
-      } catch (error) {
+      } catch (_error) {
+        // Error silently handled - loading state will complete
       } finally {
         setLoading(false);
       }
@@ -429,7 +439,8 @@ export function useAuditFindings() {
 
         if (error) throw error;
         setData(findings || []);
-      } catch (error) {
+      } catch (_error) {
+        // Error silently handled - loading state will complete
       } finally {
         setLoading(false);
       }

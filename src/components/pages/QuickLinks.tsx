@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Link2, 
@@ -85,17 +85,7 @@ export default function QuickLinks() {
         return 0;
     }
   });
-  // Fetch quick links on component mount
-  useEffect(() => {
-    fetchQuickLinks();
-
-    // Cleanup function to prevent state updates after unmount
-    return () => {
-      setIsMounted(false);
-    };
-  }, []);
-
-  const fetchQuickLinks = async () => {
+  const fetchQuickLinks = useCallback(async () => {
     try {
       setLoading(true);
       const { data, error } = await supabase
@@ -117,7 +107,17 @@ export default function QuickLinks() {
         setLoading(false);
       }
     }
-  };
+  }, [isMounted]);
+
+  // Fetch quick links on component mount
+  useEffect(() => {
+    fetchQuickLinks();
+
+    // Cleanup function to prevent state updates after unmount
+    return () => {
+      setIsMounted(false);
+    };
+  }, [fetchQuickLinks]);
 
   const handleDeleteLink = async (link: QuickLink) => {
     if (window.confirm(`Are you sure you want to delete "${link.name}"? This action cannot be undone.`)) {

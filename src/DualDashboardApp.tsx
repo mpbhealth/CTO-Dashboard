@@ -98,10 +98,8 @@ const CEOBoardPacket = lazy(() => import('./components/pages/ceod/CEOBoardPacket
 const CEOConciergeTracking = lazy(() => import('./components/pages/ceod/CEOConciergeTracking').then(m => ({ default: m.CEOConciergeTracking })));
 const CEOConciergeNotes = lazy(() => import('./components/pages/ceod/CEOConciergeNotes').then(m => ({ default: m.CEOConciergeNotes })));
 const CEOSalesReports = lazy(() => import('./components/pages/ceod/CEOSalesReportsEnhanced').then(m => ({ default: m.CEOSalesReportsEnhanced })));
-const CEOOperations = lazy(() => import('./components/pages/ceod/CEOOperations').then(m => ({ default: m.CEOOperations })));
 const CEOFiles = lazy(() => import('./components/pages/ceod/CEOFiles').then(m => ({ default: m.CEOFiles })));
 const CEODataManagement = lazy(() => import('./components/pages/ceod/CEODataManagement').then(m => ({ default: m.CEODataManagement })));
-const CEOFinance = lazy(() => import('./components/pages/ceod/CEOFinance').then(m => ({ default: m.CEOFinance })));
 const CEODepartmentUpload = lazy(() => import('./components/pages/ceod/CEODepartmentUpload').then(m => ({ default: m.CEODepartmentUpload })));
 const CEODepartmentUploadPortal = lazy(() => import('./components/pages/ceod/CEODepartmentUploadPortal').then(m => ({ default: m.CEODepartmentUploadPortal })));
 const CEOConciergeUpload = lazy(() => import('./components/pages/ceod/CEOConciergeUpload').then(m => ({ default: m.CEOConciergeUpload })));
@@ -130,38 +128,6 @@ const Projects = lazy(() => import('./components/pages/Projects'));
 const MondayTasks = lazy(() => import('./components/pages/MondayTasks'));
 const Assignments = lazy(() => import('./components/pages/Assignments'));
 const Notepad = lazy(() => import('./components/pages/Notepad'));
-
-// Operations & Management pages
-const SaaSSpend = lazy(() => import('./components/pages/SaaSSpend'));
-const AIAgents = lazy(() => import('./components/pages/AIAgents'));
-const ITSupport = lazy(() => import('./components/pages/ITSupport'));
-const IntegrationsHub = lazy(() => import('./components/pages/IntegrationsHub'));
-const PolicyManagement = lazy(() => import('./components/pages/PolicyManagement'));
-const EmployeePerformance = lazy(() => import('./components/pages/EmployeePerformance'));
-const PerformanceEvaluation = lazy(() => import('./components/pages/PerformanceEvaluation'));
-const OrganizationalStructure = lazy(() => import('./components/pages/OrganizationalStructure'));
-const Deployments = lazy(() => import('./components/pages/Deployments'));
-const APIStatus = lazy(() => import('./components/pages/APIStatus'));
-const SystemUptime = lazy(() => import('./components/pages/SystemUptime'));
-
-// Compliance pages
-const ComplianceCommandCenter = lazy(() => import('./components/pages/ComplianceCommandCenter'));
-const ComplianceAdministration = lazy(() => import('./components/pages/ComplianceAdministration'));
-const ComplianceTraining = lazy(() => import('./components/pages/ComplianceTraining'));
-const CompliancePHIAccess = lazy(() => import('./components/pages/CompliancePHIAccess'));
-const ComplianceTechnicalSafeguards = lazy(() => import('./components/pages/ComplianceTechnicalSafeguards'));
-const ComplianceBAAs = lazy(() => import('./components/pages/ComplianceBAAs'));
-const ComplianceIncidents = lazy(() => import('./components/pages/ComplianceIncidents'));
-const ComplianceAudits = lazy(() => import('./components/pages/ComplianceAudits'));
-const ComplianceTemplatesTools = lazy(() => import('./components/pages/ComplianceTemplatesTools'));
-const EmployeeDocumentStorage = lazy(() => import('./components/pages/EmployeeDocumentStorage'));
-
-// Analytics pages
-const Analytics = lazy(() => import('./components/pages/Analytics'));
-const MemberEngagement = lazy(() => import('./components/pages/MemberEngagement'));
-const MemberRetention = lazy(() => import('./components/pages/MemberRetention'));
-const AdvisorPerformance = lazy(() => import('./components/pages/AdvisorPerformance'));
-const MarketingAnalytics = lazy(() => import('./components/pages/MarketingAnalytics'));
 
 const LoadingFallback = () => (
   <div className="flex items-center justify-center min-h-screen">
@@ -200,7 +166,6 @@ function DualDashboardContent() {
   const [isMobile, setIsMobile] = useState(false);
 
   const isCEORoute = useMemo(() => location.pathname.startsWith('/ceod/'), [location.pathname]);
-  const isSharedRoute = useMemo(() => location.pathname.startsWith('/shared/'), [location.pathname]);
 
   const shouldShowCTOSidebar = useMemo(() => {
     if (!profileReady) return false;

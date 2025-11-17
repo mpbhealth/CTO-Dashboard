@@ -56,13 +56,29 @@ export default defineConfig({
             if (id.includes('react-router')) {
               return 'router';
             }
-            // Charts - lazy load
+            // Charts - lazy load (heavy library)
             if (id.includes('recharts')) {
               return 'charts';
+            }
+            // Office document libraries - lazy load (very heavy)
+            if (id.includes('xlsx') || id.includes('jspdf') || id.includes('pptxgenjs')) {
+              return 'office';
+            }
+            // Data processing libraries
+            if (id.includes('papaparse') || id.includes('csv')) {
+              return 'csv';
             }
             // UI libraries - lazy load
             if (id.includes('framer-motion') || id.includes('lucide-react')) {
               return 'ui-libs';
+            }
+            // React Query (TanStack)
+            if (id.includes('@tanstack')) {
+              return 'query';
+            }
+            // Date libraries
+            if (id.includes('dayjs')) {
+              return 'date';
             }
             // Everything else
             return 'vendor';

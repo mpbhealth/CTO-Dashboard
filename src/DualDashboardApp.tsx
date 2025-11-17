@@ -118,6 +118,19 @@ const AuditLogViewer = lazy(() => import('./components/pages/shared/AuditLogView
 const AuthDiagnostics = lazy(() => import('./components/pages/AuthDiagnostics'));
 const DiagnosticsDashboard = lazy(() => import('./components/pages/DiagnosticsDashboard'));
 
+// Shared components (legacy)
+const SaaSSpend = lazy(() => import('./components/pages/SaaSSpend'));
+const AIAgents = lazy(() => import('./components/pages/AIAgents'));
+const ITSupport = lazy(() => import('./components/pages/ITSupport'));
+const IntegrationsHub = lazy(() => import('./components/pages/IntegrationsHub'));
+const Deployments = lazy(() => import('./components/pages/Deployments'));
+const PolicyManagement = lazy(() => import('./components/pages/PolicyManagement'));
+const EmployeePerformance = lazy(() => import('./components/pages/EmployeePerformance'));
+const APIStatus = lazy(() => import('./components/pages/APIStatus'));
+const SystemUptime = lazy(() => import('./components/pages/SystemUptime'));
+const PerformanceEvaluation = lazy(() => import('./components/pages/PerformanceEvaluation'));
+const OrganizationalStructure = lazy(() => import('./components/pages/OrganizationalStructure'));
+
 const Overview = lazy(() => import('./components/pages/Overview'));
 const TechStack = lazy(() => import('./components/pages/TechStack'));
 const QuickLinks = lazy(() => import('./components/pages/QuickLinks'));

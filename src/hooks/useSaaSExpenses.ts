@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
+import { SaaSExpense } from '../types/common';
 
 interface SaaSMetrics {
   totalMonthly: number;
@@ -10,7 +11,7 @@ interface SaaSMetrics {
 }
 
 export function useSaaSExpenses() {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<SaaSExpense[]>([]);
   const [metrics, setMetrics] = useState<SaaSMetrics>({
     totalMonthly: 0,
     totalAnnual: 0,
@@ -21,7 +22,7 @@ export function useSaaSExpenses() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       const { data: expenses, error: expensesError } = await supabase
@@ -54,28 +55,30 @@ export function useSaaSExpenses() {
         totalDepartments: departments,
         renewingNext30Days,
       });
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch SaaS expenses';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
-  const addExpense = async (expense: any) => {
+  const addExpense = async (expense: Omit<SaaSExpense, 'id' | 'created_at' | 'updated_at'>) => {
     try {
       const { error } = await supabase.from('saas_expenses').insert([expense]);
       if (error) throw error;
       await fetchData();
-    } catch (err: any) {
-      throw new Error(err.message);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to add expense';
+      throw new Error(errorMessage);
     }
   };
 
-  const updateExpense = async (id: string, updates: any) => {
+  const updateExpense = async (id: string, updates: Partial<SaaSExpense>) => {
     try {
       const { error } = await supabase
         .from('saas_expenses')
@@ -83,8 +86,9 @@ export function useSaaSExpenses() {
         .eq('id', id);
       if (error) throw error;
       await fetchData();
-    } catch (err: any) {
-      throw new Error(err.message);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to update expense';
+      throw new Error(errorMessage);
     }
   };
 
@@ -93,18 +97,20 @@ export function useSaaSExpenses() {
       const { error } = await supabase.from('saas_expenses').delete().eq('id', id);
       if (error) throw error;
       await fetchData();
-    } catch (err: any) {
-      throw new Error(err.message);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to delete expense';
+      throw new Error(errorMessage);
     }
   };
 
-  const bulkImport = async (expenses: any[]) => {
+  const bulkImport = async (expenses: Omit<SaaSExpense, 'id' | 'created_at' | 'updated_at'>[]) => {
     try {
       const { error } = await supabase.from('saas_expenses').insert(expenses);
       if (error) throw error;
       await fetchData();
-    } catch (err: any) {
-      throw new Error(err.message);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to bulk import expenses';
+      throw new Error(errorMessage);
     }
   };
 

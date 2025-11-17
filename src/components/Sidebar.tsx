@@ -104,7 +104,7 @@ export default function Sidebar({
     }
   };
 
-  const isActiveRoute = (itemPath: string, itemId: string, submenu?: any[]) => {
+  const isActiveRoute = (itemPath: string, itemId: string, submenu?: Array<{ id: string; path: string }>) => {
     const currentPath = location.pathname;
 
     // Check if current path matches exactly or starts with item path
@@ -120,7 +120,7 @@ export default function Sidebar({
     }
 
     // Fallback to activeTab prop
-    return activeTab === itemId || (submenu && submenu.some((sub: any) => activeTab === sub.id));
+    return activeTab === itemId || (submenu && submenu.some((sub) => activeTab === sub.id));
   };
 
   return (
@@ -188,7 +188,7 @@ export default function Sidebar({
                 </h3>
               )}
              <ul className="space-y-1" style={{position: 'relative', zIndex: 52, pointerEvents: 'auto'}}>
-                {items.map((item: any) => {
+                {items.map((item: NavItem) => {
                   const Icon = item.icon;
                   const isActive = isActiveRoute(item.path, item.id, item.submenu);
                   const hasSubmenu = item.submenu && item.submenu.length > 0;
@@ -240,7 +240,7 @@ export default function Sidebar({
                       {/* Submenu */}
                       {hasSubmenu && isExpanded && isSidebarExpanded && (
                         <ul className={`ml-4 mt-1 space-y-1 border-l ${isCEO ? 'border-pink-800' : 'border-slate-700'} pl-3`}>
-                          {item.submenu.map((subItem: any) => {
+                          {item.submenu.map((subItem) => {
                             const isSubActive = location.pathname === subItem.path || location.pathname.startsWith(subItem.path + '/');
                             return (
                               <li key={subItem.id}>

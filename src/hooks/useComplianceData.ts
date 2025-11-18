@@ -71,7 +71,6 @@ export function useComplianceDashboard() {
         };
         setData(dashboardData);
       } catch (error) {
-        console.error('Error fetching dashboard:', error);
         setData({
           policies: { approved: 0, inReview: 0, overdue: 0, total: 0 },
           baas: { active: 0, expiringSoon: 0, expired: 0, total: 0 },
@@ -102,8 +101,8 @@ export function useTasks() {
 
         if (error) throw error;
         setData(tasks || []);
-      } catch (error) {
-        console.error('Error fetching tasks:', error);
+      } catch (_error) {
+        // Error silently handled - loading state will complete
       } finally {
         setLoading(false);
       }
@@ -132,8 +131,8 @@ export function useAuditLog() {
 
         if (error) throw error;
         setData(logs || []);
-      } catch (error) {
-        console.error('Error fetching audit log:', error);
+      } catch (_error) {
+        // Error silently handled - loading state will complete
       } finally {
         setLoading(false);
       }
@@ -171,8 +170,8 @@ export function useComplianceDocs() {
 
       if (error) throw error;
       setData(docs || []);
-    } catch (error) {
-      console.error('Error fetching documents:', error);
+    } catch (_error) {
+      // Error silently handled - loading state will complete
     } finally {
       setLoading(false);
     }
@@ -220,8 +219,8 @@ export function usePHIAccessLogs() {
 
         if (error) throw error;
         setData(logs || []);
-      } catch (error) {
-        console.error('Error fetching PHI access logs:', error);
+      } catch (_error) {
+        // Error silently handled - loading state will complete
       } finally {
         setLoading(false);
       }
@@ -252,8 +251,8 @@ export function useIncidents() {
 
       if (error) throw error;
       setData(incidents || []);
-    } catch (error) {
-      console.error('Error fetching incidents:', error);
+    } catch (_error) {
+      // Error silently handled - loading state will complete
     } finally {
       setLoading(false);
     }
@@ -287,8 +286,8 @@ export function useTrainings() {
 
         if (error) throw error;
         setData(trainings || []);
-      } catch (error) {
-        console.error('Error fetching trainings:', error);
+      } catch (_error) {
+        // Error silently handled - loading state will complete
       } finally {
         setLoading(false);
       }
@@ -313,8 +312,8 @@ export function useTrainingAttendance() {
 
         if (error) throw error;
         setData(attendance || []);
-      } catch (error) {
-        console.error('Error fetching training attendance:', error);
+      } catch (_error) {
+        // Error silently handled - loading state will complete
       } finally {
         setLoading(false);
       }
@@ -338,8 +337,8 @@ export function useBAAs() {
 
       if (error) throw error;
       setData(baas || []);
-    } catch (error) {
-      console.error('Error fetching BAAs:', error);
+    } catch (_error) {
+      // Error silently handled - loading state will complete
     } finally {
       setLoading(false);
     }
@@ -372,8 +371,8 @@ export function useEmployeeDocuments() {
 
       if (error) throw error;
       setData(docs || []);
-    } catch (error) {
-      console.error('Error fetching employee documents:', error);
+    } catch (_error) {
+      // Error silently handled - loading state will complete
     } finally {
       setLoading(false);
     }
@@ -414,8 +413,8 @@ export function useAuditSchedules() {
 
         if (error) throw error;
         setData(schedules || []);
-      } catch (error) {
-        console.error('Error fetching audit schedules:', error);
+      } catch (_error) {
+        // Error silently handled - loading state will complete
       } finally {
         setLoading(false);
       }
@@ -440,8 +439,8 @@ export function useAuditFindings() {
 
         if (error) throw error;
         setData(findings || []);
-      } catch (error) {
-        console.error('Error fetching audit findings:', error);
+      } catch (_error) {
+        // Error silently handled - loading state will complete
       } finally {
         setLoading(false);
       }
@@ -492,7 +491,6 @@ export function useExpiringDocuments(daysUntilExpiry: number = 90) {
         if (error) throw error;
         setData(docs || []);
       } catch (error) {
-        console.error('Error fetching expiring documents:', error);
         setData([]);
       } finally {
         setLoading(false);

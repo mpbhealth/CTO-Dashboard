@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Plus, Calendar, User, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Plus, Calendar, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { useTasks, useCreateTask, useUpdateTask } from '../../hooks/useComplianceData';
 import { TaskStatusChip, PriorityChip } from './ComplianceChips';
-import type { HIPAATask, TaskStatus, TaskPriority, DocSection } from '../../types/compliance';
+import type { TaskStatus, TaskPriority, DocSection } from '../../types/compliance';
 
 interface TasksPanelProps {
   linkedTable?: string;

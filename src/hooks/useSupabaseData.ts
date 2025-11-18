@@ -1,8 +1,22 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 
+interface SupabaseRecord {
+  id: string;
+  created_at?: string;
+  updated_at?: string;
+  [key: string]: unknown;
+}
+
+interface UseDataResult<T> {
+  data: T[];
+  loading: boolean;
+  error: string | null;
+  refetch?: () => Promise<void>;
+}
+
 export function useKPIData() {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<SupabaseRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -16,8 +30,8 @@ export function useKPIData() {
 
         if (kpiError) throw kpiError;
         setData(kpis || []);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
       } finally {
         setLoading(false);
       }
@@ -29,7 +43,7 @@ export function useKPIData() {
 }
 
 export function useTeamMembers() {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<SupabaseRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -43,8 +57,8 @@ export function useTeamMembers() {
 
       if (membersError) throw membersError;
       setData(members || []);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);
     }
@@ -58,7 +72,7 @@ export function useTeamMembers() {
 }
 
 export function useProjects() {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<SupabaseRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -72,8 +86,8 @@ export function useProjects() {
 
         if (projectsError) throw projectsError;
         setData(projects || []);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
       } finally {
         setLoading(false);
       }
@@ -85,7 +99,7 @@ export function useProjects() {
 }
 
 export function useRoadmapItems() {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<SupabaseRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -99,8 +113,8 @@ export function useRoadmapItems() {
 
         if (itemsError) throw itemsError;
         setData(items || []);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
       } finally {
         setLoading(false);
       }
@@ -112,7 +126,7 @@ export function useRoadmapItems() {
 }
 
 export function useTechStack() {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<SupabaseRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -126,8 +140,8 @@ export function useTechStack() {
 
         if (techError) throw techError;
         setData(tech || []);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
       } finally {
         setLoading(false);
       }
@@ -139,7 +153,7 @@ export function useTechStack() {
 }
 
 export function useDeploymentLogs() {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<SupabaseRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -153,8 +167,8 @@ export function useDeploymentLogs() {
 
         if (deploymentsError) throw deploymentsError;
         setData(deployments || []);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
       } finally {
         setLoading(false);
       }
@@ -166,7 +180,7 @@ export function useDeploymentLogs() {
 }
 
 export function useAIAgents() {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<SupabaseRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -180,8 +194,8 @@ export function useAIAgents() {
 
         if (agentsError) throw agentsError;
         setData(agents || []);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
       } finally {
         setLoading(false);
       }

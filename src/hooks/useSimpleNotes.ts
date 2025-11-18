@@ -44,7 +44,6 @@ export function useSimpleNotes(category?: string) {
 
       setNotes(data || []);
     } catch (err) {
-      console.error('[useSimpleNotes] Error fetching notes:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch notes');
     } finally {
       setLoading(false);
@@ -102,7 +101,6 @@ export function useSimpleNotes(category?: string) {
 
       return data;
     } catch (err) {
-      console.error('[useSimpleNotes] Error creating note:', err);
       throw err;
     }
   };
@@ -132,7 +130,6 @@ export function useSimpleNotes(category?: string) {
 
       return data;
     } catch (err) {
-      console.error('[useSimpleNotes] Error updating note:', err);
       throw err;
     }
   };
@@ -146,7 +143,6 @@ export function useSimpleNotes(category?: string) {
 
       if (deleteError) throw deleteError;
     } catch (err) {
-      console.error('[useSimpleNotes] Error deleting note:', err);
       throw err;
     }
   };

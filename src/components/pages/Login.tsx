@@ -1,17 +1,13 @@
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Eye, EyeOff, Mail, Lock, Building2, AlertCircle, CheckCircle, User, KeyRound, Briefcase, Code2 } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Eye, EyeOff, Mail, Lock, AlertCircle, CheckCircle, User, KeyRound, Briefcase, Code2 } from 'lucide-react';
 import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 
-interface LoginProps {
-  onLoginSuccess: () => void;
-}
-
 type UserRole = 'ceo' | 'cto' | null;
 
-export default function Login({ onLoginSuccess }: LoginProps) {
+export default function Login() {
   const navigate = useNavigate();
   const { isDemoMode, profile } = useAuth();
   const [isSignUp, setIsSignUp] = useState(false);

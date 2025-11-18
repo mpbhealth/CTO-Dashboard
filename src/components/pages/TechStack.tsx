@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useTechStack } from '../../hooks/useSupabaseData';
 import { Server, Edit, Trash2, Plus, Search } from 'lucide-react';
 import AddTechnologyModal from '../modals/AddTechnologyModal';
+import EditTechnologyModal from '../modals/EditTechnologyModal';
 import { supabase } from '../../lib/supabase';
 import { Database } from '../../types/database';
 import ExportDropdown from '../ui/ExportDropdown';
@@ -15,6 +16,8 @@ export default function TechStack() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [techToEdit, setTechToEdit] = useState<TechStackItem | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   
   // Cleanup on unmount
@@ -101,8 +104,13 @@ export default function TechStack() {
   };
 
   const handleEditTechnology = (item: TechStackItem) => {
-    // TODO: Implement edit functionality
-    alert(`Edit functionality for "${item.name}" will be implemented soon.`);
+    setTechToEdit(item);
+    setIsEditModalOpen(true);
+  };
+
+  const handleEditSuccess = () => {
+    refetch();
+    setTechToEdit(null);
   };
 
   return (
@@ -398,6 +406,17 @@ export default function TechStack() {
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         onSuccess={handleAddSuccess}
+      />
+
+      {/* Edit Technology Modal */}
+      <EditTechnologyModal
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setTechToEdit(null);
+        }}
+        onSuccess={handleEditSuccess}
+        technology={techToEdit}
       />
     </div>
   );

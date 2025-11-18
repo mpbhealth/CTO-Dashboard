@@ -12,7 +12,6 @@ const ComplianceAdministration: React.FC = () => {
   
   const { data: docs = [], isLoading } = useComplianceDocs({ section: ['administration'] });
   const createDoc = useCreateDoc();
-  const updateDoc = useUpdateDoc();
   const deleteDoc = useDeleteDoc();
 
   const [newDoc, setNewDoc] = useState<DocFormData>({

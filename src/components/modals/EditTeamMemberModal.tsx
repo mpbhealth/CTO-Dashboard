@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { X, UserCheck, Users } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { Database } from '../../types/database';
@@ -55,7 +55,7 @@ export default function EditTeamMemberModal({ isOpen, onClose, onSuccess, member
     'Content'
   ];
 
-  const departments = [
+  const departments = useMemo(() => [
     'Executive',
     'Engineering',
     'Product',
@@ -74,7 +74,7 @@ export default function EditTeamMemberModal({ isOpen, onClose, onSuccess, member
     'Fintech Innovation',
     'AI & Machine Learning',
     'Custom' // This will trigger the custom input
-  ];
+  ], []);
 
   useEffect(() => {
     if (member) {

@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { MessageSquare, Clock, CheckCircle2, TrendingUp } from 'lucide-react';
+import { MessageSquare } from 'lucide-react';
 import { loadConciergeMetrics } from '@/lib/data/ceo/loaders';
 
 export const ConciergePanel = memo(function ConciergePanel() {

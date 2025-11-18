@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  CheckSquare, 
-  Plus, 
-  Search, 
-  Calendar, 
-  User, 
-  Building, 
+import {
+  CheckSquare,
+  Plus,
+  Search,
+  Calendar,
+  User,
+  Building,
   Clock,
   CheckCircle,
   Circle,
@@ -19,7 +19,6 @@ import {
   Zap,
   Mail,
   MessageSquare,
-  Send,
   Copy
 } from 'lucide-react';
 import { useAssignments } from '../../hooks/useAssignments';

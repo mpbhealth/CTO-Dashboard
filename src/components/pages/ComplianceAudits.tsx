@@ -10,7 +10,6 @@ import {
   Search,
   CheckCircle2,
   AlertTriangle,
-  ExternalLink,
 } from 'lucide-react';
 import {
   useAudits,

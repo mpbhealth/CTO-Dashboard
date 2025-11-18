@@ -92,8 +92,8 @@ export function useTicketStats() {
           sla_compliance_percentage,
           tickets_by_priority
         });
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
       } finally {
         setLoading(false);
       }
@@ -141,8 +141,8 @@ export function useTicketTrends(days: number = 30) {
         }));
 
         setTrends(trendsData);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
       } finally {
         setLoading(false);
       }

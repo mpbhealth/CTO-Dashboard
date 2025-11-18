@@ -68,7 +68,7 @@ export default function FileUpload({
         try {
           const payload = JSON.parse(xhr.responseText);
           onUploaded?.(payload);
-        } catch (e) {
+        } catch {
           setErr("Failed to parse upload response");
         }
       } else {
@@ -116,8 +116,9 @@ export default function FileUpload({
       xhr.open("POST", apiUrl);
       xhr.setRequestHeader("Authorization", `Bearer ${session.access_token}`);
       xhr.send(form);
-    } catch (e: any) {
-      setErr(e.message || "Upload failed");
+    } catch (e) {
+      const errorMessage = e instanceof Error ? e.message : "Upload failed";
+      setErr(errorMessage);
       setBusy(false);
     }
   }

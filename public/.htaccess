@@ -1,0 +1,76 @@
+# Apache Configuration for React SPA (Single Page Application)
+# This file handles client-side routing for the MPB Health Dashboard
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Don't rewrite files or directories that exist
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME} !-l
+
+  # Rewrite everything else to index.html to allow client-side routing
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# Security Headers
+<IfModule mod_headers.c>
+  # Prevent clickjacking
+  Header always set X-Frame-Options "SAMEORIGIN"
+
+  # Prevent MIME type sniffing
+  Header always set X-Content-Type-Options "nosniff"
+
+  # Enable XSS protection
+  Header always set X-XSS-Protection "1; mode=block"
+
+  # Referrer policy
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# Enable gzip compression for better performance
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html
+  AddOutputFilterByType DEFLATE text/css
+  AddOutputFilterByType DEFLATE text/javascript
+  AddOutputFilterByType DEFLATE application/javascript
+  AddOutputFilterByType DEFLATE application/x-javascript
+  AddOutputFilterByType DEFLATE application/json
+  AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>
+
+# Cache control for static assets
+<IfModule mod_expires.c>
+  ExpiresActive On
+
+  # Images
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType image/gif "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+
+  # CSS and JavaScript
+  ExpiresByType text/css "access plus 1 month"
+  ExpiresByType application/javascript "access plus 1 month"
+  ExpiresByType text/javascript "access plus 1 month"
+
+  # Fonts
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType font/woff "access plus 1 year"
+  ExpiresByType font/ttf "access plus 1 year"
+
+  # HTML (don't cache too long for SPA)
+  ExpiresByType text/html "access plus 0 seconds"
+</IfModule>
+
+# Prevent directory browsing
+Options -Indexes
+
+# Follow symbolic links (may be needed for some hosting)
+Options +FollowSymLinks
+
+# Error pages (optional - customize as needed)
+# ErrorDocument 404 /index.html
+# ErrorDocument 500 /index.html

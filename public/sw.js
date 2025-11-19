@@ -1,11 +1,15 @@
-// Service Worker for MPB Health CTO Dashboard PWA
-const CACHE_NAME = 'mpb-dashboard-v2-' + new Date().getTime(); // Bust cache on each deploy
+// Service Worker for MPB Health Dashboard PWA
+// Version is set at build time for proper cache invalidation
+const VERSION = '2.0.1';
+const CACHE_NAME = 'mpb-dashboard-v' + VERSION;
 const urlsToCache = [
   '/',
   '/index.html',
   '/manifest.json',
   // Don't pre-cache hashed assets - they change on each build
 ];
+
+console.log('[SW] Service Worker version:', VERSION);
 
 // Install event - cache important files
 self.addEventListener('install', (event) => {
@@ -94,19 +98,22 @@ self.addEventListener('fetch', (event) => {
 
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
-  console.log('SW activating, cleaning old caches');
+  console.log('[SW] Activating version:', VERSION);
   event.waitUntil(
     caches.keys().then((cacheNames) => {
+      console.log('[SW] Found caches:', cacheNames);
       return Promise.all(
         cacheNames.map((cacheName) => {
-          if (!cacheName.startsWith('mpb-dashboard-v2-')) {
-            console.log('Deleting old cache:', cacheName);
+          // Delete all caches except current version
+          if (cacheName !== CACHE_NAME && cacheName.startsWith('mpb-dashboard-v')) {
+            console.log('[SW] Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
       );
+    }).then(() => {
+      console.log('[SW] Cache cleanup complete, claiming clients');
+      return self.clients.claim();
     })
   );
-  // Claim all clients immediately
-  return self.clients.claim();
 });

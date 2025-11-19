@@ -286,12 +286,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [fetchProfile, loadCachedProfile]);
 
   const signIn = useCallback(async (email: string, password: string) => {
+    logger.log('Attempting sign in...');
+
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
-    if (error) throw error;
+    if (error) {
+      logger.error('Sign in failed:', {
+        message: error.message,
+        status: error.status,
+        code: error.code,
+        name: error.name,
+      });
+      throw error;
+    }
+
+    logger.log('Sign in successful, fetching profile...');
     if (data.user) {
       await fetchProfile(data.user.id);
     }

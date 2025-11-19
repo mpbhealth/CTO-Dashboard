@@ -221,8 +221,29 @@ if (import.meta.env.PROD) {
   console.log('[MPB Health] Environment check:', {
     hasUrl: !!import.meta.env.VITE_SUPABASE_URL,
     hasKey: !!import.meta.env.VITE_SUPABASE_ANON_KEY,
+    urlFirstChars: import.meta.env.VITE_SUPABASE_URL?.substring(0, 20) || 'missing',
+    keyFirstChars: import.meta.env.VITE_SUPABASE_ANON_KEY?.substring(0, 20) || 'missing',
     mode: import.meta.env.MODE,
+    buildTime: import.meta.env.VITE_BUILD_TIME || 'not set',
   });
+
+  // Test Supabase connectivity
+  if (isSupabaseConfigured) {
+    console.log('[MPB Health] Testing Supabase connection...');
+    import('./lib/supabase').then(({ supabase }) => {
+      supabase.auth.getSession()
+        .then(({ data, error }) => {
+          if (error) {
+            console.error('[MPB Health] Supabase connection test FAILED:', error.message);
+          } else {
+            console.log('[MPB Health] Supabase connection test successful');
+          }
+        })
+        .catch(err => {
+          console.error('[MPB Health] Supabase connection test ERROR:', err);
+        });
+    });
+  }
 }
 
 // Configuration Check Component

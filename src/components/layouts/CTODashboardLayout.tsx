@@ -11,7 +11,6 @@ import {
 } from 'lucide-react';
 import { useCurrentProfile } from '../../hooks/useDualDashboard';
 import { useAuth } from '../../contexts/AuthContext';
-import { DashboardViewToggle } from '../ui/DashboardViewToggle';
 import { ViewingContextBadge } from '../ui/ViewingContextBadge';
 
 interface CTODashboardLayoutProps {
@@ -69,9 +68,9 @@ export function CTODashboardLayout({ children }: CTODashboardLayoutProps) {
   return (
     <div className="min-h-screen bg-gray-50">
       <nav className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center gap-8">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center gap-4 lg:gap-6">
               <div className="flex items-center gap-3">
                 <img
                   src="/MPB-Health-No-background.png"
@@ -114,8 +113,7 @@ export function CTODashboardLayout({ children }: CTODashboardLayoutProps) {
                 })}
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <DashboardViewToggle />
+            <div className="flex items-center gap-2">
               <ViewingContextBadge />
               <button
                 onClick={handleSignOut}

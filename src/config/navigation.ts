@@ -59,7 +59,6 @@ export interface NavItem {
 export const categories: Record<string, string> = {
   main: 'Dashboard',
   analytics: 'Analytics & Insights',
-  reporting: 'Department Reporting',
   development: 'Development & Planning',
   operations: 'Operations & Management',
   infrastructure: 'Infrastructure & Monitoring',
@@ -294,22 +293,6 @@ export const ctoNavigationItems: NavItem[] = [
       { id: 'cto-deployments', label: 'Deployments', path: '/ctod/infrastructure/deployments' },
       { id: 'cto-api-status', label: 'API Status', path: '/ctod/infrastructure/api-status' },
       { id: 'cto-system-uptime', label: 'System Uptime', path: '/ctod/infrastructure/system-uptime' }
-    ]
-  },
-
-  {
-    id: 'cto-department-reporting',
-    label: 'Department Reporting',
-    icon: FolderUp,
-    category: 'reporting',
-    path: '/ctod/departments',
-    roles: ['cto', 'admin', 'staff'],
-    submenu: [
-      { id: 'cto-dept-concierge', label: 'Concierge', path: '/ctod/departments/concierge' },
-      { id: 'cto-dept-sales', label: 'Sales', path: '/ctod/departments/sales' },
-      { id: 'cto-dept-operations', label: 'Operations', path: '/ctod/departments/operations' },
-      { id: 'cto-dept-finance', label: 'Finance', path: '/ctod/departments/finance' },
-      { id: 'cto-dept-saudemax', label: 'SaudeMAX', path: '/ctod/departments/saudemax' }
     ]
   }
 ];

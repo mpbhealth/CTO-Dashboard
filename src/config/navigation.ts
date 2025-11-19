@@ -203,6 +203,7 @@ export const ceoNavigationItems: NavItem[] = [
 
 export const ctoNavigationItems: NavItem[] = [
   { id: 'cto-home', label: 'CTO Overview', path: '/ctod/home', icon: Building2, category: 'main', roles: ['cto', 'admin'] },
+  { id: 'cto-files', label: 'Files & Documents', path: '/ctod/files', icon: FileText, category: 'main', roles: ['cto', 'admin', 'staff'] },
 
   {
     id: 'cto-analytics',

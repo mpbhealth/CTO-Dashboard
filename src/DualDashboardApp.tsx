@@ -99,6 +99,7 @@ const CEOConciergeTracking = lazy(() => import('./components/pages/ceod/CEOConci
 const CEOConciergeNotes = lazy(() => import('./components/pages/ceod/CEOConciergeNotes').then(m => ({ default: m.CEOConciergeNotes })));
 const CEOSalesReports = lazy(() => import('./components/pages/ceod/CEOSalesReportsEnhanced').then(m => ({ default: m.CEOSalesReportsEnhanced })));
 const CEOFiles = lazy(() => import('./components/pages/ceod/CEOFiles').then(m => ({ default: m.CEOFiles })));
+const CTOFiles = lazy(() => import('./components/pages/ctod/CTOFiles').then(m => ({ default: m.CTOFiles })));
 const CEODataManagement = lazy(() => import('./components/pages/ceod/CEODataManagement').then(m => ({ default: m.CEODataManagement })));
 const CEODepartmentUpload = lazy(() => import('./components/pages/ceod/CEODepartmentUpload').then(m => ({ default: m.CEODepartmentUpload })));
 const CEODepartmentUploadPortal = lazy(() => import('./components/pages/ceod/CEODepartmentUploadPortal').then(m => ({ default: m.CEODepartmentUploadPortal })));
@@ -297,7 +298,7 @@ function DualDashboardContent() {
             <Routes>
             {/* CTO Home */}
             <Route path="/ctod/home" element={<CTOOnly><CTOHome /></CTOOnly>} />
-            <Route path="/ctod/files" element={<CTOOnly><CTOHome /></CTOOnly>} />
+            <Route path="/ctod/files" element={<CTOOnly><CTOFiles /></CTOOnly>} />
             <Route path="/ctod/kpis" element={<CTOOnly><CTOHome /></CTOOnly>} />
             <Route path="/ctod/engineering" element={<CTOOnly><CTOHome /></CTOOnly>} />
 

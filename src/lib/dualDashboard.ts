@@ -350,6 +350,19 @@ export async function uploadFile(
 
   if (uploadError) {
     logger.error('Error uploading file', uploadError);
+
+    // Provide specific error messages for common issues
+    if (uploadError.message?.includes('row-level security')) {
+      console.error('[PRODUCTION ERROR] Error uploading file: StorageApiError: new row violates row-level security policy');
+      alert('Upload failed: Permission denied. Please contact your administrator if this persists.');
+    } else if (uploadError.message?.includes('violates foreign key')) {
+      console.error('[PRODUCTION ERROR] Error uploading file: Foreign key constraint violation');
+      alert('Upload failed: Invalid configuration. Please refresh the page and try again.');
+    } else {
+      console.error('[PRODUCTION ERROR] Error uploading file:', uploadError);
+      alert(`Upload failed: ${uploadError.message || 'Unknown error'}`);
+    }
+
     return null;
   }
 

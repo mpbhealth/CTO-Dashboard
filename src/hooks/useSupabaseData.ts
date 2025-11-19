@@ -157,26 +157,29 @@ export function useDeploymentLogs() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    async function fetchDeployments() {
-      try {
-        const { data: deployments, error: deploymentsError } = await supabase
-          .from('deployment_logs')
-          .select('*')
-          .order('deployed_at', { ascending: false });
+  const fetchDeployments = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const { data: deployments, error: deploymentsError } = await supabase
+        .from('deployment_logs')
+        .select('*')
+        .order('timestamp', { ascending: false });
 
-        if (deploymentsError) throw deploymentsError;
-        setData(deployments || []);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
-      } finally {
-        setLoading(false);
-      }
+      if (deploymentsError) throw deploymentsError;
+      setData(deployments || []);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setLoading(false);
     }
+  };
+
+  useEffect(() => {
     fetchDeployments();
   }, []);
 
-  return { data, loading, error };
+  return { data, loading, error, refetch: fetchDeployments };
 }
 
 export function useAIAgents() {

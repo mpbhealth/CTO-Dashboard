@@ -40,7 +40,7 @@ export function CEOMarketingPlanner() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'Active': return 'bg-green-100 text-green-700';
-      case 'Planning': return 'bg-pink-100 text-pink-700';
+      case 'Planning': return 'bg-pink-100 text-pink-500';
       case 'Completed': return 'bg-gray-100 text-gray-700';
       default: return 'bg-gray-100 text-gray-700';
     }
@@ -54,7 +54,7 @@ export function CEOMarketingPlanner() {
             <h1 className="text-3xl font-bold text-gray-900">Campaign Planner</h1>
             <p className="text-gray-600 mt-1">Plan and manage marketing campaigns</p>
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-lg hover:opacity-90 transition-opacity font-medium shadow-md">
+          <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-400 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity font-medium shadow-md">
             <Plus size={18} />
             New Campaign
           </button>
@@ -63,7 +63,7 @@ export function CEOMarketingPlanner() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-white rounded-xl shadow-sm border p-5">
             <div className="flex items-center justify-between mb-2">
-              <Target size={18} className="text-pink-600" />
+              <Target size={18} className="text-pink-500" />
               <span className="text-sm font-medium text-green-600">+12%</span>
             </div>
             <div className="text-2xl font-bold text-gray-900">{campaigns.filter(c => c.status === 'Active').length}</div>

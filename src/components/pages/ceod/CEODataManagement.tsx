@@ -61,7 +61,7 @@ export function CEODataManagement() {
       name: 'Lead Reports',
       description: 'CRM lead pipeline data with sources and status',
       icon: FileSpreadsheet,
-      color: 'text-pink-600',
+      color: 'text-pink-500',
       bgColor: 'bg-pink-50',
     },
     {
@@ -150,14 +150,14 @@ export function CEODataManagement() {
                 setUploadLinkCopied(true);
                 setTimeout(() => setUploadLinkCopied(false), 2000);
               }}
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-lg hover:opacity-90 transition-opacity shadow-md"
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-400 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity shadow-md"
             >
               {uploadLinkCopied ? <CheckCircle size={18} /> : <Share2 size={18} />}
               {uploadLinkCopied ? 'Copied!' : 'Share Upload Portal'}
             </button>
             <button
               onClick={handleCopyUploadLink}
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-lg hover:opacity-90 transition-opacity shadow-md"
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-400 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity shadow-md"
             >
               {uploadLinkCopied ? <CheckCircle size={18} /> : <Copy size={18} />}
               {uploadLinkCopied ? 'Copied!' : 'Upload Department Data'}
@@ -385,7 +385,7 @@ export function CEODataManagement() {
                             {new Date(upload.created_at).toLocaleDateString()}
                           </td>
                           <td className="px-4 py-3 text-sm">
-                            <span className="inline-block px-2 py-1 bg-pink-100 text-pink-700 rounded text-xs font-medium capitalize">
+                            <span className="inline-block px-2 py-1 bg-pink-100 text-pink-500 rounded text-xs font-medium capitalize">
                               {upload.department}
                             </span>
                           </td>
@@ -405,7 +405,7 @@ export function CEODataManagement() {
                                   : upload.status === 'failed'
                                   ? 'bg-red-100 text-red-700'
                                   : upload.status === 'approved'
-                                  ? 'bg-pink-100 text-pink-700'
+                                  ? 'bg-pink-100 text-pink-500'
                                   : 'bg-yellow-100 text-yellow-700'
                               }`}
                             >

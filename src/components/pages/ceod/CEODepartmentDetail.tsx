@@ -187,7 +187,7 @@ View detailed report: ${window.location.href}
             </button>
             <button
               onClick={handleExportData}
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-lg hover:opacity-90 transition-opacity"
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-400 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity"
             >
               <Download size={18} />
               Export
@@ -363,7 +363,7 @@ View detailed report: ${window.location.href}
                           {upload.status === 'completed' && (
                             <button
                               onClick={() => approveUpload.mutate(upload.id)}
-                              className="text-pink-600 hover:text-pink-700 font-medium"
+                              className="text-pink-500 hover:text-pink-500 font-medium"
                             >
                               Approve
                             </button>

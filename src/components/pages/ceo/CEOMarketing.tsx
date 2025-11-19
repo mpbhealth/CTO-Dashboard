@@ -44,13 +44,13 @@ export default function CEOMarketing() {
           className="bg-white p-6 rounded-xl shadow-lg border border-slate-200"
         >
           <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-pink-500 rounded-lg">
+            <div className="p-3 bg-pink-400 rounded-lg">
               <Users className="w-6 h-6 text-white" />
             </div>
           </div>
           <h3 className="text-slate-600 text-sm font-medium">Total Leads</h3>
           <p className="text-2xl font-bold text-slate-900 mt-2">1,590</p>
-          <p className="text-xs text-pink-600 mt-1">+12% vs last month</p>
+          <p className="text-xs text-pink-500 mt-1">+12% vs last month</p>
         </motion.div>
 
         <motion.div
@@ -92,13 +92,13 @@ export default function CEOMarketing() {
           className="bg-white p-6 rounded-xl shadow-lg border border-slate-200"
         >
           <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-pink-500 rounded-lg">
+            <div className="p-3 bg-pink-400 rounded-lg">
               <MousePointer className="w-6 h-6 text-white" />
             </div>
           </div>
           <h3 className="text-slate-600 text-sm font-medium">Cost per Lead</h3>
           <p className="text-2xl font-bold text-slate-900 mt-2">{formatCurrency(30.19)}</p>
-          <p className="text-xs text-pink-600 mt-1">-3.2% vs last month</p>
+          <p className="text-xs text-pink-500 mt-1">-3.2% vs last month</p>
         </motion.div>
       </div>
 

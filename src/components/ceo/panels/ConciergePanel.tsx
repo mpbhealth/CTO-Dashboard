@@ -51,7 +51,7 @@ export const ConciergePanel = memo(function ConciergePanel() {
       <div className="grid grid-cols-3 gap-4 mb-6">
         <div className="text-center p-4 bg-pink-50 rounded-lg">
           <div className="text-2xl font-bold text-pink-900">{metrics.ticketsToday}</div>
-          <div className="text-xs text-pink-600 mt-1">Tickets Today</div>
+          <div className="text-xs text-pink-500 mt-1">Tickets Today</div>
         </div>
         <div className="text-center p-4 bg-green-50 rounded-lg">
           <div className="text-2xl font-bold text-green-900">{metrics.slaMetPercent}%</div>

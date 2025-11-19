@@ -287,7 +287,7 @@ export function CEODepartmentUpload() {
 
         <div className="bg-pink-50 border border-pink-200 rounded-lg p-4">
           <div className="flex items-start gap-3">
-            <Info className="w-5 h-5 text-pink-600 mt-0.5 flex-shrink-0" />
+            <Info className="w-5 h-5 text-pink-500 mt-0.5 flex-shrink-0" />
             <div className="text-sm text-pink-800">
               <p className="font-medium mb-2">How to use this portal:</p>
               <ol className="list-decimal list-inside space-y-1 text-xs">

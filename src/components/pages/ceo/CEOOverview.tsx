@@ -116,7 +116,7 @@ export default function CEOOverview() {
 
   // Quick actions for CEO
   const quickActions = [
-    { label: 'View Sales Pipeline', icon: Target, color: 'bg-pink-500', action: () => {} },
+    { label: 'View Sales Pipeline', icon: Target, color: 'bg-pink-400', action: () => {} },
     { label: 'Agent Performance', icon: Award, color: 'bg-purple-500', action: () => {} },
     { label: 'Marketing ROI', icon: TrendingUp, color: 'bg-green-500', action: () => {} },
     { label: 'Strategic Goals', icon: Briefcase, color: 'bg-amber-500', action: () => {} },
@@ -351,7 +351,7 @@ export default function CEOOverview() {
                   <span className="text-slate-600">Actual</span>
                 </div>
                 <div className="flex items-center space-x-1">
-                  <div className="w-3 h-3 bg-pink-500 rounded-full"></div>
+                  <div className="w-3 h-3 bg-pink-400 rounded-full"></div>
                   <span className="text-slate-600">Target</span>
                 </div>
               </div>
@@ -532,7 +532,7 @@ export default function CEOOverview() {
               >
                 {alert.type === 'success' && <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />}
                 {alert.type === 'warning' && <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />}
-                {alert.type === 'info' && <Activity className="w-5 h-5 text-pink-600 flex-shrink-0 mt-0.5" />}
+                {alert.type === 'info' && <Activity className="w-5 h-5 text-pink-500 flex-shrink-0 mt-0.5" />}
                 <div className="flex-1">
                   <p className={`text-sm font-medium ${
                     alert.type === 'success' ? 'text-emerald-900' :

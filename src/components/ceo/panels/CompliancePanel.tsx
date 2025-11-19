@@ -47,7 +47,7 @@ export const CompliancePanel = memo(function CompliancePanel() {
   const complianceColor = getComplianceColor(metrics.complianceScore);
   const colorClasses = {
     green: 'from-green-500 to-green-600 text-green-600',
-    blue: 'from-blue-500 to-blue-600 text-pink-600',
+    blue: 'from-blue-500 to-blue-600 text-pink-500',
     yellow: 'from-yellow-500 to-yellow-600 text-yellow-600',
     red: 'from-red-500 to-red-600 text-red-600',
   };
@@ -103,7 +103,7 @@ export const CompliancePanel = memo(function CompliancePanel() {
         <div className="lg:col-span-2 space-y-3">
           <div className="flex items-center justify-between p-3 bg-pink-50 rounded-lg border border-pink-200">
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-5 h-5 text-pink-600" />
+              <CheckCircle2 className="w-5 h-5 text-pink-500" />
               <span className="text-sm font-medium text-pink-900">HIPAA Audits</span>
             </div>
             <span className="text-lg font-bold text-pink-900">{metrics.hipaaAuditCount}</span>

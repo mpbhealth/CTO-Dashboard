@@ -52,7 +52,6 @@ export function AuthCallback() {
           redirectPath = '/ctod/home';
         }
 
-        console.log(`[AuthCallback] Redirecting ${role} to ${redirectPath}`);
         navigate(redirectPath, { replace: true });
       } catch (err) {
         console.error('Auth callback error:', err);

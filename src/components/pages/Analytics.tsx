@@ -27,8 +27,7 @@ import {
   AreaChart,
   Area
 } from 'recharts';
-import { useEnrollmentData } from '../../hooks/useEnrollmentData';
-import { useMemberStatusData } from '../../hooks/useMemberStatusData';
+import { useEnrollments, useMemberStatus } from '../../hooks/useSupabaseTable';
 
 interface KpiMetric {
   title: string;
@@ -49,8 +48,8 @@ export default function Analytics() {
   const [timeRange, setTimeRange] = useState('30d');
   const [showImporter, setShowImporter] = useState(false);
   const [selectedDepartment, setSelectedDepartment] = useState<'mpb' | 'saudemax'>('mpb');
-  const { refetch: refetchEnrollments } = useEnrollmentData();
-  const { refetch: refetchStatus } = useMemberStatusData();
+  const { refetch: refetchEnrollments } = useEnrollments();
+  const { refetch: refetchStatus } = useMemberStatus();
 
   // Empty state - no demo data, ready for file uploads
   const currentDepartmentData = {

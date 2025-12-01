@@ -78,11 +78,8 @@ export default function AuthWrapper({ children }: AuthWrapperProps) {
       const isLoginPath = currentPath.startsWith('/login');
       const isAuthCallbackPath = currentPath.startsWith('/auth/callback');
 
-      console.log('[AuthWrapper] Route check:', { currentPath, role: profile.role, isCEOPath, isCTOPath, isSharedPath, isRootPath });
-
       if (profile.role === 'ceo') {
         if (isCTOPath || isRootPath || isLoginPath || isAuthCallbackPath) {
-          console.log('[AuthWrapper] Redirecting CEO to /ceod/home from:', currentPath);
           setTimeout(() => {
             navigate('/ceod/home', { replace: true });
             redirectAttemptedRef.current = false;
@@ -92,13 +89,11 @@ export default function AuthWrapper({ children }: AuthWrapperProps) {
         }
       } else {
         if (isCEOPath) {
-          console.log(`[AuthWrapper] Redirecting ${profile.role} to /ctod/home from:`, currentPath);
           setTimeout(() => {
             navigate('/ctod/home', { replace: true });
             redirectAttemptedRef.current = false;
           }, 100);
         } else if (isRootPath || isLoginPath || isAuthCallbackPath) {
-          console.log(`[AuthWrapper] Redirecting ${profile.role} to /ctod/home from root/login`);
           setTimeout(() => {
             navigate('/ctod/home', { replace: true });
             redirectAttemptedRef.current = false;
@@ -212,7 +207,7 @@ export default function AuthWrapper({ children }: AuthWrapperProps) {
   }
 
   if (!user) {
-    return <Login onLoginSuccess={() => console.log('[AuthWrapper] Login success')} />;
+    return <Login onLoginSuccess={() => {}} />;
   }
 
   return <>{children}</>;

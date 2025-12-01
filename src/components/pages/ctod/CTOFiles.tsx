@@ -36,17 +36,9 @@ export function CTOFiles() {
     setUploadError(null);
 
     try {
-      console.log('[CTOFiles] Starting upload:', {
-        fileName: selectedFile.name,
-        fileSize: selectedFile.size,
-        fileType: selectedFile.type,
-        workspaceId: workspace?.id
-      });
-
       const result = await uploadFile(selectedFile, 'CTO');
 
       if (result) {
-        console.log('[CTOFiles] Upload successful:', result);
         setUploadSuccess(true);
         queryClient.invalidateQueries({ queryKey: ['resources'] });
         setSelectedFile(null);

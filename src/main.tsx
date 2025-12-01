@@ -214,36 +214,13 @@ if ('serviceWorker' in navigator && !Environment.isStackBlitz()) {
   });
 }
 
-// Production environment check logging
-if (import.meta.env.PROD) {
-  console.log('[MPB Health] Production build initialized');
-  console.log('[MPB Health] Supabase configured:', isSupabaseConfigured);
-  console.log('[MPB Health] Environment check:', {
-    hasUrl: !!import.meta.env.VITE_SUPABASE_URL,
-    hasKey: !!import.meta.env.VITE_SUPABASE_ANON_KEY,
-    urlFirstChars: import.meta.env.VITE_SUPABASE_URL?.substring(0, 20) || 'missing',
-    keyFirstChars: import.meta.env.VITE_SUPABASE_ANON_KEY?.substring(0, 20) || 'missing',
-    mode: import.meta.env.MODE,
-    buildTime: import.meta.env.VITE_BUILD_TIME || 'not set',
-  });
-
-  // Test Supabase connectivity
-  if (isSupabaseConfigured) {
-    console.log('[MPB Health] Testing Supabase connection...');
-    import('./lib/supabase').then(({ supabase }) => {
-      supabase.auth.getSession()
-        .then(({ data, error }) => {
-          if (error) {
-            console.error('[MPB Health] Supabase connection test FAILED:', error.message);
-          } else {
-            console.log('[MPB Health] Supabase connection test successful');
-          }
-        })
-        .catch(err => {
-          console.error('[MPB Health] Supabase connection test ERROR:', err);
-        });
+// Production environment check - only log errors
+if (import.meta.env.PROD && isSupabaseConfigured) {
+  import('./lib/supabase').then(({ supabase }) => {
+    supabase.auth.getSession().catch(err => {
+      console.error('[MPB Health] Supabase connection error:', err);
     });
-  }
+  });
 }
 
 // Configuration Check Component
@@ -384,9 +361,6 @@ if (!rootElement) {
   throw new Error('Failed to find root element. The DOM may not have loaded properly.');
 }
 
-// Log app initialization
-console.log('[MPB Health] Initializing React application...');
-
 try {
   createRoot(rootElement).render(
     <StrictMode>
@@ -428,7 +402,6 @@ try {
       </ErrorBoundary>
     </StrictMode>
   );
-  console.log('[MPB Health] React application mounted successfully');
 } catch (error) {
   console.error('[MPB Health] Fatal error during React mount:', error);
   // Display error directly in the DOM if React fails to mount

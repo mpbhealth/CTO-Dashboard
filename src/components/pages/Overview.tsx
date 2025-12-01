@@ -21,10 +21,10 @@ import {
 
 import KPICard from '../ui/KPICard';
 import { useKPIData, useTeamMembers, useProjects } from '../../hooks/useSupabaseData';
+import { useEnrollments } from '../../hooks/useSupabaseTable';
 import { useDepartments, useEmployeeProfiles, useDepartmentMetrics } from '../../hooks/useOrganizationalData';
 import { useSaaSExpenses } from '../../hooks/useSaaSExpenses';
 import { useTicketStats, useTicketTrends } from '../../hooks/useTickets';
-import { useEnrollmentData } from '../../hooks/useEnrollmentData';
 import { useAudits } from '../../hooks/useComplianceData';
 import AddTeamMemberModal from '../modals/AddTeamMemberModal';
 import EditTeamMemberModal from '../modals/EditTeamMemberModal';
@@ -47,7 +47,7 @@ export default function Overview() {
     metrics: saasMetrics = { totalMonthly: 0, totalAnnual: 0, totalTools: 0, totalDepartments: 0, renewingNext30Days: 0 }, 
     loading: saasLoading 
   } = useSaaSExpenses();
-  const { data: enrollments = [], loading: enrollmentsLoading } = useEnrollmentData();
+  const { data: enrollments = [], loading: enrollmentsLoading } = useEnrollments();
   const { data: audits = [], loading: auditsLoading } = useAudits();
   const { stats: ticketStats, loading: ticketStatsLoading } = useTicketStats();
   const { trends: ticketTrends, loading: ticketTrendsLoading } = useTicketTrends(10);

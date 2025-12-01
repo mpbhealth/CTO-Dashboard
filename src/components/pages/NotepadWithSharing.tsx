@@ -77,13 +77,6 @@ export default function NotepadWithSharing({
       setSaving(true);
       setError(null);
 
-      console.log('[NotepadWithSharing] Creating note:', {
-        dashboardRole,
-        creationMode,
-        contentLength: content.length,
-        hasTitle: !!title
-      });
-
       if (creationMode === 'for-other') {
         await createNote(content, {
           title: title || undefined,
@@ -106,8 +99,6 @@ export default function NotepadWithSharing({
         setContent('');
         setTitle('');
       }
-
-      console.log('[NotepadWithSharing] Note created successfully');
     } catch (err) {
       console.error('[NotepadWithSharing] Error creating note:', err);
       const errorMessage = err instanceof Error ? err.message : 'Failed to save note';

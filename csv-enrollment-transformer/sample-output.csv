@@ -1,5 +1,0 @@
-ID Customer,ID Product,Date Active,Date Inactive,Name First,Name Last,Product Admin Label,Product Benefit ID,Product Label,Date Created Member,Date First Billing,Date Last Payment,Date Next Billing,ID Agent,Last Payment,Last Transaction Amount,Product Amount
-M001,PROD-ESS,2023-01-15,2023-06-15,,,Essentials,BEN-1001,MPB Essentials,2023-01-15,2023-01-15,,2024-01-15,1234,,,29.99
-M002,PROD-PLUS,2023-03-01,2023-12-01,,,Plus,BEN-2001,MPB Plus,2023-03-01,2023-03-01,,2024-03-01,,,,49.99
-M003,PROD-PREM,2023-12-05,,,,Premium,BEN-3001,MPB Premium,2023-12-05,2023-12-05,,2024-12-05,5678,,,99.99
-M004,PROD-ESS,2023-02-15,2023-11-30,,,Essentials,BEN-1001,MPB Essentials,2023-02-15,2023-02-15,,2024-02-15,9999,,,29.99

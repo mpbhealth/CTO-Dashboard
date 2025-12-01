@@ -14,12 +14,12 @@ import {
 } from 'recharts';
 import { TrendingDown, TrendingUp, Users, Calendar, Upload, BarChart3 } from 'lucide-react';
 import { retentionKPIs, churnReasons, retentionTimeline, churnTimeline, cohortAnalysis } from '../../data/consolidatedMockData';
-import { useMemberStatusData } from '../../hooks/useMemberStatusData';
+import { useMemberStatus } from '../../hooks/useSupabaseTable';
 
 export default function MemberRetention() {
   const [selectedTimeframe, setSelectedTimeframe] = useState('6m');
   const [showImporter, setShowImporter] = useState(false);
-  const { refetch: refetchStatus } = useMemberStatusData();
+  const { refetch: refetchStatus } = useMemberStatus();
 
   const timeframes = [
     { value: '3m', label: 'Last 3 months' },

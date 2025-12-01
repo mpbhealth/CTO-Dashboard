@@ -54,8 +54,7 @@ export default function AdvisorPerformance() {
   };
 
   const handleImportSuccess = () => {
-    // Refresh data after successful import
-    console.log('Advisor data imported successfully');
+    // Data refreshed via React Query invalidation
   };
 
   // Prepare comprehensive export data

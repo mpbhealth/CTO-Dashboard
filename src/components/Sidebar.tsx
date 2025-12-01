@@ -5,11 +5,12 @@ import {
   Menu,
   X,
   ChevronsLeft,
-  ChevronsRight
+  ChevronsRight,
+  RefreshCw
 } from 'lucide-react';
 import { useCurrentProfile } from '../hooks/useDualDashboard';
 import { useAuth } from '../contexts/AuthContext';
-import { getNavigationForRole, categories, type NavItem } from '../config/navigation';
+import { getNavigationForRole, ceoNavigationItems, ctoNavigationItems, categories, type NavItem } from '../config/navigation';
 
 interface SidebarProps {
   activeTab: string;
@@ -31,13 +32,21 @@ export default function Sidebar({
   const [isMobile, setIsMobile] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState<string[]>(['compliance', 'department-reporting']);
   const { data: profile } = useCurrentProfile();
+  
+  // Admin role-switcher state
+  const [adminViewMode, setAdminViewMode] = useState<'ceo' | 'cto'>('ceo');
 
-  const isCEO = profile?.role === 'ceo';
+  const isAdmin = profile?.role === 'admin';
+  const isCEO = profile?.role === 'ceo' || (isAdmin && adminViewMode === 'ceo');
   const userRole = profile?.role || 'staff';
 
+  // For admin users, use the view mode to determine navigation
   const menuItems = useMemo(() => {
+    if (isAdmin) {
+      return adminViewMode === 'ceo' ? ceoNavigationItems : ctoNavigationItems;
+    }
     return getNavigationForRole(userRole as 'ceo' | 'cto' | 'admin' | 'staff');
-  }, [userRole]);
+  }, [userRole, isAdmin, adminViewMode]);
 
   // Detect if we're on mobile
   useEffect(() => {
@@ -176,6 +185,41 @@ export default function Sidebar({
               </div>
             )}
           </div>
+          
+          {/* Admin Role Switcher */}
+          {isAdmin && isSidebarExpanded && (
+            <div className="mt-4 p-2 bg-white/10 rounded-lg">
+              <p className="text-xs text-white/70 mb-2 font-medium">Admin View Mode</p>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => {
+                    setAdminViewMode('ceo');
+                    navigate('/ceod/home');
+                  }}
+                  className={`flex-1 px-3 py-1.5 rounded text-xs font-medium transition-colors ${
+                    adminViewMode === 'ceo'
+                      ? 'bg-pink-500 text-white'
+                      : 'bg-white/10 text-white/70 hover:bg-white/20'
+                  }`}
+                >
+                  CEO View
+                </button>
+                <button
+                  onClick={() => {
+                    setAdminViewMode('cto');
+                    navigate('/ctod/home');
+                  }}
+                  className={`flex-1 px-3 py-1.5 rounded text-xs font-medium transition-colors ${
+                    adminViewMode === 'cto'
+                      ? 'bg-sky-500 text-white'
+                      : 'bg-white/10 text-white/70 hover:bg-white/20'
+                  }`}
+                >
+                  CTO View
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Navigation Menu */}

@@ -434,17 +434,17 @@ function DualDashboardContent() {
             <Route path="/shared/performance-evaluation" element={<PerformanceEvaluation />} />
             <Route path="/shared/organizational-structure" element={<OrganizationalStructure />} />
 
-            {/* Legacy CTO Routes for backward compatibility */}
-            <Route path="/overview" element={<Overview />} />
-            <Route path="/tech-stack" element={<TechStack />} />
-            <Route path="/quick-links" element={<QuickLinks />} />
-            <Route path="/roadmap" element={<Roadmap />} />
-            <Route path="/road-visualizer" element={<RoadVisualizerWithFilters />} />
-            <Route path="/roadmap-presentation" element={<RoadmapPresentation />} />
-            <Route path="/projects" element={<Projects />} />
-            <Route path="/monday-tasks" element={<MondayTasks />} />
-            <Route path="/assignments" element={<Assignments />} />
-            <Route path="/notepad" element={<Notepad />} />
+            {/* Legacy CTO Routes for backward compatibility - Protected with CTOOnly */}
+            <Route path="/overview" element={<CTOOnly><Overview /></CTOOnly>} />
+            <Route path="/tech-stack" element={<CTOOnly><TechStack /></CTOOnly>} />
+            <Route path="/quick-links" element={<CTOOnly><QuickLinks /></CTOOnly>} />
+            <Route path="/roadmap" element={<CTOOnly><Roadmap /></CTOOnly>} />
+            <Route path="/road-visualizer" element={<CTOOnly><RoadVisualizerWithFilters /></CTOOnly>} />
+            <Route path="/roadmap-presentation" element={<CTOOnly><RoadmapPresentation /></CTOOnly>} />
+            <Route path="/projects" element={<CTOOnly><Projects /></CTOOnly>} />
+            <Route path="/monday-tasks" element={<CTOOnly><MondayTasks /></CTOOnly>} />
+            <Route path="/assignments" element={<CTOOnly><Assignments /></CTOOnly>} />
+            <Route path="/notepad" element={<CTOOnly><Notepad /></CTOOnly>} />
 
             <Route path="*" element={<RoleBasedRedirect />} />
           </Routes>

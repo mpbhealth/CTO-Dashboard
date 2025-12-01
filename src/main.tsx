@@ -17,10 +17,9 @@ import React from 'react';
 
 // Load diagnostics asynchronously to avoid circular dependency issues
 if (typeof window !== 'undefined') {
-  Promise.all([
-    import('./lib/diagnostics'),
-    import('./lib/whiteScreenDiagnostics')
-  ]).catch(err => console.error('Failed to load diagnostics:', err));
+  import('./lib/whiteScreenDiagnostics').catch(err => 
+    console.error('Failed to load diagnostics:', err)
+  );
 }
 
 // Create a client for React Query with optimized settings

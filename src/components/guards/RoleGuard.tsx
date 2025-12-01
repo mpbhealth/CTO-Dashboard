@@ -50,7 +50,7 @@ interface CEOOnlyProps {
 
 export function CEOOnly({ children }: CEOOnlyProps) {
   return (
-    <RoleGuard allowedRoles={['ceo']} redirectTo="/ctod/home">
+    <RoleGuard allowedRoles={['ceo', 'admin']} redirectTo="/ctod/home">
       {children}
     </RoleGuard>
   );

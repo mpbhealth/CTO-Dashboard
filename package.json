@@ -1,7 +1,7 @@
 {
-  "name": "vite-react-typescript-starter",
+  "name": "mpb-health-dashboard",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -12,14 +12,12 @@
     "transform:run": "node csv-enrollment-transformer/dist/transform.js --input csv-enrollment-transformer/input.csv --output csv-enrollment-transformer/output.csv",
     "transform:test": "vitest run",
     "test:e2e": "playwright test",
-    "link:check": "node ./scripts/link-check.mjs http://localhost:3000"
+    "link:check": "node ./scripts/link-check.mjs http://localhost:3000",
+    "analyze": "vite build --mode analyze"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",
     "@tanstack/react-query": "^5.83.0",
-    "@types/crypto-js": "^4.2.2",
-    "@types/dompurify": "^3.0.5",
-    "@types/papaparse": "^5.3.16",
     "crypto-js": "^4.2.0",
     "csv-parse": "^5.5.6",
     "csv-stringify": "^6.4.6",
@@ -43,7 +41,11 @@
   "devDependencies": {
     "@eslint/js": "^9.9.1",
     "@playwright/test": "^1.56.1",
+    "@types/crypto-js": "^4.2.2",
+    "@types/dompurify": "^3.0.5",
+    "@types/file-saver": "^2.0.7",
     "@types/node": "^22.8.1",
+    "@types/papaparse": "^5.3.16",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",

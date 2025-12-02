@@ -236,7 +236,7 @@ src="https://px.ads.linkedin.com/collect/?pid=${platform.tracking_id}&fmt=gif" /
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <RefreshCw className="w-6 h-6 animate-spin text-pink-600" />
+        <RefreshCw className="w-6 h-6 animate-spin text-indigo-600" />
       </div>
     );
   }
@@ -303,7 +303,7 @@ src="https://px.ads.linkedin.com/collect/?pid=${platform.tracking_id}&fmt=gif" /
                   <button
                     onClick={() => togglePlatform(platform.id, platform.is_enabled)}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                      platform.is_enabled ? 'bg-pink-600' : 'bg-slate-300'
+                      platform.is_enabled ? 'bg-indigo-600' : 'bg-slate-300'
                     }`}
                   >
                     <span
@@ -382,7 +382,7 @@ src="https://px.ads.linkedin.com/collect/?pid=${platform.tracking_id}&fmt=gif" /
                 <div className="flex items-center space-x-2 pt-2">
                   <button
                     onClick={() => verifyConnection(platform.id)}
-                    className="flex items-center space-x-2 px-3 py-2 bg-pink-600 hover:bg-pink-700 text-white text-sm rounded-lg transition-colors"
+                    className="flex items-center space-x-2 px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm rounded-lg transition-colors"
                   >
                     <RefreshCw className="w-4 h-4" />
                     <span>Test Connection</span>

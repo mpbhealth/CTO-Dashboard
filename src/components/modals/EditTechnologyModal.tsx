@@ -120,8 +120,8 @@ export default function EditTechnologyModal({ isOpen, onClose, onSuccess, techno
       <div className="bg-white rounded-xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-slate-200">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center">
-              <Server className="w-5 h-5 text-pink-600" />
+            <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+              <Server className="w-5 h-5 text-indigo-600" />
             </div>
             <h2 className="text-xl font-semibold text-slate-900">Edit Technology</h2>
           </div>
@@ -151,7 +151,7 @@ export default function EditTechnologyModal({ isOpen, onClose, onSuccess, techno
               required
               value={formData.name}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500 text-base md:text-sm"
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500 text-base md:text-sm"
               placeholder="e.g., React, Node.js, PostgreSQL"
             />
           </div>
@@ -166,7 +166,7 @@ export default function EditTechnologyModal({ isOpen, onClose, onSuccess, techno
               required
               value={formData.category}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500 text-base md:text-sm"
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500 text-base md:text-sm"
             >
               <option value="">Select a category</option>
               {categories.map(category => (
@@ -186,7 +186,7 @@ export default function EditTechnologyModal({ isOpen, onClose, onSuccess, techno
               required
               value={formData.version}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
               placeholder="e.g., 18.3.1, v5, 2024.1"
             />
           </div>
@@ -201,7 +201,7 @@ export default function EditTechnologyModal({ isOpen, onClose, onSuccess, techno
               required
               value={formData.owner}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
             >
               <option value="">Select an owner</option>
               {owners.map(owner => (
@@ -220,7 +220,7 @@ export default function EditTechnologyModal({ isOpen, onClose, onSuccess, techno
               required
               value={formData.status}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
             >
               <option value="Active">Active</option>
               <option value="Experimental">Experimental</option>
@@ -238,7 +238,7 @@ export default function EditTechnologyModal({ isOpen, onClose, onSuccess, techno
               rows={3}
               value={formData.notes}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
               placeholder="Additional notes about this technology..."
             />
           </div>
@@ -255,7 +255,7 @@ export default function EditTechnologyModal({ isOpen, onClose, onSuccess, techno
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Save className="w-4 h-4" />
               <span>{isSubmitting ? 'Saving...' : 'Save Changes'}</span>

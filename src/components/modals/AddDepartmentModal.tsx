@@ -112,8 +112,8 @@ export default function AddDepartmentModal({ onClose, onSuccess, departments, em
       <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
         <div className="flex items-center justify-between p-6 border-b border-slate-200">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center">
-              <Building2 className="w-5 h-5 text-pink-600" />
+            <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+              <Building2 className="w-5 h-5 text-indigo-600" />
             </div>
             <h2 className="text-xl font-semibold text-slate-900">Add New Department</h2>
           </div>
@@ -150,7 +150,7 @@ export default function AddDepartmentModal({ onClose, onSuccess, departments, em
                 value={formData.name}
                 onChange={handleInputChange}
                 required
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
                 placeholder="Enter department name"
               />
             </div>
@@ -165,7 +165,7 @@ export default function AddDepartmentModal({ onClose, onSuccess, departments, em
                 name="code"
                 value={formData.code}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
                 placeholder="E.g., ENG, FIN, HR"
               />
             </div>
@@ -182,7 +182,7 @@ export default function AddDepartmentModal({ onClose, onSuccess, departments, em
                 onChange={handleInputChange}
                 step="0.01"
                 min="0"
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
                 placeholder="0.00"
               />
             </div>
@@ -196,7 +196,7 @@ export default function AddDepartmentModal({ onClose, onSuccess, departments, em
                 name="department_lead_id" 
                 value={formData.department_lead_id || ''}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
               >
                 <option value="">Select a Manager</option>
                {employees.filter(emp => emp.user_id).map(emp => (
@@ -217,7 +217,7 @@ export default function AddDepartmentModal({ onClose, onSuccess, departments, em
                 name="parent_department_id"
                 value={formData.parent_department_id || ''}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
               >
                 <option value="">No Parent Department</option>
                 {departments
@@ -238,7 +238,7 @@ export default function AddDepartmentModal({ onClose, onSuccess, departments, em
                 name="contact_email"
                 value={formData.contact_email}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
                 placeholder="department@company.com"
               />
             </div>
@@ -252,7 +252,7 @@ export default function AddDepartmentModal({ onClose, onSuccess, departments, em
                 name="reporting_frequency"
                 value={formData.reporting_frequency}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
               >
                 <option value="daily">Daily</option>
                 <option value="weekly">Weekly</option>
@@ -271,7 +271,7 @@ export default function AddDepartmentModal({ onClose, onSuccess, departments, em
                 name="location"
                 value={formData.location}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
                 placeholder="Office location"
               />
             </div>
@@ -288,7 +288,7 @@ export default function AddDepartmentModal({ onClose, onSuccess, departments, em
               value={formData.description}
               onChange={handleInputChange}
               rows={3}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
               placeholder="Brief description of the department"
             />
           </div>
@@ -303,7 +303,7 @@ export default function AddDepartmentModal({ onClose, onSuccess, departments, em
               value={formData.strategic_purpose}
               onChange={handleInputChange}
               rows={3}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
               placeholder="Strategic purpose and goals"
             />
           </div>
@@ -318,7 +318,7 @@ export default function AddDepartmentModal({ onClose, onSuccess, departments, em
               value={formData.mission_statement}
               onChange={handleInputChange}
               rows={3}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
               placeholder="Department mission statement"
             />
           </div>
@@ -334,7 +334,7 @@ export default function AddDepartmentModal({ onClose, onSuccess, departments, em
               value={formData.headcount}
               onChange={handleInputChange}
               min="0"
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
               placeholder="0"
             />
           </div>
@@ -349,7 +349,7 @@ export default function AddDepartmentModal({ onClose, onSuccess, departments, em
               name="key_objectives"
               value={formData.key_objectives}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
               placeholder="Objective 1, Objective 2, Objective 3"
             />
             <p className="text-sm text-slate-500 mt-1">Separate objectives with commas</p>
@@ -366,7 +366,7 @@ export default function AddDepartmentModal({ onClose, onSuccess, departments, em
             <button
               type="submit"
               disabled={loading}
-              className="flex items-center gap-2 px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 disabled:opacity-70 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-70 disabled:cursor-not-allowed transition-colors"
             >
               <Save className="w-4 h-4" /> 
               {loading ? 'Saving...' : 'Save'}

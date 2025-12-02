@@ -84,7 +84,7 @@ const ComplianceCommandCenter: React.FC = () => {
       case 'error':
         return 'bg-red-50 border-red-200';
       case 'info':
-        return 'bg-pink-50 border-pink-200';
+        return 'bg-indigo-50 border-indigo-200';
       default:
         return 'bg-gray-50 border-gray-200';
     }
@@ -99,7 +99,7 @@ const ComplianceCommandCenter: React.FC = () => {
       case 'error':
         return 'text-red-800';
       case 'info':
-        return 'text-pink-800';
+        return 'text-indigo-800';
       default:
         return 'text-gray-800';
     }
@@ -116,7 +116,7 @@ const ComplianceCommandCenter: React.FC = () => {
       label: 'Log PHI Access',
       icon: Shield,
       route: '/ctod/compliance/phi-minimum',
-      color: 'bg-pink-600 hover:bg-pink-700',
+      color: 'bg-indigo-600 hover:bg-indigo-700',
     },
     {
       label: 'Create Policy',
@@ -166,7 +166,7 @@ const ComplianceCommandCenter: React.FC = () => {
   if (statsLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-pink-600 border-t-transparent" />
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-indigo-600 border-t-transparent" />
       </div>
     );
   }
@@ -178,7 +178,7 @@ const ComplianceCommandCenter: React.FC = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold mb-2">Compliance Command Center</h1>
-            <p className="text-pink-100">HIPAA Compliance Management System</p>
+            <p className="text-indigo-100">HIPAA Compliance Management System</p>
           </div>
           <Shield className="w-16 h-16 opacity-50" />
         </div>
@@ -245,7 +245,7 @@ const ComplianceCommandCenter: React.FC = () => {
             </h2>
             <button
               onClick={() => navigate('/ctod/compliance/dashboard')}
-              className="text-sm text-pink-600 hover:text-pink-700"
+              className="text-sm text-indigo-600 hover:text-indigo-700"
             >
               View All
             </button>
@@ -320,7 +320,7 @@ const ComplianceCommandCenter: React.FC = () => {
                   key={log.id}
                   className="flex items-start space-x-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100"
                 >
-                  <div className="w-2 h-2 rounded-full bg-pink-600 mt-2" />
+                  <div className="w-2 h-2 rounded-full bg-indigo-600 mt-2" />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-gray-900">
                       <span className="font-medium">{log.actor_email || 'System'}</span>{' '}
@@ -362,10 +362,10 @@ const ComplianceCommandCenter: React.FC = () => {
             <button
               key={idx}
               onClick={() => navigate(section.route)}
-              className="p-4 border-2 border-gray-200 rounded-lg hover:border-pink-500 hover:bg-pink-50 transition-all group text-left"
+              className="p-4 border-2 border-gray-200 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition-all group text-left"
             >
-              <section.icon className="w-8 h-8 text-gray-400 group-hover:text-pink-600 mb-2" />
-              <h3 className="font-medium text-gray-900 text-sm group-hover:text-pink-600">
+              <section.icon className="w-8 h-8 text-gray-400 group-hover:text-indigo-600 mb-2" />
+              <h3 className="font-medium text-gray-900 text-sm group-hover:text-indigo-600">
                 {section.name}
               </h3>
             </button>

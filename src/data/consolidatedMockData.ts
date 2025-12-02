@@ -107,36 +107,36 @@ export const topAdvisors = [
 ];
 
 export const salesTrends = [
-  { month: 'Jul', revenue: 320000, target: 300000 },
-  { month: 'Aug', revenue: 345000, target: 320000 },
-  { month: 'Sep', revenue: 378000, target: 340000 },
-  { month: 'Oct', revenue: 412000, target: 360000 },
-  { month: 'Nov', revenue: 445000, target: 380000 },
-  { month: 'Dec', revenue: 480000, target: 400000 },
+  { month: 'Jul', sales: 320000, deals: 98, advisors: 22 },
+  { month: 'Aug', sales: 345000, deals: 112, advisors: 23 },
+  { month: 'Sep', sales: 378000, deals: 125, advisors: 23 },
+  { month: 'Oct', sales: 412000, deals: 138, advisors: 24 },
+  { month: 'Nov', sales: 445000, deals: 152, advisors: 24 },
+  { month: 'Dec', sales: 480000, deals: 165, advisors: 24 },
 ];
 
 export const planBreakdown = [
-  { name: 'Premium', value: 45, color: '#EC4899' },
-  { name: 'Standard', value: 35, color: '#3B82F6' },
-  { name: 'Basic', value: 15, color: '#10B981' },
-  { name: 'Enterprise', value: 5, color: '#8B5CF6' },
+  { plan: 'Premium', sales: 1080000, percentage: 45, color: '#EC4899' },
+  { plan: 'Standard', sales: 840000, percentage: 35, color: '#3B82F6' },
+  { plan: 'Basic', sales: 360000, percentage: 15, color: '#10B981' },
+  { plan: 'Enterprise', sales: 120000, percentage: 5, color: '#8B5CF6' },
 ];
 
 export const advisorSkills = [
-  { skill: 'Product Knowledge', value: 92 },
-  { skill: 'Communication', value: 88 },
-  { skill: 'Closing', value: 85 },
-  { skill: 'Follow-up', value: 78 },
-  { skill: 'Objection Handling', value: 82 },
-  { skill: 'Time Management', value: 75 },
+  { skill: 'Product Knowledge', score: 92 },
+  { skill: 'Communication', score: 88 },
+  { skill: 'Closing', score: 85 },
+  { skill: 'Follow-up', score: 78 },
+  { skill: 'Objection Handling', score: 82 },
+  { skill: 'Time Management', score: 75 },
 ];
 
 export const performanceMetrics = [
-  { metric: 'Calls Made', target: 1000, actual: 1247 },
-  { metric: 'Emails Sent', target: 2000, actual: 2156 },
-  { metric: 'Meetings Held', target: 200, actual: 234 },
-  { metric: 'Proposals Sent', target: 150, actual: 178 },
-  { metric: 'Deals Closed', target: 50, actual: 67 },
+  { advisor: 'Sarah Johnson', calls: 45, meetings: 18, proposals: 12 },
+  { advisor: 'Michael Chen', calls: 42, meetings: 16, proposals: 10 },
+  { advisor: 'Emily Davis', calls: 38, meetings: 14, proposals: 9 },
+  { advisor: 'James Wilson', calls: 35, meetings: 12, proposals: 8 },
+  { advisor: 'Lisa Martinez', calls: 32, meetings: 10, proposals: 7 },
 ];
 
 // KPI Metrics for presentations

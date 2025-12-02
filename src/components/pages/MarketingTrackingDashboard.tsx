@@ -22,7 +22,7 @@ export default function MarketingTrackingDashboard() {
           <p className="text-slate-600 mb-6">The marketing property you're looking for doesn't exist.</p>
           <button
             onClick={() => navigate('/marketing-analytics')}
-            className="px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg transition-colors"
+            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
           >
             Back to Analytics
           </button>
@@ -58,11 +58,11 @@ export default function MarketingTrackingDashboard() {
       </div>
 
       {property.website_url && (
-        <div className="bg-gradient-to-r from-pink-50 to-purple-50 border border-pink-200 rounded-xl p-4">
+        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-xl p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm">
-                <BarChart3 className="w-5 h-5 text-pink-600" />
+                <BarChart3 className="w-5 h-5 text-indigo-600" />
               </div>
               <div>
                 <p className="text-sm font-medium text-slate-900">Website URL</p>
@@ -70,7 +70,7 @@ export default function MarketingTrackingDashboard() {
                   href={property.website_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm text-pink-600 hover:text-pink-700 hover:underline"
+                  className="text-sm text-indigo-600 hover:text-indigo-700 hover:underline"
                 >
                   {property.website_url}
                 </a>
@@ -96,7 +96,7 @@ export default function MarketingTrackingDashboard() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                   activeTab === tab.id
-                    ? 'border-pink-500 text-pink-600'
+                    ? 'border-indigo-500 text-indigo-600'
                     : 'border-transparent text-slate-500 hover:text-slate-700'
                 }`}
               >

@@ -88,7 +88,7 @@ export function CEODataImporter({
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <FileText className="w-8 h-8 text-pink-600" />
+                  <FileText className="w-8 h-8 text-indigo-600" />
                   <div>
                     <p className="text-sm font-medium text-slate-900">
                       {selectedFile.name}

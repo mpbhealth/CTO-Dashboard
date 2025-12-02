@@ -121,7 +121,7 @@ export function PublicDepartmentUpload() {
 
   if (!config) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-pink-50/30 flex items-center justify-center p-4 relative">
+      <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-indigo-50/30 flex items-center justify-center p-4 relative">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(236,72,153,0.03),transparent_50%),radial-gradient(circle_at_70%_60%,rgba(236,72,153,0.02),transparent_50%)] pointer-events-none" />
         <div className="relative text-center max-w-md">
           <div className="w-24 h-24 bg-gradient-to-br from-red-100 to-red-50 rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg">
@@ -131,7 +131,7 @@ export function PublicDepartmentUpload() {
           <p className="text-gray-600 mb-8 leading-relaxed">The specified department was not found. Please select a valid department from the portal.</p>
           <button
             onClick={() => navigate('/public/upload')}
-            className="px-8 py-4 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-xl hover:from-pink-600 hover:to-pink-700 hover:shadow-xl transition-all font-semibold shadow-lg hover:-translate-y-0.5"
+            className="px-8 py-4 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white rounded-xl hover:from-indigo-600 hover:to-indigo-700 hover:shadow-xl transition-all font-semibold shadow-lg hover:-translate-y-0.5"
           >
             Return to Department Selection
           </button>
@@ -266,7 +266,7 @@ export function PublicDepartmentUpload() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-pink-50/30 relative">
+    <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-indigo-50/30 relative">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(236,72,153,0.03),transparent_50%),radial-gradient(circle_at_70%_60%,rgba(236,72,153,0.02),transparent_50%)] pointer-events-none" />
       <div className="relative max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-10">
         <button
@@ -295,15 +295,15 @@ export function PublicDepartmentUpload() {
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-pink-50 to-pink-50/50 border border-pink-200/60 rounded-xl p-6 mb-8">
+          <div className="bg-gradient-to-br from-indigo-50 to-indigo-50/50 border border-indigo-200/60 rounded-xl p-6 mb-8">
             <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-pink-600" />
+              <CheckCircle className="w-4 h-4 text-indigo-600" />
               Required Fields
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {config.fields.map((field) => (
                 <div key={field.key} className="text-sm text-gray-700 flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-pink-500" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
                   <span className="font-medium">{field.label}</span>
                   {field.required && <span className="text-red-500">*</span>}
                   <span className="text-gray-500">({field.type})</span>
@@ -322,7 +322,7 @@ export function PublicDepartmentUpload() {
             </button>
           </div>
 
-          <div className="relative border-2 border-dashed border-gray-300 rounded-2xl p-12 text-center mb-8 hover:border-pink-400 hover:bg-gradient-to-br hover:from-pink-50/30 hover:to-pink-50/10 transition-all duration-300 group">
+          <div className="relative border-2 border-dashed border-gray-300 rounded-2xl p-12 text-center mb-8 hover:border-indigo-400 hover:bg-gradient-to-br hover:from-indigo-50/30 hover:to-indigo-50/10 transition-all duration-300 group">
             <input
               type="file"
               accept=".csv"
@@ -331,8 +331,8 @@ export function PublicDepartmentUpload() {
               id="file-upload"
             />
             <label htmlFor="file-upload" className="cursor-pointer block">
-              <div className="w-20 h-20 bg-gradient-to-br from-pink-100 to-pink-50 rounded-full flex items-center justify-center mx-auto mb-5 group-hover:shadow-lg group-hover:scale-110 transition-all duration-300">
-                <Upload className="w-10 h-10 text-pink-600" />
+              <div className="w-20 h-20 bg-gradient-to-br from-indigo-100 to-indigo-50 rounded-full flex items-center justify-center mx-auto mb-5 group-hover:shadow-lg group-hover:scale-110 transition-all duration-300">
+                <Upload className="w-10 h-10 text-indigo-600" />
               </div>
               <p className="text-xl font-semibold text-gray-900 mb-2">
                 {file ? file.name : 'Click to upload or drag and drop'}
@@ -345,7 +345,7 @@ export function PublicDepartmentUpload() {
             <div className={`rounded-xl p-6 mb-8 border ${
               progress.status === 'success' ? 'bg-gradient-to-br from-green-50 to-green-50/50 border-green-200' :
               progress.status === 'error' ? 'bg-gradient-to-br from-red-50 to-red-50/50 border-red-200' :
-              'bg-gradient-to-br from-pink-50 to-pink-50/50 border-pink-200'
+              'bg-gradient-to-br from-indigo-50 to-indigo-50/50 border-indigo-200'
             }`}>
               <div className="flex items-start gap-3">
                 {progress.status === 'success' && <CheckCircle className="text-green-600 mt-0.5 flex-shrink-0" size={22} />}
@@ -354,7 +354,7 @@ export function PublicDepartmentUpload() {
                   <p className={`font-semibold text-sm ${
                     progress.status === 'success' ? 'text-green-900' :
                     progress.status === 'error' ? 'text-red-900' :
-                    'text-pink-900'
+                    'text-indigo-900'
                   }`}>
                     {progress.message}
                   </p>
@@ -385,7 +385,7 @@ export function PublicDepartmentUpload() {
               <button
                 onClick={handleUpload}
                 disabled={progress.status === 'uploading'}
-                className="flex-1 flex items-center justify-center gap-2 px-8 py-3 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-xl hover:from-pink-600 hover:to-pink-700 hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed font-semibold shadow-lg hover:-translate-y-0.5"
+                className="flex-1 flex items-center justify-center gap-2 px-8 py-3 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white rounded-xl hover:from-indigo-600 hover:to-indigo-700 hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed font-semibold shadow-lg hover:-translate-y-0.5"
               >
                 <Upload size={20} />
                 <span>{progress.status === 'uploading' ? 'Uploading...' : 'Upload Data'}</span>
@@ -414,7 +414,7 @@ export function PublicDepartmentUpload() {
                   </thead>
                   <tbody className="divide-y divide-gray-200 bg-white">
                     {parsedData.slice(0, 5).map((row, idx) => (
-                      <tr key={idx} className="hover:bg-pink-50/30 transition-colors">
+                      <tr key={idx} className="hover:bg-indigo-50/30 transition-colors">
                         {Object.values(row).map((value: any, cellIdx) => (
                           <td key={cellIdx} className="px-5 py-3 text-gray-900 whitespace-nowrap">
                             {String(value)}
@@ -437,7 +437,7 @@ export function PublicDepartmentUpload() {
                   setProgress({ status: 'idle', message: '' });
                   setShowPreview(false);
                 }}
-                className="px-8 py-4 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-xl hover:from-pink-600 hover:to-pink-700 hover:shadow-xl transition-all font-semibold shadow-lg hover:-translate-y-0.5"
+                className="px-8 py-4 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white rounded-xl hover:from-indigo-600 hover:to-indigo-700 hover:shadow-xl transition-all font-semibold shadow-lg hover:-translate-y-0.5"
               >
                 Upload Another File
               </button>

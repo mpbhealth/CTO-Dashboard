@@ -25,6 +25,7 @@ interface AuthContextType {
   signUp: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
+  updatePassword: (currentPassword: string, newPassword: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -347,6 +348,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [isDemoMode]);
 
+  const updatePassword = useCallback(async (currentPassword: string, newPassword: string) => {
+    if (isDemoMode) {
+      throw new Error('Password cannot be changed in demo mode');
+    }
+
+    if (!user?.email) {
+      throw new Error('No user email found');
+    }
+
+    // Re-authenticate with current password first
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email: user.email,
+      password: currentPassword,
+    });
+
+    if (signInError) {
+      throw new Error('Current password is incorrect');
+    }
+
+    // Update to new password
+    const { error: updateError } = await supabase.auth.updateUser({
+      password: newPassword,
+    });
+
+    if (updateError) {
+      throw updateError;
+    }
+
+    logger.log('Password updated successfully');
+  }, [isDemoMode, user?.email]);
+
   const value = useMemo(() => ({
     user,
     session,
@@ -358,7 +390,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signUp,
     signOut,
     refreshProfile,
-  }), [user, session, profile, loading, profileReady, isDemoMode, signIn, signUp, signOut, refreshProfile]);
+    updatePassword,
+  }), [user, session, profile, loading, profileReady, isDemoMode, signIn, signUp, signOut, refreshProfile, updatePassword]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

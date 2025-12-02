@@ -156,7 +156,7 @@ export default function Overview() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="flex flex-col items-center space-y-4">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-4 border-pink-600"></div>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-4 border-indigo-600"></div>
           <p className="text-slate-600 font-medium">Loading company insights...</p>
         </div>
       </div>
@@ -217,7 +217,7 @@ export default function Overview() {
       case 'Live':
         return 'text-emerald-600 bg-emerald-50';
       case 'Building':
-        return 'text-pink-600 bg-pink-50';
+        return 'text-indigo-600 bg-indigo-50';
       case 'Planning':
         return 'text-purple-600 bg-purple-50';
       case 'On Hold':
@@ -256,7 +256,7 @@ export default function Overview() {
             </select>
             <button
               onClick={() => window.location.reload()}
-              className="p-2 text-slate-600 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition-colors"
+              className="p-2 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
               title="Refresh data"
             >
               <Activity className="w-5 h-5" />
@@ -292,13 +292,13 @@ export default function Overview() {
           <p className="text-emerald-100 text-sm mt-1">{orgMetrics.activeEnrollments} active enrollments</p>
         </div>
 
-        <div className="bg-gradient-to-br from-pink-500 to-pink-700 p-6 rounded-xl shadow-lg text-white">
+        <div className="bg-gradient-to-br from-indigo-500 to-indigo-700 p-6 rounded-xl shadow-lg text-white">
           <div className="flex items-center justify-between mb-4">
             <Briefcase className="w-10 h-10 opacity-80" />
             <span className="text-3xl font-bold">{orgMetrics.activeProjects}</span>
           </div>
           <h3 className="text-lg font-semibold">Active Projects</h3>
-          <p className="text-pink-100 text-sm mt-1">{orgMetrics.completedProjects} completed</p>
+          <p className="text-indigo-100 text-sm mt-1">{orgMetrics.completedProjects} completed</p>
         </div>
 
         <div className="bg-gradient-to-br from-amber-500 to-amber-700 p-6 rounded-xl shadow-lg text-white">
@@ -318,7 +318,7 @@ export default function Overview() {
         transition={{ duration: 0.5, delay: 0.2 }}
       >
         <h2 className="text-2xl font-bold text-slate-900 mb-4 flex items-center">
-          <BarChart3 className="w-6 h-6 mr-2 text-pink-600" />
+          <BarChart3 className="w-6 h-6 mr-2 text-indigo-600" />
           Key Performance Indicators
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -337,7 +337,7 @@ export default function Overview() {
           className="mt-8"
         >
           <h2 className="text-2xl font-bold text-slate-900 mb-4 flex items-center">
-            <Ticket className="w-6 h-6 mr-2 text-pink-600" />
+            <Ticket className="w-6 h-6 mr-2 text-indigo-600" />
             IT Support Tickets
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -345,11 +345,11 @@ export default function Overview() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-slate-600">Open Tickets</p>
-                  <p className="text-2xl font-bold text-pink-600 mt-1">
+                  <p className="text-2xl font-bold text-indigo-600 mt-1">
                     {ticketStats?.open_tickets ?? 0}
                   </p>
                 </div>
-                <Ticket className="w-8 h-8 text-pink-400" />
+                <Ticket className="w-8 h-8 text-indigo-400" />
               </div>
               <p className="text-xs text-slate-500 mt-2">
                 {ticketStats?.in_progress_tickets ?? 0} in progress
@@ -463,7 +463,7 @@ export default function Overview() {
         >
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-slate-900 flex items-center">
-              <TrendingUp className="w-5 h-5 mr-2 text-pink-600" />
+              <TrendingUp className="w-5 h-5 mr-2 text-indigo-600" />
               Growth Trends
             </h3>
           </div>
@@ -520,7 +520,7 @@ export default function Overview() {
         >
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-slate-900 flex items-center">
-              <PieChart className="w-5 h-5 mr-2 text-pink-600" />
+              <PieChart className="w-5 h-5 mr-2 text-indigo-600" />
               Team Distribution
             </h3>
           </div>
@@ -554,7 +554,7 @@ export default function Overview() {
         >
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-slate-900 flex items-center">
-              <DollarSign className="w-5 h-5 mr-2 text-pink-600" />
+              <DollarSign className="w-5 h-5 mr-2 text-indigo-600" />
               Budget Allocation by Department
             </h3>
           </div>
@@ -592,7 +592,7 @@ export default function Overview() {
         >
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-slate-900 flex items-center">
-              <GitBranch className="w-5 h-5 mr-2 text-pink-600" />
+              <GitBranch className="w-5 h-5 mr-2 text-indigo-600" />
               Project Portfolio Status
             </h3>
           </div>
@@ -629,15 +629,15 @@ export default function Overview() {
         >
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-2">
-              <Users className="w-5 h-5 text-pink-600" />
+              <Users className="w-5 h-5 text-indigo-600" />
               <h2 className="text-xl font-semibold text-slate-900">Team Directory</h2>
-              <span className="bg-pink-100 text-pink-700 text-xs font-semibold px-2 py-1 rounded-full">
+              <span className="bg-indigo-100 text-indigo-700 text-xs font-semibold px-2 py-1 rounded-full">
                 {teamMembers.length}
               </span>
             </div>
             <button
               onClick={() => setIsAddModalOpen(true)}
-              className="bg-pink-600 hover:bg-pink-700 text-white px-3 py-2 rounded-lg flex items-center space-x-2 transition-colors text-sm"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-lg flex items-center space-x-2 transition-colors text-sm"
             >
               <Plus className="w-4 h-4" />
               <span>Add Member</span>
@@ -657,8 +657,8 @@ export default function Overview() {
                   className="flex items-center justify-between p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors"
                 >
                   <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center">
-                      <span className="text-sm font-medium text-pink-600">
+                    <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
+                      <span className="text-sm font-medium text-indigo-600">
                         {member.name.split(' ').map(n => n[0]).join('')}
                       </span>
                     </div>
@@ -678,7 +678,7 @@ export default function Overview() {
                     <div className="flex items-center space-x-1">
                       <button
                         onClick={() => handleEditMember(member)}
-                        className="p-1 text-slate-400 hover:text-pink-600 hover:bg-pink-50 rounded transition-colors"
+                        className="p-1 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
                         title="Edit team member"
                       >
                         <Edit className="w-4 h-4" />
@@ -706,9 +706,9 @@ export default function Overview() {
           className="bg-white p-6 rounded-xl shadow-sm border border-slate-200"
         >
           <div className="flex items-center space-x-2 mb-4">
-            <Building2 className="w-5 h-5 text-pink-600" />
+            <Building2 className="w-5 h-5 text-indigo-600" />
             <h2 className="text-xl font-semibold text-slate-900">Departments</h2>
-            <span className="bg-pink-100 text-pink-700 text-xs font-semibold px-2 py-1 rounded-full">
+            <span className="bg-indigo-100 text-indigo-700 text-xs font-semibold px-2 py-1 rounded-full">
               {departments.filter(d => d.is_active).length}
             </span>
           </div>
@@ -725,7 +725,7 @@ export default function Overview() {
                 .map((dept) => (
                   <div
                     key={dept.id}
-                    className="flex items-center justify-between p-4 border border-slate-200 rounded-lg hover:border-pink-300 hover:shadow-sm transition-all"
+                    className="flex items-center justify-between p-4 border border-slate-200 rounded-lg hover:border-indigo-300 hover:shadow-sm transition-all"
                   >
                     <div className="flex-1">
                       <h3 className="font-semibold text-slate-900">{dept.name}</h3>
@@ -770,7 +770,7 @@ export default function Overview() {
           className="bg-white p-6 rounded-xl shadow-sm border border-slate-200"
         >
           <div className="flex items-center space-x-2 mb-4">
-            <DollarSign className="w-5 h-5 text-pink-600" />
+            <DollarSign className="w-5 h-5 text-indigo-600" />
             <h2 className="text-xl font-semibold text-slate-900">Financial Overview</h2>
           </div>
           <div className="space-y-4">
@@ -793,14 +793,14 @@ export default function Overview() {
               </div>
               <Package className="w-8 h-8 text-amber-600" />
             </div>
-            <div className="flex items-center justify-between p-4 bg-pink-50 rounded-lg">
+            <div className="flex items-center justify-between p-4 bg-indigo-50 rounded-lg">
               <div>
                 <p className="text-sm text-slate-600">Total Dept Budget</p>
-                <p className="text-2xl font-bold text-pink-700">
+                <p className="text-2xl font-bold text-indigo-700">
                   ${(orgMetrics.totalBudget / 1000000).toFixed(2)}M
                 </p>
               </div>
-              <Briefcase className="w-8 h-8 text-pink-600" />
+              <Briefcase className="w-8 h-8 text-indigo-600" />
             </div>
             <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
               <div>
@@ -825,17 +825,17 @@ export default function Overview() {
           className="bg-white p-6 rounded-xl shadow-sm border border-slate-200"
         >
           <div className="flex items-center space-x-2 mb-4">
-            <Code className="w-5 h-5 text-pink-600" />
+            <Code className="w-5 h-5 text-indigo-600" />
             <h2 className="text-xl font-semibold text-slate-900">Technology Health</h2>
           </div>
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 bg-pink-50 rounded-lg">
+            <div className="flex items-center justify-between p-4 bg-indigo-50 rounded-lg">
               <div>
                 <p className="text-sm text-slate-600">Active Projects</p>
-                <p className="text-2xl font-bold text-pink-700">{orgMetrics.activeProjects}</p>
+                <p className="text-2xl font-bold text-indigo-700">{orgMetrics.activeProjects}</p>
                 <p className="text-xs text-slate-600 mt-1">{orgMetrics.completedProjects} completed</p>
               </div>
-              <Briefcase className="w-8 h-8 text-pink-600" />
+              <Briefcase className="w-8 h-8 text-indigo-600" />
             </div>
             <div className="flex items-center justify-between p-4 bg-cyan-50 rounded-lg">
               <div>
@@ -873,9 +873,9 @@ export default function Overview() {
         className="bg-white p-6 rounded-xl shadow-sm border border-slate-200"
       >
         <div className="flex items-center space-x-2 mb-4">
-          <Briefcase className="w-5 h-5 text-pink-600" />
+          <Briefcase className="w-5 h-5 text-indigo-600" />
           <h2 className="text-xl font-semibold text-slate-900">Active Projects</h2>
-          <span className="bg-pink-100 text-pink-700 text-xs font-semibold px-2 py-1 rounded-full">
+          <span className="bg-indigo-100 text-indigo-700 text-xs font-semibold px-2 py-1 rounded-full">
             {projects.length}
           </span>
         </div>
@@ -883,7 +883,7 @@ export default function Overview() {
           {projects.slice(0, 6).map((project) => (
             <div
               key={project.id}
-              className="border border-slate-200 rounded-lg p-4 hover:border-pink-300 hover:shadow-sm transition-all"
+              className="border border-slate-200 rounded-lg p-4 hover:border-indigo-300 hover:shadow-sm transition-all"
             >
               <div className="flex items-start justify-between mb-2 gap-2">
                 <h3 className="font-semibold text-slate-900 line-clamp-1 flex-1 min-w-0">{project.name}</h3>
@@ -901,7 +901,7 @@ export default function Overview() {
                 </div>
                 <div className="w-full bg-slate-200 rounded-full h-2 relative overflow-hidden">
                   <div
-                    className="bg-pink-600 h-2 rounded-full transition-all absolute left-0 top-0"
+                    className="bg-indigo-600 h-2 rounded-full transition-all absolute left-0 top-0"
                     style={{ width: `${project.progress}%` }}
                   />
                 </div>
@@ -919,7 +919,7 @@ export default function Overview() {
         className="bg-white p-6 rounded-xl shadow-sm border border-slate-200"
       >
         <div className="flex items-center space-x-2 mb-4">
-          <Clock className="w-5 h-5 text-pink-600" />
+          <Clock className="w-5 h-5 text-indigo-600" />
           <h2 className="text-xl font-semibold text-slate-900">Recent Activity</h2>
         </div>
         <div className="space-y-3">
@@ -964,13 +964,13 @@ export default function Overview() {
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
                     activity.type === 'project'
-                      ? 'bg-pink-100 text-pink-600'
+                      ? 'bg-indigo-100 text-indigo-600'
                       : activity.type === 'security'
                       ? 'bg-green-100 text-green-600'
                       : activity.type === 'team'
                       ? 'bg-sky-100 text-sky-600'
                       : activity.type === 'organization'
-                      ? 'bg-pink-100 text-pink-600'
+                      ? 'bg-indigo-100 text-indigo-600'
                       : 'bg-amber-100 text-amber-600'
                   }`}
                 >

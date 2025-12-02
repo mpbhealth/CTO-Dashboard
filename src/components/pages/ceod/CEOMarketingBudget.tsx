@@ -22,7 +22,7 @@ export function CEOMarketingBudget() {
             <h1 className="text-3xl font-bold text-gray-900">Marketing Budget</h1>
             <p className="text-gray-600 mt-1">Track spend and ROI by channel</p>
           </div>
-          <button className="px-4 py-2 bg-gradient-to-r from-pink-400 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity font-medium shadow-md">
+          <button className="px-4 py-2 bg-gradient-to-r from-indigo-400 to-indigo-500 text-white rounded-lg hover:opacity-90 transition-opacity font-medium shadow-md">
             Download Report
           </button>
         </div>
@@ -38,8 +38,8 @@ export function CEOMarketingBudget() {
           </div>
           <div className="bg-white rounded-xl shadow-sm border p-5">
             <div className="flex items-center justify-between mb-2">
-              <TrendingUp size={18} className="text-pink-500" />
-              <span className="text-sm font-medium text-pink-500">${totalSpent.toLocaleString()}</span>
+              <TrendingUp size={18} className="text-indigo-500" />
+              <span className="text-sm font-medium text-indigo-500">${totalSpent.toLocaleString()}</span>
             </div>
             <div className="text-2xl font-bold text-gray-900">${(totalBudget - totalSpent).toLocaleString()}</div>
             <div className="text-sm text-gray-500 mt-1">Remaining Budget</div>

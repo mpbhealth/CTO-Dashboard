@@ -1,6 +1,8 @@
 import React, { useState, useCallback } from 'react';
-import { Upload, X, FileText, AlertCircle, CheckCircle } from 'lucide-react';
+import { Upload, X, FileText, AlertCircle, CheckCircle, Lock, LockOpen } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { encryptFile, type EncryptedFileData } from '../../utils/encryption';
+import { isEncryptionConfigured, getEncryptionKey } from '../../lib/encryptionConfig';
 import type { HIPAAEvidence } from '../../types/compliance';
 
 interface EvidenceUploaderProps {
@@ -8,6 +10,8 @@ interface EvidenceUploaderProps {
   onUploadComplete?: (evidence: HIPAAEvidence) => void;
   maxSizeMB?: number;
   allowedTypes?: string[];
+  /** Enable encryption by default */
+  defaultEncrypt?: boolean;
 }
 
 export const EvidenceUploader: React.FC<EvidenceUploaderProps> = ({
@@ -25,6 +29,7 @@ export const EvidenceUploader: React.FC<EvidenceUploaderProps> = ({
     'text/plain',
     'text/csv',
   ],
+  defaultEncrypt = true,
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -33,6 +38,10 @@ export const EvidenceUploader: React.FC<EvidenceUploaderProps> = ({
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [encryptEnabled, setEncryptEnabled] = useState(defaultEncrypt && isEncryptionConfigured());
+  const [uploadProgress, setUploadProgress] = useState<string>('');
+
+  const encryptionAvailable = isEncryptionConfigured();
 
   const validateFile = (file: File): string | null => {
     if (file.size > maxSizeMB * 1024 * 1024) {
@@ -95,6 +104,7 @@ export const EvidenceUploader: React.FC<EvidenceUploaderProps> = ({
 
     setUploading(true);
     setError(null);
+    setUploadProgress('');
 
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -104,14 +114,54 @@ export const EvidenceUploader: React.FC<EvidenceUploaderProps> = ({
       const timestamp = Date.now();
       const sanitizedTitle = title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
       const fileExt = selectedFile.name.split('.').pop();
-      const filePath = `${category}/${user.id}/${timestamp}_${sanitizedTitle}.${fileExt}`;
+      
+      let uploadData: Blob | string;
+      let filePath: string;
+      let metadata: Record<string, unknown> = {};
+
+      if (encryptEnabled && encryptionAvailable) {
+        // Encrypt the file before uploading
+        setUploadProgress('Encrypting file...');
+        
+        const encryptionKey = getEncryptionKey();
+        const encryptedData: EncryptedFileData = await encryptFile(selectedFile, encryptionKey);
+        
+        // Store encrypted content as JSON blob
+        const encryptedBlob = new Blob(
+          [JSON.stringify({ iv: encryptedData.iv, content: encryptedData.content })],
+          { type: 'application/octet-stream' }
+        );
+        
+        uploadData = encryptedBlob;
+        filePath = `${category}/${user.id}/${timestamp}_${sanitizedTitle}.${fileExt}.enc`;
+        
+        // Store encryption metadata (IV and original file info)
+        metadata = {
+          encrypted: true,
+          encryption_iv: encryptedData.iv,
+          original_name: encryptedData.metadata.name,
+          original_type: encryptedData.metadata.type,
+          original_size: encryptedData.metadata.size,
+        };
+        
+        setUploadProgress('Uploading encrypted file...');
+      } else {
+        // Upload unencrypted
+        uploadData = selectedFile;
+        filePath = `${category}/${user.id}/${timestamp}_${sanitizedTitle}.${fileExt}`;
+        metadata = { encrypted: false };
+        
+        setUploadProgress('Uploading file...');
+      }
 
       // Upload to storage
       const { error: uploadError } = await supabase.storage
         .from('hipaa-evidence')
-        .upload(filePath, selectedFile);
+        .upload(filePath, uploadData);
 
       if (uploadError) throw uploadError;
+
+      setUploadProgress('Saving record...');
 
       // Create evidence record
       const tagsArray = tags.split(',').map(t => t.trim()).filter(Boolean);
@@ -126,6 +176,7 @@ export const EvidenceUploader: React.FC<EvidenceUploaderProps> = ({
           file_size: selectedFile.size,
           owner: user.id,
           tags: tagsArray,
+          metadata,
         })
         .select()
         .single();
@@ -136,14 +187,17 @@ export const EvidenceUploader: React.FC<EvidenceUploaderProps> = ({
       setSelectedFile(null);
       setTitle('');
       setTags('');
+      setUploadProgress('');
 
       if (onUploadComplete && evidence) {
         onUploadComplete(evidence as HIPAAEvidence);
       }
 
       setTimeout(() => setSuccess(false), 3000);
-    } catch (err: any) {
-      setError(err.message || 'Upload failed');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Upload failed';
+      setError(message);
+      setUploadProgress('');
     } finally {
       setUploading(false);
     }
@@ -157,6 +211,40 @@ export const EvidenceUploader: React.FC<EvidenceUploaderProps> = ({
 
   return (
     <div className="space-y-4">
+      {/* Encryption toggle */}
+      {encryptionAvailable && (
+        <div className="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded-lg">
+          <div className="flex items-center space-x-2">
+            {encryptEnabled ? (
+              <Lock className="w-5 h-5 text-green-600" />
+            ) : (
+              <LockOpen className="w-5 h-5 text-gray-400" />
+            )}
+            <div>
+              <span className="text-sm font-medium text-gray-700">
+                AES-256 Encryption
+              </span>
+              <p className="text-xs text-gray-500">
+                {encryptEnabled ? 'Files will be encrypted before upload' : 'Files will be uploaded unencrypted'}
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => setEncryptEnabled(!encryptEnabled)}
+            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+              encryptEnabled ? 'bg-green-600' : 'bg-gray-300'
+            }`}
+          >
+            <span
+              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                encryptEnabled ? 'translate-x-6' : 'translate-x-1'
+              }`}
+            />
+          </button>
+        </div>
+      )}
+
       {/* Drop zone */}
       <div
         onDragOver={handleDragOver}
@@ -164,7 +252,7 @@ export const EvidenceUploader: React.FC<EvidenceUploaderProps> = ({
         onDrop={handleDrop}
         className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
           isDragging
-            ? 'border-pink-500 bg-pink-50'
+            ? 'border-indigo-500 bg-indigo-50'
             : 'border-gray-300 hover:border-gray-400'
         }`}
       >
@@ -178,10 +266,17 @@ export const EvidenceUploader: React.FC<EvidenceUploaderProps> = ({
         
         {selectedFile ? (
           <div className="flex items-center justify-center space-x-3">
-            <FileText className="w-8 h-8 text-pink-600" />
+            <FileText className="w-8 h-8 text-indigo-600" />
             <div className="text-left">
               <p className="font-medium text-gray-900">{selectedFile.name}</p>
-              <p className="text-sm text-gray-500">{formatFileSize(selectedFile.size)}</p>
+              <p className="text-sm text-gray-500">
+                {formatFileSize(selectedFile.size)}
+                {encryptEnabled && encryptionAvailable && (
+                  <span className="ml-2 text-green-600">
+                    <Lock className="w-3 h-3 inline" /> Will be encrypted
+                  </span>
+                )}
+              </p>
             </div>
             <button
               type="button"
@@ -197,7 +292,7 @@ export const EvidenceUploader: React.FC<EvidenceUploaderProps> = ({
             <p className="text-gray-600 mb-2">Drag and drop your file here, or</p>
             <label
               htmlFor="file-upload"
-              className="inline-block px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 cursor-pointer"
+              className="inline-block px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 cursor-pointer"
             >
               Browse Files
             </label>
@@ -218,7 +313,7 @@ export const EvidenceUploader: React.FC<EvidenceUploaderProps> = ({
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-pink-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-indigo-500"
               placeholder="Enter evidence title"
             />
           </div>
@@ -231,7 +326,7 @@ export const EvidenceUploader: React.FC<EvidenceUploaderProps> = ({
               type="text"
               value={tags}
               onChange={(e) => setTags(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-pink-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-indigo-500"
               placeholder="e.g., policy, training, 2025"
             />
           </div>
@@ -240,17 +335,23 @@ export const EvidenceUploader: React.FC<EvidenceUploaderProps> = ({
             type="button"
             onClick={handleUpload}
             disabled={uploading || !title}
-            className="w-full px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+            className="w-full px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
           >
             {uploading ? (
               <>
                 <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
-                <span>Uploading...</span>
+                <span>{uploadProgress || 'Processing...'}</span>
               </>
             ) : (
               <>
-                <Upload className="w-4 h-4" />
-                <span>Upload Evidence</span>
+                {encryptEnabled && encryptionAvailable ? (
+                  <Lock className="w-4 h-4" />
+                ) : (
+                  <Upload className="w-4 h-4" />
+                )}
+                <span>
+                  {encryptEnabled && encryptionAvailable ? 'Encrypt & Upload' : 'Upload Evidence'}
+                </span>
               </>
             )}
           </button>
@@ -269,10 +370,12 @@ export const EvidenceUploader: React.FC<EvidenceUploaderProps> = ({
       {success && (
         <div className="flex items-center space-x-2 p-3 bg-green-50 border border-green-200 rounded-lg text-green-800">
           <CheckCircle className="w-5 h-5 flex-shrink-0" />
-          <span className="text-sm">Evidence uploaded successfully!</span>
+          <span className="text-sm">
+            Evidence uploaded successfully!
+            {encryptEnabled && encryptionAvailable && ' (encrypted)'}
+          </span>
         </div>
       )}
     </div>
   );
 };
-

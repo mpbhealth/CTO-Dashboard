@@ -42,7 +42,7 @@ export function ViewingContextBadge({
     },
     department: {
       icon: Building2,
-      color: 'bg-pink-100 text-pink-800',
+      color: 'bg-indigo-100 text-indigo-800',
       defaultLabel: 'Department View',
     },
     team: {

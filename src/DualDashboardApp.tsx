@@ -118,6 +118,7 @@ const SharedOverview = lazy(() => import('./components/pages/shared/SharedOvervi
 const AuditLogViewer = lazy(() => import('./components/pages/shared/AuditLogViewer').then(m => ({ default: m.AuditLogViewer })));
 const AuthDiagnostics = lazy(() => import('./components/pages/AuthDiagnostics'));
 const DiagnosticsDashboard = lazy(() => import('./components/pages/DiagnosticsDashboard'));
+const Settings = lazy(() => import('./components/pages/Settings'));
 
 // Shared components (legacy)
 const SaaSSpend = lazy(() => import('./components/pages/SaaSSpend'));
@@ -145,7 +146,7 @@ const Notepad = lazy(() => import('./components/pages/Notepad'));
 
 const LoadingFallback = () => (
   <div className="flex items-center justify-center min-h-screen">
-    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600"></div>
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
   </div>
 );
 
@@ -249,7 +250,7 @@ function DualDashboardContent() {
     return (
       <div className="flex items-center justify-center min-h-screen bg-slate-50">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Authenticating...</p>
         </div>
       </div>
@@ -260,7 +261,7 @@ function DualDashboardContent() {
     return (
       <div className="flex items-center justify-center min-h-screen bg-slate-50">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading your dashboard...</p>
         </div>
       </div>
@@ -280,7 +281,7 @@ function DualDashboardContent() {
 
       {shouldShowCTOSidebar && isMobile && !isSidebarExpanded && (
         <button
-          className="fixed top-4 left-4 p-3 rounded-md bg-pink-600 text-white shadow-lg md:hidden z-50 mobile-hamburger"
+          className="fixed top-4 left-4 p-3 rounded-md bg-indigo-600 text-white shadow-lg md:hidden z-50 mobile-hamburger"
           onClick={toggleSidebar}
           aria-label="Open menu"
         >
@@ -351,6 +352,9 @@ function DualDashboardContent() {
             <Route path="/ctod/infrastructure/api-status" element={<CTOOnly><CTOAPIStatus /></CTOOnly>} />
             <Route path="/ctod/infrastructure/system-uptime" element={<CTOOnly><CTOSystemUptime /></CTOOnly>} />
 
+            {/* CTO Settings */}
+            <Route path="/ctod/settings" element={<CTOOnly><Settings /></CTOOnly>} />
+
             <Route path="/ceod/home" element={<CEOOnly><CEODashboardLayout><CEOHome /></CEODashboardLayout></CEOOnly>} />
 
             {/* CEO Analytics Routes */}
@@ -415,6 +419,9 @@ function DualDashboardContent() {
             <Route path="/ceod/board" element={<CEOOnly><CEODashboardLayout><CEOBoardPacket /></CEODashboardLayout></CEOOnly>} />
             <Route path="/ceod/initiatives" element={<CEOOnly><CEODashboardLayout><CEOHome /></CEODashboardLayout></CEOOnly>} />
             <Route path="/ceod/approvals" element={<CEOOnly><CEODashboardLayout><CEOHome /></CEODashboardLayout></CEOOnly>} />
+
+            {/* CEO Settings */}
+            <Route path="/ceod/settings" element={<CEOOnly><CEODashboardLayout><Settings /></CEODashboardLayout></CEOOnly>} />
 
             <Route path="/shared/overview" element={<SharedOverview />} />
             <Route path="/shared/audit" element={<AuditLogViewer />} />

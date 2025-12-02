@@ -3,11 +3,22 @@
 @tailwind utilities;
 
 @layer base {
+  /* Safe area insets for notched devices */
   :root {
     --color-primary: theme('colors.slate.900');
     --color-muted: theme('colors.slate.600');
     --color-accent: theme('colors.indigo.600');
     --color-accent-hover: theme('colors.indigo.700');
+    
+    /* Safe area fallbacks */
+    --safe-area-top: env(safe-area-inset-top, 0px);
+    --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-area-left: env(safe-area-inset-left, 0px);
+    --safe-area-right: env(safe-area-inset-right, 0px);
+    
+    /* Touch target minimum (44px is Apple's recommendation) */
+    --touch-target-min: 44px;
+    --touch-target-comfortable: 48px;
   }
 
   :root[data-role='ceo'] {
@@ -38,14 +49,35 @@
     --brand-border: #bae6fd;
   }
 
+  /* Smooth font rendering on all devices */
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Prevent pull-to-refresh and elastic scrolling on iOS */
+  html, body {
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Mobile-friendly body defaults */
+  body {
+    padding-top: var(--safe-area-top);
+    padding-bottom: var(--safe-area-bottom);
+    padding-left: var(--safe-area-left);
+    padding-right: var(--safe-area-right);
+  }
+
   /* Mobile hamburger menu */
   .mobile-hamburger {
     z-index: 999;
     pointer-events: auto;
   }
 
-  /* Ensure all menu items are clickable */
-  button, a {
+  /* Ensure all interactive elements are clickable */
+  button, a, [role="button"] {
     pointer-events: auto !important;
     cursor: pointer !important;
   }
@@ -60,9 +92,238 @@
     position: relative;
     z-index: 41;
   }
+
+  /* Better input styling on iOS */
+  input, textarea, select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border-radius: 0.5rem;
+  }
+
+  /* Prevent zoom on input focus for iOS (requires 16px minimum) */
+  @media screen and (max-width: 767px) {
+    input, select, textarea {
+      font-size: 16px !important;
+    }
+  }
+}
+
+@layer components {
+  /* Mobile-first card component */
+  .mobile-card {
+    @apply bg-white rounded-2xl shadow-mobile p-4 md:p-6;
+    @apply border border-gray-100;
+    @apply transition-all duration-200;
+  }
+  
+  .mobile-card-hover {
+    @apply hover:shadow-card-hover hover:border-gray-200;
+    @apply active:scale-[0.98] active:shadow-mobile-sm;
+  }
+
+  /* Touch-friendly button base */
+  .touch-button {
+    @apply min-h-touch px-4 py-3;
+    @apply flex items-center justify-center;
+    @apply rounded-xl font-medium;
+    @apply transition-all duration-200;
+    @apply active:scale-[0.97];
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Touch-friendly form input */
+  .touch-input {
+    @apply min-h-touch-lg px-4 py-3;
+    @apply text-base rounded-xl;
+    @apply border border-gray-200;
+    @apply focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+    @apply transition-all duration-200;
+    @apply placeholder:text-gray-400;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Bottom sheet modal */
+  .bottom-sheet {
+    @apply fixed inset-x-0 bottom-0 z-50;
+    @apply bg-white rounded-t-3xl;
+    @apply shadow-bottom-sheet;
+    @apply max-h-screen-90;
+    @apply overflow-hidden;
+    padding-bottom: var(--safe-area-bottom);
+    animation: slideInUp 0.3s ease-out;
+  }
+
+  .bottom-sheet-handle {
+    @apply w-12 h-1.5 bg-gray-300 rounded-full mx-auto my-3;
+    @apply cursor-grab active:cursor-grabbing;
+  }
+
+  /* Mobile navigation item */
+  .mobile-nav-item {
+    @apply flex items-center gap-3;
+    @apply min-h-touch px-4 py-3;
+    @apply rounded-xl;
+    @apply transition-all duration-200;
+    @apply active:scale-[0.98];
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Skeleton loading */
+  .skeleton {
+    @apply bg-gray-200 rounded;
+    background: linear-gradient(
+      90deg,
+      theme('colors.gray.200') 0%,
+      theme('colors.gray.100') 50%,
+      theme('colors.gray.200') 100%
+    );
+    background-size: 200px 100%;
+    animation: skeleton 1.5s ease-in-out infinite;
+  }
+
+  /* Mobile-optimized table */
+  .mobile-table-card {
+    @apply bg-white rounded-xl border border-gray-200 p-4 mb-3;
+    @apply active:bg-gray-50 transition-colors;
+  }
+
+  /* Pull to refresh indicator */
+  .pull-indicator {
+    @apply flex items-center justify-center py-4;
+    @apply text-gray-400 text-sm;
+  }
+
+  /* Floating action button */
+  .fab {
+    @apply fixed z-50;
+    @apply w-14 h-14 rounded-full;
+    @apply flex items-center justify-center;
+    @apply shadow-lg;
+    @apply active:scale-95;
+    @apply transition-transform duration-200;
+    right: 1rem;
+    bottom: calc(1rem + var(--safe-area-bottom));
+  }
+
+  /* Mobile header with safe area */
+  .mobile-header {
+    @apply sticky top-0 z-30;
+    @apply bg-white/95 backdrop-blur-sm;
+    @apply border-b border-gray-200;
+    padding-top: var(--safe-area-top);
+  }
+
+  /* Mobile tab bar */
+  .mobile-tab-bar {
+    @apply fixed bottom-0 left-0 right-0 z-40;
+    @apply bg-white border-t border-gray-200;
+    @apply flex items-center justify-around;
+    padding-bottom: var(--safe-area-bottom);
+  }
+
+  .mobile-tab-item {
+    @apply flex flex-col items-center justify-center;
+    @apply min-h-touch py-2 px-4;
+    @apply text-xs font-medium;
+    @apply transition-colors duration-200;
+    @apply active:bg-gray-100;
+  }
+
+  /* Swipeable cards container */
+  .swipe-container {
+    @apply overflow-x-auto;
+    @apply flex gap-4 pb-4;
+    @apply snap-x snap-mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .swipe-container::-webkit-scrollbar {
+    display: none;
+  }
+
+  .swipe-card {
+    @apply flex-shrink-0 snap-start;
+    @apply w-[85vw] max-w-sm;
+  }
 }
 
 @layer utilities {
+  /* Safe area padding utilities */
+  .pt-safe {
+    padding-top: var(--safe-area-top);
+  }
+  
+  .pb-safe {
+    padding-bottom: var(--safe-area-bottom);
+  }
+  
+  .pl-safe {
+    padding-left: var(--safe-area-left);
+  }
+  
+  .pr-safe {
+    padding-right: var(--safe-area-right);
+  }
+  
+  .p-safe {
+    padding: var(--safe-area-top) var(--safe-area-right) var(--safe-area-bottom) var(--safe-area-left);
+  }
+
+  /* Touch action utilities */
+  .touch-pan-x {
+    touch-action: pan-x;
+  }
+  
+  .touch-pan-y {
+    touch-action: pan-y;
+  }
+  
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
+  
+  .touch-none {
+    touch-action: none;
+  }
+
+  /* Disable tap highlight */
+  .tap-highlight-none {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Hardware acceleration for smooth animations */
+  .gpu-accelerated {
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+
+  /* Prevent text selection during interactions */
+  .select-none-touch {
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* Momentum scrolling for iOS */
+  .scroll-smooth-ios {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+
+  /* Overscroll behavior */
+  .overscroll-none {
+    overscroll-behavior: none;
+  }
+  
+  .overscroll-contain {
+    overscroll-behavior: contain;
+  }
+
+  /* Brand utilities */
   .text-primary {
     color: var(--color-primary);
   }
@@ -108,14 +369,13 @@
     background-color: theme('colors.slate.800');
   }
   
-  /* Fix for sidebar menu items */
+  /* Sidebar component utilities */
   .sidebar-menu-item {
     position: relative;
     z-index: 45;
     pointer-events: auto !important;
   }
 
-  /* Critical sidebar fixes */
   .sidebar-wrapper {
     pointer-events: auto !important;
     position: relative;
@@ -144,8 +404,8 @@
     pointer-events: auto !important;
   }
   
-  /* Mobile menu fixes */
-  @media (max-width: 768px) {
+  /* Mobile-specific adjustments */
+  @media (max-width: 767px) {
     .sidebar-wrapper {
       z-index: 999;
     }
@@ -155,12 +415,44 @@
     .sidebar-category {
       z-index: 1000;
     }
+
+    /* Larger tap targets on mobile */
+    .mobile-tap-target {
+      min-height: 44px;
+      min-width: 44px;
+    }
+
+    /* Mobile-specific text sizing */
+    .mobile-text-scale {
+      font-size: 16px;
+      line-height: 1.5;
+    }
   }
-  
-  /* Add debug outline - uncomment if needed for troubleshooting */
-  /* 
-  .sidebar-debug * {
-    outline: 1px solid rgba(255,0,0,0.2);
+
+  /* Responsive spacing helpers */
+  .responsive-padding {
+    @apply px-4 sm:px-6 md:px-8 lg:px-12;
   }
-  */
+
+  .responsive-gap {
+    @apply gap-3 sm:gap-4 md:gap-6;
+  }
+
+  /* Landscape mode optimizations */
+  @media (orientation: landscape) and (max-height: 500px) {
+    .landscape-compact {
+      @apply py-2;
+    }
+    
+    .landscape-hide {
+      @apply hidden;
+    }
+  }
+
+  /* Print styles - hide navigation on print */
+  @media print {
+    .no-print {
+      display: none !important;
+    }
+  }
 }

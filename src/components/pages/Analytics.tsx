@@ -153,7 +153,7 @@ export default function Analytics() {
           <select
             value={selectedDepartment}
             onChange={(e) => setSelectedDepartment(e.target.value as 'mpb' | 'saudemax')}
-            className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+            className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
             aria-label="Select department"
           >
             <option value="mpb">MPB Health</option>
@@ -163,7 +163,7 @@ export default function Analytics() {
           <select
             value={timeRange}
             onChange={(e) => setTimeRange(e.target.value)}
-            className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+            className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
             aria-label="Select time range"
           >
             {timeRanges.map(range => (
@@ -229,7 +229,7 @@ export default function Analytics() {
             <p className="text-slate-500 mb-4">Upload your customer data to see KPI metrics, user engagement, and performance insights.</p>
             <button
               onClick={toggleImporter}
-              className="inline-flex items-center space-x-2 bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-pink-700 transition-colors"
+              className="inline-flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
             >
               <Upload className="h-4 w-4" />
               <span>Upload Customer Data</span>
@@ -249,8 +249,8 @@ export default function Analytics() {
           transition={{ duration: 0.6, delay: 0.2 }}
         >
           <div className="flex items-center space-x-3 mb-4">
-            <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center">
-              <Users className="w-5 h-5 text-pink-600" />
+            <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+              <Users className="w-5 h-5 text-indigo-600" />
             </div>
             <div>
               <h2 className="text-lg font-semibold text-slate-900">Daily Active Users</h2>
@@ -436,7 +436,7 @@ export default function Analytics() {
                     <td className="px-6 py-4 text-right">
                       <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
                         region.growth >= 15 ? 'bg-emerald-100 text-emerald-800' :
-                        region.growth >= 10 ? 'bg-pink-100 text-pink-800' :
+                        region.growth >= 10 ? 'bg-indigo-100 text-indigo-800' :
                         region.growth >= 5 ? 'bg-amber-100 text-amber-800' :
                         'bg-slate-100 text-slate-800'
                       }`}>
@@ -465,8 +465,8 @@ export default function Analytics() {
           transition={{ duration: 0.6, delay: 0.6 }}
         >
           <div className="flex items-center space-x-3 mb-6">
-            <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center">
-              <TrendingUp className="w-5 h-5 text-pink-600" />
+            <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+              <TrendingUp className="w-5 h-5 text-indigo-600" />
             </div>
             <div>
               <h2 className="text-lg font-semibold text-slate-900">Key Insights</h2>
@@ -478,12 +478,12 @@ export default function Analytics() {
             {(currentDepartmentData.insights || []).map((insight, index) => (
               <li 
                 key={index} 
-                className="flex items-start space-x-3 p-3 bg-pink-50 rounded-lg"
+                className="flex items-start space-x-3 p-3 bg-indigo-50 rounded-lg"
               >
-                <div className="w-6 h-6 bg-pink-200 rounded-full flex items-center justify-center mt-0.5">
-                  <span className="text-sm font-bold text-pink-700">{index + 1}</span>
+                <div className="w-6 h-6 bg-indigo-200 rounded-full flex items-center justify-center mt-0.5">
+                  <span className="text-sm font-bold text-indigo-700">{index + 1}</span>
                 </div>
-                <p className="text-sm text-pink-800 flex-1">{insight}</p>
+                <p className="text-sm text-indigo-800 flex-1">{insight}</p>
               </li>
             ))}
           </ul>

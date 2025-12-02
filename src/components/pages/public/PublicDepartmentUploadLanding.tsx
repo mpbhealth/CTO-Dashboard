@@ -17,9 +17,9 @@ const DEPARTMENTS: DepartmentCard[] = [
     name: 'Concierge',
     description: 'Upload member interactions and support touchpoints',
     icon: MessageSquare,
-    color: 'text-pink-600',
-    bgColor: 'bg-pink-500',
-    gradient: 'from-pink-500 to-pink-600',
+    color: 'text-indigo-600',
+    bgColor: 'bg-indigo-500',
+    gradient: 'from-indigo-500 to-indigo-600',
   },
   {
     id: 'sales',
@@ -85,13 +85,13 @@ export function PublicDepartmentUploadLanding() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-pink-50/30 overflow-x-hidden relative">
+    <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-indigo-50/30 overflow-x-hidden relative">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(236,72,153,0.03),transparent_50%),radial-gradient(circle_at_70%_60%,rgba(236,72,153,0.02),transparent_50%)] pointer-events-none" />
       <div className="relative max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-10">
         <div className="text-center mb-16">
           <div className="mb-10 flex justify-center">
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-pink-500 to-pink-600 rounded-2xl blur-xl opacity-20" />
+              <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-2xl blur-xl opacity-20" />
               <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8">
                 <img
                   src="/MPB-Health-No-background.png"
@@ -118,11 +118,11 @@ export function PublicDepartmentUploadLanding() {
               <button
                 key={dept.id}
                 onClick={() => handleDepartmentSelect(dept.id)}
-                className="group relative bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-sm border border-gray-200/50 hover:border-pink-400/50 hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                className="group relative bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-sm border border-gray-200/50 hover:border-indigo-400/50 hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-pink-500/0 to-pink-500/0 group-hover:from-pink-500/5 group-hover:to-pink-500/10 rounded-2xl transition-all duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/0 to-indigo-500/0 group-hover:from-indigo-500/5 group-hover:to-indigo-500/10 rounded-2xl transition-all duration-300" />
                 <div className="relative flex flex-col items-center text-center space-y-5">
-                  <div className="w-20 h-20 bg-gradient-to-br from-gray-50 to-white border-2 border-gray-200 rounded-2xl flex items-center justify-center group-hover:border-pink-300 group-hover:shadow-lg transition-all duration-300">
+                  <div className="w-20 h-20 bg-gradient-to-br from-gray-50 to-white border-2 border-gray-200 rounded-2xl flex items-center justify-center group-hover:border-indigo-300 group-hover:shadow-lg transition-all duration-300">
                     <Icon className={dept.color} size={32} />
                   </div>
                   <h3 className="text-2xl font-bold text-gray-900">
@@ -131,7 +131,7 @@ export function PublicDepartmentUploadLanding() {
                   <p className="text-gray-600 text-sm leading-relaxed">
                     {dept.description}
                   </p>
-                  <div className="flex items-center gap-2 text-pink-600 font-semibold pt-3 group-hover:gap-3 transition-all">
+                  <div className="flex items-center gap-2 text-indigo-600 font-semibold pt-3 group-hover:gap-3 transition-all">
                     <span>Upload Data</span>
                     <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
                   </div>
@@ -150,8 +150,8 @@ export function PublicDepartmentUploadLanding() {
               const Icon = feature.icon;
               return (
                 <div key={feature.title} className="flex flex-col items-center text-center group">
-                  <div className="w-16 h-16 bg-gradient-to-br from-pink-100 to-pink-50 rounded-2xl flex items-center justify-center mb-5 group-hover:shadow-lg group-hover:scale-110 transition-all duration-300">
-                    <Icon className="text-pink-600" size={28} />
+                  <div className="w-16 h-16 bg-gradient-to-br from-indigo-100 to-indigo-50 rounded-2xl flex items-center justify-center mb-5 group-hover:shadow-lg group-hover:scale-110 transition-all duration-300">
+                    <Icon className="text-indigo-600" size={28} />
                   </div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-3">
                     {feature.title}
@@ -165,19 +165,19 @@ export function PublicDepartmentUploadLanding() {
           </div>
         </div>
 
-        <div className="relative overflow-hidden bg-gradient-to-r from-pink-500 to-pink-600 rounded-2xl shadow-lg p-10 text-center text-white">
+        <div className="relative overflow-hidden bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-2xl shadow-lg p-10 text-center text-white">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(255,255,255,0.1),transparent_60%)]" />
           <div className="relative">
             <h3 className="text-3xl font-bold mb-4">
               Need Help?
             </h3>
-            <p className="text-pink-50 text-lg mb-8 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-indigo-50 text-lg mb-8 max-w-2xl mx-auto leading-relaxed">
               If you have questions about uploading data or need assistance, please contact your department administrator or the MPB Health support team.
             </p>
             <div className="flex justify-center">
               <a
                 href="mailto:support@mpbhealth.com"
-                className="px-8 py-4 bg-white text-pink-600 rounded-xl font-semibold hover:bg-pink-50 hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5"
+                className="px-8 py-4 bg-white text-indigo-600 rounded-xl font-semibold hover:bg-indigo-50 hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5"
               >
                 Contact Support
               </a>

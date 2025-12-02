@@ -97,7 +97,7 @@ export default function CsvUploader({
         onDragLeave={handleDragLeave}
         className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
           isDragging
-            ? 'border-pink-500 bg-pink-50'
+            ? 'border-indigo-500 bg-indigo-50'
             : 'border-slate-300 hover:border-slate-400'
         }`}
       >
@@ -129,7 +129,7 @@ export default function CsvUploader({
               </div>
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors"
+                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
               >
                 Select File
               </button>
@@ -143,7 +143,7 @@ export default function CsvUploader({
               className="space-y-4"
             >
               <div className="flex items-center justify-center space-x-3">
-                <FileText className="w-8 h-8 text-pink-600" />
+                <FileText className="w-8 h-8 text-indigo-600" />
                 <div className="flex-1 text-left">
                   <p className="text-slate-900 font-medium">{selectedFile.name}</p>
                   <p className="text-sm text-slate-500">

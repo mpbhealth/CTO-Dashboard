@@ -213,7 +213,7 @@ export function CEOConciergeNotes() {
                     {note.tags.split(',').map((tag, index) => (
                       <span
                         key={index}
-                        className="px-2 py-1 bg-pink-50 text-pink-500 text-xs rounded"
+                        className="px-2 py-1 bg-indigo-50 text-indigo-500 text-xs rounded"
                       >
                         {tag.trim()}
                       </span>

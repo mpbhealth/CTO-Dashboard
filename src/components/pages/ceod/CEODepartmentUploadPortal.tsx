@@ -29,9 +29,9 @@ const DEPARTMENTS: DepartmentCard[] = [
     name: 'Sales Portal',
     description: 'Upload sales orders and pipeline data',
     icon: ShoppingCart,
-    color: 'text-pink-400',
-    gradient: 'from-pink-500 via-pink-600 to-rose-600',
-    borderColor: 'border-pink-500/30 hover:border-pink-400',
+    color: 'text-indigo-400',
+    gradient: 'from-indigo-500 via-indigo-600 to-blue-600',
+    borderColor: 'border-indigo-500/30 hover:border-indigo-400',
     route: '/ceod/upload',
   },
   {
@@ -74,7 +74,7 @@ export function CEODepartmentUploadPortal() {
       }}></div>
 
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-gradient-to-br from-cyan-500/10 to-blue-500/5 rounded-full blur-3xl animate-pulse"></div>
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-gradient-to-br from-purple-500/10 to-pink-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-gradient-to-br from-purple-500/10 to-indigo-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -180,7 +180,7 @@ export function CEODepartmentUploadPortal() {
       </motion.div>
 
       <div className="absolute -top-8 -right-8 w-40 h-40 bg-gradient-to-br from-cyan-400/20 via-blue-500/10 to-purple-600/20 rounded-full blur-3xl animate-pulse"></div>
-      <div className="absolute -bottom-8 -left-8 w-48 h-48 bg-gradient-to-br from-purple-400/20 via-pink-500/10 to-pink-600/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+      <div className="absolute -bottom-8 -left-8 w-48 h-48 bg-gradient-to-br from-purple-400/20 via-indigo-500/10 to-indigo-600/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
     </div>
   );
 }

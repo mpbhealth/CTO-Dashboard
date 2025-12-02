@@ -99,8 +99,8 @@ export default function EditProjectModal({ isOpen, onClose, onSuccess, project }
       <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-slate-200">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center">
-              <FolderOpen className="w-5 h-5 text-pink-600" />
+            <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+              <FolderOpen className="w-5 h-5 text-indigo-600" />
             </div>
             <h2 className="text-xl font-semibold text-slate-900">Edit Project</h2>
           </div>
@@ -131,7 +131,7 @@ export default function EditProjectModal({ isOpen, onClose, onSuccess, project }
                 required
                 value={formData.name}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
                 placeholder="e.g., MPB Health APP Suite"
               />
             </div>
@@ -147,7 +147,7 @@ export default function EditProjectModal({ isOpen, onClose, onSuccess, project }
                 rows={3}
                 value={formData.description}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
                 placeholder="Brief description of the project goals and features"
               />
             </div>
@@ -162,7 +162,7 @@ export default function EditProjectModal({ isOpen, onClose, onSuccess, project }
                 required
                 value={formData.status}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
               >
                 {statuses.map(status => (
                   <option key={status} value={status}>{status}</option>
@@ -182,7 +182,7 @@ export default function EditProjectModal({ isOpen, onClose, onSuccess, project }
                 max="100"
                 value={formData.progress}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
                 placeholder="0"
               />
             </div>
@@ -197,7 +197,7 @@ export default function EditProjectModal({ isOpen, onClose, onSuccess, project }
                 name="team"
                 value={formData.team}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
                 placeholder="Enter team members separated by commas (e.g., Sarah Johnson, Michael Chen)"
               />
               <p className="text-xs text-slate-500 mt-1">
@@ -217,7 +217,7 @@ export default function EditProjectModal({ isOpen, onClose, onSuccess, project }
                   name="github_link"
                   value={formData.github_link}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+                  className="w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
                   placeholder="https://github.com/mpbhealth/project-name"
                 />
               </div>
@@ -235,7 +235,7 @@ export default function EditProjectModal({ isOpen, onClose, onSuccess, project }
                   name="monday_link"
                   value={formData.monday_link}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+                  className="w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
                   placeholder="https://mpbhealth.monday.com/boards/PROJECT"
                 />
               </div>
@@ -253,7 +253,7 @@ export default function EditProjectModal({ isOpen, onClose, onSuccess, project }
                   name="website_url"
                   value={formData.website_url}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+                  className="w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
                   placeholder="https://project.mpbhealth.com or https://yourproject.com"
                 />
               </div>
@@ -275,7 +275,7 @@ export default function EditProjectModal({ isOpen, onClose, onSuccess, project }
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-pink-600 hover:bg-pink-700 text-white px-6 py-2 rounded-lg flex items-center space-x-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg flex items-center space-x-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Save className="w-4 h-4" />
               <span>{isSubmitting ? 'Saving...' : 'Save Changes'}</span>

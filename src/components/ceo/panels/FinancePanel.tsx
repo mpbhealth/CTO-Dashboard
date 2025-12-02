@@ -82,12 +82,12 @@ export const FinancePanel = memo(function FinancePanel() {
             {formatCurrency(metrics.accountsPayable)}
           </div>
         </div>
-        <div className="text-center p-4 bg-pink-50 rounded-lg border border-pink-200">
-          <div className="flex items-center justify-center gap-1 text-pink-500 mb-1">
+        <div className="text-center p-4 bg-indigo-50 rounded-lg border border-indigo-200">
+          <div className="flex items-center justify-center gap-1 text-indigo-500 mb-1">
             <DollarSign className="w-4 h-4" />
             <span className="text-xs font-medium">Payouts</span>
           </div>
-          <div className="text-xl font-bold text-pink-900">
+          <div className="text-xl font-bold text-indigo-900">
             {formatCurrency(metrics.payoutsThisMonth)}
           </div>
         </div>

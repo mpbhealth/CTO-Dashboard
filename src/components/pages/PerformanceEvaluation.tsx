@@ -73,7 +73,7 @@ function PerformanceEvaluation() {
   if (employeesLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
       </div>
     );
   }
@@ -102,7 +102,7 @@ function PerformanceEvaluation() {
       case 'draft':
         return 'bg-slate-100 text-slate-800';
       case 'submitted':
-        return 'bg-pink-100 text-pink-800';
+        return 'bg-indigo-100 text-indigo-800';
       case 'under_review':
         return 'bg-yellow-100 text-yellow-800';
       case 'approved':
@@ -195,7 +195,7 @@ function PerformanceEvaluation() {
                 placeholder="Search employees..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+                className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
               />
             </div>
           </div>
@@ -206,13 +206,13 @@ function PerformanceEvaluation() {
                 key={employee.id}
                 className={`flex items-center space-x-3 p-3 rounded-lg cursor-pointer transition-colors ${
                   selectedEmployee === employee.id
-                    ? 'bg-pink-50 border-pink-200 border'
+                    ? 'bg-indigo-50 border-indigo-200 border'
                     : 'hover:bg-slate-50 border border-transparent'
                 }`}
                 onClick={() => setSelectedEmployee(employee.id)}
               >
-                <div className="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center">
-                  <span className="text-sm font-medium text-pink-600">
+                <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
+                  <span className="text-sm font-medium text-indigo-600">
                     {employee.first_name[0]}{employee.last_name[0]}
                   </span>
                 </div>
@@ -226,7 +226,7 @@ function PerformanceEvaluation() {
                       e.stopPropagation();
                       openFeedbackModal(employee.id);
                     }}
-                    className="mt-1 text-xs text-pink-600 hover:text-pink-800 font-medium"
+                    className="mt-1 text-xs text-indigo-600 hover:text-indigo-800 font-medium"
                   >
                     Give Feedback
                   </button>
@@ -251,8 +251,8 @@ function PerformanceEvaluation() {
               <div className="p-6 border-b border-slate-200">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
-                    <div className="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center">
-                      <span className="text-xl font-medium text-pink-600">
+                    <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center">
+                      <span className="text-xl font-medium text-indigo-600">
                         {selectedEmployeeDetails?.first_name}{selectedEmployeeDetails?.last_name}
                       </span>
                     </div>
@@ -263,7 +263,7 @@ function PerformanceEvaluation() {
                       <p className="text-slate-600">{selectedEmployeeDetails?.title}</p>
                     </div>
                   </div>
-                  <button className="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
+                  <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
                     <Plus className="w-4 h-4" />
                     <span>New Review</span>
                   </button>
@@ -282,7 +282,7 @@ function PerformanceEvaluation() {
                 <button
                   className={`flex items-center space-x-2 px-6 py-4 font-medium text-sm transition-colors border-b-2 ${
                     selectedTab === 'reviews'
-                      ? 'text-pink-600 border-pink-600'
+                      ? 'text-indigo-600 border-indigo-600'
                       : 'text-slate-500 border-transparent hover:text-slate-700 hover:border-slate-300'
                   }`}
                   onClick={() => setSelectedTab('reviews')}
@@ -293,7 +293,7 @@ function PerformanceEvaluation() {
                 <button
                   className={`flex items-center space-x-2 px-6 py-4 font-medium text-sm transition-colors border-b-2 ${
                     selectedTab === 'kpis'
-                      ? 'text-pink-600 border-pink-600'
+                      ? 'text-indigo-600 border-indigo-600'
                       : 'text-slate-500 border-transparent hover:text-slate-700 hover:border-slate-300'
                   }`}
                   onClick={() => setSelectedTab('kpis')}
@@ -304,7 +304,7 @@ function PerformanceEvaluation() {
                 <button
                   className={`flex items-center space-x-2 px-6 py-4 font-medium text-sm transition-colors border-b-2 ${
                     selectedTab === 'development'
-                      ? 'text-pink-600 border-pink-600'
+                      ? 'text-indigo-600 border-indigo-600'
                       : 'text-slate-500 border-transparent hover:text-slate-700 hover:border-slate-300'
                   }`}
                   onClick={() => setSelectedTab('development')}
@@ -315,7 +315,7 @@ function PerformanceEvaluation() {
                 <button
                   className={`flex items-center space-x-2 px-6 py-4 font-medium text-sm transition-colors border-b-2 ${
                     selectedTab === 'feedback'
-                      ? 'text-pink-600 border-pink-600'
+                      ? 'text-indigo-600 border-indigo-600'
                       : 'text-slate-500 border-transparent hover:text-slate-700 hover:border-slate-300'
                   }`}
                   onClick={() => setSelectedTab('feedback')}
@@ -335,7 +335,7 @@ function PerformanceEvaluation() {
                     
                     {reviewsLoading ? (
                       <div className="flex items-center justify-center h-64">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-600"></div>
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
                       </div>
                     ) : reviews && reviews.length > 0 ? (
                       <div className="space-y-4">
@@ -388,7 +388,7 @@ function PerformanceEvaluation() {
                             )}
                             
                             <div className="mt-3 flex justify-end">
-                              <button className="text-pink-600 hover:text-pink-800 text-sm font-medium">
+                              <button className="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
                                 View Complete Review
                               </button>
                             </div>
@@ -400,7 +400,7 @@ function PerformanceEvaluation() {
                         <FileText className="w-12 h-12 text-slate-300 mx-auto mb-3" />
                         <h4 className="text-lg font-medium text-slate-700 mb-2">No reviews yet</h4>
                         <p className="text-slate-500 mb-4">Start by creating the first performance review</p>
-                        <button className="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors mx-auto">
+                        <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors mx-auto">
                           <Plus className="w-4 h-4" />
                           <span>Create Review</span>
                         </button>
@@ -413,7 +413,7 @@ function PerformanceEvaluation() {
                   <div>
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="text-lg font-semibold text-slate-900">Key Performance Indicators</h3>
-                      <button className="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
+                      <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
                         <Plus className="w-4 h-4" />
                         <span>Add KPI</span>
                       </button>
@@ -421,7 +421,7 @@ function PerformanceEvaluation() {
                     
                     {kpisLoading ? (
                       <div className="flex items-center justify-center h-64">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-600"></div>
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
                       </div>
                     ) : kpis && kpis.length > 0 ? (
                       <div className="space-y-4">
@@ -432,7 +432,7 @@ function PerformanceEvaluation() {
                           >
                             <div className="flex justify-between items-center mb-2">
                               <div className="flex items-center space-x-2">
-                                <BarChart3 className="w-5 h-5 text-pink-600" />
+                                <BarChart3 className="w-5 h-5 text-indigo-600" />
                                 <span className="text-slate-900 font-medium">{kpi.kpi?.name || 'KPI'}</span>
                               </div>
                               <span className={`px-2 py-1 rounded-full text-xs font-medium ${getKpiStatusColor(kpi.status)}`}>
@@ -464,7 +464,7 @@ function PerformanceEvaluation() {
                             </div>
                             
                             <div className="mt-2 pt-2 border-t border-slate-100 flex justify-end">
-                              <button className="text-pink-600 hover:text-pink-800 text-sm font-medium">
+                              <button className="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
                                 Update
                               </button>
                             </div>
@@ -476,7 +476,7 @@ function PerformanceEvaluation() {
                         <BarChart3 className="w-12 h-12 text-slate-300 mx-auto mb-3" />
                         <h4 className="text-lg font-medium text-slate-700 mb-2">No KPIs assigned</h4>
                         <p className="text-slate-500 mb-4">Assign KPIs to track employee performance</p>
-                        <button className="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors mx-auto">
+                        <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors mx-auto">
                           <Plus className="w-4 h-4" />
                           <span>Assign KPIs</span>
                         </button>
@@ -489,7 +489,7 @@ function PerformanceEvaluation() {
                   <div>
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="text-lg font-semibold text-slate-900">Career Development</h3>
-                      <button className="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
+                      <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
                         <Plus className="w-4 h-4" />
                         <span>New Plan</span>
                       </button>
@@ -497,7 +497,7 @@ function PerformanceEvaluation() {
                     
                     {plansLoading ? (
                       <div className="flex items-center justify-center h-64">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-600"></div>
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
                       </div>
                     ) : careerPlans && careerPlans.length > 0 ? (
                       <div className="space-y-4">
@@ -510,7 +510,7 @@ function PerformanceEvaluation() {
                               <h4 className="text-slate-900 font-medium">{plan.title}</h4>
                               <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                                 plan.status === 'completed' ? 'bg-green-100 text-green-800' :
-                                plan.status === 'active' ? 'bg-pink-100 text-pink-800' : 'bg-slate-100 text-slate-800'
+                                plan.status === 'active' ? 'bg-indigo-100 text-indigo-800' : 'bg-slate-100 text-slate-800'
                               }`}>
                                 {plan.status.charAt(0).toUpperCase() + plan.status.slice(1)}
                               </span>
@@ -546,7 +546,7 @@ function PerformanceEvaluation() {
                               </div>
                               <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
                                 <div 
-                                  className="h-full bg-pink-600"
+                                  className="h-full bg-indigo-600"
                                   style={{ width: `${plan.progress}%` }}
                                 ></div>
                               </div>
@@ -556,7 +556,7 @@ function PerformanceEvaluation() {
                               <button className="text-slate-600 hover:text-slate-800 text-sm font-medium">
                                 View Activities
                               </button>
-                              <button className="text-pink-600 hover:text-pink-800 text-sm font-medium">
+                              <button className="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
                                 Update Plan
                               </button>
                             </div>
@@ -568,7 +568,7 @@ function PerformanceEvaluation() {
                         <TrendingUp className="w-12 h-12 text-slate-300 mx-auto mb-3" />
                         <h4 className="text-lg font-medium text-slate-700 mb-2">No career plans</h4>
                         <p className="text-slate-500 mb-4">Create a development plan to track career growth</p>
-                        <button className="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors mx-auto">
+                        <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors mx-auto">
                           <Plus className="w-4 h-4" />
                           <span>Create Plan</span>
                         </button>
@@ -581,7 +581,7 @@ function PerformanceEvaluation() {
                   <div>
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="text-lg font-semibold text-slate-900">360° Feedback</h3>
-                      <button className="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
+                      <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
                         <Plus className="w-4 h-4" />
                         <span>Provide Feedback</span>
                       </button>
@@ -589,7 +589,7 @@ function PerformanceEvaluation() {
                     
                     {feedbackLoading ? (
                       <div className="flex items-center justify-center h-64">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-600"></div>
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
                       </div>
                     ) : feedback && feedback.length > 0 ? (
                       <div className="space-y-4">
@@ -603,12 +603,12 @@ function PerformanceEvaluation() {
                                 <div className={`p-2 rounded-lg ${
                                   item.feedback_type === 'praise' ? 'bg-green-100' :
                                   item.feedback_type === 'criticism' ? 'bg-red-100' :
-                                  item.feedback_type === 'suggestion' ? 'bg-pink-100' : 'bg-purple-100'
+                                  item.feedback_type === 'suggestion' ? 'bg-indigo-100' : 'bg-purple-100'
                                 }`}>
                                   <MessageSquare className={`w-4 h-4 ${
                                     item.feedback_type === 'praise' ? 'text-green-600' :
                                     item.feedback_type === 'criticism' ? 'text-red-600' :
-                                    item.feedback_type === 'suggestion' ? 'text-pink-600' : 'text-purple-600'
+                                    item.feedback_type === 'suggestion' ? 'text-indigo-600' : 'text-purple-600'
                                   }`} />
                                 </div>
                                 <div>
@@ -641,7 +641,7 @@ function PerformanceEvaluation() {
                         <p className="text-slate-500 mb-4">Collect feedback to help improve performance</p>
                         <button
                           onClick={() => openFeedbackModal(selectedEmployee)}
-                          className="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors mx-auto"
+                          className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors mx-auto"
                         >
                           <Plus className="w-4 h-4" />
                           <span>Provide Feedback</span>
@@ -695,7 +695,7 @@ function PerformanceEvaluation() {
                   name="feedback_type"
                   value={feedbackForm.feedback_type}
                   onChange={handleFeedbackInputChange}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
                 >
                   <option value="praise">👏 Praise</option>
                   <option value="suggestion">💡 Suggestion</option>
@@ -715,7 +715,7 @@ function PerformanceEvaluation() {
                   rows={6}
                   value={feedbackForm.content}
                   onChange={handleFeedbackInputChange}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
                   placeholder="Share your feedback here..."
                 />
               </div>
@@ -727,7 +727,7 @@ function PerformanceEvaluation() {
                   name="is_anonymous"
                   checked={feedbackForm.is_anonymous}
                   onChange={handleFeedbackInputChange}
-                  className="rounded border-slate-300 text-pink-600 focus:ring-sky-500"
+                  className="rounded border-slate-300 text-indigo-600 focus:ring-sky-500"
                 />
                 <label htmlFor="is_anonymous" className="text-sm text-slate-700">
                   Submit anonymously

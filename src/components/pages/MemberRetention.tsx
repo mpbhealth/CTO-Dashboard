@@ -39,7 +39,7 @@ export default function MemberRetention() {
         <select
           value={selectedTimeframe}
           onChange={(e) => setSelectedTimeframe(e.target.value)}
-          className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+          className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
         >
           {timeframes.map(timeframe => (
             <option key={timeframe.value} value={timeframe.value}>{timeframe.label}</option>
@@ -100,7 +100,7 @@ export default function MemberRetention() {
             <p className="text-slate-500 mb-4">Upload member status data to track retention rates, churn analysis, and cohort performance.</p>
             <button
               onClick={() => setShowImporter(!showImporter)}
-              className="inline-flex items-center space-x-2 bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-pink-700 transition-colors"
+              className="inline-flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
             >
               <Upload className="h-4 w-4" />
               <span>Upload Retention Data</span>
@@ -248,8 +248,8 @@ export default function MemberRetention() {
           transition={{ duration: 0.6, delay: 0.5 }}
         >
           <div className="flex items-center space-x-3 mb-4">
-            <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center">
-              <Calendar className="w-5 h-5 text-pink-600" />
+            <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+              <Calendar className="w-5 h-5 text-indigo-600" />
             </div>
             <div>
               <h2 className="text-lg font-semibold text-slate-900">Cohort Retention Analysis</h2>
@@ -366,9 +366,9 @@ export default function MemberRetention() {
             </ul>
           </div>
           
-          <div className="p-4 bg-pink-50 rounded-lg border border-pink-200">
-            <h3 className="font-medium text-pink-900 mb-2">💡 Recommendations</h3>
-            <ul className="text-sm text-pink-800 space-y-1">
+          <div className="p-4 bg-indigo-50 rounded-lg border border-indigo-200">
+            <h3 className="font-medium text-indigo-900 mb-2">💡 Recommendations</h3>
+            <ul className="text-sm text-indigo-800 space-y-1">
               <li>• Implement value-focused onboarding</li>
               <li>• Address service quality issues</li>
               <li>• Create month 3 engagement campaign</li>

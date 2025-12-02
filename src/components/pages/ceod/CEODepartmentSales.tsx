@@ -8,7 +8,7 @@ export function CEODepartmentSales() {
       title="Sales"
       description="Sales orders and pipeline data"
       icon={ShoppingCart}
-      color="text-pink-500"
+      color="text-indigo-500"
       gradient="from-blue-500 to-blue-600"
     />
   );

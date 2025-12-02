@@ -325,8 +325,8 @@ export default function NotepadWithSharing({
       <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center">
-              <StickyNote className="w-5 h-5 text-pink-600" />
+            <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+              <StickyNote className="w-5 h-5 text-indigo-600" />
             </div>
             <h2 className="text-lg font-semibold text-slate-900">Create New Note</h2>
           </div>
@@ -335,7 +335,7 @@ export default function NotepadWithSharing({
               onClick={() => setCreationMode('personal')}
               className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
                 creationMode === 'personal'
-                  ? 'bg-pink-600 text-white'
+                  ? 'bg-indigo-600 text-white'
                   : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
               }`}
             >
@@ -346,7 +346,7 @@ export default function NotepadWithSharing({
               onClick={() => setCreationMode('for-other')}
               className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
                 creationMode === 'for-other'
-                  ? 'bg-pink-600 text-white'
+                  ? 'bg-indigo-600 text-white'
                   : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
               }`}
             >
@@ -400,19 +400,19 @@ export default function NotepadWithSharing({
             value={title}
             onChange={e => setTitle(e.target.value)}
             placeholder="Note title (optional)"
-            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
           />
           <textarea
             value={content}
             onChange={e => setContent(e.target.value)}
             placeholder="Write your note here..."
-            className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500 min-h-24"
+            className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500 min-h-24"
           />
           <div className="flex justify-end">
             <button
               onClick={handleAddNote}
               disabled={saving || !content.trim()}
-              className="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors disabled:opacity-50"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors disabled:opacity-50"
             >
               {saving ? (
                 <>
@@ -443,7 +443,7 @@ export default function NotepadWithSharing({
             placeholder="Search notes..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+            className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
           />
           {searchTerm && (
             <button
@@ -572,7 +572,7 @@ export default function NotepadWithSharing({
             {searchTerm && (
               <button
                 onClick={() => setSearchTerm('')}
-                className="text-pink-600 hover:text-pink-800 font-medium"
+                className="text-indigo-600 hover:text-indigo-800 font-medium"
               >
                 Clear search
               </button>

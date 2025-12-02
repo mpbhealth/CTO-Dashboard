@@ -83,7 +83,7 @@ export const TasksPanel: React.FC<TasksPanelProps> = ({
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-2 border-pink-600 border-t-transparent" />
+        <div className="animate-spin rounded-full h-8 w-8 border-2 border-indigo-600 border-t-transparent" />
       </div>
     );
   }
@@ -98,7 +98,7 @@ export const TasksPanel: React.FC<TasksPanelProps> = ({
         {showCreateButton && (
           <button
             onClick={() => setShowCreateForm(!showCreateForm)}
-            className="flex items-center space-x-1 px-3 py-1.5 bg-pink-600 text-white rounded-lg hover:bg-pink-700 text-sm"
+            className="flex items-center space-x-1 px-3 py-1.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm"
           >
             <Plus className="w-4 h-4" />
             <span>New Task</span>
@@ -118,7 +118,7 @@ export const TasksPanel: React.FC<TasksPanelProps> = ({
               value={newTask.title}
               onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-pink-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-indigo-500"
               placeholder="Enter task title"
             />
           </div>
@@ -131,7 +131,7 @@ export const TasksPanel: React.FC<TasksPanelProps> = ({
               value={newTask.description}
               onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
               rows={2}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-pink-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-indigo-500"
               placeholder="Task description"
             />
           </div>
@@ -144,7 +144,7 @@ export const TasksPanel: React.FC<TasksPanelProps> = ({
               <select
                 value={newTask.priority}
                 onChange={(e) => setNewTask({ ...newTask, priority: e.target.value as TaskPriority })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-pink-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-indigo-500"
               >
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
@@ -161,7 +161,7 @@ export const TasksPanel: React.FC<TasksPanelProps> = ({
                 type="date"
                 value={newTask.due_date}
                 onChange={(e) => setNewTask({ ...newTask, due_date: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-pink-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-indigo-500"
               />
             </div>
           </div>
@@ -177,7 +177,7 @@ export const TasksPanel: React.FC<TasksPanelProps> = ({
             <button
               type="submit"
               disabled={createTask.isPending}
-              className="px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 disabled:bg-gray-300"
+              className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-gray-300"
             >
               {createTask.isPending ? 'Creating...' : 'Create Task'}
             </button>
@@ -196,7 +196,7 @@ export const TasksPanel: React.FC<TasksPanelProps> = ({
           {filteredTasks.map((task) => (
             <div
               key={task.id}
-              className="p-4 bg-white border border-gray-200 rounded-lg hover:border-pink-300 transition-colors"
+              className="p-4 bg-white border border-gray-200 rounded-lg hover:border-indigo-300 transition-colors"
             >
               <div className="flex items-start justify-between mb-2">
                 <div className="flex-1">
@@ -237,7 +237,7 @@ export const TasksPanel: React.FC<TasksPanelProps> = ({
                   <select
                     value={task.status}
                     onChange={(e) => handleStatusChange(task.id, e.target.value as TaskStatus)}
-                    className="text-xs px-2 py-1 border border-gray-300 rounded hover:border-pink-300"
+                    className="text-xs px-2 py-1 border border-gray-300 rounded hover:border-indigo-300"
                   >
                     <option value="todo">To Do</option>
                     <option value="in_progress">In Progress</option>

@@ -47,7 +47,7 @@ export default function KPICard({
   const colorMap: Record<string, { bg: string; text: string; border: string }> = {
     indigo: { bg: 'from-cyan-500 to-cyan-700', text: 'text-cyan-100', border: 'border-cyan-300' },
     emerald: { bg: 'from-emerald-500 to-emerald-700', text: 'text-emerald-100', border: 'border-emerald-300' },
-    pink: { bg: 'from-pink-500 to-pink-700', text: 'text-pink-100', border: 'border-pink-300' },
+    pink: { bg: 'from-indigo-500 to-indigo-700', text: 'text-indigo-100', border: 'border-indigo-300' },
     amber: { bg: 'from-amber-500 to-amber-700', text: 'text-amber-100', border: 'border-amber-300' },
     sky: { bg: 'from-sky-500 to-sky-700', text: 'text-sky-100', border: 'border-sky-300' },
     purple: { bg: 'from-teal-500 to-teal-700', text: 'text-teal-100', border: 'border-teal-300' },

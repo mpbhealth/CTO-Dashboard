@@ -9,7 +9,7 @@ export default function AIAgents() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-pink-600"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600"></div>
       </div>
     );
   }
@@ -47,8 +47,8 @@ export default function AIAgents() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center">
-              <Bot className="w-6 h-6 text-pink-600" />
+            <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
+              <Bot className="w-6 h-6 text-indigo-600" />
             </div>
             <div>
               <p className="text-sm font-medium text-slate-600">Total Agents</p>
@@ -106,8 +106,8 @@ export default function AIAgents() {
           <div key={agent.id} className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center">
-                  <Bot className="w-6 h-6 text-pink-600" />
+                <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
+                  <Bot className="w-6 h-6 text-indigo-600" />
                 </div>
                 <div>
                   <h3 className="text-xl font-semibold text-slate-900">{agent.name}</h3>
@@ -152,7 +152,7 @@ export default function AIAgents() {
               <p className="text-sm font-medium text-slate-700 mb-2">Connected Datasets:</p>
               <div className="flex flex-wrap gap-2">
                 {agent.dataset_refs.map((dataset, index) => (
-                  <span key={index} className="px-2 py-1 bg-pink-100 text-pink-800 rounded text-xs">
+                  <span key={index} className="px-2 py-1 bg-indigo-100 text-indigo-800 rounded text-xs">
                     {dataset}
                   </span>
                 ))}
@@ -162,7 +162,7 @@ export default function AIAgents() {
             {/* Action Buttons */}
             <div className="flex items-center justify-between pt-4 border-t border-slate-200">
               <button 
-                className="flex items-center space-x-2 px-3 py-2 text-pink-600 hover:bg-pink-50 rounded-lg transition-colors"
+                className="flex items-center space-x-2 px-3 py-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
                 onClick={() => setSelectedAgent(selectedAgent === agent.id ? null : agent.id)}
                 title="Edit agent prompt"
               >
@@ -184,7 +184,7 @@ export default function AIAgents() {
                   </button>
                 )}
                 <button 
-                  className="p-2 text-slate-600 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition-colors"
+                  className="p-2 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
                   title="Agent settings"
                 >
                   <Settings className="w-4 h-4" />
@@ -201,7 +201,7 @@ export default function AIAgents() {
                       Agent Prompt
                     </label>
                     <textarea
-                      className="w-full h-32 px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500 text-sm"
+                      className="w-full h-32 px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500 text-sm"
                       defaultValue={agent.prompt}
                     />
                   </div>
@@ -209,7 +209,7 @@ export default function AIAgents() {
                     <button className="px-4 py-2 text-slate-600 hover:text-slate-800 transition-colors">
                       Cancel
                     </button>
-                    <button className="px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg transition-colors">
+                    <button className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors">
                       Save Changes
                     </button>
                   </div>

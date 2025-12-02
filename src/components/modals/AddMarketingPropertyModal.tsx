@@ -149,7 +149,7 @@ export default function AddMarketingPropertyModal({
               onClick={() => setActiveTab('basic')}
               className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === 'basic'
-                  ? 'border-pink-500 text-pink-600'
+                  ? 'border-indigo-500 text-indigo-600'
                   : 'border-transparent text-slate-500 hover:text-slate-700'
               }`}
             >
@@ -159,7 +159,7 @@ export default function AddMarketingPropertyModal({
               onClick={() => setActiveTab('tracking')}
               className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === 'tracking'
-                  ? 'border-pink-500 text-pink-600'
+                  ? 'border-indigo-500 text-indigo-600'
                   : 'border-transparent text-slate-500 hover:text-slate-700'
               }`}
             >
@@ -169,7 +169,7 @@ export default function AddMarketingPropertyModal({
               onClick={() => setActiveTab('advanced')}
               className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === 'advanced'
-                  ? 'border-pink-500 text-pink-600'
+                  ? 'border-indigo-500 text-indigo-600'
                   : 'border-transparent text-slate-500 hover:text-slate-700'
               }`}
             >
@@ -190,7 +190,7 @@ export default function AddMarketingPropertyModal({
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                     placeholder="MPB Health - Main Website"
                     required
                   />
@@ -207,7 +207,7 @@ export default function AddMarketingPropertyModal({
                       type="url"
                       value={formData.website_url}
                       onChange={(e) => setFormData({ ...formData, website_url: e.target.value })}
-                      className="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                      className="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                       placeholder="https://mpbhealth.com"
                     />
                   </div>
@@ -221,7 +221,7 @@ export default function AddMarketingPropertyModal({
                   <select
                     value={formData.timezone}
                     onChange={(e) => setFormData({ ...formData, timezone: e.target.value })}
-                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   >
                     <option value="America/New_York">Eastern Time (US & Canada)</option>
                     <option value="America/Chicago">Central Time (US & Canada)</option>
@@ -305,7 +305,7 @@ export default function AddMarketingPropertyModal({
 
                 <div className="bg-slate-50 border border-slate-200 rounded-lg p-4">
                   <div className="flex items-center space-x-3 mb-4">
-                    <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                    <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-lg flex items-center justify-center">
                       <Instagram className="w-5 h-5 text-white" />
                     </div>
                     <div>
@@ -389,7 +389,7 @@ export default function AddMarketingPropertyModal({
                       type="text"
                       value={formData.gtm_container_id}
                       onChange={(e) => setFormData({ ...formData, gtm_container_id: e.target.value })}
-                      className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                      className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                       placeholder="GTM-XXXXXXX"
                     />
                   </div>
@@ -406,7 +406,7 @@ export default function AddMarketingPropertyModal({
                         type="text"
                         value={formData.google_ads_conversion_id}
                         onChange={(e) => setFormData({ ...formData, google_ads_conversion_id: e.target.value })}
-                        className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                        className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                         placeholder="AW-123456789"
                       />
                     </div>
@@ -418,7 +418,7 @@ export default function AddMarketingPropertyModal({
                         type="text"
                         value={formData.bing_uet_tag_id}
                         onChange={(e) => setFormData({ ...formData, bing_uet_tag_id: e.target.value })}
-                        className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                        className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                         placeholder="12345678"
                       />
                     </div>
@@ -435,7 +435,7 @@ export default function AddMarketingPropertyModal({
                       type="text"
                       value={formData.hotjar_site_id}
                       onChange={(e) => setFormData({ ...formData, hotjar_site_id: e.target.value })}
-                      className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                      className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                       placeholder="1234567"
                     />
                   </div>
@@ -449,7 +449,7 @@ export default function AddMarketingPropertyModal({
                     value={formData.notes}
                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                     rows={3}
-                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                     placeholder="Add any additional notes or configuration details..."
                   />
                 </div>
@@ -475,7 +475,7 @@ export default function AddMarketingPropertyModal({
             <button
               type="submit"
               disabled={isSubmitting || !formData.name}
-              className="px-6 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors disabled:bg-slate-300 disabled:cursor-not-allowed"
+              className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors disabled:bg-slate-300 disabled:cursor-not-allowed"
             >
               {isSubmitting ? 'Creating Property...' : 'Create Property'}
             </button>

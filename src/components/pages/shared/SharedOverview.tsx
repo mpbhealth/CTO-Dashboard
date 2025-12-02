@@ -18,7 +18,7 @@ export function SharedOverview() {
           </div>
           <button
             onClick={() => window.location.reload()}
-            className="p-2 text-slate-600 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition-colors"
+            className="p-2 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
             title="Refresh data"
           >
             <Activity className="w-5 h-5" />

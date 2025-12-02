@@ -66,7 +66,7 @@ export default function DiagnosticsDashboard() {
             <button
               onClick={runDiagnostics}
               disabled={isLoading}
-              className="flex items-center space-x-2 bg-pink-600 hover:bg-pink-700 text-white px-6 py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm font-medium"
+              className="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm font-medium"
             >
               <RefreshCw className={`w-5 h-5 ${isLoading ? 'animate-spin' : ''}`} />
               <span>{isLoading ? 'Running...' : 'Run Diagnostics'}</span>
@@ -176,7 +176,7 @@ export default function DiagnosticsDashboard() {
         {isLoading && (
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600 mx-auto mb-4"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
               <p className="text-slate-600">Running diagnostics...</p>
             </div>
           </div>

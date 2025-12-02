@@ -127,7 +127,7 @@ function ErrorBoundary({ children }: { children: React.ReactNode }) {
                   window.location.reload();
                 }
               }}
-              className="bg-pink-600 hover:bg-pink-700 text-white px-6 py-3 rounded-lg transition-colors font-medium shadow-sm"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg transition-colors font-medium shadow-sm"
             >
               Clear Cache & Reload
             </button>
@@ -175,7 +175,7 @@ function ErrorBoundary({ children }: { children: React.ReactNode }) {
             <pre className="mt-3 p-3 bg-slate-100 rounded text-xs text-slate-700 overflow-auto max-h-64">
               {errorInfo || error?.stack || 'No stack trace available'}
             </pre>
-            <div className="mt-3 p-3 bg-pink-50 border border-pink-200 rounded text-xs text-pink-700">
+            <div className="mt-3 p-3 bg-indigo-50 border border-indigo-200 rounded text-xs text-indigo-700">
               <strong className="block mb-2">Debug Information:</strong>
               <div className="space-y-1">
                 <div>• Environment: {import.meta.env.MODE}</div>
@@ -236,7 +236,7 @@ function ConfigurationCheck({ children }: { children: React.ReactNode }) {
           {/* Glass morphism card */}
           <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden border border-white/20">
             {/* Header with gradient */}
-            <div className="bg-gradient-to-r from-pink-600 to-rose-600 p-8 text-white relative overflow-hidden">
+            <div className="bg-gradient-to-r from-indigo-600 to-blue-600 p-8 text-white relative overflow-hidden">
               <div className="absolute inset-0 opacity-20">
                 <div className="absolute inset-0" style={{
                   backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
@@ -252,7 +252,7 @@ function ConfigurationCheck({ children }: { children: React.ReactNode }) {
                 </div>
                 <div>
                   <h1 className="text-3xl font-bold tracking-tight">Configuration Required</h1>
-                  <p className="text-pink-50 mt-1 text-sm">Database connection setup needed</p>
+                  <p className="text-indigo-50 mt-1 text-sm">Database connection setup needed</p>
                 </div>
               </div>
             </div>
@@ -278,35 +278,35 @@ function ConfigurationCheck({ children }: { children: React.ReactNode }) {
               {/* Setup instructions */}
               <div>
                 <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center">
-                  <span className="w-1 h-6 bg-gradient-to-b from-pink-500 to-rose-500 rounded-full mr-3"></span>
+                  <span className="w-1 h-6 bg-gradient-to-b from-indigo-500 to-blue-500 rounded-full mr-3"></span>
                   Setup Instructions
                 </h2>
                 <ol className="space-y-4 text-sm text-slate-700">
                   <li className="flex items-start group">
-                    <span className="flex-shrink-0 w-7 h-7 bg-gradient-to-br from-pink-600 to-rose-600 text-white rounded-lg flex items-center justify-center font-bold text-xs mr-3 mt-0.5 shadow-md group-hover:scale-110 transition-transform">1</span>
+                    <span className="flex-shrink-0 w-7 h-7 bg-gradient-to-br from-indigo-600 to-blue-600 text-white rounded-lg flex items-center justify-center font-bold text-xs mr-3 mt-0.5 shadow-md group-hover:scale-110 transition-transform">1</span>
                     <span className="pt-0.5">Log in to your deployment platform (Netlify, Vercel, etc.)</span>
                   </li>
                   <li className="flex items-start group">
-                    <span className="flex-shrink-0 w-7 h-7 bg-gradient-to-br from-pink-600 to-rose-600 text-white rounded-lg flex items-center justify-center font-bold text-xs mr-3 mt-0.5 shadow-md group-hover:scale-110 transition-transform">2</span>
+                    <span className="flex-shrink-0 w-7 h-7 bg-gradient-to-br from-indigo-600 to-blue-600 text-white rounded-lg flex items-center justify-center font-bold text-xs mr-3 mt-0.5 shadow-md group-hover:scale-110 transition-transform">2</span>
                     <span className="pt-0.5">Navigate to your site's environment variables settings</span>
                   </li>
                   <li className="flex items-start group">
-                    <span className="flex-shrink-0 w-7 h-7 bg-gradient-to-br from-pink-600 to-rose-600 text-white rounded-lg flex items-center justify-center font-bold text-xs mr-3 mt-0.5 shadow-md group-hover:scale-110 transition-transform">3</span>
+                    <span className="flex-shrink-0 w-7 h-7 bg-gradient-to-br from-indigo-600 to-blue-600 text-white rounded-lg flex items-center justify-center font-bold text-xs mr-3 mt-0.5 shadow-md group-hover:scale-110 transition-transform">3</span>
                     <span className="pt-0.5">Add the following environment variables:</span>
                   </li>
                 </ol>
               </div>
 
               {/* Code block */}
-              <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-xl p-5 shadow-lg border border-pink-500/20">
+              <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-xl p-5 shadow-lg border border-indigo-500/20">
                 <div className="font-mono text-xs space-y-3">
-                  <div className="text-pink-400 font-semibold"># Required Variables</div>
+                  <div className="text-indigo-400 font-semibold"># Required Variables</div>
                   <div>
-                    <div className="text-rose-300 font-semibold">VITE_SUPABASE_URL</div>
+                    <div className="text-blue-300 font-semibold">VITE_SUPABASE_URL</div>
                     <div className="text-slate-400 ml-4 text-[10px]">→ Your Supabase project URL</div>
                   </div>
                   <div>
-                    <div className="text-rose-300 font-semibold mt-2">VITE_SUPABASE_ANON_KEY</div>
+                    <div className="text-blue-300 font-semibold mt-2">VITE_SUPABASE_ANON_KEY</div>
                     <div className="text-slate-400 ml-4 text-[10px]">→ Your Supabase anonymous key</div>
                   </div>
                 </div>
@@ -332,7 +332,7 @@ function ConfigurationCheck({ children }: { children: React.ReactNode }) {
               <div className="pt-4 border-t border-slate-200">
                 <button
                   onClick={() => window.location.reload()}
-                  className="w-full bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white px-6 py-4 rounded-xl transition-all font-semibold shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center space-x-2"
+                  className="w-full bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white px-6 py-4 rounded-xl transition-all font-semibold shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center space-x-2"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -425,7 +425,7 @@ try {
             <button onclick="window.location.href='/diagnostics.html'" style="background: #3b82f6; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: 600;">
               Run Diagnostics
             </button>
-            <button onclick="window.location.reload()" style="background: #ec4899; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+            <button onclick="window.location.reload()" style="background: #4f46e5; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: 600;">
               Reload Page
             </button>
             <button onclick="console.log('Error details:', ${JSON.stringify(error)}); alert('Check browser console (F12) for details')" style="background: #64748b; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: 600;">

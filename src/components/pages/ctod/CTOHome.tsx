@@ -67,7 +67,7 @@ export function CTOHome() {
         <div>
           {isCEOUser ? (
             <>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent">
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">
                 CEO Dashboard — CTO Technology Overview
               </h1>
               <p className="text-gray-600 mt-1">Viewing CTO operations and technology metrics</p>
@@ -88,7 +88,7 @@ export function CTOHome() {
             const statusColors = {
               success: 'bg-green-100 text-green-700',
               warning: 'bg-yellow-100 text-yellow-700',
-              neutral: 'bg-pink-100 text-pink-700',
+              neutral: 'bg-indigo-100 text-indigo-700',
             };
             return (
               <div
@@ -145,7 +145,7 @@ export function CTOHome() {
                       </div>
                       <button
                         onClick={() => setShareModalResource(resource)}
-                        className="flex items-center gap-2 px-3 py-1.5 text-sm text-pink-600 hover:bg-pink-50 rounded-lg transition-colors"
+                        className="flex items-center gap-2 px-3 py-1.5 text-sm text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
                       >
                         <Share2 size={14} />
                         Share
@@ -164,7 +164,7 @@ export function CTOHome() {
                 Quick Actions
               </h2>
               <div className="space-y-2">
-                <button className="w-full text-left px-4 py-3 bg-pink-50 text-pink-700 rounded-lg hover:bg-pink-100 transition-colors font-medium">
+                <button className="w-full text-left px-4 py-3 bg-indigo-50 text-indigo-700 rounded-lg hover:bg-indigo-100 transition-colors font-medium">
                   Upload File
                 </button>
                 <button className="w-full text-left px-4 py-3 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors font-medium">
@@ -179,7 +179,7 @@ export function CTOHome() {
             <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-sm p-6 text-white">
               <Shield size={32} className="mb-3" />
               <h3 className="font-semibold text-lg mb-2">Security Status</h3>
-              <p className="text-pink-100 text-sm mb-4">All systems secure. No alerts.</p>
+              <p className="text-indigo-100 text-sm mb-4">All systems secure. No alerts.</p>
               <div className="flex items-center gap-2 text-sm">
                 <CheckCircle size={16} />
                 <span>Last audit: 3 days ago</span>

@@ -67,7 +67,7 @@ export function RecordShareModal({ recordId, recordTitle, currentVisibility, onC
       <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-pink-500 to-pink-600 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center">
               <Share2 className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -100,12 +100,12 @@ export function RecordShareModal({ recordId, recordTitle, currentVisibility, onC
                 onClick={() => handleVisibilityChange('private')}
                 className={`p-4 rounded-lg border-2 transition-all ${
                   currentVisibility === 'private'
-                    ? 'border-pink-500 bg-pink-50'
+                    ? 'border-indigo-500 bg-indigo-50'
                     : 'border-gray-200 hover:border-gray-300'
                 }`}
               >
                 <Lock className={`w-5 h-5 mx-auto mb-2 ${
-                  currentVisibility === 'private' ? 'text-pink-600' : 'text-gray-400'
+                  currentVisibility === 'private' ? 'text-indigo-600' : 'text-gray-400'
                 }`} />
                 <div className="text-sm font-medium text-gray-900">Private</div>
                 <div className="text-xs text-gray-500 mt-1">Only you</div>
@@ -115,12 +115,12 @@ export function RecordShareModal({ recordId, recordTitle, currentVisibility, onC
                 onClick={() => handleVisibilityChange('org')}
                 className={`p-4 rounded-lg border-2 transition-all ${
                   currentVisibility === 'org'
-                    ? 'border-pink-500 bg-pink-50'
+                    ? 'border-indigo-500 bg-indigo-50'
                     : 'border-gray-200 hover:border-gray-300'
                 }`}
               >
                 <Globe className={`w-5 h-5 mx-auto mb-2 ${
-                  currentVisibility === 'org' ? 'text-pink-600' : 'text-gray-400'
+                  currentVisibility === 'org' ? 'text-indigo-600' : 'text-gray-400'
                 }`} />
                 <div className="text-sm font-medium text-gray-900">Organization</div>
                 <div className="text-xs text-gray-500 mt-1">All members</div>
@@ -130,12 +130,12 @@ export function RecordShareModal({ recordId, recordTitle, currentVisibility, onC
                 onClick={() => handleVisibilityChange('shared')}
                 className={`p-4 rounded-lg border-2 transition-all ${
                   currentVisibility === 'shared'
-                    ? 'border-pink-500 bg-pink-50'
+                    ? 'border-indigo-500 bg-indigo-50'
                     : 'border-gray-200 hover:border-gray-300'
                 }`}
               >
                 <Users className={`w-5 h-5 mx-auto mb-2 ${
-                  currentVisibility === 'shared' ? 'text-pink-600' : 'text-gray-400'
+                  currentVisibility === 'shared' ? 'text-indigo-600' : 'text-gray-400'
                 }`} />
                 <div className="text-sm font-medium text-gray-900">Shared</div>
                 <div className="text-xs text-gray-500 mt-1">Specific access</div>
@@ -154,7 +154,7 @@ export function RecordShareModal({ recordId, recordTitle, currentVisibility, onC
                   <select
                     value={shareType}
                     onChange={(e) => setShareType(e.target.value as 'role' | 'user')}
-                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   >
                     <option value="role">Share with Role</option>
                     <option value="user">Share with User</option>
@@ -165,7 +165,7 @@ export function RecordShareModal({ recordId, recordTitle, currentVisibility, onC
                   <select
                     value={targetRole}
                     onChange={(e) => setTargetRole(e.target.value as 'ceo' | 'cto')}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   >
                     {isCEO ? (
                       <>
@@ -186,7 +186,7 @@ export function RecordShareModal({ recordId, recordTitle, currentVisibility, onC
                     type="checkbox"
                     checked={canEdit}
                     onChange={(e) => setCanEdit(e.target.checked)}
-                    className="w-4 h-4 text-pink-600 border-gray-300 rounded focus:ring-pink-500"
+                    className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
                   />
                   <span className="text-sm text-gray-700">
                     Allow editing (not just viewing)
@@ -196,7 +196,7 @@ export function RecordShareModal({ recordId, recordTitle, currentVisibility, onC
                 <button
                   onClick={handleShare}
                   disabled={shareRecord.isPending}
-                  className="w-full bg-gradient-to-r from-pink-600 to-pink-700 text-white px-4 py-2 rounded-lg hover:from-pink-700 hover:to-pink-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                  className="w-full bg-gradient-to-r from-indigo-600 to-indigo-700 text-white px-4 py-2 rounded-lg hover:from-indigo-700 hover:to-indigo-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium"
                 >
                   {shareRecord.isPending ? 'Sharing...' : 'Add Access'}
                 </button>

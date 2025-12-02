@@ -86,7 +86,7 @@ export default function AssignmentForm({
               type="text"
               value={formData.title}
               onChange={(e) => handleChange('title', e.target.value)}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
               required
             />
           </div>
@@ -99,7 +99,7 @@ export default function AssignmentForm({
               value={formData.description}
               onChange={(e) => handleChange('description', e.target.value)}
               rows={4}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
             />
           </div>
 
@@ -110,7 +110,7 @@ export default function AssignmentForm({
             <select
               value={formData.project_id}
               onChange={(e) => handleChange('project_id', e.target.value)}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
             >
               <option value="">Select a project</option>
               {projects.map((project) => (
@@ -128,7 +128,7 @@ export default function AssignmentForm({
             <select
               value={formData.status}
               onChange={(e) => handleChange('status', e.target.value)}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
             >
               <option value="todo">To Do</option>
               <option value="in_progress">In Progress</option>
@@ -145,7 +145,7 @@ export default function AssignmentForm({
               type="date"
               value={formData.due_date}
               onChange={(e) => handleChange('due_date', e.target.value)}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
             />
           </div>
 
@@ -157,7 +157,7 @@ export default function AssignmentForm({
               type="email"
               value={formData.employee_email}
               onChange={(e) => handleChange('employee_email', e.target.value)}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
               placeholder="employee@example.com"
             />
           </div>
@@ -180,7 +180,7 @@ export default function AssignmentForm({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-6 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors disabled:bg-slate-300 disabled:cursor-not-allowed"
+              className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors disabled:bg-slate-300 disabled:cursor-not-allowed"
             >
               {isSubmitting ? 'Saving...' : submitLabel}
             </button>

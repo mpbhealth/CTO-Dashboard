@@ -1,9 +1,42 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Eye, EyeOff, Mail, Lock, AlertCircle, CheckCircle, User, KeyRound, Briefcase, Code2 } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, AlertCircle, CheckCircle, User, KeyRound, Briefcase, Code2, Shield, ShieldCheck, Fingerprint } from 'lucide-react';
 import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+
+// Security badges component
+const SecurityBadges = () => (
+  <motion.div
+    initial={{ opacity: 0, y: 10 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5, delay: 0.4 }}
+    className="mt-8"
+  >
+    <div className="flex items-center justify-center space-x-2 mb-4">
+      <div className="h-px flex-1 bg-gradient-to-r from-transparent via-slate-600 to-transparent"></div>
+      <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">Enterprise Security</span>
+      <div className="h-px flex-1 bg-gradient-to-r from-transparent via-slate-600 to-transparent"></div>
+    </div>
+    <div className="flex flex-wrap items-center justify-center gap-3">
+      <div className="flex items-center space-x-1.5 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
+        <Shield className="w-3.5 h-3.5 text-emerald-400" />
+        <span className="text-xs font-semibold text-emerald-400">AES-256</span>
+      </div>
+      <div className="flex items-center space-x-1.5 px-3 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded-full">
+        <ShieldCheck className="w-3.5 h-3.5 text-blue-400" />
+        <span className="text-xs font-semibold text-blue-400">HIPAA</span>
+      </div>
+      <div className="flex items-center space-x-1.5 px-3 py-1.5 bg-purple-500/10 border border-purple-500/20 rounded-full">
+        <Fingerprint className="w-3.5 h-3.5 text-purple-400" />
+        <span className="text-xs font-semibold text-purple-400">SOC 2</span>
+      </div>
+    </div>
+    <p className="text-center text-xs text-slate-500 mt-3">
+      End-to-end encryption protects all sensitive data
+    </p>
+  </motion.div>
+);
 
 type UserRole = 'ceo' | 'cto' | null;
 
@@ -205,16 +238,11 @@ export default function Login() {
               transition={{ duration: 0.5, type: "spring", stiffness: 200 }}
               className="flex justify-center mb-8"
             >
-              <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-amber-500/20 rounded-3xl blur-2xl group-hover:blur-3xl transition-all duration-500"></div>
-                <div className="relative bg-gradient-to-br from-slate-900/90 via-slate-800/90 to-slate-900/90 backdrop-blur-xl rounded-3xl p-6 border-2 border-white/10 shadow-2xl">
-                  <img
-                    src="/0001MPB.Health-Logo-png-1.png"
-                    alt="MPB Health"
-                    className="h-20 w-auto"
-                  />
-                </div>
-              </div>
+              <img
+                src="/0001MPB.Health-Logo-png-1.png"
+                alt="MPB Health"
+                className="h-24 w-auto drop-shadow-2xl"
+              />
             </motion.div>
             <motion.h1
               initial={{ opacity: 0, y: 10 }}
@@ -302,7 +330,9 @@ export default function Login() {
             </motion.button>
           </div>
 
-          <div className="mt-8 text-center">
+          <SecurityBadges />
+
+          <div className="mt-6 text-center">
             <p className="text-slate-400 text-sm">
               © 2025 MPB Health. All rights reserved.
             </p>
@@ -337,16 +367,11 @@ export default function Login() {
               transition={{ duration: 0.5, type: "spring", stiffness: 200 }}
               className="flex justify-center mb-8"
             >
-              <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-amber-500/20 rounded-3xl blur-2xl group-hover:blur-3xl transition-all duration-500"></div>
-                <div className="relative bg-gradient-to-br from-slate-900/90 via-slate-800/90 to-slate-900/90 backdrop-blur-xl rounded-3xl p-6 border-2 border-white/10 shadow-2xl">
-                  <img
-                    src="/0001MPB.Health-Logo-png-1.png"
-                    alt="MPB Health"
-                    className="h-20 w-auto"
-                  />
-                </div>
-              </div>
+              <img
+                src="/0001MPB.Health-Logo-png-1.png"
+                alt="MPB Health"
+                className="h-24 w-auto drop-shadow-2xl"
+              />
             </motion.div>
             <motion.h1
               initial={{ opacity: 0, y: 10 }}
@@ -430,7 +455,9 @@ export default function Login() {
             </motion.button>
           </div>
 
-          <div className="mt-8 text-center">
+          <SecurityBadges />
+
+          <div className="mt-6 text-center">
             <p className="text-slate-400 text-sm">
               © 2025 MPB Health. All rights reserved.
             </p>
@@ -743,9 +770,25 @@ export default function Login() {
             </div>
           </form>
 
-          {/* Footer */}
-          <div className="mt-8 pt-6 border-t border-slate-700/30 text-center">
-            <p className="text-xs font-medium text-slate-500">
+          {/* Security & Footer */}
+          <div className="mt-8 pt-6 border-t border-slate-700/30">
+            <div className="flex items-center justify-center space-x-4 mb-4">
+              <div className="flex items-center space-x-1.5">
+                <Shield className="w-3.5 h-3.5 text-emerald-400" />
+                <span className="text-xs font-medium text-slate-400">AES-256</span>
+              </div>
+              <div className="w-1 h-1 rounded-full bg-slate-600"></div>
+              <div className="flex items-center space-x-1.5">
+                <ShieldCheck className="w-3.5 h-3.5 text-blue-400" />
+                <span className="text-xs font-medium text-slate-400">HIPAA</span>
+              </div>
+              <div className="w-1 h-1 rounded-full bg-slate-600"></div>
+              <div className="flex items-center space-x-1.5">
+                <Fingerprint className="w-3.5 h-3.5 text-purple-400" />
+                <span className="text-xs font-medium text-slate-400">SOC 2</span>
+              </div>
+            </div>
+            <p className="text-xs font-medium text-slate-500 text-center">
               © 2025 MPB Health. All rights reserved.
             </p>
           </div>

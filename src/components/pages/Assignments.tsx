@@ -147,7 +147,7 @@ export default function Assignments() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-pink-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600 mx-auto mb-4"></div>
           <p className="text-slate-600">Loading assignments...</p>
         </div>
       </div>
@@ -162,7 +162,7 @@ export default function Assignments() {
           <p className="text-slate-600 mb-4">Please make sure the assignments table exists in Supabase.</p>
           <button
             onClick={() => refetch()}
-            className="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg transition-colors"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors"
           >
             Retry
           </button>
@@ -351,11 +351,11 @@ export default function Assignments() {
                   <button
                     onClick={() => handleSendViaEmail(assignment)}
                     disabled={sendingId === assignment.id && sendMethod === 'email'}
-                    className="p-1 text-slate-400 hover:text-pink-600 hover:bg-pink-50 rounded transition-colors disabled:opacity-50"
+                    className="p-1 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors disabled:opacity-50"
                     title="Send via Email"
                   >
                     {sendingId === assignment.id && sendMethod === 'email' ? (
-                      <div className="w-4 h-4 border-2 border-pink-600 border-t-transparent rounded-full animate-spin" />
+                      <div className="w-4 h-4 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
                     ) : (
                       <Mail className="w-4 h-4" />
                     )}
@@ -369,7 +369,7 @@ export default function Assignments() {
                   </button>
                   <button
                     onClick={() => openEditModal(assignment)}
-                    className="p-1 text-slate-400 hover:text-pink-600 hover:bg-pink-50 rounded transition-colors"
+                    className="p-1 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
                     title="Edit Assignment"
                   >
                     <Edit className="w-4 h-4" />
@@ -455,7 +455,7 @@ export default function Assignments() {
           </button>
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="flex items-center space-x-2 px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg transition-colors"
+            className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
           >
             <Plus className="w-4 h-4" />
             <span>New Assignment</span>
@@ -467,8 +467,8 @@ export default function Assignments() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center">
-              <CheckSquare className="w-6 h-6 text-pink-600" />
+            <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
+              <CheckSquare className="w-6 h-6 text-indigo-600" />
             </div>
             <div>
               <p className="text-sm font-medium text-slate-600">Total Assignments</p>
@@ -529,7 +529,7 @@ export default function Assignments() {
           <button
             className={`flex items-center space-x-2 px-6 py-4 font-medium text-sm transition-colors border-b-2 ${
               activeTab === 'assignments'
-                ? 'text-pink-600 border-pink-600'
+                ? 'text-indigo-600 border-indigo-600'
                 : 'text-slate-500 border-transparent hover:text-slate-700 hover:border-slate-300'
             }`}
             onClick={() => setActiveTab('assignments')}
@@ -540,7 +540,7 @@ export default function Assignments() {
           <button
             className={`flex items-center space-x-2 px-6 py-4 font-medium text-sm transition-colors border-b-2 ${
               activeTab === 'monday'
-                ? 'text-pink-600 border-pink-600'
+                ? 'text-indigo-600 border-indigo-600'
                 : 'text-slate-500 border-transparent hover:text-slate-700 hover:border-slate-300'
             }`}
             onClick={() => setActiveTab('monday')}
@@ -560,7 +560,7 @@ export default function Assignments() {
                   <input
                     type="text"
                     placeholder="Search assignments..."
-                    className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+                    className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
@@ -578,7 +578,7 @@ export default function Assignments() {
 
               <div className="flex flex-col sm:flex-row gap-3">
                 <select
-                  className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+                  className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
                   value={selectedProject}
                   onChange={(e) => setSelectedProject(e.target.value)}
                   aria-label="Filter assignments by project"
@@ -590,7 +590,7 @@ export default function Assignments() {
                 </select>
                 
                 <select
-                  className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+                  className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
                   value={selectedStatus}
                   onChange={(e) => setSelectedStatus(e.target.value)}
                   aria-label="Filter assignments by status"
@@ -704,11 +704,11 @@ export default function Assignments() {
                             <button
                               onClick={() => handleSendViaEmail(assignment)}
                               disabled={sendingId === assignment.id && sendMethod === 'email'}
-                              className="p-2 text-slate-400 hover:text-pink-600 hover:bg-pink-50 rounded transition-colors disabled:opacity-50"
+                              className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors disabled:opacity-50"
                               title="Send via Email"
                             >
                               {sendingId === assignment.id && sendMethod === 'email' ? (
-                                <div className="w-4 h-4 border-2 border-pink-600 border-t-transparent rounded-full animate-spin" />
+                                <div className="w-4 h-4 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
                               ) : (
                                 <Mail className="w-4 h-4" />
                               )}
@@ -722,7 +722,7 @@ export default function Assignments() {
                             </button>
                             <button
                               onClick={() => openEditModal(assignment)}
-                              className="p-2 text-slate-400 hover:text-pink-600 hover:bg-pink-50 rounded transition-colors"
+                              className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
                               title="Edit Assignment"
                             >
                               <Edit className="w-4 h-4" />
@@ -752,7 +752,7 @@ export default function Assignments() {
                     <p className="text-slate-600 mb-2">No assignments match your filters.</p>
                     <button
                       onClick={clearFilters}
-                      className="text-pink-600 hover:text-pink-800 font-medium"
+                      className="text-indigo-600 hover:text-indigo-800 font-medium"
                     >
                       Clear filters to see all assignments
                     </button>
@@ -820,7 +820,7 @@ export default function Assignments() {
                     required
                     value={formData.title}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
                     placeholder="e.g., Review API documentation"
                   />
                 </div>
@@ -834,7 +834,7 @@ export default function Assignments() {
                     rows={3}
                     value={formData.description}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
                     placeholder="Detailed description of the assignment..."
                   />
                 </div>
@@ -848,7 +848,7 @@ export default function Assignments() {
                     value={formData.project_id}
                     onChange={handleInputChange}
                     aria-label="Select project for assignment"
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
                   >
                     <option value="">No Project</option>
                     {projects.map(project => (
@@ -867,7 +867,7 @@ export default function Assignments() {
                     value={formData.status}
                     onChange={handleInputChange}
                     aria-label="Select assignment status"
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
                   >
                     <option value="todo">To Do</option>
                     <option value="in_progress">In Progress</option>
@@ -885,7 +885,7 @@ export default function Assignments() {
                     value={formData.due_date}
                     onChange={handleInputChange}
                     aria-label="Select assignment due date"
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
                   />
                 </div>
               </div>
@@ -906,7 +906,7 @@ export default function Assignments() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="bg-pink-600 hover:bg-pink-700 text-white px-6 py-2 rounded-lg flex items-center space-x-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg flex items-center space-x-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Save className="w-4 h-4" />
                   <span>{isSubmitting ? 'Updating...' : 'Update Assignment'}</span>

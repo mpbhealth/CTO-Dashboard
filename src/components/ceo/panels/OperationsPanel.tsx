@@ -48,11 +48,11 @@ export const OperationsPanel = memo(function OperationsPanel() {
       </div>
 
       <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="text-center p-4 bg-pink-50 rounded-lg">
-          <div className="text-2xl font-bold text-pink-900">
+        <div className="text-center p-4 bg-indigo-50 rounded-lg">
+          <div className="text-2xl font-bold text-indigo-900">
             {metrics.openByQueue.reduce((sum, q) => sum + q.count, 0)}
           </div>
-          <div className="text-xs text-pink-500 mt-1">Open Tickets</div>
+          <div className="text-xs text-indigo-500 mt-1">Open Tickets</div>
         </div>
         <div className="text-center p-4 bg-amber-50 rounded-lg">
           <div className="text-2xl font-bold text-amber-900">{metrics.agingOver48h}</div>

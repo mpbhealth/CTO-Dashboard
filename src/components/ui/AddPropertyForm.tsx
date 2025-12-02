@@ -58,7 +58,7 @@ export default function AddPropertyForm({
               type="text"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
               required
             />
           </div>
@@ -71,7 +71,7 @@ export default function AddPropertyForm({
               type="text"
               value={formData.value}
               onChange={(e) => setFormData({ ...formData, value: e.target.value })}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
             />
           </div>
 
@@ -83,7 +83,7 @@ export default function AddPropertyForm({
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               rows={3}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
             />
           </div>
 
@@ -105,7 +105,7 @@ export default function AddPropertyForm({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-6 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors disabled:bg-slate-300 disabled:cursor-not-allowed"
+              className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors disabled:bg-slate-300 disabled:cursor-not-allowed"
             >
               {isSubmitting ? 'Adding...' : `Add ${propertyType}`}
             </button>

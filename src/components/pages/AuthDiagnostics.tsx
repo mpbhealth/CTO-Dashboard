@@ -292,7 +292,7 @@ export default function AuthDiagnostics() {
           <button
             onClick={runDiagnosticTests}
             disabled={isRunningTests}
-            className="bg-pink-600 hover:bg-pink-700 text-white px-6 py-3 rounded-lg transition-colors font-medium disabled:opacity-50"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg transition-colors font-medium disabled:opacity-50"
           >
             {isRunningTests ? 'Running Tests...' : 'Run Diagnostic Tests'}
           </button>
@@ -316,7 +316,7 @@ export default function AuthDiagnostics() {
           <div className="space-y-3">
             <button
               onClick={() => window.location.reload()}
-              className="w-full bg-pink-600 hover:bg-pink-700 text-white px-4 py-3 rounded-lg transition-colors font-medium"
+              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-3 rounded-lg transition-colors font-medium"
             >
               Reload Page
             </button>
@@ -329,8 +329,8 @@ export default function AuthDiagnostics() {
           </div>
         </div>
 
-        <div className="mt-6 p-4 bg-pink-50 rounded-lg">
-          <p className="text-sm text-pink-700">
+        <div className="mt-6 p-4 bg-indigo-50 rounded-lg">
+          <p className="text-sm text-indigo-700">
             <strong>Note:</strong> This page is for debugging authentication issues.
             If you see "Profile Loaded: No" but "User Authenticated: Yes", there may be a database RLS policy issue or missing profile record.
           </p>

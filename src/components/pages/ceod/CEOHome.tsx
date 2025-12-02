@@ -91,7 +91,7 @@ export function CEOHome() {
           </div>
           <Link
             to="/ceod/upload"
-            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-pink-400 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity shadow-lg font-medium"
+            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-400 to-indigo-500 text-white rounded-lg hover:opacity-90 transition-opacity shadow-lg font-medium"
           >
             <Upload size={20} />
             <span>Upload Department Data</span>
@@ -151,7 +151,7 @@ export function CEOHome() {
                 {priorities.map((priority, index) => {
                   const statusColors = {
                     green: 'bg-green-100 text-green-700',
-                    blue: 'bg-pink-100 text-pink-700',
+                    blue: 'bg-indigo-100 text-indigo-700',
                     yellow: 'bg-yellow-100 text-yellow-700',
                   };
                   return (
@@ -172,7 +172,7 @@ export function CEOHome() {
                       <div className="flex items-center gap-3">
                         <div className="flex-1 bg-gray-200 rounded-full h-2">
                           <div
-                            className="bg-pink-500 h-2 rounded-full transition-all"
+                            className="bg-indigo-500 h-2 rounded-full transition-all"
                             style={{ width: `${priority.progress}%` }}
                           />
                         </div>
@@ -189,7 +189,7 @@ export function CEOHome() {
             <div className="bg-white rounded-xl shadow-sm border border-gray-200">
               <div className="p-6 border-b border-gray-200">
                 <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                  <Share2 size={20} className="text-pink-500" />
+                  <Share2 size={20} className="text-indigo-500" />
                   Shared from CTO
                 </h2>
                 <p className="text-sm text-gray-500 mt-1">Resources shared with you by the CTO team</p>
@@ -203,11 +203,11 @@ export function CEOHome() {
               ) : (
                 <div className="divide-y divide-gray-200">
                   {sharedFromCTO.map((resource) => (
-                    <div key={resource.id} className="p-4 hover:bg-pink-50 transition-colors group">
+                    <div key={resource.id} className="p-4 hover:bg-indigo-50 transition-colors group">
                       <div className="flex items-center justify-between">
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-pink-400 to-pink-500 flex items-center justify-center">
+                            <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-indigo-400 to-indigo-500 flex items-center justify-center">
                               <FileText size={16} className="text-white" />
                             </div>
                             <div>
@@ -218,7 +218,7 @@ export function CEOHome() {
                             </div>
                           </div>
                         </div>
-                        <button className="px-3 py-1.5 bg-gradient-to-r from-pink-400 to-pink-500 text-white rounded-lg text-sm font-medium opacity-90 group-hover:opacity-100 transition-opacity">
+                        <button className="px-3 py-1.5 bg-gradient-to-r from-indigo-400 to-indigo-500 text-white rounded-lg text-sm font-medium opacity-90 group-hover:opacity-100 transition-opacity">
                           View
                         </button>
                       </div>
@@ -236,25 +236,25 @@ export function CEOHome() {
                 Quick Actions
               </h2>
               <div className="space-y-2">
-                <Link to="/ceod/marketing" className="block w-full text-left px-4 py-3 bg-gradient-to-r from-pink-400 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity font-medium">
+                <Link to="/ceod/marketing" className="block w-full text-left px-4 py-3 bg-gradient-to-r from-indigo-400 to-indigo-500 text-white rounded-lg hover:opacity-90 transition-opacity font-medium">
                   View Marketing
                 </Link>
-                <Link to="/ceod/sales/reports" className="block w-full text-left px-4 py-3 bg-pink-50 text-pink-600 rounded-lg hover:bg-pink-100 transition-colors font-medium">
+                <Link to="/ceod/sales/reports" className="block w-full text-left px-4 py-3 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition-colors font-medium">
                   Sales Reports
                 </Link>
-                <Link to="/ceod/board" className="block w-full text-left px-4 py-3 bg-pink-50 text-pink-600 rounded-lg hover:bg-pink-100 transition-colors font-medium">
+                <Link to="/ceod/board" className="block w-full text-left px-4 py-3 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition-colors font-medium">
                   Board Packet
                 </Link>
-                <Link to="/ceod/operations/overview" className="block w-full text-left px-4 py-3 bg-pink-50 text-pink-600 rounded-lg hover:bg-pink-100 transition-colors font-medium">
+                <Link to="/ceod/operations/overview" className="block w-full text-left px-4 py-3 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition-colors font-medium">
                   Operations
                 </Link>
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-pink-400 to-pink-500 rounded-xl shadow-sm p-6 text-white">
+            <div className="bg-gradient-to-br from-indigo-400 to-indigo-500 rounded-xl shadow-sm p-6 text-white">
               <CheckCircle size={32} className="mb-3" />
               <h3 className="font-semibold text-lg mb-2">Company Health</h3>
-              <p className="text-pink-50 text-sm mb-4">Strong performance across all metrics</p>
+              <p className="text-indigo-50 text-sm mb-4">Strong performance across all metrics</p>
               <div className="space-y-2 text-sm">
                 <div className="flex items-center justify-between">
                   <span>Revenue Growth</span>
@@ -271,7 +271,7 @@ export function CEOHome() {
               <h2 className="text-sm font-semibold text-gray-700 mb-3">UPCOMING</h2>
               <div className="space-y-3">
                 <div className="flex items-start gap-3">
-                  <div className="w-2 h-2 bg-pink-600 rounded-full mt-1.5" />
+                  <div className="w-2 h-2 bg-indigo-600 rounded-full mt-1.5" />
                   <div className="flex-1">
                     <p className="text-sm font-medium text-gray-900">Board Meeting</p>
                     <p className="text-xs text-gray-500">Tomorrow, 2:00 PM</p>

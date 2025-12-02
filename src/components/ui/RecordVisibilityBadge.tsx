@@ -37,9 +37,9 @@ export function RecordVisibilityBadge({ visibility, size = 'md', showLabel = tru
     shared: {
       icon: Users,
       label: 'Shared',
-      bgColor: 'bg-pink-100',
-      textColor: 'text-pink-700',
-      borderColor: 'border-pink-200'
+      bgColor: 'bg-indigo-100',
+      textColor: 'text-indigo-700',
+      borderColor: 'border-indigo-200'
     }
   };
 

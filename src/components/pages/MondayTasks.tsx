@@ -354,7 +354,7 @@ export default function MondayTasks() {
       case 'done':
         return 'bg-emerald-100 text-emerald-800';
       case 'working on it':
-        return 'bg-pink-100 text-pink-800';
+        return 'bg-indigo-100 text-indigo-800';
       case 'stuck':
         return 'bg-red-100 text-red-800';
       case 'waiting for review':
@@ -373,7 +373,7 @@ export default function MondayTasks() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-pink-600"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600"></div>
       </div>
     );
   }
@@ -391,7 +391,7 @@ export default function MondayTasks() {
           <button
             onClick={syncMondayTasks}
             disabled={syncing}
-            className="flex items-center space-x-2 px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <RefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
             <span>{syncing ? 'Syncing...' : 'Sync Tasks'}</span>
@@ -400,7 +400,7 @@ export default function MondayTasks() {
           {selectedTasks.size > 0 && (
             <button
               onClick={importSelectedTasks}
-              className="flex items-center space-x-2 px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg transition-colors"
+              className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
             >
               <FolderPlus className="w-4 h-4" />
               <span>Import Selected ({selectedTasks.size})</span>
@@ -445,7 +445,7 @@ export default function MondayTasks() {
               <input
                 type="text"
                 placeholder="Search tasks, creators..."
-                className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+                className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -463,7 +463,7 @@ export default function MondayTasks() {
           {/* Filter Dropdowns */}
           <div className="flex flex-col sm:flex-row gap-3">
             <select
-              className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+              className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
               value={selectedBoard}
               onChange={(e) => setSelectedBoard(e.target.value)}
             >
@@ -472,7 +472,7 @@ export default function MondayTasks() {
               ))}
             </select>
             <select
-              className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-pink-500"
+              className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
             >
@@ -527,7 +527,7 @@ export default function MondayTasks() {
                     }
                     setSelectedTasks(newSelected);
                   }}
-                  className="mt-1 rounded border-slate-300 text-pink-600 focus:ring-sky-500"
+                  className="mt-1 rounded border-slate-300 text-indigo-600 focus:ring-sky-500"
                 />
 
                 {/* Task Content */}
@@ -573,7 +573,7 @@ export default function MondayTasks() {
                       href={`https://mpbhealth.monday.com/boards/${task.board.id}/pulses/${task.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center space-x-1 text-pink-600 hover:text-pink-800 text-sm"
+                      className="flex items-center space-x-1 text-indigo-600 hover:text-indigo-800 text-sm"
                     >
                       <ExternalLink className="w-3 h-3" />
                       <span>View in Monday.com</span>
@@ -592,14 +592,14 @@ export default function MondayTasks() {
             {tasks.length === 0 ? (
               <button
                 onClick={syncMondayTasks}
-                className="text-pink-600 hover:text-pink-800 font-medium"
+                className="text-indigo-600 hover:text-indigo-800 font-medium"
               >
                 Sync tasks from Monday.com to get started
               </button>
             ) : (
               <button
                 onClick={clearFilters}
-                className="text-pink-600 hover:text-pink-800 font-medium"
+                className="text-indigo-600 hover:text-indigo-800 font-medium"
               >
                 Clear all filters
               </button>

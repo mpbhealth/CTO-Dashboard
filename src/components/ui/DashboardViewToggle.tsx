@@ -17,7 +17,7 @@ export function DashboardViewToggle({
         onClick={() => onViewChange('dashboard')}
         className={`px-4 py-2 rounded-l-lg flex items-center space-x-2 transition-colors ${
           view === 'dashboard'
-            ? 'bg-pink-600 text-white'
+            ? 'bg-indigo-600 text-white'
             : 'text-slate-700 hover:bg-slate-50'
         }`}
       >
@@ -28,7 +28,7 @@ export function DashboardViewToggle({
         onClick={() => onViewChange('list')}
         className={`px-4 py-2 rounded-r-lg flex items-center space-x-2 transition-colors border-l ${
           view === 'list'
-            ? 'bg-pink-600 text-white border-pink-600'
+            ? 'bg-indigo-600 text-white border-indigo-600'
             : 'text-slate-700 hover:bg-slate-50 border-slate-300'
         }`}
       >

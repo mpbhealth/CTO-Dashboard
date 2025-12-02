@@ -144,7 +144,7 @@ export default function InteractiveOrgChart({
             >
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center space-x-2">
-                  <Building2 className="w-5 h-5 text-pink-600" />
+                  <Building2 className="w-5 h-5 text-indigo-600" />
                   <h3 className="font-semibold text-slate-900">{node.name}</h3>
                 </div>
                 {node.is_active !== false && (

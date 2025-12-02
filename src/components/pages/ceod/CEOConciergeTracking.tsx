@@ -218,7 +218,7 @@ export function CEOConciergeTracking() {
 
           <div className="bg-white rounded-lg border border-gray-200 p-4">
             <div className="flex items-center justify-between mb-2">
-              <TrendingUp className="text-pink-500" size={20} />
+              <TrendingUp className="text-indigo-500" size={20} />
               <span className="text-xs font-medium text-gray-500">SLA</span>
             </div>
             <div className="text-2xl font-bold text-gray-900">{metrics.slaCompliance}%</div>
@@ -347,7 +347,7 @@ export function CEOConciergeTracking() {
                             {interaction.agent_name || 'N/A'}
                           </td>
                           <td className="px-4 py-3 text-sm">
-                            <span className="inline-block px-2 py-1 bg-pink-100 text-pink-500 rounded text-xs">
+                            <span className="inline-block px-2 py-1 bg-indigo-100 text-indigo-500 rounded text-xs">
                               {interaction.channel || 'N/A'}
                             </span>
                           </td>

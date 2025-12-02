@@ -145,16 +145,16 @@ export default function APIStatus() {
   const getResponseTimeColor = (rt: number) => rt === 0 ? 'text-red-600' : rt > 1000 ? 'text-amber-600' : rt > 500 ? 'text-amber-600' : 'text-emerald-600';
 
   const getSeverityColor = (s: string) => {
-    const colors = { 'critical': 'bg-red-100 text-red-800', 'warning': 'bg-amber-100 text-amber-800', 'info': 'bg-pink-100 text-pink-800' };
+    const colors = { 'critical': 'bg-red-100 text-red-800', 'warning': 'bg-amber-100 text-amber-800', 'info': 'bg-indigo-100 text-indigo-800' };
     return colors[s as keyof typeof colors] || 'bg-slate-100 text-slate-800';
   };
 
   const getIncidentStatusColor = (s: string) => {
-    const colors = { 'resolved': 'bg-emerald-100 text-emerald-800', 'monitoring': 'bg-pink-100 text-pink-800', 'identified': 'bg-amber-100 text-amber-800', 'investigating': 'bg-orange-100 text-orange-800' };
+    const colors = { 'resolved': 'bg-emerald-100 text-emerald-800', 'monitoring': 'bg-indigo-100 text-indigo-800', 'identified': 'bg-amber-100 text-amber-800', 'investigating': 'bg-orange-100 text-orange-800' };
     return colors[s as keyof typeof colors] || 'bg-slate-100 text-slate-800';
   };
 
-  if (loading) return <div className="flex items-center justify-center h-64"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-600"></div></div>;
+  if (loading) return <div className="flex items-center justify-center h-64"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div></div>;
 
   const activeApis = apis.filter(a => a.is_active);
   const stats = {
@@ -186,7 +186,7 @@ export default function APIStatus() {
       </div>
       <div className="flex justify-end space-x-2">
         <button type="button" onClick={() => { isEdit ? setEditApiId(null) : setShowAddApi(false); setApiForm({ name: '', url: '', description: '', status: 'Healthy', response_time: 0, uptime: 99.9, endpoint_count: 0 }); }} className="px-4 py-2 text-slate-600 hover:text-slate-800">Cancel</button>
-        <button type="submit" className="px-4 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700">{isEdit ? 'Update' : 'Add API'}</button>
+        <button type="submit" className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">{isEdit ? 'Update' : 'Add API'}</button>
       </div>
     </form>
   );
@@ -226,7 +226,7 @@ export default function APIStatus() {
           <p className="text-slate-600 mt-2">Monitor the health and performance of all MPB Health APIs</p></div>
         <div className="flex space-x-3">
           <button onClick={fetchData} className="flex items-center space-x-2 px-4 py-2 bg-white border border-slate-300 text-slate-700 rounded-md hover:bg-slate-50 transition-colors"><RefreshCw className="h-4 w-4" /><span>Refresh</span></button>
-          <button onClick={() => setShowAddApi(true)} className="flex items-center space-x-2 px-4 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700 transition-colors"><Plus className="h-4 w-4" /><span>Add API</span></button>
+          <button onClick={() => setShowAddApi(true)} className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"><Plus className="h-4 w-4" /><span>Add API</span></button>
           <button onClick={() => setShowAddIncident(true)} className="flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"><AlertCircle className="h-4 w-4" /><span>Report Incident</span></button>
         </div>
       </div>
@@ -258,7 +258,7 @@ export default function APIStatus() {
         {apis.map(api => (
           <div key={api.id}>
             {editApiId === api.id ? (
-              <div className="bg-pink-50 p-6 rounded-xl shadow-sm border border-pink-300"><h3 className="text-lg font-semibold text-slate-900 mb-4">Edit API</h3>
+              <div className="bg-indigo-50 p-6 rounded-xl shadow-sm border border-indigo-300"><h3 className="text-lg font-semibold text-slate-900 mb-4">Edit API</h3>
                 <ApiForm onSubmit={(e) => handleUpdateApi(api.id, e)} isEdit /></div>
             ) : (
               <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
@@ -286,7 +286,7 @@ export default function APIStatus() {
                     <span>Last: {new Date(api.last_checked).toLocaleString()}</span></div>
                   <div className="flex items-center space-x-2">
                     <button onClick={() => setSelectedApi(api)} className="p-2 text-slate-600 hover:bg-slate-50 rounded-md" title="View"><Eye className="h-4 w-4" /></button>
-                    <button onClick={() => { setApiForm({ name: api.name, url: api.url, description: api.description || '', status: api.status, response_time: api.response_time, uptime: api.uptime || 99.9, endpoint_count: api.endpoint_count || 0 }); setEditApiId(api.id); }} className="p-2 text-pink-600 hover:bg-pink-50 rounded-md" title="Edit"><Edit2 className="h-4 w-4" /></button>
+                    <button onClick={() => { setApiForm({ name: api.name, url: api.url, description: api.description || '', status: api.status, response_time: api.response_time, uptime: api.uptime || 99.9, endpoint_count: api.endpoint_count || 0 }); setEditApiId(api.id); }} className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-md" title="Edit"><Edit2 className="h-4 w-4" /></button>
                     <button onClick={() => handleDeleteApi(api.id)} className="p-2 text-red-600 hover:bg-red-50 rounded-md" title="Delete"><Trash2 className="h-4 w-4" /></button>
                   </div>
                 </div>
@@ -309,11 +309,11 @@ export default function APIStatus() {
                 return (
                   <div key={inc.id}>
                     {editIncidentId === inc.id ? (
-                      <div className="p-4 border-2 border-pink-300 rounded-lg bg-pink-50"><h4 className="font-medium text-slate-900 mb-3">Edit Incident</h4>
+                      <div className="p-4 border-2 border-indigo-300 rounded-lg bg-indigo-50"><h4 className="font-medium text-slate-900 mb-3">Edit Incident</h4>
                         <IncidentForm onSubmit={(e) => handleUpdateIncident(inc.id, e)} isEdit /></div>
                     ) : (
                       <div className="flex items-start space-x-4 p-4 border border-slate-200 rounded-lg hover:bg-slate-50">
-                        <div className={`w-3 h-3 rounded-full mt-2 ${inc.severity === 'critical' ? 'bg-red-500' : inc.severity === 'warning' ? 'bg-amber-500' : 'bg-pink-500'}`}></div>
+                        <div className={`w-3 h-3 rounded-full mt-2 ${inc.severity === 'critical' ? 'bg-red-500' : inc.severity === 'warning' ? 'bg-amber-500' : 'bg-indigo-500'}`}></div>
                         <div className="flex-1">
                           <div className="flex items-start justify-between gap-2 mb-2">
                             <div><h3 className="font-medium text-slate-900">{inc.title}</h3>
@@ -329,7 +329,7 @@ export default function APIStatus() {
                             <p className="text-sm text-emerald-800"><strong>Resolution:</strong> {inc.resolution_notes}</p></div>}
                         </div>
                         <div className="flex space-x-1">
-                          <button onClick={() => { setIncidentForm({ api_id: inc.api_id, title: inc.title, description: inc.description, severity: inc.severity, status: inc.status, impact: inc.impact || '', resolution_notes: inc.resolution_notes || '' }); setEditIncidentId(inc.id); }} className="p-1.5 text-pink-600 hover:bg-pink-50 rounded" title="Edit"><Edit2 className="h-4 w-4" /></button>
+                          <button onClick={() => { setIncidentForm({ api_id: inc.api_id, title: inc.title, description: inc.description, severity: inc.severity, status: inc.status, impact: inc.impact || '', resolution_notes: inc.resolution_notes || '' }); setEditIncidentId(inc.id); }} className="p-1.5 text-indigo-600 hover:bg-indigo-50 rounded" title="Edit"><Edit2 className="h-4 w-4" /></button>
                           <button onClick={() => handleDeleteIncident(inc.id)} className="p-1.5 text-red-600 hover:bg-red-50 rounded" title="Delete"><Trash2 className="h-4 w-4" /></button>
                         </div>
                       </div>

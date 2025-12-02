@@ -77,7 +77,7 @@ export function NotesPanel({
         {onAddNote && !isAdding && (
           <button
             onClick={() => setIsAdding(true)}
-            className="flex items-center space-x-1 px-3 py-1 text-sm bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors"
+            className="flex items-center space-x-1 px-3 py-1 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
           >
             <Plus className="w-4 h-4" />
             <span>Add Note</span>
@@ -99,7 +99,7 @@ export function NotesPanel({
                 onChange={(e) => setNewNoteContent(e.target.value)}
                 placeholder="Enter your note..."
                 rows={3}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent resize-none"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
                 autoFocus
               />
               <div className="flex justify-end space-x-2 mt-2">
@@ -141,7 +141,7 @@ export function NotesPanel({
                     value={editContent}
                     onChange={(e) => setEditContent(e.target.value)}
                     rows={3}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent resize-none"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
                   />
                   <div className="flex justify-end space-x-2 mt-2">
                     <button

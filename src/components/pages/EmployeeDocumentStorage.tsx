@@ -368,7 +368,7 @@ const EmployeeDocumentStorage: React.FC = () => {
                       <div className="flex items-center justify-end space-x-2">
                         <button
                           onClick={() => handleDownload(doc)}
-                          className="p-1 text-pink-600 hover:bg-pink-50 rounded"
+                          className="p-1 text-indigo-600 hover:bg-indigo-50 rounded"
                           title="Download"
                         >
                           <Download className="w-4 h-4" />

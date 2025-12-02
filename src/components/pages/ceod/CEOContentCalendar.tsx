@@ -13,7 +13,7 @@ export function CEOContentCalendar() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'Published': return 'bg-green-100 text-green-700';
-      case 'Scheduled': return 'bg-pink-100 text-pink-500';
+      case 'Scheduled': return 'bg-indigo-100 text-indigo-500';
       case 'Draft': return 'bg-gray-100 text-gray-700';
       case 'In Review': return 'bg-yellow-100 text-yellow-700';
       case 'Production': return 'bg-purple-100 text-purple-700';
@@ -34,7 +34,7 @@ export function CEOContentCalendar() {
               <Filter size={18} />
               Filter
             </button>
-            <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-400 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity font-medium shadow-md">
+            <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-400 to-indigo-500 text-white rounded-lg hover:opacity-90 transition-opacity font-medium shadow-md">
               <Plus size={18} />
               Add Content
             </button>
@@ -79,7 +79,7 @@ export function CEOContentCalendar() {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-sm">
-                      <button className="text-pink-500 hover:text-pink-500 font-medium">Edit</button>
+                      <button className="text-indigo-500 hover:text-indigo-500 font-medium">Edit</button>
                     </td>
                   </tr>
                 ))}

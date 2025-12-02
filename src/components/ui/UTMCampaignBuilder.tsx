@@ -124,7 +124,7 @@ export default function UTMCampaignBuilder({ propertyId, baseUrl = '' }: UTMCamp
 
   return (
     <div className="space-y-6">
-      <div className="bg-gradient-to-br from-pink-50 to-purple-50 border border-pink-200 rounded-xl p-6">
+      <div className="bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-200 rounded-xl p-6">
         <h3 className="text-lg font-semibold text-slate-900 mb-2">UTM Campaign Builder</h3>
         <p className="text-sm text-slate-600 mb-4">
           Generate trackable URLs for your marketing campaigns across all platforms
@@ -135,7 +135,7 @@ export default function UTMCampaignBuilder({ propertyId, baseUrl = '' }: UTMCamp
             <button
               key={preset}
               onClick={() => applyPreset(preset as keyof typeof presets)}
-              className="px-3 py-2 bg-white hover:bg-pink-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-700 transition-colors capitalize"
+              className="px-3 py-2 bg-white hover:bg-indigo-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-700 transition-colors capitalize"
             >
               {preset.replace('_', ' ')}
             </button>
@@ -152,7 +152,7 @@ export default function UTMCampaignBuilder({ propertyId, baseUrl = '' }: UTMCamp
                 type="text"
                 value={campaignName}
                 onChange={(e) => setCampaignName(e.target.value)}
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 placeholder="Summer Sale 2024"
               />
             </div>
@@ -165,7 +165,7 @@ export default function UTMCampaignBuilder({ propertyId, baseUrl = '' }: UTMCamp
                 type="url"
                 value={destinationUrl}
                 onChange={(e) => setDestinationUrl(e.target.value)}
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 placeholder="https://mpbhealth.com/landing-page"
               />
             </div>
@@ -180,7 +180,7 @@ export default function UTMCampaignBuilder({ propertyId, baseUrl = '' }: UTMCamp
                 type="text"
                 value={utmParams.source}
                 onChange={(e) => setUtmParams({ ...utmParams, source: e.target.value })}
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 placeholder="facebook"
               />
               <p className="text-xs text-slate-500 mt-1">Where the traffic comes from</p>
@@ -194,7 +194,7 @@ export default function UTMCampaignBuilder({ propertyId, baseUrl = '' }: UTMCamp
                 type="text"
                 value={utmParams.medium}
                 onChange={(e) => setUtmParams({ ...utmParams, medium: e.target.value })}
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 placeholder="social"
               />
               <p className="text-xs text-slate-500 mt-1">The marketing medium</p>
@@ -208,7 +208,7 @@ export default function UTMCampaignBuilder({ propertyId, baseUrl = '' }: UTMCamp
                 type="text"
                 value={utmParams.campaign}
                 onChange={(e) => setUtmParams({ ...utmParams, campaign: e.target.value })}
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 placeholder="summer_sale"
               />
               <p className="text-xs text-slate-500 mt-1">Campaign identifier</p>
@@ -224,7 +224,7 @@ export default function UTMCampaignBuilder({ propertyId, baseUrl = '' }: UTMCamp
                 type="text"
                 value={utmParams.term}
                 onChange={(e) => setUtmParams({ ...utmParams, term: e.target.value })}
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 placeholder="health insurance"
               />
               <p className="text-xs text-slate-500 mt-1">Paid keywords</p>
@@ -238,7 +238,7 @@ export default function UTMCampaignBuilder({ propertyId, baseUrl = '' }: UTMCamp
                 type="text"
                 value={utmParams.content}
                 onChange={(e) => setUtmParams({ ...utmParams, content: e.target.value })}
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 placeholder="banner_ad_v1"
               />
               <p className="text-xs text-slate-500 mt-1">A/B test variations</p>
@@ -254,7 +254,7 @@ export default function UTMCampaignBuilder({ propertyId, baseUrl = '' }: UTMCamp
                 type="number"
                 value={budget}
                 onChange={(e) => setBudget(e.target.value)}
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 placeholder="5000"
                 step="0.01"
               />
@@ -268,7 +268,7 @@ export default function UTMCampaignBuilder({ propertyId, baseUrl = '' }: UTMCamp
                 type="text"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 placeholder="Campaign objectives and notes"
               />
             </div>
@@ -281,7 +281,7 @@ export default function UTMCampaignBuilder({ propertyId, baseUrl = '' }: UTMCamp
           <h4 className="text-sm font-semibold text-slate-900 mb-3">Generated URL</h4>
           <div className="bg-slate-50 rounded-lg p-4 mb-4">
             <div className="flex items-start space-x-3">
-              <Link className="w-5 h-5 text-pink-600 flex-shrink-0 mt-0.5" />
+              <Link className="w-5 h-5 text-indigo-600 flex-shrink-0 mt-0.5" />
               <div className="flex-1 min-w-0">
                 <p className="text-sm text-slate-900 break-all font-mono">{generatedUrl}</p>
               </div>
@@ -291,7 +291,7 @@ export default function UTMCampaignBuilder({ propertyId, baseUrl = '' }: UTMCamp
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={copyToClipboard}
-              className="flex items-center space-x-2 px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg transition-colors"
+              className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
             >
               {copied ? (
                 <>

@@ -161,6 +161,55 @@ src/
 6. **Open your browser**
    Navigate to the URL shown in terminal (usually `http://localhost:5173` or `http://localhost:5174`)
 
+## 🔐 **Encryption Setup**
+
+The dashboard includes AES-256-GCM encryption for protecting sensitive compliance documents and evidence files.
+
+### **Generate an Encryption Key**
+
+```bash
+npx ts-node scripts/generate-encryption-key.ts
+```
+
+This generates a cryptographically secure 256-bit key (64 hex characters).
+
+### **Configure the Key**
+
+Add the generated key to your `.env` file:
+
+```
+VITE_ENCRYPTION_KEY=your_64_char_hex_key_here
+```
+
+### **How It Works**
+
+- **Client-side encryption**: Files are encrypted in the browser before upload using the WebCrypto API
+- **AES-256-GCM**: Industry-standard authenticated encryption with 256-bit keys
+- **Secure storage**: Encrypted files are stored in Supabase Storage with metadata in the database
+- **Automatic detection**: The EvidenceUploader component automatically enables encryption when configured
+
+### **Security Notes**
+
+- **Never commit your encryption key** to version control
+- **Use different keys** for development and production environments
+- **Back up your key securely** - encrypted data is unrecoverable without it
+- **Key rotation**: When rotating keys, re-encrypt existing data before switching
+
+### **Usage in Code**
+
+```typescript
+import { encryptToString, decryptFromString } from '@utils/encryption';
+import { secureStore } from '@lib/secureStore';
+
+// Encrypt/decrypt strings
+const encrypted = await encryptToString('sensitive data', key);
+const decrypted = await decryptFromString(encrypted, key);
+
+// High-level secure store for JSON data
+const payload = await secureStore.set({ ssn: '123-45-6789' });
+const data = await secureStore.get<{ ssn: string }>(payload);
+```
+
 ## 📊 **Dashboard Pages**
 
 ### **1. Overview**

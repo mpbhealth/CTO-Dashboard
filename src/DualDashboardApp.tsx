@@ -145,8 +145,14 @@ const Assignments = lazy(() => import('./components/pages/Assignments'));
 const Notepad = lazy(() => import('./components/pages/Notepad'));
 
 const LoadingFallback = () => (
-  <div className="flex items-center justify-center min-h-screen">
-    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+  <div 
+    className="flex items-center justify-center min-h-screen bg-slate-50"
+    style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}
+  >
+    <div className="text-center px-4">
+      <div className="animate-spin rounded-full h-10 w-10 md:h-12 md:w-12 border-b-2 border-indigo-600 mx-auto"></div>
+      <p className="text-gray-500 text-sm mt-4">Loading...</p>
+    </div>
   </div>
 );
 
@@ -248,10 +254,13 @@ function DualDashboardContent() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-slate-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Authenticating...</p>
+      <div 
+        className="flex items-center justify-center min-h-screen bg-slate-50"
+        style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}
+      >
+        <div className="text-center px-4">
+          <div className="animate-spin rounded-full h-10 w-10 md:h-12 md:w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+          <p className="text-gray-600 text-sm md:text-base">Authenticating...</p>
         </div>
       </div>
     );
@@ -259,10 +268,13 @@ function DualDashboardContent() {
 
   if (!profileReady) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-slate-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading your dashboard...</p>
+      <div 
+        className="flex items-center justify-center min-h-screen bg-slate-50"
+        style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}
+      >
+        <div className="text-center px-4">
+          <div className="animate-spin rounded-full h-10 w-10 md:h-12 md:w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+          <p className="text-gray-600 text-sm md:text-base">Loading your dashboard...</p>
         </div>
       </div>
     );
@@ -279,21 +291,63 @@ function DualDashboardContent() {
         />
       )}
 
+      {/* Mobile hamburger menu button */}
       {shouldShowCTOSidebar && isMobile && !isSidebarExpanded && (
         <button
-          className="fixed top-4 left-4 p-3 rounded-md bg-indigo-600 text-white shadow-lg md:hidden z-50 mobile-hamburger"
+          className="
+            fixed z-50 md:hidden
+            p-3 rounded-xl
+            bg-indigo-600 text-white 
+            shadow-lg shadow-indigo-500/30
+            touch-manipulation
+            active:scale-95 active:bg-indigo-700
+            transition-all duration-200
+            min-h-[44px] min-w-[44px]
+            flex items-center justify-center
+            mobile-hamburger
+          "
+          style={{
+            top: 'max(1rem, env(safe-area-inset-top))',
+            left: 'max(1rem, env(safe-area-inset-left))',
+          }}
           onClick={toggleSidebar}
-          aria-label="Open menu"
+          aria-label="Open navigation menu"
         >
           <Menu className="w-5 h-5" />
         </button>
       )}
 
-      <main className={`flex-1 overflow-y-auto ${
-        isCEORoute
-          ? ''
-          : `transition-all duration-300 ${isMobile ? 'p-3' : 'p-8 pl-12'} ${isSidebarExpanded ? 'md:pl-96' : isMobile ? 'ml-0 pt-16' : 'md:pl-32'}`
-      }`}>
+      <main 
+        className={`
+          flex-1 overflow-y-auto overflow-x-hidden
+          ${isCEORoute
+            ? ''
+            : `
+              transition-all duration-300 ease-out
+              ${isMobile 
+                ? 'px-4 py-4' 
+                : 'px-6 md:px-8 lg:px-12 py-6 md:py-8'
+              } 
+              ${isSidebarExpanded 
+                ? 'md:pl-[21rem] lg:pl-[22rem]' 
+                : isMobile 
+                  ? 'pl-4' 
+                  : 'md:pl-24 lg:pl-28'
+              }
+            `
+          }
+        `}
+        style={{
+          // Add top padding for mobile hamburger button when sidebar is closed
+          paddingTop: shouldShowCTOSidebar && isMobile && !isSidebarExpanded 
+            ? 'max(4.5rem, calc(env(safe-area-inset-top) + 3.5rem))' 
+            : isMobile 
+              ? 'max(1rem, env(safe-area-inset-top))' 
+              : undefined,
+          // Add bottom safe area
+          paddingBottom: isMobile ? 'max(1rem, env(safe-area-inset-bottom))' : undefined,
+        }}
+      >
         <CEOErrorBoundary>
           <Suspense fallback={<LoadingFallback />}>
             <Routes>

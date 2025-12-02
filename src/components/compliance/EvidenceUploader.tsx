@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Upload, X, FileText, AlertCircle, CheckCircle, Lock, LockOpen } from 'lucide-react';
+import { Upload, X, FileText, AlertCircle, CheckCircle, Lock, Unlock } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { encryptFile, type EncryptedFileData } from '../../utils/encryption';
 import { isEncryptionConfigured, getEncryptionKey } from '../../lib/encryptionConfig';
@@ -218,7 +218,7 @@ export const EvidenceUploader: React.FC<EvidenceUploaderProps> = ({
             {encryptEnabled ? (
               <Lock className="w-5 h-5 text-green-600" />
             ) : (
-              <LockOpen className="w-5 h-5 text-gray-400" />
+              <Unlock className="w-5 h-5 text-gray-400" />
             )}
             <div>
               <span className="text-sm font-medium text-gray-700">

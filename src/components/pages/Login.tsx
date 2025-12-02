@@ -54,6 +54,7 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [rememberMe, setRememberMe] = useState(false);
 
   useEffect(() => {
     if (isDemoMode && profile) {
@@ -61,6 +62,15 @@ export default function Login() {
       navigate(redirectPath, { replace: true });
     }
   }, [isDemoMode, profile, navigate]);
+
+  // Load remembered email on mount
+  useEffect(() => {
+    const savedEmail = localStorage.getItem('mpb_remembered_email');
+    if (savedEmail) {
+      setEmail(savedEmail);
+      setRememberMe(true);
+    }
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -79,6 +89,13 @@ export default function Login() {
       }
 
       if (data.user) {
+        // Handle remember me - save or remove email from localStorage
+        if (rememberMe) {
+          localStorage.setItem('mpb_remembered_email', email);
+        } else {
+          localStorage.removeItem('mpb_remembered_email');
+        }
+        
         setSuccess('Login successful! Redirecting...');
         window.location.href = '/auth/callback';
       }
@@ -241,7 +258,7 @@ export default function Login() {
               <img
                 src="/0001MPB.Health-Logo-png-1.png"
                 alt="MPB Health"
-                className="h-24 w-auto drop-shadow-2xl"
+                className="h-16 w-auto drop-shadow-2xl"
               />
             </motion.div>
             <motion.h1
@@ -370,7 +387,7 @@ export default function Login() {
               <img
                 src="/0001MPB.Health-Logo-png-1.png"
                 alt="MPB Health"
-                className="h-24 w-auto drop-shadow-2xl"
+                className="h-16 w-auto drop-shadow-2xl"
               />
             </motion.div>
             <motion.h1
@@ -379,7 +396,7 @@ export default function Login() {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="text-5xl font-bold text-white mb-4 tracking-tight"
             >
-              Welcome to <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent">MPB Health</span>
+              <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent">Innovation Never Sleeps</span> — Neither Do We.
             </motion.h1>
             <motion.p
               initial={{ opacity: 0 }}
@@ -387,7 +404,7 @@ export default function Login() {
               transition={{ duration: 0.5, delay: 0.3 }}
               className="text-slate-300 text-lg font-medium"
             >
-              Select your role to access the executive portal
+              Select your role to access your Champion Executive Portal
             </motion.p>
           </div>
 
@@ -705,6 +722,8 @@ export default function Login() {
                     id="remember-me"
                     name="remember-me"
                     type="checkbox"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
                     className={`h-4 w-4 rounded border-2 transition-colors bg-slate-800 ${
                       selectedRole === 'ceo'
                         ? 'text-amber-500 focus:ring-amber-500 border-amber-500/30'

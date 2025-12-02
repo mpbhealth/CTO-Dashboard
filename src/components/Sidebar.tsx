@@ -145,6 +145,8 @@ export default function Sidebar({
 
   const handleLogout = async () => {
     try {
+      // Clear access PIN session storage
+      sessionStorage.removeItem('mpb_access_verified');
       await signOut();
       if (!isDemoMode) {
         window.location.href = '/login';

@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { ShoppingCart, Download, TrendingUp, DollarSign, Users, Target, Award, UserPlus, UserMinus, Phone, FileSpreadsheet, Eye } from 'lucide-react';
+import { useState, useMemo, useEffect } from 'react';
+import { ShoppingCart, Download, TrendingUp, DollarSign, Users, Target, Award, UserPlus, UserMinus, Phone, FileSpreadsheet, Eye, ChevronDown, ChevronUp, LayoutGrid, List } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 import { useQuery } from '@tanstack/react-query';
 import { ExportModal } from '../../modals/ExportModal';
@@ -55,6 +55,23 @@ export function CEOSalesReportsEnhanced() {
   const [showExportModal, setShowExportModal] = useState(false);
   const [selectedFile, setSelectedFile] = useState<any>(null);
   const [fileData, setFileData] = useState<any[]>([]);
+  
+  // Mobile-specific state
+  const [isMobile, setIsMobile] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
+  const [viewMode, setViewMode] = useState<'table' | 'cards'>('table');
+  
+  // Detect mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      if (mobile) setViewMode('cards');
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const { data: orders = [], isLoading: ordersLoading } = useQuery({
     queryKey: ['sales_orders'],
@@ -260,202 +277,317 @@ export function CEOSalesReportsEnhanced() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-96">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1a3d97]"></div>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-10 w-10 md:h-12 md:w-12 border-b-2 border-[#1a3d97] mx-auto"></div>
+          <p className="text-gray-500 text-sm mt-3">Loading sales data...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="w-full space-y-4 sm:space-y-6">
+      {/* Header - Stacks on mobile */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <ShoppingCart className="text-[#1a3d97]" size={32} />
-            Sales Intelligence Dashboard
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 flex items-center gap-2 sm:gap-3">
+            <ShoppingCart className="text-[#1a3d97]" size={24} />
+            <span className="truncate">Sales Intelligence</span>
           </h1>
-          <p className="text-gray-600 mt-1">Complete sales pipeline from lead to churn analysis</p>
+          <p className="text-gray-600 mt-1 text-sm md:text-base">
+            Complete sales pipeline from lead to churn analysis
+          </p>
         </div>
         <button
           onClick={() => setShowExportModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity"
+          className="
+            flex items-center justify-center gap-2 
+            px-4 py-3 sm:py-2.5
+            bg-gradient-to-r from-[#1a3d97] to-[#00A896] 
+            text-white rounded-xl 
+            hover:opacity-90 active:scale-[0.98]
+            transition-all duration-200
+            font-medium text-sm
+            min-h-[44px]
+            touch-manipulation
+            w-full sm:w-auto
+          "
         >
           <Download size={18} />
-          Export
+          Export Data
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
-          <div className="flex items-center justify-between mb-2">
-            <DollarSign className="text-[#1a3d97]" size={20} />
-            <span className="text-xs font-medium text-gray-500">MTD SALES</span>
+      {/* KPI Cards - 2x2 grid on mobile */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+        <div className="bg-white rounded-xl md:rounded-lg border border-gray-200 p-3 sm:p-4 hover:border-[#1a3d97] transition-colors">
+          <div className="flex items-center justify-between mb-1.5 sm:mb-2">
+            <div className="p-1.5 bg-blue-50 rounded-lg">
+              <DollarSign className="text-[#1a3d97]" size={16} />
+            </div>
+            <span className="text-[10px] sm:text-xs font-medium text-gray-500">MTD SALES</span>
           </div>
-          <div className="text-2xl font-bold text-gray-900">${(unifiedMetrics.mtdSales / 1000).toFixed(1)}K</div>
-          <div className="text-sm text-gray-500">This Month</div>
+          <div className="text-lg sm:text-2xl font-bold text-gray-900">${(unifiedMetrics.mtdSales / 1000).toFixed(1)}K</div>
+          <div className="text-xs sm:text-sm text-gray-500">This Month</div>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
-          <div className="flex items-center justify-between mb-2">
-            <Target className="text-[#00A896]" size={20} />
-            <span className="text-xs font-medium text-gray-500">PIPELINE</span>
+        <div className="bg-white rounded-xl md:rounded-lg border border-gray-200 p-3 sm:p-4 hover:border-[#00A896] transition-colors">
+          <div className="flex items-center justify-between mb-1.5 sm:mb-2">
+            <div className="p-1.5 bg-teal-50 rounded-lg">
+              <Target className="text-[#00A896]" size={16} />
+            </div>
+            <span className="text-[10px] sm:text-xs font-medium text-gray-500">PIPELINE</span>
           </div>
-          <div className="text-2xl font-bold text-gray-900">${(unifiedMetrics.totalPipeline / 1000).toFixed(1)}K</div>
-          <div className="text-sm text-gray-500">{filteredLeads.length} Leads</div>
+          <div className="text-lg sm:text-2xl font-bold text-gray-900">${(unifiedMetrics.totalPipeline / 1000).toFixed(1)}K</div>
+          <div className="text-xs sm:text-sm text-gray-500">{filteredLeads.length} Leads</div>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
-          <div className="flex items-center justify-between mb-2">
-            <TrendingUp className="text-green-600" size={20} />
-            <span className="text-xs font-medium text-gray-500">CONVERSION</span>
+        <div className="bg-white rounded-xl md:rounded-lg border border-gray-200 p-3 sm:p-4 hover:border-green-500 transition-colors">
+          <div className="flex items-center justify-between mb-1.5 sm:mb-2">
+            <div className="p-1.5 bg-green-50 rounded-lg">
+              <TrendingUp className="text-green-600" size={16} />
+            </div>
+            <span className="text-[10px] sm:text-xs font-medium text-gray-500">CONVERSION</span>
           </div>
-          <div className="text-2xl font-bold text-gray-900">{unifiedMetrics.conversionRate.toFixed(1)}%</div>
-          <div className="text-sm text-gray-500">Lead to Sale</div>
+          <div className="text-lg sm:text-2xl font-bold text-gray-900">{unifiedMetrics.conversionRate.toFixed(1)}%</div>
+          <div className="text-xs sm:text-sm text-gray-500">Lead to Sale</div>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
-          <div className="flex items-center justify-between mb-2">
-            <UserMinus className="text-amber-600" size={20} />
-            <span className="text-xs font-medium text-gray-500">CHURN</span>
+        <div className="bg-white rounded-xl md:rounded-lg border border-gray-200 p-3 sm:p-4 hover:border-amber-500 transition-colors">
+          <div className="flex items-center justify-between mb-1.5 sm:mb-2">
+            <div className="p-1.5 bg-amber-50 rounded-lg">
+              <UserMinus className="text-amber-600" size={16} />
+            </div>
+            <span className="text-[10px] sm:text-xs font-medium text-gray-500">CHURN</span>
           </div>
-          <div className="text-2xl font-bold text-gray-900">{unifiedMetrics.churnRate.toFixed(1)}%</div>
-          <div className="text-sm text-gray-500">{cancelations.length} Canceled</div>
+          <div className="text-lg sm:text-2xl font-bold text-gray-900">{unifiedMetrics.churnRate.toFixed(1)}%</div>
+          <div className="text-xs sm:text-sm text-gray-500">{cancelations.length} Canceled</div>
         </div>
       </div>
 
-      <div className="bg-white rounded-lg border border-gray-200">
-        <div className="flex border-b border-gray-200">
+      <div className="bg-white rounded-xl md:rounded-lg border border-gray-200 overflow-hidden">
+        {/* Scrollable tab bar on mobile */}
+        <div className="flex border-b border-gray-200 overflow-x-auto scrollbar-hide">
           <button
             onClick={() => setActiveTab('orders')}
-            className={`flex-1 px-6 py-3 text-sm font-medium transition-colors ${
-              activeTab === 'orders'
+            className={`
+              flex-1 min-w-[120px] px-4 sm:px-6 py-3.5 sm:py-3 
+              text-xs sm:text-sm font-medium 
+              transition-colors whitespace-nowrap
+              touch-manipulation
+              ${activeTab === 'orders'
                 ? 'text-[#1a3d97] border-b-2 border-[#1a3d97] bg-blue-50'
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-            }`}
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50 active:bg-gray-100'
+              }
+            `}
           >
-            <ShoppingCart className="inline-block mr-2" size={16} />
-            Sales Orders
+            <ShoppingCart className="inline-block mr-1.5 sm:mr-2" size={14} />
+            Orders
           </button>
           <button
             onClick={() => setActiveTab('leads')}
-            className={`flex-1 px-6 py-3 text-sm font-medium transition-colors ${
-              activeTab === 'leads'
+            className={`
+              flex-1 min-w-[120px] px-4 sm:px-6 py-3.5 sm:py-3 
+              text-xs sm:text-sm font-medium 
+              transition-colors whitespace-nowrap
+              touch-manipulation
+              ${activeTab === 'leads'
                 ? 'text-[#00A896] border-b-2 border-[#00A896] bg-green-50'
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-            }`}
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50 active:bg-gray-100'
+              }
+            `}
           >
-            <UserPlus className="inline-block mr-2" size={16} />
-            Lead Pipeline
+            <UserPlus className="inline-block mr-1.5 sm:mr-2" size={14} />
+            Leads
           </button>
           <button
             onClick={() => setActiveTab('churn')}
-            className={`flex-1 px-6 py-3 text-sm font-medium transition-colors ${
-              activeTab === 'churn'
+            className={`
+              flex-1 min-w-[120px] px-4 sm:px-6 py-3.5 sm:py-3 
+              text-xs sm:text-sm font-medium 
+              transition-colors whitespace-nowrap
+              touch-manipulation
+              ${activeTab === 'churn'
                 ? 'text-amber-600 border-b-2 border-amber-600 bg-amber-50'
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-            }`}
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50 active:bg-gray-100'
+              }
+            `}
           >
-            <UserMinus className="inline-block mr-2" size={16} />
-            Churn Analysis
+            <UserMinus className="inline-block mr-1.5 sm:mr-2" size={14} />
+            Churn
           </button>
         </div>
 
-        <div className="p-6">
+        <div className="p-3 sm:p-6">
           {activeTab === 'orders' && (
-            <div className="space-y-6">
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h3 className="text-sm font-semibold text-gray-900 mb-3">Filters</h3>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">From Date</label>
-                    <input
-                      type="date"
-                      value={dateFrom}
-                      onChange={(e) => setDateFrom(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">To Date</label>
-                    <input
-                      type="date"
-                      value={dateTo}
-                      onChange={(e) => setDateTo(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Rep</label>
-                    <select
-                      value={selectedRep}
-                      onChange={(e) => setSelectedRep(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                    >
-                      <option value="">All Reps</option>
-                      {Array.from(new Set(orders.map((o) => o.rep).filter(Boolean)))
-                        .sort()
-                        .map((rep) => (
-                          <option key={rep} value={rep!}>
-                            {rep}
-                          </option>
-                        ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Channel</label>
-                    <select
-                      value={selectedChannel}
-                      onChange={(e) => setSelectedChannel(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                    >
-                      <option value="">All Channels</option>
-                      {Array.from(new Set(orders.map((o) => o.channel).filter(Boolean)))
-                        .sort()
-                        .map((channel) => (
-                          <option key={channel} value={channel!}>
-                            {channel}
-                          </option>
-                        ))}
-                    </select>
+            <div className="space-y-4 sm:space-y-6">
+              {/* Collapsible Filters */}
+              <div className="bg-gray-50 rounded-xl p-3 sm:p-4">
+                <button
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="
+                    flex items-center justify-between w-full
+                    text-sm font-semibold text-gray-900
+                    md:cursor-default
+                  "
+                >
+                  <span>Filters</span>
+                  <span className="md:hidden flex items-center gap-2">
+                    {(dateFrom || dateTo || selectedRep || selectedChannel) && (
+                      <span className="w-2 h-2 bg-[#1a3d97] rounded-full"></span>
+                    )}
+                    {showFilters ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                  </span>
+                </button>
+                <div className={`${showFilters || !isMobile ? 'block' : 'hidden'} mt-3`}>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1.5">From Date</label>
+                      <input
+                        type="date"
+                        value={dateFrom}
+                        onChange={(e) => setDateFrom(e.target.value)}
+                        className="w-full px-3 py-2.5 border border-gray-300 rounded-xl text-sm min-h-[44px]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1.5">To Date</label>
+                      <input
+                        type="date"
+                        value={dateTo}
+                        onChange={(e) => setDateTo(e.target.value)}
+                        className="w-full px-3 py-2.5 border border-gray-300 rounded-xl text-sm min-h-[44px]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1.5">Rep</label>
+                      <select
+                        value={selectedRep}
+                        onChange={(e) => setSelectedRep(e.target.value)}
+                        className="w-full px-3 py-2.5 border border-gray-300 rounded-xl text-sm min-h-[44px]"
+                      >
+                        <option value="">All Reps</option>
+                        {Array.from(new Set(orders.map((o) => o.rep).filter(Boolean)))
+                          .sort()
+                          .map((rep) => (
+                            <option key={rep} value={rep!}>
+                              {rep}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1.5">Channel</label>
+                      <select
+                        value={selectedChannel}
+                        onChange={(e) => setSelectedChannel(e.target.value)}
+                        className="w-full px-3 py-2.5 border border-gray-300 rounded-xl text-sm min-h-[44px]"
+                      >
+                        <option value="">All Channels</option>
+                        {Array.from(new Set(orders.map((o) => o.channel).filter(Boolean)))
+                          .sort()
+                          .map((channel) => (
+                            <option key={channel} value={channel!}>
+                              {channel}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-200">
-                    <tr>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase">Date</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase">Member</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase">Amount</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase">Plan</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase">Rep</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {filteredOrders.length === 0 ? (
-                      <tr>
-                        <td colSpan={5} className="px-4 py-8 text-center text-gray-500">
-                          No orders found
-                        </td>
-                      </tr>
-                    ) : (
-                      filteredOrders.slice(0, 50).map((order) => (
-                        <tr key={order.staging_id} className="hover:bg-gray-50">
-                          <td className="px-4 py-3 text-sm text-gray-900">
-                            {order.order_date ? new Date(order.order_date).toLocaleDateString() : 'N/A'}
-                          </td>
-                          <td className="px-4 py-3 text-sm text-gray-900">{order.member_id || 'N/A'}</td>
-                          <td className="px-4 py-3 text-sm font-bold text-[#1a3d97]">
-                            ${order.amount.toFixed(2)}
-                          </td>
-                          <td className="px-4 py-3 text-sm text-gray-900">{order.plan || 'N/A'}</td>
-                          <td className="px-4 py-3 text-sm text-gray-900">{order.rep || 'N/A'}</td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
+              {/* View Mode Toggle - Mobile only */}
+              <div className="flex items-center justify-between md:hidden">
+                <span className="text-sm text-gray-600">{filteredOrders.length} orders</span>
+                <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+                  <button
+                    onClick={() => setViewMode('cards')}
+                    className={`p-2 rounded-md transition-colors ${viewMode === 'cards' ? 'bg-white shadow-sm' : ''}`}
+                  >
+                    <LayoutGrid size={16} className={viewMode === 'cards' ? 'text-[#1a3d97]' : 'text-gray-500'} />
+                  </button>
+                  <button
+                    onClick={() => setViewMode('table')}
+                    className={`p-2 rounded-md transition-colors ${viewMode === 'table' ? 'bg-white shadow-sm' : ''}`}
+                  >
+                    <List size={16} className={viewMode === 'table' ? 'text-[#1a3d97]' : 'text-gray-500'} />
+                  </button>
+                </div>
               </div>
+
+              {/* Mobile Card View */}
+              {isMobile && viewMode === 'cards' ? (
+                <div className="space-y-3">
+                  {filteredOrders.length === 0 ? (
+                    <div className="text-center py-8 text-gray-500">
+                      <ShoppingCart className="mx-auto mb-2 text-gray-300" size={40} />
+                      <p className="text-sm">No orders found</p>
+                    </div>
+                  ) : (
+                    filteredOrders.slice(0, 50).map((order) => (
+                      <div 
+                        key={order.staging_id} 
+                        className="bg-gray-50 rounded-xl p-4 space-y-2 active:bg-gray-100 transition-colors"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <p className="font-medium text-gray-900">{order.member_id || 'Unknown Member'}</p>
+                            <p className="text-xs text-gray-500">
+                              {order.order_date ? new Date(order.order_date).toLocaleDateString() : 'N/A'}
+                            </p>
+                          </div>
+                          <span className="text-lg font-bold text-[#1a3d97]">
+                            ${order.amount.toFixed(2)}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-3 text-xs text-gray-600">
+                          <span className="px-2 py-1 bg-white rounded-lg">{order.plan || 'N/A'}</span>
+                          <span>{order.rep || 'N/A'}</span>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              ) : (
+                /* Desktop/Table View */
+                <div className="overflow-x-auto -mx-3 sm:mx-0">
+                  <table className="w-full min-w-[500px]">
+                    <thead className="bg-gray-50 border-b border-gray-200">
+                      <tr>
+                        <th className="px-3 sm:px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase">Date</th>
+                        <th className="px-3 sm:px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase">Member</th>
+                        <th className="px-3 sm:px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase">Amount</th>
+                        <th className="px-3 sm:px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase">Plan</th>
+                        <th className="px-3 sm:px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase">Rep</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      {filteredOrders.length === 0 ? (
+                        <tr>
+                          <td colSpan={5} className="px-4 py-8 text-center text-gray-500">
+                            No orders found
+                          </td>
+                        </tr>
+                      ) : (
+                        filteredOrders.slice(0, 50).map((order) => (
+                          <tr key={order.staging_id} className="hover:bg-gray-50">
+                            <td className="px-3 sm:px-4 py-3 text-sm text-gray-900">
+                              {order.order_date ? new Date(order.order_date).toLocaleDateString() : 'N/A'}
+                            </td>
+                            <td className="px-3 sm:px-4 py-3 text-sm text-gray-900">{order.member_id || 'N/A'}</td>
+                            <td className="px-3 sm:px-4 py-3 text-sm font-bold text-[#1a3d97]">
+                              ${order.amount.toFixed(2)}
+                            </td>
+                            <td className="px-3 sm:px-4 py-3 text-sm text-gray-900">{order.plan || 'N/A'}</td>
+                            <td className="px-3 sm:px-4 py-3 text-sm text-gray-900">{order.rep || 'N/A'}</td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           )}
 

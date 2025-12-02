@@ -1,4 +1,42 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
-  <rect width="192" height="192" fill="#0ea5e9"/>
-  <path d="M48 96L72 72L96 96L144 48L168 72L96 144L48 96Z" fill="white"/>
+  <defs>
+    <linearGradient id="bg192" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a"/>
+      <stop offset="50%" style="stop-color:#1e293b"/>
+      <stop offset="100%" style="stop-color:#1e3a5f"/>
+    </linearGradient>
+    <linearGradient id="trophy192" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fde68a"/>
+      <stop offset="50%" style="stop-color:#fbbf24"/>
+      <stop offset="100%" style="stop-color:#f59e0b"/>
+    </linearGradient>
+    <linearGradient id="handle192" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24"/>
+      <stop offset="100%" style="stop-color:#d97706"/>
+    </linearGradient>
+  </defs>
+  <rect width="192" height="192" rx="38" fill="url(#bg192)"/>
+  
+  <!-- Trophy Cup -->
+  <path d="M48 40h96v42c0 26.5-21.5 48-48 48s-48-21.5-48-48V40z" fill="url(#trophy192)"/>
+  
+  <!-- Left Handle -->
+  <path d="M36 40h16v24c0 8.8-7.2 16-16 16V40z" fill="url(#handle192)"/>
+  <path d="M36 40h16v24c0 8.8-7.2 16-16 16V40z" fill="none" stroke="#d97706" stroke-width="2"/>
+  
+  <!-- Right Handle -->
+  <path d="M140 40h16v40c0 8.8-7.2 16-16 16V40z" fill="url(#handle192)"/>
+  <path d="M140 40h16v40c0 8.8-7.2 16-16 16V40z" fill="none" stroke="#d97706" stroke-width="2"/>
+  
+  <!-- Stem -->
+  <rect x="84" y="126" width="24" height="20" fill="url(#trophy192)"/>
+  
+  <!-- Base -->
+  <rect x="60" y="144" width="72" height="12" rx="4" fill="url(#trophy192)"/>
+  
+  <!-- Star decoration -->
+  <path d="M96 60l6 12 13 2-9 9 2 13-12-6-12 6 2-13-9-9 13-2z" fill="white" opacity="0.9"/>
+  
+  <!-- Shine effect -->
+  <ellipse cx="72" cy="65" rx="8" ry="12" fill="white" opacity="0.3"/>
 </svg>

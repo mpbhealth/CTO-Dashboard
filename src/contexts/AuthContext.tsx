@@ -81,6 +81,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const profileCache = useRef<Map<string, Profile>>(new Map());
   const fetchingRef = useRef<string | null>(null);
   const initializingRef = useRef(false);
+  const authCompletedRef = useRef(false);
 
   const loadCachedProfile = useCallback((userId: string): Profile | null => {
     try {
@@ -231,15 +232,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
+    // Reset auth completed flag
+    authCompletedRef.current = false;
+
     const loadingTimeout = setTimeout(() => {
-      if (loading) {
-        logger.error('Auth timeout - check your network connection');
-        setLoading(false);
-        setProfileReady(true);
+      // Use ref to check if auth completed, not the stale closure value
+      if (!authCompletedRef.current) {
+        logger.warn('Auth is taking longer than expected - checking network connection...');
+        // Only show error after 15s total
+        setTimeout(() => {
+          if (!authCompletedRef.current) {
+            logger.error('Auth timeout - check your network connection or Supabase status');
+            setLoading(false);
+            setProfileReady(true);
+          }
+        }, 5000);
       }
     }, 10000);
 
     supabase.auth.getSession().then(({ data: { session } }) => {
+      authCompletedRef.current = true;
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user?.id) {
@@ -257,6 +269,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       setLoading(false);
     }).catch((error) => {
+      authCompletedRef.current = true;
       logger.error('Error getting session', error);
       setProfile(null);
       setProfileReady(true);

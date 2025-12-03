@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
+import { useState, useEffect, useCallback } from 'react';
+import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 
 export interface Note {
@@ -48,17 +48,73 @@ export interface UseNotesOptions {
   autoRefresh?: boolean;
 }
 
+// Demo mode mock data
+const createDemoNote = (dashboardRole: 'ceo' | 'cto', index: number): Note => ({
+  id: `demo-note-${dashboardRole}-${index}`,
+  title: index === 0 ? 'Welcome to Notes' : `Sample Note ${index}`,
+  content: index === 0
+    ? 'This is a demo note. Notes are stored locally in demo mode. Sign in to save notes to the cloud.'
+    : `This is sample note content #${index} for the ${dashboardRole.toUpperCase()} dashboard.`,
+  owner_role: dashboardRole,
+  created_for_role: null,
+  is_shared: false,
+  is_collaborative: false,
+  created_by: `demo-${dashboardRole}`,
+  created_at: new Date(Date.now() - index * 86400000).toISOString(),
+  updated_at: new Date(Date.now() - index * 86400000).toISOString(),
+  category: 'general',
+  tags: ['demo'],
+  is_pinned: index === 0,
+});
+
+const DEMO_STORAGE_KEY = 'mpb_demo_notes';
+
+function loadDemoNotes(dashboardRole: 'ceo' | 'cto'): Note[] {
+  try {
+    const stored = localStorage.getItem(`${DEMO_STORAGE_KEY}_${dashboardRole}`);
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch {
+    // Ignore parse errors
+  }
+  // Return default demo notes
+  return [createDemoNote(dashboardRole, 0), createDemoNote(dashboardRole, 1)];
+}
+
+function saveDemoNotes(dashboardRole: 'ceo' | 'cto', notes: Note[]): void {
+  try {
+    localStorage.setItem(`${DEMO_STORAGE_KEY}_${dashboardRole}`, JSON.stringify(notes));
+  } catch {
+    // Ignore storage errors
+  }
+}
+
 export function useNotes(options: UseNotesOptions) {
   const { dashboardRole, autoRefresh = false } = options;
-  const { user } = useAuth();
+  const { user, isDemoMode } = useAuth();
   const [notes, setNotes] = useState<Note[]>([]);
   const [sharedNotes, setSharedNotes] = useState<Note[]>([]);
   const [notifications, setNotifications] = useState<NoteNotification[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Check if we should use demo mode (either explicit demo mode or Supabase not configured)
+  const isInDemoMode = isDemoMode || !isSupabaseConfigured;
+
+  // Demo mode functions
+  const fetchDemoNotes = useCallback(() => {
+    const demoNotes = loadDemoNotes(dashboardRole);
+    setNotes(demoNotes);
+    setSharedNotes([]);
+    setNotifications([]);
+    setLoading(false);
+    setError(null);
+  }, [dashboardRole]);
+
   const fetchMyNotes = async () => {
     if (!user) throw new Error('Not authenticated');
+    if (isInDemoMode) return loadDemoNotes(dashboardRole);
 
     const { data, error: fetchError } = await supabase
       .from('notes')
@@ -73,6 +129,7 @@ export function useNotes(options: UseNotesOptions) {
 
   const fetchSharedNotes = async () => {
     if (!user) throw new Error('Not authenticated');
+    if (isInDemoMode) return [];
 
     const { data, error: fetchError } = await supabase
       .from('notes')
@@ -94,6 +151,7 @@ export function useNotes(options: UseNotesOptions) {
 
   const fetchNotifications = async () => {
     if (!user) throw new Error('Not authenticated');
+    if (isInDemoMode) return [];
 
     const { data, error: fetchError } = await supabase
       .from('note_notifications')
@@ -109,7 +167,13 @@ export function useNotes(options: UseNotesOptions) {
     return data || [];
   };
 
-  const fetchAllNotes = async () => {
+  const fetchAllNotes = useCallback(async () => {
+    // In demo mode, use local storage
+    if (isInDemoMode) {
+      fetchDemoNotes();
+      return;
+    }
+
     try {
       setLoading(true);
       setError(null);
@@ -124,16 +188,18 @@ export function useNotes(options: UseNotesOptions) {
       setSharedNotes(sharedNotesData);
       setNotifications(notificationsData as NoteNotification[]);
     } catch (err) {
+      console.error('[useNotes] Error fetching notes:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch notes');
     } finally {
       setLoading(false);
     }
-  };
+  }, [isInDemoMode, fetchDemoNotes]);
 
   useEffect(() => {
     fetchAllNotes();
 
-    if (autoRefresh) {
+    // Only set up real-time subscription if not in demo mode
+    if (autoRefresh && !isInDemoMode) {
       const subscription = supabase
         .channel('notes_changes')
         .on(
@@ -163,7 +229,7 @@ export function useNotes(options: UseNotesOptions) {
         subscription.unsubscribe();
       };
     }
-  }, [dashboardRole, autoRefresh]);
+  }, [dashboardRole, autoRefresh, isInDemoMode, fetchAllNotes]);
 
   const createNote = async (
     content: string,
@@ -176,6 +242,30 @@ export function useNotes(options: UseNotesOptions) {
     }
   ) => {
     if (!user) throw new Error('Not authenticated');
+
+    // Demo mode: save to local storage
+    if (isInDemoMode) {
+      const newNote: Note = {
+        id: `demo-note-${Date.now()}`,
+        content,
+        title: options?.title || undefined,
+        owner_role: dashboardRole,
+        created_for_role: options?.createdForRole || null,
+        created_by: user.id,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        is_shared: false,
+        is_collaborative: false,
+        category: 'general',
+        tags: ['demo'],
+        is_pinned: false,
+      };
+      const currentNotes = loadDemoNotes(dashboardRole);
+      const updatedNotes = [newNote, ...currentNotes];
+      saveDemoNotes(dashboardRole, updatedNotes);
+      setNotes(updatedNotes);
+      return newNote;
+    }
 
     const noteData = {
       content,
@@ -209,6 +299,19 @@ export function useNotes(options: UseNotesOptions) {
   };
 
   const updateNote = async (id: string, content: string, title?: string) => {
+    // Demo mode: update in local storage
+    if (isInDemoMode) {
+      const currentNotes = loadDemoNotes(dashboardRole);
+      const updatedNotes = currentNotes.map(note =>
+        note.id === id
+          ? { ...note, content, title: title || note.title, updated_at: new Date().toISOString() }
+          : note
+      );
+      saveDemoNotes(dashboardRole, updatedNotes);
+      setNotes(updatedNotes);
+      return;
+    }
+
     const { error: updateError } = await supabase
       .from('notes')
       .update({ content, title, updated_at: new Date().toISOString() })
@@ -220,6 +323,15 @@ export function useNotes(options: UseNotesOptions) {
   };
 
   const deleteNote = async (id: string) => {
+    // Demo mode: delete from local storage
+    if (isInDemoMode) {
+      const currentNotes = loadDemoNotes(dashboardRole);
+      const updatedNotes = currentNotes.filter(note => note.id !== id);
+      saveDemoNotes(dashboardRole, updatedNotes);
+      setNotes(updatedNotes);
+      return;
+    }
+
     const { error: deleteError } = await supabase
       .from('notes')
       .delete()
@@ -236,6 +348,12 @@ export function useNotes(options: UseNotesOptions) {
     permissionLevel: 'view' | 'edit' = 'view',
     shareMessage?: string
   ) => {
+    // Demo mode: sharing is not supported
+    if (isInDemoMode) {
+      console.warn('[useNotes] Sharing is not available in demo mode');
+      throw new Error('Note sharing is not available in demo mode. Please sign in to share notes.');
+    }
+
     const { data, error: rpcError } = await supabase.rpc('share_note_with_role', {
       p_note_id: noteId,
       p_target_role: targetRole,
@@ -243,10 +361,13 @@ export function useNotes(options: UseNotesOptions) {
       p_share_message: shareMessage || null
     });
 
-    if (rpcError) throw rpcError;
+    if (rpcError) {
+      console.error('[useNotes] Error sharing note:', rpcError);
+      throw new Error(rpcError.message || 'Failed to share note. The sharing function may not be available.');
+    }
 
-    if (!data.success) {
-      throw new Error(data.error || 'Failed to share note');
+    if (!data?.success) {
+      throw new Error(data?.error || 'Failed to share note');
     }
 
     await fetchAllNotes();
@@ -255,6 +376,12 @@ export function useNotes(options: UseNotesOptions) {
 
   const unshareNote = async (noteId: string, userId?: string) => {
     if (!user) throw new Error('Not authenticated');
+
+    // Demo mode: unsharing is not supported
+    if (isInDemoMode) {
+      console.warn('[useNotes] Unsharing is not available in demo mode');
+      return;
+    }
 
     let query = supabase
       .from('note_shares')
@@ -285,6 +412,11 @@ export function useNotes(options: UseNotesOptions) {
   };
 
   const getNoteShares = async (noteId: string): Promise<NoteShare[]> => {
+    // Demo mode: no shares
+    if (isInDemoMode) {
+      return [];
+    }
+
     const { data, error: fetchError } = await supabase
       .from('note_shares')
       .select(`
@@ -299,6 +431,11 @@ export function useNotes(options: UseNotesOptions) {
   };
 
   const markNotificationAsRead = async (notificationId: string) => {
+    // Demo mode: no notifications
+    if (isInDemoMode) {
+      return;
+    }
+
     const { error: updateError } = await supabase
       .from('note_notifications')
       .update({ is_read: true })
@@ -311,6 +448,11 @@ export function useNotes(options: UseNotesOptions) {
 
   const markAllNotificationsAsRead = async () => {
     if (!user) throw new Error('Not authenticated');
+
+    // Demo mode: no notifications
+    if (isInDemoMode) {
+      return;
+    }
 
     const { error: updateError } = await supabase
       .from('note_notifications')
@@ -332,6 +474,7 @@ export function useNotes(options: UseNotesOptions) {
     unreadCount,
     loading,
     error,
+    isInDemoMode,
     createNote,
     updateNote,
     deleteNote,

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { X, Server, Save } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { Database } from '../../types/database';
+import { handleError } from '../../lib/errorHandler';
 
 type TechStackItem = Database['public']['Tables']['tech_stack']['Row'];
 
@@ -102,7 +103,7 @@ export default function EditTechnologyModal({ isOpen, onClose, onSuccess, techno
       onSuccess();
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(handleError('EditTechnologyModal', err));
     } finally {
       setIsSubmitting(false);
     }

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { X, Link2, Plus, Check, AlertCircle } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { handleError } from '../../lib/errorHandler';
 
 interface AddQuickLinkModalProps {
   isOpen: boolean;
@@ -152,8 +153,7 @@ export default function AddQuickLinkModal({
       });
       
     } catch (err) {
-      console.error('Error adding quick link:', err);
-      setFormError(err instanceof Error ? err.message : 'An error occurred');
+      setFormError(handleError('AddQuickLinkModal', err));
     } finally {
       setIsSubmitting(false);
     }

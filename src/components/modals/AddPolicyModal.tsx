@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { X, FileText, Save, Eye, Calendar, Upload, Share2, AlertCircle, Check, Paperclip, Trash2, RefreshCw } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { Department } from '../../hooks/useOrganizationalData';
+import { handleError } from '../../lib/errorHandler';
 
 interface AddPolicyModalProps {
   isOpen: boolean;
@@ -126,7 +127,7 @@ ${formData.compliance_measures}
       onSuccess();
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(handleError('AddPolicyModal', err));
     } finally {
       setIsSubmitting(false);
     }

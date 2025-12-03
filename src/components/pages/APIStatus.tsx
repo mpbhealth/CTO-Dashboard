@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Activity, CheckCircle, AlertTriangle, XCircle, Clock, Plus, Edit2, Trash2, Eye, RefreshCw, TrendingUp, AlertCircle, Calendar, Info } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { handleError } from '../../lib/errorHandler';
 
 interface APIStatus {
   id: string; name: string; url: string; description?: string;

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { X, UserPlus } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { Department } from '../../hooks/useOrganizationalData';
+import { handleError } from '../../lib/errorHandler';
 
 interface AddEmployeeModalProps {
   isOpen: boolean;
@@ -90,7 +91,7 @@ export default function AddEmployeeModal({ isOpen, onClose, onSuccess, departmen
       onSuccess();
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(handleError('AddEmployeeModal', err));
     } finally {
       setIsSubmitting(false);
     }

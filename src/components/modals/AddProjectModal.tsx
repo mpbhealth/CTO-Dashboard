@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { X, FolderPlus, Github, ExternalLink, Globe } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { handleError } from '../../lib/errorHandler';
 
 interface AddProjectModalProps {
   isOpen: boolean;
@@ -66,7 +67,7 @@ export default function AddProjectModal({ isOpen, onClose, onSuccess }: AddProje
       onSuccess();
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(handleError('AddProjectModal', err));
     } finally {
       setIsSubmitting(false);
     }

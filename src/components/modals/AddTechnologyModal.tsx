@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { X, Server, Plus } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { handleError } from '../../lib/errorHandler';
 
 interface AddTechnologyModalProps {
   isOpen: boolean;
@@ -90,7 +91,7 @@ export default function AddTechnologyModal({ isOpen, onClose, onSuccess }: AddTe
       onSuccess();
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(handleError('AddTechnologyModal', err));
     } finally {
       setIsSubmitting(false);
     }

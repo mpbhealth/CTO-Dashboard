@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { X, Globe, BarChart3, Facebook, Instagram, Linkedin, TrendingUp } from 'lucide-react';
 import { useMarketingProperties } from '../../hooks/useMarketingData';
+import { handleError } from '../../lib/errorHandler';
 
 interface AddMarketingPropertyModalProps {
   isOpen: boolean;
@@ -98,7 +99,7 @@ export default function AddMarketingPropertyModal({
       onSuccess();
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to add property');
+      setError(handleError('AddMarketingPropertyModal', err));
     } finally {
       setIsSubmitting(false);
     }

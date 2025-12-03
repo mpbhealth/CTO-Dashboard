@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { X, UserCheck, Users } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { Database } from '../../types/database';
+import { handleError } from '../../lib/errorHandler';
 
 type TeamMember = Database['public']['Tables']['team_members']['Row'];
 
@@ -130,7 +131,7 @@ export default function EditTeamMemberModal({ isOpen, onClose, onSuccess, member
       onSuccess();
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(handleError('EditTeamMemberModal', err));
     } finally {
       setIsSubmitting(false);
     }

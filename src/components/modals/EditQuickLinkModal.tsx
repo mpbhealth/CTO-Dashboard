@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { X, Link2, Save, Check, AlertCircle } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { handleError } from '../../lib/errorHandler';
 
 interface QuickLink {
   id: string;
@@ -161,8 +162,7 @@ export default function EditQuickLinkModal({
       
       onSuccess(data);
     } catch (err) {
-      console.error('Error updating quick link:', err);
-      setFormError(err instanceof Error ? err.message : 'An error occurred');
+      setFormError(handleError('EditQuickLinkModal', err));
     } finally {
       setIsSubmitting(false);
     }

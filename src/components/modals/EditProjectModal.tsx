@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { X, FolderOpen, Github, ExternalLink, Globe, Save } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { Database } from '../../types/database';
+import { handleError } from '../../lib/errorHandler';
 
 type Project = Database['public']['Tables']['projects']['Row'];
 
@@ -78,7 +79,7 @@ export default function EditProjectModal({ isOpen, onClose, onSuccess, project }
       onSuccess();
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(handleError('EditProjectModal', err));
     } finally {
       setIsSubmitting(false);
     }

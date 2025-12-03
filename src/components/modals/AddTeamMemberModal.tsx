@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { X, UserPlus, Users } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { handleError } from '../../lib/errorHandler';
 
 interface AddTeamMemberModalProps {
   isOpen: boolean;
@@ -115,7 +116,7 @@ export default function AddTeamMemberModal({ isOpen, onClose, onSuccess }: AddTe
       onSuccess();
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(handleError('AddTeamMemberModal', err));
     } finally {
       setIsSubmitting(false);
     }

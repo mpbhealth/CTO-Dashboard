@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { X, Building2, Save } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
-import { Department, EmployeeProfile } from '../../hooks/useOrganizationalData'; 
+import { Department, EmployeeProfile } from '../../hooks/useOrganizationalData';
+import { handleError } from '../../lib/errorHandler'; 
 
 interface AddDepartmentModalProps {
   onClose: () => void;
@@ -93,8 +94,7 @@ export default function AddDepartmentModal({ onClose, onSuccess, departments, em
 
       onSuccess();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to add department');
-       console.error('Error adding department:', err);
+      setError(handleError('AddDepartmentModal', err));
     } finally {
       setLoading(false);
     }

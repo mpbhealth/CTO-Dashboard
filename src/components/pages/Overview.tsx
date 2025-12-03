@@ -21,7 +21,6 @@ import {
 
 import KPICard from '../ui/KPICard';
 import { useKPIData, useTeamMembers, useProjects } from '../../hooks/useSupabaseData';
-import { useEnrollments } from '../../hooks/useSupabaseTable';
 import { useDepartments, useEmployeeProfiles, useDepartmentMetrics } from '../../hooks/useOrganizationalData';
 import { useSaaSExpenses } from '../../hooks/useSaaSExpenses';
 import { useTicketStats, useTicketTrends } from '../../hooks/useTickets';
@@ -47,7 +46,6 @@ export default function Overview() {
     metrics: saasMetrics = { totalMonthly: 0, totalAnnual: 0, totalTools: 0, totalDepartments: 0, renewingNext30Days: 0 }, 
     loading: saasLoading 
   } = useSaaSExpenses();
-  const { data: enrollments = [], loading: enrollmentsLoading } = useEnrollments();
   const { data: audits = [], loading: auditsLoading } = useAudits();
   const { stats: ticketStats, loading: ticketStatsLoading } = useTicketStats();
   const { trends: ticketTrends, loading: ticketTrendsLoading } = useTicketTrends(10);
@@ -70,9 +68,6 @@ export default function Overview() {
     const completedProjects = projects.filter(p => p.status === 'Live').length;
     const projectsAtRisk = projects.filter(p => p.progress < 50).length;
 
-    const activeEnrollments = enrollments.filter(e => e.enrollment_status === 'active').length;
-    const totalRevenue = enrollments.reduce((sum, e) => sum + (e.premium_amount || 0), 0);
-
     const completedAudits = audits.filter(a => a.status === 'completed').length;
     const upcomingAudits = audits.filter(a => 
       a.status !== 'completed' && 
@@ -87,9 +82,6 @@ export default function Overview() {
       activeProjects,
       completedProjects,
       projectsAtRisk,
-      activeEnrollments,
-      totalRevenue,
-      monthlyRevenue: totalRevenue / 12,
       saasSpend: (saasMetrics?.totalMonthly ?? 0),
       saasTools: (saasMetrics?.totalTools ?? 0),
       completedAudits,
@@ -97,7 +89,7 @@ export default function Overview() {
       teamMembers: teamMembers.length,
       employees: employees.length,
     };
-  }, [departments, projects, enrollments, audits, teamMembers, employees, saasMetrics]);
+  }, [departments, projects, audits, teamMembers, employees, saasMetrics]);
 
   // Department distribution for pie chart
   const departmentDistribution = useMemo(() => {
@@ -285,11 +277,11 @@ export default function Overview() {
           <div className="flex items-center justify-between mb-4">
             <DollarSign className="w-10 h-10 opacity-80" />
             <span className="text-3xl font-bold">
-              ${(orgMetrics.monthlyRevenue / 1000).toFixed(0)}K
+              ${(orgMetrics.totalBudget / 1000).toFixed(0)}K
             </span>
           </div>
-          <h3 className="text-lg font-semibold">Monthly Revenue</h3>
-          <p className="text-emerald-100 text-sm mt-1">{orgMetrics.activeEnrollments} active enrollments</p>
+          <h3 className="text-lg font-semibold">Department Budget</h3>
+          <p className="text-emerald-100 text-sm mt-1">${(orgMetrics.saasSpend / 1000).toFixed(1)}K monthly SaaS spend</p>
         </div>
 
         <div className="bg-gradient-to-br from-indigo-500 to-indigo-700 p-6 rounded-xl shadow-lg text-white">

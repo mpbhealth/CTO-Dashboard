@@ -49,6 +49,20 @@ export function useMarketingProperties() {
     }
   };
 
+  const addProperty = async (property: Omit<MarketingProperty, 'id' | 'created_at' | 'updated_at'>) => {
+    try {
+      const { error: insertError } = await supabase
+        .from('marketing_properties')
+        .insert(property);
+
+      if (insertError) throw insertError;
+      await fetchData();
+      return { success: true };
+    } catch (err) {
+      return { success: false, error: err instanceof Error ? err.message : 'Insert failed' };
+    }
+  };
+
   const updateProperty = async (id: string, updates: Partial<MarketingProperty>) => {
     try {
       const { error: updateError } = await supabase
@@ -68,7 +82,7 @@ export function useMarketingProperties() {
     fetchData();
   }, []);
 
-  return { data, loading, error, refetch: fetchData, updateProperty };
+  return { data, loading, error, refetch: fetchData, addProperty, updateProperty };
 }
 
 export function useMarketingMetrics(

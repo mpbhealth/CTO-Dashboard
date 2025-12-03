@@ -1,24 +1,49 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 
 export interface Department {
   id: string;
   name: string;
-  is_active: boolean;
+  description?: string;
+  code?: string;
+  strategic_purpose?: string;
+  parent_department_id?: string;
+  department_lead_id?: string;
+  budget?: number;
   budget_allocated?: number;
   headcount?: number;
+  location?: string;
+  contact_email?: string;
+  mission_statement?: string;
+  key_objectives?: string[];
+  tech_stack?: string[];
+  reporting_frequency?: string;
+  is_active: boolean;
   created_at: string;
   updated_at: string;
 }
 
 export interface EmployeeProfile {
   id: string;
-  name: string;
+  first_name: string;
+  last_name: string;
+  name?: string;
   email: string;
-  department: string;
-  position: string;
-  hire_date: string;
-  status: string;
+  phone?: string;
+  employee_id?: string;
+  title: string;
+  primary_department_id?: string;
+  reports_to_id?: string;
+  department?: string;
+  position?: string;
+  employment_status?: 'active' | 'inactive' | 'on_leave' | 'terminated';
+  employment_type?: 'full_time' | 'part_time' | 'contract' | 'intern';
+  location?: string;
+  start_date?: string;
+  hire_date?: string;
+  skills?: string[];
+  certifications?: string[];
+  status?: string;
   created_at: string;
   updated_at: string;
 }
@@ -28,26 +53,47 @@ export function useDepartments() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    async function fetchDepartments() {
-      try {
-        const { data: departments, error: deptError } = await supabase
-          .from('departments')
-          .select('*')
-          .order('name', { ascending: true });
+  const fetchDepartments = useCallback(async () => {
+    setLoading(true);
+    try {
+      const { data: departments, error: deptError } = await supabase
+        .from('departments')
+        .select('*')
+        .order('name', { ascending: true });
 
-        if (deptError) throw deptError;
-        setData(departments || []);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
-      } finally {
-        setLoading(false);
-      }
+      if (deptError) throw deptError;
+      setData(departments || []);
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setLoading(false);
     }
-    fetchDepartments();
   }, []);
 
-  return { data, loading, error };
+  useEffect(() => {
+    fetchDepartments();
+  }, [fetchDepartments]);
+
+  const deleteDepartment = useCallback(async (id: string) => {
+    try {
+      const { error: deleteError } = await supabase
+        .from('departments')
+        .delete()
+        .eq('id', id);
+
+      if (deleteError) throw deleteError;
+      
+      // Update local state
+      setData(prev => prev.filter(d => d.id !== id));
+      return { success: true };
+    } catch (err) {
+      console.error('Error deleting department:', err);
+      throw err;
+    }
+  }, []);
+
+  return { data, loading, error, refetch: fetchDepartments, deleteDepartment };
 }
 
 export function useEmployeeProfiles() {
@@ -55,26 +101,47 @@ export function useEmployeeProfiles() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    async function fetchEmployees() {
-      try {
-        const { data: employees, error: empError } = await supabase
-          .from('employee_profiles')
-          .select('*')
-          .order('last_name', { ascending: true });
+  const fetchEmployees = useCallback(async () => {
+    setLoading(true);
+    try {
+      const { data: employees, error: empError } = await supabase
+        .from('employee_profiles')
+        .select('*')
+        .order('last_name', { ascending: true });
 
-        if (empError) throw empError;
-        setData(employees || []);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
-      } finally {
-        setLoading(false);
-      }
+      if (empError) throw empError;
+      setData(employees || []);
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setLoading(false);
     }
-    fetchEmployees();
   }, []);
 
-  return { data, loading, error };
+  useEffect(() => {
+    fetchEmployees();
+  }, [fetchEmployees]);
+
+  const deleteEmployee = useCallback(async (id: string) => {
+    try {
+      const { error: deleteError } = await supabase
+        .from('employee_profiles')
+        .delete()
+        .eq('id', id);
+
+      if (deleteError) throw deleteError;
+      
+      // Update local state
+      setData(prev => prev.filter(e => e.id !== id));
+      return { success: true };
+    } catch (err) {
+      console.error('Error deleting employee:', err);
+      throw err;
+    }
+  }, []);
+
+  return { data, loading, error, refetch: fetchEmployees, deleteEmployee };
 }
 
 interface DepartmentMetric {
@@ -90,26 +157,29 @@ export function useDepartmentMetrics() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    async function fetchMetrics() {
-      try {
-        const { data: metrics, error: metricsError } = await supabase
-          .from('department_metrics')
-          .select('*')
-          .order('created_at', { ascending: false });
+  const fetchMetrics = useCallback(async () => {
+    setLoading(true);
+    try {
+      const { data: metrics, error: metricsError } = await supabase
+        .from('department_metrics')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-        if (metricsError) throw metricsError;
-        setData(metrics || []);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
-      } finally {
-        setLoading(false);
-      }
+      if (metricsError) throw metricsError;
+      setData(metrics || []);
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setLoading(false);
     }
-    fetchMetrics();
   }, []);
 
-  return { data, loading, error };
+  useEffect(() => {
+    fetchMetrics();
+  }, [fetchMetrics]);
+
+  return { data, loading, error, refetch: fetchMetrics };
 }
 
 interface PolicyDocument {
@@ -127,7 +197,8 @@ export function usePolicyDocuments() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
+    setLoading(true);
     try {
       const { data: policies, error: policiesError } = await supabase
         .from('policy_documents')
@@ -136,16 +207,17 @@ export function usePolicyDocuments() {
 
       if (policiesError) throw policiesError;
       setData(policies || []);
-    } catch (err) {
+      setError(null);
+    } catch (err: any) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   return { data, loading, error, refetch: fetchData };
 }
@@ -163,26 +235,29 @@ export function useDepartmentRelationships() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    async function fetchRelationships() {
-      try {
-        const { data: relationships, error: relError } = await supabase
-          .from('department_relationships')
-          .select('*')
-          .order('created_at', { ascending: false });
+  const fetchRelationships = useCallback(async () => {
+    setLoading(true);
+    try {
+      const { data: relationships, error: relError } = await supabase
+        .from('department_relationships')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-        if (relError) throw relError;
-        setData(relationships || []);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
-      } finally {
-        setLoading(false);
-      }
+      if (relError) throw relError;
+      setData(relationships || []);
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setLoading(false);
     }
-    fetchRelationships();
   }, []);
 
-  return { data, loading, error };
+  useEffect(() => {
+    fetchRelationships();
+  }, [fetchRelationships]);
+
+  return { data, loading, error, refetch: fetchRelationships };
 }
 
 export interface OrgChartPosition {
@@ -200,26 +275,29 @@ export function useOrgChartPositions() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    async function fetchPositions() {
-      try {
-        const { data: positions, error: posError } = await supabase
-          .from('org_chart_positions')
-          .select('*')
-          .order('updated_at', { ascending: false });
+  const fetchPositions = useCallback(async () => {
+    setLoading(true);
+    try {
+      const { data: positions, error: posError } = await supabase
+        .from('org_chart_positions')
+        .select('*')
+        .order('updated_at', { ascending: false });
 
-        if (posError) throw posError;
-        setData(positions || []);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
-      } finally {
-        setLoading(false);
-      }
+      if (posError) throw posError;
+      setData(positions || []);
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setLoading(false);
     }
-    fetchPositions();
   }, []);
 
-  const updatePosition = async (departmentId: string, x: number, y: number) => {
+  useEffect(() => {
+    fetchPositions();
+  }, [fetchPositions]);
+
+  const updatePosition = useCallback(async (departmentId: string, x: number, y: number) => {
     try {
       const { error: updateError } = await supabase
         .from('org_chart_positions')
@@ -248,9 +326,9 @@ export function useOrgChartPositions() {
       console.error('Error updating position:', err);
       throw err;
     }
-  };
+  }, []);
 
-  const saveLayout = async () => {
+  const saveLayout = useCallback(async () => {
     try {
       const timestamp = new Date().toISOString();
       const updates = data.map(pos => ({
@@ -268,9 +346,9 @@ export function useOrgChartPositions() {
       console.error('Error saving layout:', err);
       throw err;
     }
-  };
+  }, [data]);
 
-  const resetLayout = async () => {
+  const resetLayout = useCallback(async () => {
     try {
       const { error: deleteError } = await supabase
         .from('org_chart_positions')
@@ -283,7 +361,7 @@ export function useOrgChartPositions() {
       console.error('Error resetting layout:', err);
       throw err;
     }
-  };
+  }, []);
 
-  return { data, loading, error, updatePosition, saveLayout, resetLayout };
+  return { data, loading, error, refetch: fetchPositions, updatePosition, saveLayout, resetLayout };
 }

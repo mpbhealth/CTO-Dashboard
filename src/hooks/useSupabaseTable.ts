@@ -92,6 +92,4 @@ export const useRoadmapItems = () => useSupabaseTable({ table: 'roadmap_items' }
 export const useTechStack = () => useSupabaseTable({ table: 'tech_stack', orderBy: 'name', orderAscending: true });
 export const useDeploymentLogs = () => useSupabaseTable({ table: 'deployment_logs', orderBy: 'timestamp' });
 export const useAIAgents = () => useSupabaseTable({ table: 'ai_agents', orderBy: 'name', orderAscending: true });
-export const useEnrollments = () => useSupabaseTable({ table: 'enrollments' });
-export const useMemberStatus = () => useSupabaseTable({ table: 'member_status' });
 

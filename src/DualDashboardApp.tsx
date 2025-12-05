@@ -144,6 +144,18 @@ const MondayTasks = lazy(() => import('./components/pages/MondayTasks'));
 const Assignments = lazy(() => import('./components/pages/Assignments'));
 const Notepad = lazy(() => import('./components/pages/Notepad'));
 
+// Admin/Web Control Center Pages
+const AdminLayout = lazy(() => import('./components/admin/AdminLayout').then(m => ({ default: m.AdminLayout })));
+const AdminDashboard = lazy(() => import('./components/pages/admin/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
+const MemberManagement = lazy(() => import('./components/pages/admin/MemberManagement').then(m => ({ default: m.MemberManagement })));
+const ClaimsProcessing = lazy(() => import('./components/pages/admin/ClaimsProcessing').then(m => ({ default: m.ClaimsProcessing })));
+const SupportTickets = lazy(() => import('./components/pages/admin/SupportTickets').then(m => ({ default: m.SupportTickets })));
+const TransactionsManagement = lazy(() => import('./components/pages/admin/TransactionsManagement').then(m => ({ default: m.TransactionsManagement })));
+const BlogAdmin = lazy(() => import('./components/pages/admin/BlogAdmin').then(m => ({ default: m.BlogAdmin })));
+const FAQAdmin = lazy(() => import('./components/pages/admin/FAQAdmin').then(m => ({ default: m.FAQAdmin })));
+const NotificationsAdmin = lazy(() => import('./components/pages/admin/NotificationsAdmin').then(m => ({ default: m.NotificationsAdmin })));
+const AdminSystemSettings = lazy(() => import('./components/pages/admin/SystemSettings').then(m => ({ default: m.SystemSettings })));
+
 const LoadingFallback = () => (
   <div 
     className="flex items-center justify-center min-h-screen bg-slate-50"
@@ -506,6 +518,17 @@ function DualDashboardContent() {
             <Route path="/monday-tasks" element={<CTOOnly><MondayTasks /></CTOOnly>} />
             <Route path="/assignments" element={<CTOOnly><Assignments /></CTOOnly>} />
             <Route path="/notepad" element={<CTOOnly><Notepad /></CTOOnly>} />
+
+            {/* Admin / Web Control Center Routes */}
+            <Route path="/admin" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
+            <Route path="/admin/members" element={<AdminLayout><MemberManagement /></AdminLayout>} />
+            <Route path="/admin/claims" element={<AdminLayout><ClaimsProcessing /></AdminLayout>} />
+            <Route path="/admin/support" element={<AdminLayout><SupportTickets /></AdminLayout>} />
+            <Route path="/admin/transactions" element={<AdminLayout><TransactionsManagement /></AdminLayout>} />
+            <Route path="/admin/blog" element={<AdminLayout><BlogAdmin /></AdminLayout>} />
+            <Route path="/admin/faq" element={<AdminLayout><FAQAdmin /></AdminLayout>} />
+            <Route path="/admin/notifications" element={<AdminLayout><NotificationsAdmin /></AdminLayout>} />
+            <Route path="/admin/settings" element={<AdminLayout><AdminSystemSettings /></AdminLayout>} />
 
             <Route path="*" element={<RoleBasedRedirect />} />
           </Routes>

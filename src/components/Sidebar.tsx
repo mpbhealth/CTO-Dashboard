@@ -11,6 +11,7 @@ import {
 import { useCurrentProfile } from '../hooks/useDualDashboard';
 import { useAuth } from '../contexts/AuthContext';
 import { getNavigationForRole, ceoNavigationItems, ctoNavigationItems, categories, type NavItem } from '../config/navigation';
+import { DashboardSwitcher } from './ui/DashboardSwitcher';
 
 interface SidebarProps {
   activeTab: string;
@@ -292,6 +293,13 @@ export default function Sidebar({
               )}
             </div>
             
+            {/* Dashboard Switcher - Quick access to all dashboards */}
+            {isSidebarExpanded && (
+              <div className="mt-4">
+                <DashboardSwitcher variant="dropdown" />
+              </div>
+            )}
+
             {/* Admin Role Switcher */}
             {isAdmin && isSidebarExpanded && (
               <div className="mt-4 p-3 bg-white/10 rounded-lg">

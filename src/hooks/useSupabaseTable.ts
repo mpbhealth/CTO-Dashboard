@@ -93,3 +93,7 @@ export const useTechStack = () => useSupabaseTable({ table: 'tech_stack', orderB
 export const useDeploymentLogs = () => useSupabaseTable({ table: 'deployment_logs', orderBy: 'timestamp' });
 export const useAIAgents = () => useSupabaseTable({ table: 'ai_agents', orderBy: 'name', orderAscending: true });
 
+// Analytics hooks
+export const useEnrollments = () => useSupabaseTable({ table: 'member_enrollments', orderBy: 'created_at' });
+export const useMemberStatus = () => useSupabaseTable({ table: 'member_status_updates', orderBy: 'updated_at' });
+

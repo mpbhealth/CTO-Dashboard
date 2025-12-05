@@ -24,7 +24,32 @@
    VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
    ```
 
-### **Option 2: Vercel**
+### **Option 2: A2 Hosting (cPanel/Apache)**
+
+1. **Build Locally**
+   ```bash
+   npm run build
+   ```
+
+2. **Upload to A2 Hosting**
+   - Login to cPanel
+   - Open File Manager
+   - Navigate to `public_html` (or subdomain folder)
+   - Upload entire contents of `/dist` folder
+   - Make sure `.htaccess` is included (it handles React routing)
+
+3. **Important Files**
+   - `.htaccess` - Handles SPA routing, caching, compression, and HTTPS redirect
+   - `index.html` - Main entry point
+   - `/assets/` - All JS, CSS, and media files
+
+4. **Verify Deployment**
+   - Visit your domain
+   - Test all routes work (e.g., `/ceo`, `/cto`, `/admin`)
+   - Check browser console for errors
+   - Verify Supabase connection works
+
+### **Option 3: Vercel**
 
 1. **Install Vercel CLI**
    ```bash

@@ -1,76 +1,115 @@
-# Apache Configuration for React SPA (Single Page Application)
-# This file handles client-side routing for the MPB Health Dashboard
+# Apache Configuration for React SPA on A2 Hosting
+# This file handles client-side routing and security headers
 
+# Enable RewriteEngine
 <IfModule mod_rewrite.c>
-  RewriteEngine On
-  RewriteBase /
+    RewriteEngine On
+    RewriteBase /
 
-  # Don't rewrite files or directories that exist
-  RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteCond %{REQUEST_FILENAME} !-l
+    # Force HTTPS (REQUIRED for Supabase authentication)
+    RewriteCond %{HTTPS} off
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-  # Rewrite everything else to index.html to allow client-side routing
-  RewriteRule ^ index.html [L]
+    # Handle React Router - Send all requests to index.html
+    # Don't rewrite files or directories that exist
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-l
+    RewriteRule ^(.*)$ /index.html [L]
+</IfModule>
+
+# GZIP Compression
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE application/xhtml+xml
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-javascript
+    AddOutputFilterByType DEFLATE application/json
+    AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>
+
+# Browser Caching
+<IfModule mod_expires.c>
+    ExpiresActive On
+
+    # Images
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType image/x-icon "access plus 1 year"
+
+    # Fonts
+    ExpiresByType font/ttf "access plus 1 year"
+    ExpiresByType font/otf "access plus 1 year"
+    ExpiresByType font/woff "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+    ExpiresByType application/font-woff "access plus 1 year"
+
+    # CSS, JavaScript
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType application/javascript "access plus 1 year"
+    ExpiresByType application/x-javascript "access plus 1 year"
+
+    # HTML - don't cache (SPA needs fresh index.html)
+    ExpiresByType text/html "access plus 0 seconds"
 </IfModule>
 
 # Security Headers
 <IfModule mod_headers.c>
-  # Prevent clickjacking
-  Header always set X-Frame-Options "SAMEORIGIN"
+    # Prevent MIME type sniffing
+    Header always set X-Content-Type-Options "nosniff"
 
-  # Prevent MIME type sniffing
-  Header always set X-Content-Type-Options "nosniff"
+    # XSS Protection
+    Header always set X-XSS-Protection "1; mode=block"
 
-  # Enable XSS protection
-  Header always set X-XSS-Protection "1; mode=block"
+    # Clickjacking Protection
+    Header always set X-Frame-Options "SAMEORIGIN"
 
-  # Referrer policy
-  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    # Referrer Policy
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+    # Don't cache index.html and service worker
+    <FilesMatch "^(index\.html|sw\.js)$">
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+        Header set Pragma "no-cache"
+        Header set Expires "0"
+    </FilesMatch>
+
+    # Cache static assets with hashed filenames
+    <FilesMatch "\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
 </IfModule>
 
-# Enable gzip compression for better performance
-<IfModule mod_deflate.c>
-  AddOutputFilterByType DEFLATE text/html
-  AddOutputFilterByType DEFLATE text/css
-  AddOutputFilterByType DEFLATE text/javascript
-  AddOutputFilterByType DEFLATE application/javascript
-  AddOutputFilterByType DEFLATE application/x-javascript
-  AddOutputFilterByType DEFLATE application/json
-  AddOutputFilterByType DEFLATE image/svg+xml
+# Prevent access to hidden files and directories
+<IfModule mod_rewrite.c>
+    RewriteCond %{SCRIPT_FILENAME} -d [OR]
+    RewriteCond %{SCRIPT_FILENAME} -f
+    RewriteRule "(^|/)\." - [F]
 </IfModule>
 
-# Cache control for static assets
-<IfModule mod_expires.c>
-  ExpiresActive On
-
-  # Images
-  ExpiresByType image/jpeg "access plus 1 year"
-  ExpiresByType image/png "access plus 1 year"
-  ExpiresByType image/svg+xml "access plus 1 year"
-  ExpiresByType image/gif "access plus 1 year"
-  ExpiresByType image/webp "access plus 1 year"
-
-  # CSS and JavaScript
-  ExpiresByType text/css "access plus 1 month"
-  ExpiresByType application/javascript "access plus 1 month"
-  ExpiresByType text/javascript "access plus 1 month"
-
-  # Fonts
-  ExpiresByType font/woff2 "access plus 1 year"
-  ExpiresByType font/woff "access plus 1 year"
-  ExpiresByType font/ttf "access plus 1 year"
-
-  # HTML (don't cache too long for SPA)
-  ExpiresByType text/html "access plus 0 seconds"
-</IfModule>
-
-# Prevent directory browsing
+# Prevent directory listing
 Options -Indexes
 
-# Follow symbolic links (may be needed for some hosting)
-Options +FollowSymLinks
+# Set default charset
+AddDefaultCharset UTF-8
 
-# Error pages (optional - customize as needed)
-# ErrorDocument 404 /index.html
-# ErrorDocument 500 /index.html
+# MIME Types
+<IfModule mod_mime.c>
+    AddType application/javascript js mjs
+    AddType application/json json
+    AddType image/svg+xml svg svgz
+    AddType application/font-woff woff
+    AddType application/font-woff2 woff2
+    AddType application/manifest+json webmanifest
+</IfModule>
+
+# Error Documents (optional - fallback to React app)
+ErrorDocument 404 /index.html

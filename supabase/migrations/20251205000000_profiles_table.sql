@@ -43,9 +43,17 @@ CREATE POLICY "profiles_update_own" ON profiles
 CREATE POLICY "profiles_insert_own" ON profiles
     FOR INSERT WITH CHECK (auth.uid() = user_id);
 
--- Admins, CEOs, CTOs can view all profiles
+-- Admins, CEOs, CTOs can manage all profiles
 CREATE POLICY "profiles_admin_all" ON profiles
-    FOR ALL USING (
+    FOR ALL 
+    USING (
+        EXISTS (
+            SELECT 1 FROM profiles p 
+            WHERE p.user_id = auth.uid() 
+            AND p.role IN ('admin', 'ceo', 'cto')
+        )
+    )
+    WITH CHECK (
         EXISTS (
             SELECT 1 FROM profiles p 
             WHERE p.user_id = auth.uid() 

@@ -27,7 +27,7 @@ export function AuthCallback() {
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('role, display_name, is_superuser')
-          .eq('id', session.user.id)
+          .eq('user_id', session.user.id)
           .maybeSingle();
 
         if (profileError) {

@@ -84,6 +84,7 @@ export const ceoNavigationItems: NavItem[] = [
     roles: ['ceo', 'admin'],
     submenu: [
       { id: 'ceo-analytics-overview', label: 'Analytics Overview', path: '/ceod/analytics/overview', icon: BarChart3 },
+      { id: 'ceo-website-analytics', label: 'Website Analytics', path: '/ceod/analytics/website', icon: Globe },
       { id: 'ceo-analytics-engagement', label: 'Member Engagement', path: '/ceod/analytics/member-engagement', icon: Users },
       { id: 'ceo-analytics-retention', label: 'Member Retention', path: '/ceod/analytics/member-retention', icon: TrendingDown },
       { id: 'ceo-analytics-advisor', label: 'Advisor Performance', path: '/ceod/analytics/advisor-performance', icon: Award },
@@ -218,6 +219,7 @@ export const ctoNavigationItems: NavItem[] = [
     roles: ['cto', 'admin', 'staff'],
     submenu: [
       { id: 'cto-analytics-overview', label: 'Analytics Overview', path: '/ctod/analytics/overview', icon: BarChart3 },
+      { id: 'cto-website-analytics', label: 'Website Analytics', path: '/ctod/analytics/website', icon: Globe },
       { id: 'cto-member-engagement', label: 'Member Engagement', path: '/ctod/analytics/member-engagement', icon: Users },
       { id: 'cto-member-retention', label: 'Member Retention', path: '/ctod/analytics/member-retention', icon: TrendingDown },
       { id: 'cto-advisor-performance', label: 'Advisor Performance', path: '/ctod/analytics/advisor-performance', icon: Award },

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Eye, EyeOff, Mail, Lock, AlertCircle, CheckCircle, User, KeyRound, Briefcase, Code2, Shield, ShieldCheck, Fingerprint } from 'lucide-react';
-import { supabase, isSupabaseConfigured, updateSessionStorage } from '../../lib/supabase';
+import { supabase, isSupabaseConfigured, setRememberMePreference, isRememberMeEnabled } from '../../lib/supabase';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -63,11 +63,15 @@ export default function Login() {
     }
   }, [isDemoMode, profile, navigate]);
 
-  // Load remembered email on mount
+  // Load remembered email and remember me preference on mount
   useEffect(() => {
     const savedEmail = localStorage.getItem('mpb_remembered_email');
+    const rememberMeEnabled = isRememberMeEnabled();
+    
     if (savedEmail) {
       setEmail(savedEmail);
+    }
+    if (rememberMeEnabled) {
       setRememberMe(true);
     }
   }, []);
@@ -89,15 +93,15 @@ export default function Login() {
       }
 
       if (data.user) {
-        // Handle remember me - save or remove email from localStorage
+        // Handle remember me - save or remove email and set session persistence preference
         if (rememberMe) {
           localStorage.setItem('mpb_remembered_email', email);
         } else {
           localStorage.removeItem('mpb_remembered_email');
         }
         
-        // Update session storage based on remember me preference
-        await updateSessionStorage(rememberMe);
+        // Set remember me preference for session persistence
+        setRememberMePreference(rememberMe);
         
         setSuccess('Login successful! Redirecting...');
         window.location.href = '/auth/callback';

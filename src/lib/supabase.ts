@@ -41,38 +41,47 @@ if (import.meta.env.PROD && !isSupabaseConfigured) {
   console.error('[Supabase] Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your deployment environment');
 }
 
-// Check if user previously selected "remember me"
-const shouldPersistSession = typeof localStorage !== 'undefined' 
-  ? localStorage.getItem('mpb_remembered_email') !== null 
-  : true;
-
 // Create client with auth persistence options
 export const supabase = createClient(finalUrl, finalKey, {
   auth: {
     persistSession: true,
     storageKey: 'mpb-auth-token',
-    storage: shouldPersistSession ? localStorage : sessionStorage,
     autoRefreshToken: true,
     detectSessionInUrl: true,
   }
 });
 
-// Helper to update session storage based on "remember me" preference
-export const updateSessionStorage = async (rememberMe: boolean) => {
-  if (typeof window === 'undefined') return;
+// Constants for remember me functionality
+const REMEMBER_ME_KEY = 'mpb_remember_session';
+
+// Set up session cleanup for when "remember me" is not checked
+if (typeof window !== 'undefined') {
+  // Check on page load if we should clear the session
+  const shouldRemember = localStorage.getItem(REMEMBER_ME_KEY) === 'true';
+  const wasUnloaded = sessionStorage.getItem('mpb_session_active') !== 'true';
   
-  const { data: { session } } = await supabase.auth.getSession();
+  if (!shouldRemember && wasUnloaded) {
+    // Clear session if "remember me" was not checked and this is a new browser session
+    localStorage.removeItem('mpb-auth-token');
+  }
+  
+  // Mark this session as active
+  sessionStorage.setItem('mpb_session_active', 'true');
+}
+
+// Helper to set "remember me" preference
+export const setRememberMePreference = (rememberMe: boolean) => {
+  if (typeof localStorage === 'undefined') return;
   
   if (rememberMe) {
-    // Move session to localStorage for persistence
-    if (session) {
-      localStorage.setItem('mpb-auth-token', JSON.stringify(session));
-    }
+    localStorage.setItem(REMEMBER_ME_KEY, 'true');
   } else {
-    // Move session to sessionStorage (cleared on browser close)
-    if (session) {
-      sessionStorage.setItem('mpb-auth-token', JSON.stringify(session));
-      localStorage.removeItem('mpb-auth-token');
-    }
+    localStorage.removeItem(REMEMBER_ME_KEY);
   }
+};
+
+// Check if "remember me" is enabled
+export const isRememberMeEnabled = (): boolean => {
+  if (typeof localStorage === 'undefined') return false;
+  return localStorage.getItem(REMEMBER_ME_KEY) === 'true';
 };

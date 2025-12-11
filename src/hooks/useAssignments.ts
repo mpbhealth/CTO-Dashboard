@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 import { Assignment } from '../types/common';
-import { useAuth } from './useAuth';
+import { useAuth } from '../contexts/AuthContext';
 
 interface UseAssignmentsReturn {
   data: Assignment[];

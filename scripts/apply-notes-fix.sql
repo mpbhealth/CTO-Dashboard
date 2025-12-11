@@ -1,25 +1,15 @@
-/*
-  # Ensure Notes Table Schema for Daily Organizer
+-- ============================================
+-- NOTES SCHEMA FIX - Run in Supabase SQL Editor
+-- ============================================
+-- This script fixes 500 errors for notes, note_shares, and note_notifications
+-- 
+-- Issues fixed:
+-- 1. share_note_with_role function referenced non-existent 'user_profiles' table
+-- 2. Missing INSERT policy on note_notifications
+-- 3. RLS policies didn't handle role-based sharing (shared_with_role)
+-- ============================================
 
-  This migration ensures the notes table has all required columns for the 
-  enhanced notes system with sharing capabilities.
-
-  1. Columns Added (if not exists):
-    - title (text) - Optional note title
-    - owner_role (text) - 'ceo' or 'cto' indicating dashboard ownership
-    - created_for_role (text) - Role the note was created for
-    - is_shared (boolean) - Whether note is shared
-    - is_collaborative (boolean) - Whether note allows collaborative editing
-    - created_by (uuid) - User who created the note
-    - category (text) - Note category
-    - tags (text[]) - Array of tags
-    - is_pinned (boolean) - Whether note is pinned
-
-  2. Security:
-    - Updates RLS policies for enhanced access control
-*/
-
--- Ensure notes table exists with base structure
+-- First, ensure all required tables exist
 CREATE TABLE IF NOT EXISTS notes (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   content text NOT NULL,
@@ -28,70 +18,37 @@ CREATE TABLE IF NOT EXISTS notes (
   user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE
 );
 
--- Add new columns if they don't exist
+-- Add columns if they don't exist
 DO $$
 BEGIN
-  -- Add title column
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'notes' AND column_name = 'title') THEN
     ALTER TABLE notes ADD COLUMN title text;
   END IF;
-
-  -- Add owner_role column
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'notes' AND column_name = 'owner_role') THEN
     ALTER TABLE notes ADD COLUMN owner_role text CHECK (owner_role IN ('ceo', 'cto'));
   END IF;
-
-  -- Add created_for_role column
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'notes' AND column_name = 'created_for_role') THEN
     ALTER TABLE notes ADD COLUMN created_for_role text CHECK (created_for_role IN ('ceo', 'cto'));
   END IF;
-
-  -- Add is_shared column
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'notes' AND column_name = 'is_shared') THEN
     ALTER TABLE notes ADD COLUMN is_shared boolean DEFAULT false;
   END IF;
-
-  -- Add is_collaborative column
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'notes' AND column_name = 'is_collaborative') THEN
     ALTER TABLE notes ADD COLUMN is_collaborative boolean DEFAULT false;
   END IF;
-
-  -- Add created_by column
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'notes' AND column_name = 'created_by') THEN
     ALTER TABLE notes ADD COLUMN created_by uuid REFERENCES auth.users(id) ON DELETE SET NULL;
   END IF;
-
-  -- Add category column
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'notes' AND column_name = 'category') THEN
     ALTER TABLE notes ADD COLUMN category text DEFAULT 'general';
   END IF;
-
-  -- Add tags column
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'notes' AND column_name = 'tags') THEN
     ALTER TABLE notes ADD COLUMN tags text[] DEFAULT '{}';
   END IF;
-
-  -- Add is_pinned column
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'notes' AND column_name = 'is_pinned') THEN
     ALTER TABLE notes ADD COLUMN is_pinned boolean DEFAULT false;
   END IF;
-
-  -- Add user_id column if it doesn't exist (for legacy compatibility)
-  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'notes' AND column_name = 'user_id') THEN
-    ALTER TABLE notes ADD COLUMN user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE;
-  END IF;
 END $$;
-
--- Backfill created_by from user_id where null (only if user_id column exists)
-DO $$
-BEGIN
-  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'notes' AND column_name = 'user_id') THEN
-    UPDATE notes SET created_by = user_id WHERE created_by IS NULL AND user_id IS NOT NULL;
-  END IF;
-END $$;
-
--- Backfill owner_role for existing notes (default to 'cto' for existing notes)
-UPDATE notes SET owner_role = 'cto' WHERE owner_role IS NULL;
 
 -- Create note_shares table if not exists
 CREATE TABLE IF NOT EXISTS note_shares (
@@ -118,7 +75,7 @@ CREATE TABLE IF NOT EXISTS note_notifications (
   created_at timestamptz DEFAULT now()
 );
 
--- Enable RLS
+-- Enable RLS on all tables
 ALTER TABLE notes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE note_shares ENABLE ROW LEVEL SECURITY;
 ALTER TABLE note_notifications ENABLE ROW LEVEL SECURITY;
@@ -133,15 +90,23 @@ CREATE INDEX IF NOT EXISTS idx_note_shares_shared_with ON note_shares(shared_wit
 CREATE INDEX IF NOT EXISTS idx_note_notifications_recipient ON note_notifications(recipient_user_id);
 CREATE INDEX IF NOT EXISTS idx_note_notifications_unread ON note_notifications(is_read) WHERE is_read = false;
 
--- Drop and recreate RLS policies for notes
+-- ============================================
+-- FIX RLS POLICIES
+-- ============================================
+
+-- Drop all existing notes policies
+DROP POLICY IF EXISTS "Users can view own and shared notes" ON notes;
 DROP POLICY IF EXISTS "Users can view their own notes" ON notes;
 DROP POLICY IF EXISTS "Users can view shared notes" ON notes;
+DROP POLICY IF EXISTS "Users can insert notes" ON notes;
 DROP POLICY IF EXISTS "Users can insert their own notes" ON notes;
+DROP POLICY IF EXISTS "Users can update notes" ON notes;
 DROP POLICY IF EXISTS "Users can update their own notes" ON notes;
+DROP POLICY IF EXISTS "Users can delete notes" ON notes;
 DROP POLICY IF EXISTS "Users can delete their own notes" ON notes;
 DROP POLICY IF EXISTS "Users can select their own notes" ON notes;
 
--- Policy: Users can view their own notes or shared notes
+-- Policy: Users can view their own notes or shared notes (including role-based shares)
 CREATE POLICY "Users can view own and shared notes"
   ON notes FOR SELECT
   TO authenticated
@@ -203,7 +168,10 @@ CREATE POLICY "Users can delete notes"
   TO authenticated
   USING (created_by = auth.uid() OR (user_id IS NOT NULL AND user_id = auth.uid()));
 
--- Policies for note_shares
+-- ============================================
+-- FIX NOTE_SHARES POLICIES
+-- ============================================
+
 DROP POLICY IF EXISTS "Users can view their shares" ON note_shares;
 DROP POLICY IF EXISTS "Users can create shares" ON note_shares;
 DROP POLICY IF EXISTS "Users can delete shares" ON note_shares;
@@ -239,7 +207,10 @@ CREATE POLICY "Users can delete shares"
   TO authenticated
   USING (shared_by_user_id = auth.uid());
 
--- Policies for note_notifications
+-- ============================================
+-- FIX NOTE_NOTIFICATIONS POLICIES
+-- ============================================
+
 DROP POLICY IF EXISTS "Users can view their notifications" ON note_notifications;
 DROP POLICY IF EXISTS "Users can update their notifications" ON note_notifications;
 DROP POLICY IF EXISTS "Users can insert notifications" ON note_notifications;
@@ -261,10 +232,12 @@ CREATE POLICY "Users can insert notifications"
   TO authenticated
   WITH CHECK (true);
 
--- Drop existing function if exists (to allow changing return type)
+-- ============================================
+-- FIX share_note_with_role FUNCTION
+-- ============================================
+
 DROP FUNCTION IF EXISTS share_note_with_role(uuid, text, text, text);
 
--- Create function for sharing notes with a role
 CREATE OR REPLACE FUNCTION share_note_with_role(
   p_note_id uuid,
   p_target_role text,
@@ -292,7 +265,7 @@ BEGIN
     RETURN jsonb_build_object('success', false, 'error', 'Not authorized to share this note');
   END IF;
 
-  -- Get users with the target role
+  -- Get users with the target role (using profiles table, NOT user_profiles)
   SELECT ARRAY_AGG(id) INTO v_target_users
   FROM auth.users u
   WHERE EXISTS (
@@ -324,3 +297,8 @@ BEGIN
   RETURN jsonb_build_object('success', true);
 END;
 $$;
+
+-- ============================================
+-- DONE! All notes-related issues should be fixed
+-- ============================================
+SELECT 'Notes schema fix applied successfully!' as status;

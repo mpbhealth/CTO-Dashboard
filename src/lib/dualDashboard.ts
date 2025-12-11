@@ -85,8 +85,8 @@ export async function getCurrentProfile(): Promise<Profile | null> {
     // Query with simplified field selection
     const { data, error } = await supabase
       .from('profiles')
-      .select('user_id, email, full_name, display_name, role, org_id')
-      .eq('user_id', user.id)
+      .select('id, role, display_name, is_superuser')
+      .eq('id', user.id)
       .maybeSingle();
 
     logger.debug('Profile query result', { hasData: !!data, hasError: !!error });

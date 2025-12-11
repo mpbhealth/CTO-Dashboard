@@ -143,6 +143,7 @@ const Projects = lazy(() => import('./components/pages/Projects'));
 const MondayTasks = lazy(() => import('./components/pages/MondayTasks'));
 const Assignments = lazy(() => import('./components/pages/Assignments'));
 const Notepad = lazy(() => import('./components/pages/Notepad'));
+const DailyOrganizer = lazy(() => import('./components/pages/DailyOrganizer'));
 
 // Admin/Web Control Center Pages
 const AdminLayout = lazy(() => import('./components/admin/AdminLayout').then(m => ({ default: m.AdminLayout })));
@@ -365,6 +366,7 @@ function DualDashboardContent() {
             <Routes>
             {/* CTO Home */}
             <Route path="/ctod/home" element={<CTOOnly><CTOHome /></CTOOnly>} />
+            <Route path="/ctod/organizer" element={<CTOOnly><DailyOrganizer dashboardRole="cto" /></CTOOnly>} />
             <Route path="/ctod/files" element={<CTOOnly><CTOFiles /></CTOOnly>} />
             <Route path="/ctod/kpis" element={<CTOOnly><CTOHome /></CTOOnly>} />
             <Route path="/ctod/engineering" element={<CTOOnly><CTOHome /></CTOOnly>} />
@@ -413,6 +415,9 @@ function DualDashboardContent() {
             <Route path="/ctod/operations/performance-evaluation" element={<CTOOnly><CTOPerformanceEvaluation /></CTOOnly>} />
             <Route path="/ctod/operations/organization" element={<CTOOnly><CTOOrganization /></CTOOnly>} />
 
+            {/* CTO Staff Management */}
+            <Route path="/ctod/staff" element={<CTOOnly><OrganizationalStructure /></CTOOnly>} />
+
             {/* CTO Infrastructure Routes */}
             <Route path="/ctod/infrastructure/deployments" element={<CTOOnly><CTODeployments /></CTOOnly>} />
             <Route path="/ctod/infrastructure/api-status" element={<CTOOnly><CTOAPIStatus /></CTOOnly>} />
@@ -422,6 +427,7 @@ function DualDashboardContent() {
             <Route path="/ctod/settings" element={<CTOOnly><Settings /></CTOOnly>} />
 
             <Route path="/ceod/home" element={<CEOOnly><CEODashboardLayout><CEOHome /></CEODashboardLayout></CEOOnly>} />
+            <Route path="/ceod/organizer" element={<CEOOnly><CEODashboardLayout><DailyOrganizer dashboardRole="ceo" /></CEODashboardLayout></CEOOnly>} />
 
             {/* CEO Analytics Routes */}
             <Route path="/ceod/analytics" element={<CEOOnly><CEODashboardLayout><CEOAnalyticsOverview /></CEODashboardLayout></CEOOnly>} />
@@ -468,6 +474,9 @@ function DualDashboardContent() {
             <Route path="/ceod/operations/employee-performance" element={<CEOOnly><CEODashboardLayout><CEOEmployeePerformance /></CEODashboardLayout></CEOOnly>} />
             <Route path="/ceod/operations/performance-evaluation" element={<CEOOnly><CEODashboardLayout><CEOPerformanceEvaluation /></CEODashboardLayout></CEOOnly>} />
             <Route path="/ceod/operations/organization" element={<CEOOnly><CEODashboardLayout><CEOOrganization /></CEODashboardLayout></CEOOnly>} />
+
+            {/* CEO Staff Management */}
+            <Route path="/ceod/staff" element={<CEOOnly><CEODashboardLayout><OrganizationalStructure /></CEODashboardLayout></CEOOnly>} />
 
             <Route path="/ceod/finance" element={<CEOOnly><CEODashboardLayout><CEOFinanceSnapshot /></CEODashboardLayout></CEOOnly>} />
             <Route path="/ceod/finance/overview" element={<CEOOnly><CEODashboardLayout><CEOFinanceSnapshot /></CEODashboardLayout></CEOOnly>} />

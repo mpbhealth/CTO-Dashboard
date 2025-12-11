@@ -28,6 +28,7 @@ import {
   Ticket,
   FolderUp,
   LayoutDashboard,
+  LayoutGrid,
   Target,
   DollarSign,
   MessageSquare,
@@ -72,6 +73,7 @@ export const categories: Record<string, string> = {
 
 export const ceoNavigationItems: NavItem[] = [
   { id: 'ceo-home', label: 'Executive Overview', path: '/ceod/home', icon: LayoutDashboard, category: 'executive', roles: ['ceo', 'admin'] },
+  { id: 'ceo-daily-organizer', label: 'Daily Organizer', path: '/ceod/organizer', icon: LayoutGrid, category: 'executive', roles: ['ceo', 'admin'], badge: 'New' },
 
   {
     id: 'ceo-analytics',
@@ -140,6 +142,8 @@ export const ceoNavigationItems: NavItem[] = [
 
   { id: 'ceo-sales', label: 'Sales Reports', path: '/ceod/sales/reports', icon: ShoppingCart, category: 'sales', roles: ['ceo', 'admin'] },
 
+  { id: 'ceo-staff-management', label: 'Staff Management', path: '/ceod/staff', icon: Users, category: 'operations', roles: ['ceo', 'admin'] },
+
   {
     id: 'ceo-operations',
     label: 'Operations',
@@ -202,6 +206,7 @@ export const ceoNavigationItems: NavItem[] = [
 
 export const ctoNavigationItems: NavItem[] = [
   { id: 'cto-home', label: 'CTO Overview', path: '/ctod/home', icon: Building2, category: 'main', roles: ['cto', 'admin'] },
+  { id: 'cto-daily-organizer', label: 'Daily Organizer', path: '/ctod/organizer', icon: LayoutGrid, category: 'main', roles: ['cto', 'admin', 'staff'], badge: 'New' },
   { id: 'cto-files', label: 'Files & Documents', path: '/ctod/files', icon: FileText, category: 'main', roles: ['cto', 'admin', 'staff'] },
 
   {
@@ -261,6 +266,8 @@ export const ctoNavigationItems: NavItem[] = [
       { id: 'cto-compliance-employee-docs', label: 'Employee Documents', path: '/ctod/compliance/employee-documents' }
     ]
   },
+
+  { id: 'cto-staff-management', label: 'Staff Management', path: '/ctod/staff', icon: Users, category: 'operations', roles: ['cto', 'admin', 'staff'] },
 
   {
     id: 'cto-operations',

@@ -116,14 +116,37 @@ export function useNotes(options: UseNotesOptions) {
     if (!user) throw new Error('Not authenticated');
     if (isInDemoMode) return loadDemoNotes(dashboardRole);
 
-    const { data, error: fetchError } = await supabase
+    // Try fetching with the enhanced schema first
+    let { data, error: fetchError } = await supabase
       .from('notes')
       .select('*')
       .eq('created_by', user.id)
       .eq('owner_role', dashboardRole)
       .order('created_at', { ascending: false });
 
-    if (fetchError) throw fetchError;
+    // If owner_role column doesn't exist, fall back to basic query
+    if (fetchError && (fetchError.message.includes('owner_role') || fetchError.code === '42703')) {
+      console.warn('[useNotes] Falling back to basic notes query - enhanced schema may not be applied');
+      const fallbackResult = await supabase
+        .from('notes')
+        .select('*')
+        .or(`created_by.eq.${user.id},user_id.eq.${user.id}`)
+        .order('created_at', { ascending: false });
+      
+      if (fallbackResult.error) throw fallbackResult.error;
+      
+      // Map basic notes to enhanced format
+      data = (fallbackResult.data || []).map(note => ({
+        ...note,
+        owner_role: dashboardRole,
+        is_shared: note.is_shared ?? false,
+        is_collaborative: note.is_collaborative ?? false,
+        created_by: note.created_by || note.user_id,
+      }));
+    } else if (fetchError) {
+      throw fetchError;
+    }
+
     return data || [];
   };
 
@@ -131,40 +154,64 @@ export function useNotes(options: UseNotesOptions) {
     if (!user) throw new Error('Not authenticated');
     if (isInDemoMode) return [];
 
-    const { data, error: fetchError } = await supabase
-      .from('notes')
-      .select(`
-        *,
-        note_shares!inner(
-          shared_by_user_id,
-          shared_with_user_id,
-          permission_level,
-          share_message
-        )
-      `)
-      .eq('note_shares.shared_with_user_id', user.id)
-      .order('created_at', { ascending: false });
+    try {
+      const { data, error: fetchError } = await supabase
+        .from('notes')
+        .select(`
+          *,
+          note_shares!inner(
+            shared_by_user_id,
+            shared_with_user_id,
+            permission_level,
+            share_message
+          )
+        `)
+        .eq('note_shares.shared_with_user_id', user.id)
+        .order('created_at', { ascending: false });
 
-    if (fetchError) throw fetchError;
-    return data || [];
+      // If note_shares table doesn't exist, return empty array
+      if (fetchError) {
+        if (fetchError.message.includes('note_shares') || fetchError.code === '42P01') {
+          console.warn('[useNotes] note_shares table not found - sharing features disabled');
+          return [];
+        }
+        throw fetchError;
+      }
+      return data || [];
+    } catch (err) {
+      console.warn('[useNotes] Error fetching shared notes:', err);
+      return [];
+    }
   };
 
   const fetchNotifications = async () => {
     if (!user) throw new Error('Not authenticated');
     if (isInDemoMode) return [];
 
-    const { data, error: fetchError } = await supabase
-      .from('note_notifications')
-      .select(`
-        *,
-        notes(*)
-      `)
-      .eq('recipient_user_id', user.id)
-      .order('created_at', { ascending: false })
-      .limit(20);
+    try {
+      const { data, error: fetchError } = await supabase
+        .from('note_notifications')
+        .select(`
+          *,
+          notes(*)
+        `)
+        .eq('recipient_user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(20);
 
-    if (fetchError) throw fetchError;
-    return data || [];
+      // If note_notifications table doesn't exist, return empty array
+      if (fetchError) {
+        if (fetchError.message.includes('note_notifications') || fetchError.code === '42P01') {
+          console.warn('[useNotes] note_notifications table not found - notifications disabled');
+          return [];
+        }
+        throw fetchError;
+      }
+      return data || [];
+    } catch (err) {
+      console.warn('[useNotes] Error fetching notifications:', err);
+      return [];
+    }
   };
 
   const fetchAllNotes = useCallback(async () => {

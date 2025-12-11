@@ -250,7 +250,7 @@ export default function EditDepartmentModal({
                     <option value="">Select Lead</option>
                     {employees.map(emp => (
                       <option key={emp.id} value={emp.id}>
-                        {emp.first_name} {emp.last_name} - {emp.title}
+                        {emp.first_name} {emp.last_name}{emp.title ? ` - ${emp.title}` : ''}
                       </option>
                     ))}
                   </select>

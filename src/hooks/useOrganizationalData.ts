@@ -25,6 +25,7 @@ export interface Department {
 
 export interface EmployeeProfile {
   id: string;
+  user_id?: string;
   first_name: string;
   last_name: string;
   name?: string;
@@ -186,8 +187,19 @@ interface PolicyDocument {
   id: string;
   title: string;
   content?: string;
+  document_type?: string;
+  department_id?: string;
   version: string;
   status: string;
+  file_url?: string;
+  tags?: string[];
+  review_date?: string;
+  effective_date?: string;
+  approved_by?: string;
+  approved_at?: string;
+  created_by?: string;
+  compliance_status?: string;
+  is_mandatory?: boolean;
   created_at: string;
   updated_at: string;
 }

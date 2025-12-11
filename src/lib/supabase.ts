@@ -41,5 +41,38 @@ if (import.meta.env.PROD && !isSupabaseConfigured) {
   console.error('[Supabase] Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your deployment environment');
 }
 
-// Create client without type parameter to avoid import errors
-export const supabase = createClient(finalUrl, finalKey);
+// Check if user previously selected "remember me"
+const shouldPersistSession = typeof localStorage !== 'undefined' 
+  ? localStorage.getItem('mpb_remembered_email') !== null 
+  : true;
+
+// Create client with auth persistence options
+export const supabase = createClient(finalUrl, finalKey, {
+  auth: {
+    persistSession: true,
+    storageKey: 'mpb-auth-token',
+    storage: shouldPersistSession ? localStorage : sessionStorage,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+  }
+});
+
+// Helper to update session storage based on "remember me" preference
+export const updateSessionStorage = async (rememberMe: boolean) => {
+  if (typeof window === 'undefined') return;
+  
+  const { data: { session } } = await supabase.auth.getSession();
+  
+  if (rememberMe) {
+    // Move session to localStorage for persistence
+    if (session) {
+      localStorage.setItem('mpb-auth-token', JSON.stringify(session));
+    }
+  } else {
+    // Move session to sessionStorage (cleared on browser close)
+    if (session) {
+      sessionStorage.setItem('mpb-auth-token', JSON.stringify(session));
+      localStorage.removeItem('mpb-auth-token');
+    }
+  }
+};

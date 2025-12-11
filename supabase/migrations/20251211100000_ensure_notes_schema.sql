@@ -147,7 +147,7 @@ CREATE POLICY "Users can view own and shared notes"
   TO authenticated
   USING (
     created_by = auth.uid() 
-    OR user_id = auth.uid()
+    OR (user_id IS NOT NULL AND user_id = auth.uid())
     OR EXISTS (
       SELECT 1 FROM note_shares 
       WHERE note_shares.note_id = notes.id 
@@ -160,7 +160,7 @@ CREATE POLICY "Users can insert notes"
   ON notes FOR INSERT
   TO authenticated
   WITH CHECK (
-    created_by = auth.uid() OR user_id = auth.uid()
+    created_by = auth.uid() OR (user_id IS NOT NULL AND user_id = auth.uid())
   );
 
 -- Policy: Users can update their own notes or collaborative shared notes
@@ -169,7 +169,7 @@ CREATE POLICY "Users can update notes"
   TO authenticated
   USING (
     created_by = auth.uid() 
-    OR user_id = auth.uid()
+    OR (user_id IS NOT NULL AND user_id = auth.uid())
     OR (
       is_collaborative = true 
       AND EXISTS (
@@ -185,7 +185,7 @@ CREATE POLICY "Users can update notes"
 CREATE POLICY "Users can delete notes"
   ON notes FOR DELETE
   TO authenticated
-  USING (created_by = auth.uid() OR user_id = auth.uid());
+  USING (created_by = auth.uid() OR (user_id IS NOT NULL AND user_id = auth.uid()));
 
 -- Policies for note_shares
 DROP POLICY IF EXISTS "Users can view their shares" ON note_shares;
@@ -206,7 +206,7 @@ CREATE POLICY "Users can create shares"
   WITH CHECK (
     shared_by_user_id = auth.uid()
     AND EXISTS (
-      SELECT 1 FROM notes WHERE notes.id = note_id AND (notes.created_by = auth.uid() OR notes.user_id = auth.uid())
+      SELECT 1 FROM notes WHERE notes.id = note_id AND (notes.created_by = auth.uid() OR (notes.user_id IS NOT NULL AND notes.user_id = auth.uid()))
     )
   );
 
@@ -229,7 +229,10 @@ CREATE POLICY "Users can update their notifications"
   TO authenticated
   USING (recipient_user_id = auth.uid());
 
--- Create or replace function for sharing notes with a role
+-- Drop existing function if exists (to allow changing return type)
+DROP FUNCTION IF EXISTS share_note_with_role(uuid, text, text, text);
+
+-- Create function for sharing notes with a role
 CREATE OR REPLACE FUNCTION share_note_with_role(
   p_note_id uuid,
   p_target_role text,

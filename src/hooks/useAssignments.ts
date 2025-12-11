@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 import { Assignment } from '../types/common';
+import { useAuth } from './useAuth';
 
 interface UseAssignmentsReturn {
   data: Assignment[];
@@ -13,6 +14,7 @@ interface UseAssignmentsReturn {
 }
 
 export function useAssignments(): UseAssignmentsReturn {
+  const { user } = useAuth();
   const [data, setData] = useState<Assignment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -42,7 +44,11 @@ export function useAssignments(): UseAssignmentsReturn {
 
   const addAssignment = async (assignment: Omit<Assignment, 'id' | 'created_at' | 'updated_at'>) => {
     try {
-      const { error } = await supabase.from('assignments').insert([assignment]);
+      const { error } = await supabase.from('assignments').insert([{
+        ...assignment,
+        created_by: user?.id,
+        assignee_id: assignment.assignee_id || user?.id,
+      }]);
       if (error) throw error;
       await fetchData();
     } catch (err) {

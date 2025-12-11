@@ -97,13 +97,15 @@ SET search_path = public
 AS $$
 BEGIN
   -- Only create profile if it doesn't exist
-  INSERT INTO profiles (user_id, email, full_name, display_name, role)
+  -- org_id is required (NOT NULL) - use default organization UUID
+  INSERT INTO profiles (user_id, email, full_name, display_name, role, org_id)
   VALUES (
     NEW.id,
     NEW.email,
     COALESCE(NEW.raw_user_meta_data->>'full_name', ''),
     COALESCE(NEW.raw_user_meta_data->>'display_name', split_part(NEW.email, '@', 1)),
-    COALESCE(NEW.raw_user_meta_data->>'role', 'staff')
+    COALESCE(NEW.raw_user_meta_data->>'role', 'staff'),
+    '00000000-0000-0000-0000-000000000000'::uuid
   )
   ON CONFLICT (user_id) DO NOTHING;
   

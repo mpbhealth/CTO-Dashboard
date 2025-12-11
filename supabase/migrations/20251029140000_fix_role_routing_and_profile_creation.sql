@@ -46,6 +46,7 @@ AS $$
 DECLARE
   inferred_role text;
   user_display_name text;
+  default_org_id uuid;
 BEGIN
   inferred_role := public.infer_role_from_email(new.email);
 
@@ -55,13 +56,16 @@ BEGIN
     new.email
   );
 
+  -- org_id is required (NOT NULL) - use default organization UUID
+  default_org_id := '00000000-0000-0000-0000-000000000000'::uuid;
+
   INSERT INTO public.profiles (id, email, display_name, role, org_id, created_at, updated_at)
   VALUES (
     new.id,
     new.email,
     user_display_name,
     inferred_role,
-    NULL,
+    default_org_id,
     now(),
     now()
   )

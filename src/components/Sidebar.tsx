@@ -44,7 +44,7 @@ export default function Sidebar({
   const [adminViewMode, setAdminViewMode] = useState<'ceo' | 'cto'>('ceo');
 
   const isAdmin = profile?.role === 'admin';
-  const isCEO = profile?.role === 'ceo' || (isAdmin && adminViewMode === 'ceo');
+  const isCEO = ['ceo', 'cfo', 'cmo'].includes(profile?.role || '') || (isAdmin && adminViewMode === 'ceo');
   const userRole = profile?.role || 'staff';
 
   // For admin users, use the view mode to determine navigation
@@ -52,7 +52,7 @@ export default function Sidebar({
     if (isAdmin) {
       return adminViewMode === 'ceo' ? ceoNavigationItems : ctoNavigationItems;
     }
-    return getNavigationForRole(userRole as 'ceo' | 'cto' | 'admin' | 'staff');
+    return getNavigationForRole(userRole);
   }, [userRole, isAdmin, adminViewMode]);
 
   // Detect if we're on mobile
@@ -506,8 +506,8 @@ export default function Sidebar({
                     {profile?.display_name || profile?.full_name || 'User'}
                   </p>
                   <p className={`text-xs truncate ${isCEO ? 'text-indigo-100' : 'text-slate-300'}`}>
-                    {profile?.role === 'ceo' 
-                      ? 'Chief Executive Officer' 
+                    {['ceo', 'cfo', 'cmo'].includes(profile?.role || '') 
+                      ? 'Executive' 
                       : profile?.role === 'cto' 
                         ? 'Chief Technology Officer' 
                         : profile?.role === 'admin' 

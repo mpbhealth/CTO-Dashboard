@@ -1,6 +1,6 @@
 // Service Worker for MPB Health Dashboard PWA
 // Version is set at build time for proper cache invalidation
-const VERSION = '2.0.1';
+const VERSION = '2.0.2';
 const CACHE_NAME = 'mpb-dashboard-v' + VERSION;
 const urlsToCache = [
   '/',

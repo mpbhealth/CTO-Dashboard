@@ -9,25 +9,51 @@ export function useRoleBasedRedirect() {
   const location = useLocation();
 
   const result = useMemo(() => {
-    if (!profileReady || loading || !profile) {
+    // Still loading auth state
+    if (loading || !profileReady) {
       return {
         redirectPath: null,
         isLoading: true
       };
     }
 
-    const role = profile.role?.toLowerCase();
+    // Profile ready but null/no profile - treat as staff/CTO by default, don't keep loading
+    const role = profile?.role?.toLowerCase() || 'staff';
     const currentPath = location.pathname;
+
+    // Define allowed paths that don't require role-based redirect
+    const isPublicPath = currentPath.startsWith('/login') || 
+                         currentPath.startsWith('/auth/') ||
+                         currentPath.startsWith('/public/') ||
+                         currentPath.startsWith('/diagnostics');
+    
+    const isSharedPath = currentPath.startsWith('/shared') || 
+                         currentPath.startsWith('/admin');
+
+    // Don't redirect from public or shared paths
+    if (isPublicPath || isSharedPath) {
+      return { redirectPath: null, isLoading: false };
+    }
 
     let redirectPath: string | null = null;
 
+    // Handle root path
+    const isCEORole = ['ceo', 'cfo', 'cmo', 'admin'].includes(role);
+    const isCTORole = ['cto', 'manager', 'staff', 'member'].includes(role);
+
     if (currentPath === '/' || currentPath === '') {
-      redirectPath = role === 'ceo' ? '/ceod/home' : '/ctod/home';
-    } else if (role === 'ceo' && !currentPath.startsWith('/ceod') && !currentPath.startsWith('/shared') && !currentPath.startsWith('/login')) {
+      redirectPath = isCEORole ? '/ceod/home' : '/ctod/home';
+    }
+    // CEO-ish roles on CTO routes should redirect to CEO dashboard
+    // Admin is excluded to allow access to both dashboards
+    else if (isCEORole && role !== 'admin' && currentPath.startsWith('/ctod')) {
       redirectPath = '/ceod/home';
-    } else if (role === 'cto' && !currentPath.startsWith('/ctod') && !currentPath.startsWith('/shared') && !currentPath.startsWith('/login')) {
+    }
+    // CTO-ish roles on CEO routes should redirect to CTO dashboard
+    else if (isCTORole && currentPath.startsWith('/ceod')) {
       redirectPath = '/ctod/home';
     }
+    // Admin can access both dashboards - no redirect needed
 
     return {
       redirectPath,

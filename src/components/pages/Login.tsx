@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Eye, EyeOff, Mail, Lock, AlertCircle, CheckCircle, User, KeyRound, Briefcase, Code2, Shield, ShieldCheck, Fingerprint } from 'lucide-react';
 import { supabase, isSupabaseConfigured, setRememberMePreference, isRememberMeEnabled } from '../../lib/supabase';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 
 // Security badges component
@@ -42,7 +42,8 @@ type UserRole = 'ceo' | 'cto' | null;
 
 export default function Login() {
   const navigate = useNavigate();
-  const { isDemoMode, profile } = useAuth();
+  const location = useLocation();
+  const { isDemoMode, profile, user, signIn: authSignIn, loading, profileReady } = useAuth();
   const [isSignUp, setIsSignUp] = useState(false);
   const [selectedRole, setSelectedRole] = useState<UserRole>(null);
   const [email, setEmail] = useState('');
@@ -55,13 +56,26 @@ export default function Login() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [rememberMe, setRememberMe] = useState(false);
+  
+  // Ref to prevent multiple redirects
+  const hasRedirected = useRef(false);
 
+  // Redirect if already authenticated (including after successful login)
   useEffect(() => {
-    if (isDemoMode && profile) {
-      const redirectPath = profile.role === 'ceo' ? '/ceod/home' : '/ctod/home';
+    // Only redirect if we're on the login page and haven't already redirected
+    if (location.pathname !== '/login') return;
+    if (hasRedirected.current) return;
+    
+    if (!loading && profileReady && (user || isDemoMode)) {
+      hasRedirected.current = true;
+      const role = profile?.role || 'staff';
+      
+      const isCEORole = ['ceo', 'cfo', 'cmo', 'admin'].includes(role);
+      const redirectPath = isCEORole ? '/ceod/home' : '/ctod/home';
+      
       navigate(redirectPath, { replace: true });
     }
-  }, [isDemoMode, profile, navigate]);
+  }, [isDemoMode, profile, user, loading, profileReady, navigate, location.pathname]);
 
   // Load remembered email and remember me preference on mount
   useEffect(() => {
@@ -83,33 +97,33 @@ export default function Login() {
     setSuccess(null);
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        throw error;
+      // Handle remember me preference
+      if (rememberMe) {
+        localStorage.setItem('mpb_remembered_email', email);
+      } else {
+        localStorage.removeItem('mpb_remembered_email');
       }
-
-      if (data.user) {
-        // Handle remember me - save or remove email and set session persistence preference
-        if (rememberMe) {
-          localStorage.setItem('mpb_remembered_email', email);
-        } else {
-          localStorage.removeItem('mpb_remembered_email');
+      setRememberMePreference(rememberMe);
+      
+      // Use AuthContext's signIn which properly updates state and fetches profile
+      await authSignIn(email, password);
+      
+      setSuccess('Login successful! Redirecting...');
+      
+      // Give React a moment to process state updates, then redirect
+      // The useEffect should handle this, but as a fallback we navigate directly
+      setTimeout(() => {
+        if (!hasRedirected.current) {
+          hasRedirected.current = true;
+          // Default to CTO dashboard if we can't determine role yet
+          navigate('/ctod/home', { replace: true });
         }
-        
-        // Set remember me preference for session persistence
-        setRememberMePreference(rememberMe);
-        
-        setSuccess('Login successful! Redirecting...');
-        window.location.href = '/auth/callback';
-      }
+      }, 500);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred during login');
       setIsLoading(false);
     }
+    // Note: Don't reset isLoading on success - we're redirecting anyway
   };
 
   const handleSignUp = async (e: React.FormEvent) => {
@@ -148,17 +162,19 @@ export default function Login() {
       }
 
       if (data.user) {
-        const orgId = '00000000-0000-0000-0000-000000000000';
-
+        // Create profile - user_id references auth.users.id and is used by RLS policies
+        // org_id is required (NOT NULL) and uses default organization UUID
+        const defaultOrgId = '00000000-0000-0000-0000-000000000000';
+        
         const { error: profileError } = await supabase
           .from('profiles')
           .upsert({
             user_id: data.user.id,
             email: email,
             full_name: name,
+            display_name: name,
             role: selectedRole,
-            org_id: orgId,
-            display_name: name
+            org_id: defaultOrgId,
           }, {
             onConflict: 'user_id'
           });

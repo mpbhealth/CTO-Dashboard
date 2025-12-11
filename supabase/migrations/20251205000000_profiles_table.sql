@@ -2,18 +2,25 @@
 -- Run this FIRST in your Supabase SQL Editor before the admin control center migration
 
 -- Create profiles table (linked to auth.users)
+-- Note: org_id must be uuid NOT NULL to match earlier migrations and application expectations
 CREATE TABLE IF NOT EXISTS profiles (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE UNIQUE NOT NULL,
-    email TEXT,
+    email TEXT NOT NULL,
     full_name TEXT,
     display_name TEXT,
-    role TEXT DEFAULT 'staff' CHECK (role IN ('admin', 'ceo', 'cto', 'staff', 'member')),
-    org_id TEXT,
+    role TEXT DEFAULT 'staff' CHECK (role IN ('ceo', 'cto', 'cfo', 'cmo', 'admin', 'manager', 'staff')),
+    org_id UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000'::uuid,
     avatar_url TEXT,
     is_superuser BOOLEAN DEFAULT false,
+    department TEXT,
+    position TEXT,
+    phone TEXT,
+    bio TEXT,
+    preferences JSONB DEFAULT '{}'::jsonb,
     created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    last_login_at TIMESTAMPTZ
 );
 
 -- Enable RLS
@@ -80,13 +87,14 @@ CREATE TRIGGER update_profiles_updated_at
 CREATE OR REPLACE FUNCTION handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-    INSERT INTO public.profiles (user_id, email, full_name, display_name, role)
+    INSERT INTO public.profiles (user_id, email, full_name, display_name, role, org_id)
     VALUES (
         NEW.id,
         NEW.email,
         COALESCE(NEW.raw_user_meta_data->>'full_name', ''),
         COALESCE(NEW.raw_user_meta_data->>'display_name', split_part(NEW.email, '@', 1)),
-        COALESCE(NEW.raw_user_meta_data->>'role', 'staff')
+        COALESCE(NEW.raw_user_meta_data->>'role', 'staff'),
+        '00000000-0000-0000-0000-000000000000'::uuid
     );
     RETURN NEW;
 END;

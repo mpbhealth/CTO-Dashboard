@@ -173,23 +173,42 @@ const LoadingFallback = () => (
 
 function RoleBasedRedirect() {
   const { redirectPath, isLoading } = useRoleBasedRedirect();
-  const { profile } = useAuth();
+  const { profile, profileReady } = useAuth();
   const location = useLocation();
 
-  if (isLoading) {
+  // Show loading while auth state is being determined
+  if (isLoading || !profileReady) {
     return <LoadingFallback />;
   }
 
-  if (redirectPath) {
+  // Redirect to role-appropriate dashboard if a redirect is needed
+  if (redirectPath && redirectPath !== location.pathname) {
     return <Navigate to={redirectPath} replace />;
   }
 
+  // Handle root path
   if (location.pathname === '/' || location.pathname === '') {
-    const defaultPath = profile?.role === 'ceo' ? '/ceod/home' : '/ctod/home';
+    const role = profile?.role || 'staff';
+    const isCEORole = ['ceo', 'cfo', 'cmo', 'admin'].includes(role);
+    const defaultPath = isCEORole ? '/ceod/home' : '/ctod/home';
     return <Navigate to={defaultPath} replace />;
   }
 
-  return null;
+  // 404 - route not found, show a simple message instead of redirecting
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-slate-50">
+      <div className="text-center">
+        <h1 className="text-2xl font-bold text-gray-800 mb-2">Page Not Found</h1>
+        <p className="text-gray-600 mb-4">The page you're looking for doesn't exist.</p>
+        <button 
+          onClick={() => window.history.back()}
+          className="text-indigo-600 hover:text-indigo-800 font-medium"
+        >
+          Go Back
+        </button>
+      </div>
+    </div>
+  );
 }
 
 
@@ -213,7 +232,7 @@ function DualDashboardContent() {
 
   const navigationItems = useMemo(() => {
     const role = profile?.role || 'staff';
-    return getNavigationForRole(role as 'ceo' | 'cto' | 'admin' | 'staff');
+    return getNavigationForRole(role);
   }, [profile?.role]);
 
   const routeToTabMap = useMemo(() => buildRouteToTabMap(navigationItems), [navigationItems]);

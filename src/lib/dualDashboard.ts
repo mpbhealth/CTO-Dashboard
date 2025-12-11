@@ -4,7 +4,7 @@ import { logger } from './logger';
 export type WorkspaceKind = 'CTO' | 'CEO' | 'SHARED';
 export type ResourceType = 'file' | 'doc' | 'kpi' | 'campaign' | 'note' | 'task' | 'dashboard';
 export type Visibility = 'private' | 'shared_to_cto' | 'shared_to_ceo' | 'org_public';
-export type UserRole = 'cto' | 'ceo' | 'admin' | 'staff';
+export type UserRole = 'cto' | 'ceo' | 'admin' | 'staff' | 'cfo' | 'cmo' | 'manager' | 'member';
 
 export interface Profile {
   user_id: string;

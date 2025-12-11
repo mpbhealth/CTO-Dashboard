@@ -111,7 +111,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const fetchProfile = useCallback(async (userId: string, skipCache = false, retryCount = 0) => {
-    if (fetchingRef.current === userId) {
+    if (fetchingRef.current === userId && !skipCache) {
       return;
     }
 
@@ -138,12 +138,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 8000);
 
-      const { data, error } = await supabase
+      // Try to find profile by user_id first (correct column)
+      let { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .eq('id', userId)
+        .eq('user_id', userId)
         .maybeSingle()
         .abortSignal(controller.signal);
+
+      // If not found by user_id, try by id (some old migrations used id instead of user_id)
+      if (!data && !error) {
+        const result = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', userId)
+          .maybeSingle();
+        data = result.data;
+        error = result.error;
+      }
 
       clearTimeout(timeoutId);
 
@@ -317,9 +329,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       throw error;
     }
 
-    logger.log('Sign in successful, fetching profile...');
-    if (data.user) {
-      await fetchProfile(data.user.id);
+    logger.log('Sign in successful, updating state and fetching profile...');
+    if (data.user && data.session) {
+      // Immediately update user and session state - don't wait for onAuthStateChange
+      setUser(data.user);
+      setSession(data.session);
+      // Fetch profile and wait for it to complete
+      await fetchProfile(data.user.id, true); // skipCache to ensure fresh data
     }
   }, [fetchProfile]);
 

@@ -53,7 +53,7 @@ export interface NavItem {
   icon: React.ComponentType<{ className?: string }>;
   category: string;
   submenu?: NavSubItem[];
-  roles?: ('ceo' | 'cto' | 'admin' | 'staff')[];
+  roles?: ('ceo' | 'cto' | 'admin' | 'staff' | 'cfo' | 'cmo' | 'manager' | 'member')[];
   badge?: string;
 }
 
@@ -338,8 +338,8 @@ export function buildTabToRouteMap(items: NavItem[]): Record<string, string> {
   return map;
 }
 
-export function getNavigationForRole(role: 'ceo' | 'cto' | 'admin' | 'staff'): NavItem[] {
-  if (role === 'ceo' || role === 'admin') {
+export function getNavigationForRole(role: string): NavItem[] {
+  if (['ceo', 'cfo', 'cmo', 'admin'].includes(role)) {
     return ceoNavigationItems;
   }
   return ctoNavigationItems;

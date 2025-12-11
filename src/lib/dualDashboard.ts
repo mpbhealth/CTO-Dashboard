@@ -82,10 +82,10 @@ export async function getCurrentProfile(): Promise<Profile | null> {
 
     logger.debug('Authenticated user', { id: user.id, email: user.email });
 
-    // Query with simplified field selection
+    // Query with simplified field selection - only columns that exist in the table
     const { data, error } = await supabase
       .from('profiles')
-      .select('id, role, display_name, is_superuser')
+      .select('id, role')
       .eq('id', user.id)
       .maybeSingle();
 

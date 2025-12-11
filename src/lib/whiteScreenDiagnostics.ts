@@ -171,7 +171,7 @@ export class WhiteScreenDiagnostics {
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('*')
-          .eq('user_id', session.user.id)
+          .eq('id', session.user.id)
           .maybeSingle();
 
         if (profileError) {

@@ -3,7 +3,8 @@
 // Bell icon with badge for notification count
 // ============================================
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { Bell, BellRing } from 'lucide-react';
 import { useNotifications } from '../../hooks/useNotifications';
 import { NotificationCenter } from './NotificationCenter';
@@ -12,13 +13,42 @@ interface NotificationBellProps {
   className?: string;
 }
 
+interface PanelPosition {
+  top: number;
+  left: number;
+}
+
 export function NotificationBell({ className = '' }: NotificationBellProps) {
   const { unreadCount, criticalCount, permissionStatus, requestPermission } = useNotifications();
   const [isOpen, setIsOpen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [panelPosition, setPanelPosition] = useState<PanelPosition>({ top: 0, left: 0 });
   const bellRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const prevUnreadCount = useRef(unreadCount);
+
+  // Calculate panel position based on bell button location
+  const calculatePosition = useCallback(() => {
+    if (bellRef.current) {
+      const rect = bellRef.current.getBoundingClientRect();
+      const panelWidth = 384; // max-width of panel (sm:w-96 = 384px)
+      const viewportWidth = window.innerWidth;
+      
+      // Position panel to the right of the button, or adjust if it would overflow
+      let left = rect.right + 8; // 8px gap from button
+      
+      // If panel would overflow right edge, position it differently
+      if (left + panelWidth > viewportWidth - 16) {
+        // Try positioning from button's left edge extending right
+        left = Math.max(16, rect.left);
+      }
+      
+      setPanelPosition({
+        top: rect.top,
+        left: left,
+      });
+    }
+  }, []);
 
   // Animate bell when new notification arrives
   useEffect(() => {
@@ -29,6 +59,19 @@ export function NotificationBell({ className = '' }: NotificationBellProps) {
     }
     prevUnreadCount.current = unreadCount;
   }, [unreadCount]);
+
+  // Recalculate position when panel opens or window resizes
+  useEffect(() => {
+    if (isOpen) {
+      calculatePosition();
+      window.addEventListener('resize', calculatePosition);
+      window.addEventListener('scroll', calculatePosition, true);
+      return () => {
+        window.removeEventListener('resize', calculatePosition);
+        window.removeEventListener('scroll', calculatePosition, true);
+      };
+    }
+  }, [isOpen, calculatePosition]);
 
   // Close panel when clicking outside
   useEffect(() => {
@@ -116,17 +159,22 @@ export function NotificationBell({ className = '' }: NotificationBellProps) {
         )}
       </button>
 
-      {/* Notification Center Panel */}
-      {isOpen && (
+      {/* Notification Center Panel - Rendered via Portal to escape sidebar DOM entirely */}
+      {isOpen && createPortal(
         <div
           ref={panelRef}
-          className="
-            absolute right-0 top-full mt-2 z-50
-            animate-in fade-in slide-in-from-top-2 duration-200
-          "
+          className="animate-in fade-in slide-in-from-top-2 duration-200"
+          style={{
+            position: 'fixed',
+            top: `${panelPosition.top}px`,
+            left: `${panelPosition.left}px`,
+            zIndex: 99999,
+            maxHeight: 'calc(100vh - 100px)',
+          }}
         >
           <NotificationCenter onClose={() => setIsOpen(false)} />
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

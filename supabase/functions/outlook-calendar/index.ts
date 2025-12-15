@@ -2,8 +2,9 @@ import { createClient } from 'npm:@supabase/supabase-js';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-auth',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'Access-Control-Max-Age': '86400',
 };
 
 interface OutlookConfig {
@@ -275,12 +276,29 @@ async function deleteCalendarEvent(
 }
 
 Deno.serve(async (req: Request) => {
-  // Handle CORS preflight requests
+  // Handle CORS preflight requests - must return 200 OK for CORS to pass
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response('ok', { 
+      status: 200,
+      headers: corsHeaders 
+    });
   }
 
   try {
+    // Parse request body first to handle JSON parsing errors
+    let body;
+    try {
+      body = await req.json();
+    } catch (parseError) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid JSON in request body' }),
+        { 
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
@@ -292,9 +310,6 @@ Deno.serve(async (req: Request) => {
       .select('*')
       .eq('is_active', true)
       .limit(1);
-
-    // Parse request body
-    const body = await req.json();
     const { action, startDate, endDate, event, eventId } = body;
 
     // If no config exists, return demo data

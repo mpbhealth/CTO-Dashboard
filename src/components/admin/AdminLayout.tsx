@@ -40,7 +40,7 @@ function AdminLayoutContent({ children, showStatsBar = true }: AdminLayoutProps)
       return 'pl-0';
     }
     if (isSidebarExpanded) {
-      return 'md:pl-64'; // 256px
+      return 'md:pl-72'; // 288px
     }
     return 'md:pl-[72px]'; // 72px collapsed
   };

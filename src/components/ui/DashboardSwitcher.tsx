@@ -177,7 +177,7 @@ export function DashboardSwitcher({ variant = 'dropdown', className = '' }: Dash
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`
-          flex items-center gap-3 px-4 py-3 rounded-xl
+          flex items-center gap-3 px-3 py-2.5 rounded-xl
           bg-white/10 hover:bg-white/20
           transition-all duration-200
           active:scale-[0.98] touch-manipulation
@@ -185,17 +185,17 @@ export function DashboardSwitcher({ variant = 'dropdown', className = '' }: Dash
         `}
       >
         <div className={`
-          w-9 h-9 rounded-lg flex items-center justify-center
+          w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0
           bg-white/20 backdrop-blur-sm
         `}>
-          <CurrentIcon className="w-5 h-5 text-white" />
+          <CurrentIcon className="w-4 h-4 text-white" />
         </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-white truncate">{currentDashboard.name}</p>
-          <p className="text-xs text-white/70 truncate">Switch dashboard</p>
+        <div className="flex-1">
+          <p className="text-sm font-semibold text-white leading-tight">{currentDashboard.name}</p>
+          <p className="text-xs text-white/70">Switch dashboard</p>
         </div>
         <ChevronDown className={`
-          w-5 h-5 text-white/70 transition-transform duration-200
+          w-4 h-4 text-white/70 transition-transform duration-200 flex-shrink-0
           ${isOpen ? 'rotate-180' : ''}
         `} />
       </button>

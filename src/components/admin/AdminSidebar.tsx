@@ -210,7 +210,7 @@ export function AdminSidebar({ isExpanded, onToggle }: AdminSidebarProps) {
           fixed top-0 left-0 z-40 shadow-2xl
           transition-transform duration-300 ease-out
           border-r border-slate-800
-          ${isExpanded ? 'w-64' : 'w-[72px]'}
+          ${isExpanded ? 'w-72' : 'w-[72px]'}
           ${isMobile && !isExpanded ? '-translate-x-full' : 'translate-x-0'}
           will-change-transform
         `}
@@ -254,18 +254,18 @@ export function AdminSidebar({ isExpanded, onToggle }: AdminSidebarProps) {
         >
           {/* Header */}
           <div className="mb-6">
-            <div className={`flex items-center ${isExpanded ? 'space-x-3' : 'justify-center'}`}>
+            <div className={`flex items-center ${isExpanded ? 'gap-3' : 'justify-center'}`}>
               <div className={`
                 ${isExpanded ? 'w-10 h-10' : 'w-9 h-9'} 
                 rounded-xl flex items-center justify-center shadow-lg 
-                bg-gradient-to-br from-emerald-500 to-emerald-600
+                bg-gradient-to-br from-emerald-500 to-emerald-600 flex-shrink-0
               `}>
                 <Globe className="w-5 h-5 text-white" />
               </div>
               {isExpanded && (
-                <div>
-                  <h1 className="text-lg font-bold text-white">Web Control</h1>
-                  <p className="text-slate-400 text-xs">Admin Center</p>
+                <div className="flex-1 min-w-0">
+                  <h1 className="text-lg font-bold text-white leading-tight">Web Control Center</h1>
+                  <p className="text-slate-400 text-xs">Admin Dashboard</p>
                 </div>
               )}
             </div>

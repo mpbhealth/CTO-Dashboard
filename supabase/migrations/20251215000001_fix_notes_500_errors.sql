@@ -325,7 +325,6 @@ BEGIN
   UPDATE notes SET is_shared = true, is_collaborative = (p_permission_level = 'edit')
   WHERE id = p_note_id;
   
-  -- Create notifications for target users
   IF v_target_users IS NOT NULL THEN
     FOREACH v_user_id IN ARRAY v_target_users LOOP
       IF v_user_id <> auth.uid() THEN

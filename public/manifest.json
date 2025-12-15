@@ -13,6 +13,12 @@
   "lang": "en-US",
   "dir": "ltr",
   "prefer_related_applications": false,
+  "permissions": ["notifications"],
+  "serviceworker": {
+    "src": "/sw.js",
+    "scope": "/",
+    "type": "module"
+  },
   "icons": [
     {
       "src": "/icons/icon-192.svg",

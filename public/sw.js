@@ -1,6 +1,6 @@
 // Service Worker for MPB Health Dashboard PWA
 // Version is set at build time for proper cache invalidation
-const VERSION = '2.0.2';
+const VERSION = '2.1.0';
 const CACHE_NAME = 'mpb-dashboard-v' + VERSION;
 const urlsToCache = [
   '/',
@@ -11,13 +11,152 @@ const urlsToCache = [
 
 console.log('[SW] Service Worker version:', VERSION);
 
+// ============================================
+// NOTIFICATION HANDLING
+// ============================================
+
+// Default notification options
+const DEFAULT_NOTIFICATION_OPTIONS = {
+  icon: '/icons/icon-192.svg',
+  badge: '/icons/icon-32x32.svg',
+  vibrate: [100, 50, 100],
+  requireInteraction: false,
+};
+
+// Priority-based notification settings
+const PRIORITY_CONFIG = {
+  critical: {
+    requireInteraction: true,
+    vibrate: [200, 100, 200, 100, 200],
+    tag: 'critical',
+  },
+  high: {
+    requireInteraction: true,
+    vibrate: [150, 75, 150],
+    tag: 'high',
+  },
+  info: {
+    requireInteraction: false,
+    vibrate: [100, 50, 100],
+    tag: 'info',
+  },
+};
+
+// Handle push notifications from server
+self.addEventListener('push', (event) => {
+  console.log('[SW] Push notification received');
+  
+  let data = {
+    title: 'MPB Health Dashboard',
+    body: 'You have a new notification',
+    priority: 'info',
+    data: {},
+  };
+  
+  if (event.data) {
+    try {
+      data = { ...data, ...event.data.json() };
+    } catch (e) {
+      console.warn('[SW] Failed to parse push data:', e);
+      data.body = event.data.text();
+    }
+  }
+  
+  const priorityConfig = PRIORITY_CONFIG[data.priority] || PRIORITY_CONFIG.info;
+  
+  const options = {
+    ...DEFAULT_NOTIFICATION_OPTIONS,
+    ...priorityConfig,
+    body: data.body,
+    data: data.data || {},
+    timestamp: Date.now(),
+  };
+  
+  event.waitUntil(
+    self.registration.showNotification(data.title, options)
+  );
+});
+
+// Handle notification click - navigate to relevant page
+self.addEventListener('notificationclick', (event) => {
+  console.log('[SW] Notification clicked:', event.notification.tag);
+  
+  event.notification.close();
+  
+  const notificationData = event.notification.data || {};
+  const targetUrl = notificationData.url || '/';
+  
+  // Handle action button clicks
+  if (event.action) {
+    console.log('[SW] Action clicked:', event.action);
+    switch (event.action) {
+      case 'view':
+        // Navigate to the notification source
+        break;
+      case 'dismiss':
+        // Just close the notification (already done above)
+        return;
+      case 'acknowledge':
+        // Could send acknowledgment back to server
+        break;
+    }
+  }
+  
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true })
+      .then((clientList) => {
+        // Check if there's already a window open
+        for (const client of clientList) {
+          if (client.url.includes(self.location.origin) && 'focus' in client) {
+            // Navigate existing window to target URL
+            client.navigate(targetUrl);
+            return client.focus();
+          }
+        }
+        // No existing window - open a new one
+        if (clients.openWindow) {
+          return clients.openWindow(targetUrl);
+        }
+      })
+  );
+});
+
+// Handle notification close (for analytics/tracking)
+self.addEventListener('notificationclose', (event) => {
+  console.log('[SW] Notification closed:', event.notification.tag);
+});
+
+// Listen for messages from the main app
+self.addEventListener('message', (event) => {
+  console.log('[SW] Message received:', event.data);
+  
+  if (event.data && event.data.type === 'SHOW_NOTIFICATION') {
+    const { title, options } = event.data.payload;
+    const priorityConfig = PRIORITY_CONFIG[options.priority] || PRIORITY_CONFIG.info;
+    
+    self.registration.showNotification(title, {
+      ...DEFAULT_NOTIFICATION_OPTIONS,
+      ...priorityConfig,
+      ...options,
+    });
+  }
+  
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+
+// ============================================
+// CACHING AND OFFLINE SUPPORT
+// ============================================
+
 // Install event - cache important files
 self.addEventListener('install', (event) => {
-  console.log('SW installing with cache:', CACHE_NAME);
+  console.log('[SW] Installing with cache:', CACHE_NAME);
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        console.log('Opened cache');
+        console.log('[SW] Opened cache');
         return cache.addAll(urlsToCache);
       })
   );
@@ -58,7 +197,7 @@ self.addEventListener('fetch', (event) => {
           caches.open(CACHE_NAME).then((cache) => {
             cache.put(event.request, responseToCache);
           }).catch((err) => {
-            console.warn('Cache storage failed:', err);
+            console.warn('[SW] Cache storage failed:', err);
           });
         }
         return response;
@@ -86,7 +225,7 @@ self.addEventListener('fetch', (event) => {
             });
           }
           // For other requests, return a simple error response instead of throwing
-          console.warn('Network request failed and no cache available:', event.request.url);
+          console.warn('[SW] Network request failed and no cache available:', event.request.url);
           return new Response('', {
             status: 503,
             statusText: 'Service Unavailable'

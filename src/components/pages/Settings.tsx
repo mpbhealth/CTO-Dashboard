@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
+import { NotificationSettings } from '../notifications';
 
 export default function Settings() {
   const navigate = useNavigate();
@@ -440,6 +441,9 @@ export default function Settings() {
             <li>• Change your password periodically for better security</li>
           </ul>
         </div>
+
+        {/* Notification Settings */}
+        <NotificationSettings className="mt-4 sm:mt-6" />
 
         {/* Sign Out Section */}
         <div className="mt-4 sm:mt-6 bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6">

@@ -12,6 +12,7 @@ import { useCurrentProfile } from '../hooks/useDualDashboard';
 import { useAuth } from '../contexts/AuthContext';
 import { getNavigationForRole, ceoNavigationItems, ctoNavigationItems, categories, type NavItem } from '../config/navigation';
 import { DashboardSwitcher } from './ui/DashboardSwitcher';
+import { NotificationBell } from './notifications';
 
 interface SidebarProps {
   activeTab: string;
@@ -284,11 +285,17 @@ export default function Sidebar({
                 />
               </div>
               {isSidebarExpanded && (
-                <div>
+                <div className="flex-1">
                   <h1 className="text-xl font-bold text-white">MPB Health</h1>
                   <p className="text-slate-300 text-sm font-medium">
                     {isCEO ? 'CEO Dashboard' : 'CTO Dashboard'}
                   </p>
+                </div>
+              )}
+              {/* Notification Bell */}
+              {isSidebarExpanded && (
+                <div className="ml-auto">
+                  <NotificationBell className="text-white [&_svg]:text-white [&_svg:hover]:text-slate-200 [&_button]:hover:bg-white/10" />
                 </div>
               )}
             </div>

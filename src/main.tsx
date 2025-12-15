@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './contexts/AuthContext.tsx';
+import { NotificationProvider } from './providers/NotificationProvider.tsx';
 import { ProtectedRoute } from './components/guards/ProtectedRoute.tsx';
 import { AccessGate } from './components/guards/AccessGate.tsx';
 import { AuthCallback } from './components/pages/AuthCallback.tsx';
@@ -375,27 +376,29 @@ try {
               }}
             >
               <AuthProvider>
-                <Routes>
-                  {/* Login Route */}
-                  <Route path="/login" element={<Login onLoginSuccess={() => {}} />} />
+                <NotificationProvider>
+                  <Routes>
+                    {/* Login Route */}
+                    <Route path="/login" element={<Login onLoginSuccess={() => {}} />} />
 
-                  {/* Auth Callback Route */}
-                  <Route path="/auth/callback" element={<AuthCallback />} />
+                    {/* Auth Callback Route */}
+                    <Route path="/auth/callback" element={<AuthCallback />} />
 
-                  {/* Public Department Upload Routes - No Auth Required */}
-                  <Route path="/public/upload" element={<PublicDepartmentUploadLanding />} />
-                  <Route path="/public/upload/:department" element={<PublicDepartmentUpload />} />
+                    {/* Public Department Upload Routes - No Auth Required */}
+                    <Route path="/public/upload" element={<PublicDepartmentUploadLanding />} />
+                    <Route path="/public/upload/:department" element={<PublicDepartmentUpload />} />
 
-                  {/* All Dashboard Routes - Handles /ceod, /ctod, /shared, and legacy routes */}
-                  <Route
-                    path="/*"
-                    element={
-                      <ProtectedRoute>
-                        <DualDashboardApp />
-                      </ProtectedRoute>
-                    }
-                  />
-                </Routes>
+                    {/* All Dashboard Routes - Handles /ceod, /ctod, /shared, and legacy routes */}
+                    <Route
+                      path="/*"
+                      element={
+                        <ProtectedRoute>
+                          <DualDashboardApp />
+                        </ProtectedRoute>
+                      }
+                    />
+                  </Routes>
+                </NotificationProvider>
               </AuthProvider>
             </BrowserRouter>
           </QueryClientProvider>

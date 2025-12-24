@@ -1,0 +1,255 @@
+/**
+ * CommandOS Global Styles
+ * Extends base Tailwind with shadcn/ui CSS variables and custom animations
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* CommandOS Design System Colors */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 199 89% 48%; /* Sky blue - brand color */
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 199 89% 48%;
+    --radius: 0.75rem;
+
+    /* CommandOS Specific */
+    --dock-blur: 20px;
+    --dock-bg: rgba(255, 255, 255, 0.85);
+    --dock-border: rgba(255, 255, 255, 0.3);
+    --galaxy-glow: rgba(14, 165, 233, 0.5);
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 199 89% 48%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 199 89% 48%;
+
+    /* CommandOS Dark Theme */
+    --dock-bg: rgba(15, 23, 42, 0.9);
+    --dock-border: rgba(51, 65, 85, 0.5);
+    --galaxy-glow: rgba(56, 189, 248, 0.4);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-slate-300 dark:bg-slate-700 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-slate-400 dark:bg-slate-600;
+  }
+}
+
+@layer components {
+  /* GalaxyDock Styles */
+  .galaxy-dock {
+    @apply fixed bottom-4 left-1/2 -translate-x-1/2 z-50;
+    @apply px-3 py-2 rounded-2xl;
+    @apply flex items-center gap-2;
+    background: var(--dock-bg);
+    backdrop-filter: blur(var(--dock-blur));
+    border: 1px solid var(--dock-border);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.12),
+      0 4px 16px rgba(0, 0, 0, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .galaxy-dock-item {
+    @apply relative flex items-center justify-center;
+    @apply w-12 h-12 rounded-xl;
+    @apply transition-all duration-200 ease-out;
+    @apply cursor-pointer select-none;
+  }
+
+  .galaxy-dock-item:hover {
+    @apply bg-white/20 dark:bg-white/10;
+  }
+
+  .galaxy-dock-item.active {
+    @apply bg-primary/20;
+  }
+
+  .galaxy-dock-item.active::after {
+    content: '';
+    @apply absolute -bottom-1.5 left-1/2 -translate-x-1/2;
+    @apply w-1 h-1 rounded-full bg-primary;
+  }
+
+  /* Command Palette Styles */
+  .command-palette {
+    @apply fixed inset-0 z-[100];
+    @apply flex items-start justify-center pt-[20vh];
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+  }
+
+  .command-palette-content {
+    @apply w-full max-w-xl;
+    @apply bg-white dark:bg-slate-900 rounded-2xl;
+    @apply shadow-2xl border border-slate-200 dark:border-slate-700;
+    @apply overflow-hidden;
+  }
+
+  /* Galaxy Map Modal */
+  .galaxy-map {
+    @apply fixed inset-0 z-[90];
+    @apply flex items-center justify-center p-4;
+    background: radial-gradient(ellipse at center, rgba(15, 23, 42, 0.95) 0%, rgba(2, 6, 23, 0.98) 100%);
+    backdrop-filter: blur(8px);
+  }
+
+  .galaxy-category {
+    @apply relative p-6 rounded-2xl;
+    @apply bg-white/5 border border-white/10;
+    @apply backdrop-blur-sm;
+  }
+
+  .galaxy-app-card {
+    @apply p-4 rounded-xl;
+    @apply bg-white/10 border border-white/20;
+    @apply hover:bg-white/20 hover:border-white/30;
+    @apply transition-all duration-200;
+    @apply cursor-pointer;
+  }
+
+  /* Glass morphism utilities */
+  .glass {
+    background: var(--dock-bg);
+    backdrop-filter: blur(var(--dock-blur));
+    border: 1px solid var(--dock-border);
+  }
+
+  .glass-dark {
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(51, 65, 85, 0.5);
+  }
+
+  /* Badge styles */
+  .dock-badge {
+    @apply absolute -top-1 -right-1;
+    @apply min-w-[18px] h-[18px] px-1;
+    @apply flex items-center justify-center;
+    @apply text-[10px] font-bold text-white;
+    @apply bg-red-500 rounded-full;
+    @apply border-2 border-white dark:border-slate-900;
+  }
+}
+
+@layer utilities {
+  /* Animation utilities for dock magnification */
+  .dock-magnify {
+    transform-origin: bottom center;
+    will-change: transform;
+  }
+
+  /* Glow effects */
+  .glow-primary {
+    box-shadow: 0 0 20px var(--galaxy-glow);
+  }
+
+  /* Text gradient */
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-primary-400 to-primary-600;
+  }
+
+  /* Shine animation for loading states */
+  .animate-shine {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.1),
+      transparent
+    );
+    background-size: 200% 100%;
+    animation: shine 1.5s infinite;
+  }
+
+  @keyframes shine {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* Orbit animation for galaxy map */
+  .animate-orbit {
+    animation: orbit 20s linear infinite;
+  }
+
+  @keyframes orbit {
+    from { transform: rotate(0deg) translateX(100px) rotate(0deg); }
+    to { transform: rotate(360deg) translateX(100px) rotate(-360deg); }
+  }
+
+  /* Pulse glow for active states */
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 20px var(--galaxy-glow); }
+    50% { box-shadow: 0 0 40px var(--galaxy-glow); }
+  }
+}
+

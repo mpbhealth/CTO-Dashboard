@@ -1,6 +1,12 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  darkMode: ['class'],
+  content: [
+    './index.html',
+    './src/**/*.{js,ts,jsx,tsx}',
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
+  ],
   theme: {
     // Custom screens with xs breakpoint for small phones
     screens: {
@@ -13,8 +19,16 @@ export default {
     },
     extend: {
       colors: {
-        // Brand primary color (sky blue) - replaces indigo/purple
+        // shadcn/ui CSS variable colors
+        border: 'hsl(var(--border))',
+        input: 'hsl(var(--input))',
+        ring: 'hsl(var(--ring))',
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
         primary: {
+          DEFAULT: 'hsl(var(--primary))',
+          foreground: 'hsl(var(--primary-foreground))',
+          // Brand color scale (sky blue)
           50: '#f0f9ff',
           100: '#e0f2fe',
           200: '#bae6fd',
@@ -25,6 +39,30 @@ export default {
           700: '#0369a1',
           800: '#075985',
           900: '#0c4a6e',
+        },
+        secondary: {
+          DEFAULT: 'hsl(var(--secondary))',
+          foreground: 'hsl(var(--secondary-foreground))',
+        },
+        destructive: {
+          DEFAULT: 'hsl(var(--destructive))',
+          foreground: 'hsl(var(--destructive-foreground))',
+        },
+        muted: {
+          DEFAULT: 'hsl(var(--muted))',
+          foreground: 'hsl(var(--muted-foreground))',
+        },
+        accent: {
+          DEFAULT: 'hsl(var(--accent))',
+          foreground: 'hsl(var(--accent-foreground))',
+        },
+        popover: {
+          DEFAULT: 'hsl(var(--popover))',
+          foreground: 'hsl(var(--popover-foreground))',
+        },
+        card: {
+          DEFAULT: 'hsl(var(--card))',
+          foreground: 'hsl(var(--card-foreground))',
         },
         // CEO Dashboard - Modern Tech Purple-Blue Palette
         'ceo-purple': {
@@ -163,12 +201,6 @@ export default {
         'screen-80': '80vh',
         'screen-70': '70vh',
       },
-      // Border radius for mobile cards
-      borderRadius: {
-        '2xl': '1rem',
-        '3xl': '1.5rem',
-        '4xl': '2rem',
-      },
       // Box shadows for mobile depth
       boxShadow: {
         'mobile-sm': '0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06)',
@@ -189,7 +221,16 @@ export default {
       backdropBlur: {
         'xs': '2px',
       },
+      // shadcn/ui border radius using CSS variable
+      borderRadius: {
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 2px)',
+        sm: 'calc(var(--radius) - 4px)',
+        '2xl': '1rem',
+        '3xl': '1.5rem',
+        '4xl': '2rem',
+      },
     },
   },
-  plugins: [],
+  plugins: [require('tailwindcss-animate')],
 };

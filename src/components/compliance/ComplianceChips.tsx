@@ -43,8 +43,10 @@ const Chip: React.FC<ChipProps> = ({ label, variant, size = 'md' }) => {
 export const PolicyStatusChip: React.FC<{ status: DocStatus; size?: 'sm' | 'md' | 'lg' }> = ({ status, size }) => {
   const statusConfig: Record<DocStatus, { label: string; variant: ChipProps['variant'] }> = {
     draft: { label: 'Draft', variant: 'default' },
+    review: { label: 'Review', variant: 'info' },
     in_review: { label: 'In Review', variant: 'info' },
     approved: { label: 'Approved', variant: 'success' },
+    expired: { label: 'Expired', variant: 'error' },
     archived: { label: 'Archived', variant: 'default' },
   };
 

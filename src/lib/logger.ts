@@ -7,9 +7,42 @@ interface LogEntry {
   context?: Record<string, unknown>;
 }
 
+/**
+ * Get environment mode safely for both Vite and Next.js
+ */
+function getEnvMode(): { isDev: boolean; isProd: boolean } {
+  // Try Node.js environment first (Next.js)
+  if (typeof process !== 'undefined' && process.env) {
+    return {
+      isDev: process.env.NODE_ENV === 'development',
+      isProd: process.env.NODE_ENV === 'production',
+    };
+  }
+
+  // Try Vite environment (client-side)
+  try {
+    // @ts-ignore - import.meta.env is Vite-specific
+    if (typeof import.meta !== 'undefined' && import.meta.env) {
+      return {
+        // @ts-ignore
+        isDev: !!import.meta.env.DEV,
+        // @ts-ignore
+        isProd: !!import.meta.env.PROD,
+      };
+    }
+  } catch {
+    // import.meta not available
+  }
+
+  // Default to production for safety
+  return { isDev: false, isProd: true };
+}
+
+const envMode = getEnvMode();
+
 class Logger {
-  private isDevelopment = import.meta.env.DEV;
-  private isProduction = import.meta.env.PROD;
+  private isDevelopment = envMode.isDev;
+  private isProduction = envMode.isProd;
   private logs: LogEntry[] = [];
   private maxLogs = 100;
 

@@ -81,7 +81,9 @@ export const OperationsPanel = memo(function OperationsPanel() {
                   <div className="flex items-center gap-2">
                     <span className="font-medium text-gray-900 text-sm">{queue.queue}</span>
                     {isAging && (
-                      <AlertTriangle className="w-4 h-4 text-amber-500" title="High average age" />
+                      <span title="High average age">
+                        <AlertTriangle className="w-4 h-4 text-amber-500" />
+                      </span>
                     )}
                   </div>
                   <span className="text-sm font-semibold text-gray-900">{queue.count} open</span>

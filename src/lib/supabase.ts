@@ -1,7 +1,37 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Support both Next.js and Vite environment variables
+// Use a function to safely access environment variables
+function getSupabaseEnv() {
+  let url = '';
+  let key = '';
+
+  // Try Next.js environment variables first (works in both client and server)
+  if (typeof process !== 'undefined' && process.env) {
+    url = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+    key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+  }
+
+  // If not found, try Vite environment variables (client-side only)
+  // This is wrapped in try-catch because import.meta may not exist in Node.js
+  if (!url || !key) {
+    try {
+      // @ts-ignore - import.meta.env is Vite-specific
+      if (typeof import.meta !== 'undefined' && import.meta.env) {
+        // @ts-ignore
+        url = url || import.meta.env.VITE_SUPABASE_URL || '';
+        // @ts-ignore
+        key = key || import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+      }
+    } catch {
+      // import.meta not available
+    }
+  }
+
+  return { url, key };
+}
+
+const { url: supabaseUrl, key: supabaseAnonKey } = getSupabaseEnv();
 
 // Validate that environment variables are properly configured
 const isValidUrl = supabaseUrl &&
@@ -20,10 +50,40 @@ export const isSupabaseConfigured = !!(isValidUrl && isValidKey);
 const finalUrl = isSupabaseConfigured ? supabaseUrl : 'https://placeholder.supabase.co';
 const finalKey = isSupabaseConfigured ? supabaseAnonKey : 'placeholder-key';
 
+// Check environment mode
+function getEnvMode() {
+  // Try Node.js environment first
+  if (typeof process !== 'undefined' && process.env) {
+    return {
+      isDev: process.env.NODE_ENV === 'development',
+      isProd: process.env.NODE_ENV === 'production',
+    };
+  }
+
+  // Try Vite environment
+  try {
+    // @ts-ignore
+    if (typeof import.meta !== 'undefined' && import.meta.env) {
+      return {
+        // @ts-ignore
+        isDev: !!import.meta.env.DEV,
+        // @ts-ignore
+        isProd: !!import.meta.env.PROD,
+      };
+    }
+  } catch {
+    // import.meta not available
+  }
+
+  return { isDev: false, isProd: true };
+}
+
+const { isDev, isProd } = getEnvMode();
+
 // Use direct console logging to avoid circular dependencies during module initialization
-if (import.meta.env.DEV && !isSupabaseConfigured) {
+if (isDev && !isSupabaseConfigured) {
   console.warn('[Supabase] Not configured - using placeholder values');
-} else if (import.meta.env.DEV && typeof localStorage !== 'undefined' && localStorage.getItem('debug') === 'true') {
+} else if (isDev && typeof localStorage !== 'undefined' && localStorage.getItem('debug') === 'true') {
   console.log('[Supabase] Configuration:', {
     configured: isSupabaseConfigured,
     hasUrl: !!supabaseUrl,
@@ -35,10 +95,10 @@ if (import.meta.env.DEV && !isSupabaseConfigured) {
 }
 
 // Production validation - warn but don't crash
-if (import.meta.env.PROD && !isSupabaseConfigured) {
+if (isProd && !isSupabaseConfigured) {
   const errorMsg = 'WARNING: Supabase is not configured in production environment';
   console.error('[Supabase]', errorMsg);
-  console.error('[Supabase] Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your deployment environment');
+  console.error('[Supabase] Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in your deployment environment');
 }
 
 // Create client with auth persistence options

@@ -1,7 +1,5 @@
-'use client';
-
 import React, { useState, useCallback, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search,
@@ -58,7 +56,7 @@ const iconMap: Record<string, React.ElementType> = {
  * - Deep linking to any page
  */
 export function CommandPalette({ onClose }: CommandPaletteProps) {
-  const router = useRouter();
+  const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const { apps, isLoading } = useApps();
@@ -141,7 +139,7 @@ export function CommandPalette({ onClose }: CommandPaletteProps) {
     (cmd: CommandItem) => {
       onClose();
       if (cmd.href) {
-        router.push(cmd.href);
+        navigate(cmd.href);
       } else if (cmd.action) {
         cmd.action();
       }

@@ -1,7 +1,5 @@
-'use client';
-
 import React, { useState, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   X,
@@ -89,7 +87,7 @@ const categoryColors: Record<string, { bg: string; border: string; text: string 
  * - Animated planet/orbit styling
  */
 export function GalaxyMapModal({ onClose }: GalaxyMapModalProps) {
-  const router = useRouter();
+  const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const { apps, isLoading } = useApps();
@@ -136,7 +134,7 @@ export function GalaxyMapModal({ onClose }: GalaxyMapModalProps) {
     if (app.kind === 'external') {
       window.open(app.href, '_blank');
     } else {
-      router.push(app.href);
+      navigate(app.href);
     }
   };
 

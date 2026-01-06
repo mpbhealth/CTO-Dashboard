@@ -1,7 +1,5 @@
-'use client';
-
 import React, { useState, useRef, useCallback } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { 
   LayoutDashboard, 
@@ -56,7 +54,7 @@ function DockItem({
   mouseX: ReturnType<typeof useMotionValue<number>>;
   isActive: boolean;
 }) {
-  const router = useRouter();
+  const navigate = useNavigate();
   const ref = useRef<HTMLButtonElement>(null);
 
   // Calculate distance from mouse for magnification
@@ -78,8 +76,8 @@ function DockItem({
   const Icon = iconMap[item.icon] || LayoutDashboard;
 
   const handleClick = useCallback(() => {
-    router.push(item.href);
-  }, [router, item.href]);
+    navigate(item.href);
+  }, [navigate, item.href]);
 
   return (
     <motion.button
@@ -131,7 +129,8 @@ function DockItem({
  * - Right-click context menu (coming in future)
  */
 export function GalaxyDock({ onOpenMap }: GalaxyDockProps) {
-  const pathname = usePathname();
+  const location = useLocation();
+  const pathname = location.pathname;
   const { openPalette } = useShell();
   const { pinnedApps, isLoading } = usePinnedApps();
   

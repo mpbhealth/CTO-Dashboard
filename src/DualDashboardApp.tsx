@@ -7,6 +7,7 @@ import { CEOErrorBoundary } from './components/ceo/ErrorBoundary';
 import { useAuth } from './contexts/AuthContext';
 import { CEODashboardLayout } from './components/layouts/CEODashboardLayout';
 import Sidebar from './components/Sidebar';
+import { AppShell } from './components/shell/AppShell';
 import { buildRouteToTabMap, buildTabToRouteMap, getNavigationForRole } from './config/navigation';
 
 const CTOHome = lazy(() => import('./components/pages/ctod/CTOHome').then(m => ({ default: m.CTOHome })));
@@ -572,5 +573,9 @@ function DualDashboardContent() {
 }
 
 export default function DualDashboardApp() {
-  return <DualDashboardContent />;
+  return (
+    <AppShell>
+      <DualDashboardContent />
+    </AppShell>
+  );
 }

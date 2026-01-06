@@ -156,3 +156,4 @@ HAVING COUNT(*) > 1;
 -- Verify trigger exists
 SELECT * FROM pg_trigger WHERE tgname = 'on_auth_user_created';
 ```
+

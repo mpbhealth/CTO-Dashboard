@@ -195,6 +195,194 @@
     @apply bg-red-500 rounded-full;
     @apply border-2 border-white dark:border-slate-900;
   }
+
+  /* Dock Divider */
+  .dock-divider {
+    @apply w-px h-8 mx-1;
+    @apply bg-slate-300/50 dark:bg-slate-600/50;
+  }
+
+  /* Dock Search Bar Styles */
+  .dock-search-trigger {
+    @apply w-12 h-12 rounded-xl;
+    @apply flex items-center justify-center;
+    @apply bg-transparent hover:bg-white/20 dark:hover:bg-white/10;
+    @apply transition-colors duration-200;
+    @apply cursor-pointer;
+  }
+
+  .dock-search-expanded {
+    @apply relative;
+    @apply bg-white dark:bg-slate-800;
+    @apply rounded-xl shadow-lg;
+    @apply border border-slate-200 dark:border-slate-700;
+    @apply overflow-visible;
+  }
+
+  .dock-search-input-wrapper {
+    @apply flex items-center gap-2 px-3 py-2;
+  }
+
+  .dock-search-input {
+    @apply flex-1 bg-transparent;
+    @apply text-sm text-slate-900 dark:text-slate-100;
+    @apply placeholder-slate-400;
+    @apply outline-none;
+    @apply min-w-0;
+  }
+
+  .dock-search-close {
+    @apply p-1 rounded-md;
+    @apply text-slate-400 hover:text-slate-600 dark:hover:text-slate-300;
+    @apply hover:bg-slate-100 dark:hover:bg-slate-700;
+    @apply transition-colors;
+  }
+
+  .dock-search-results {
+    @apply absolute bottom-full left-0 right-0 mb-2;
+    @apply bg-white dark:bg-slate-800;
+    @apply rounded-xl shadow-xl;
+    @apply border border-slate-200 dark:border-slate-700;
+    @apply max-h-80 overflow-y-auto;
+    @apply py-2;
+  }
+
+  .dock-search-result {
+    @apply w-full flex items-center gap-3 px-3 py-2;
+    @apply text-left transition-colors duration-100;
+    @apply hover:bg-slate-50 dark:hover:bg-slate-700/50;
+  }
+
+  .dock-search-result.selected {
+    @apply bg-primary/10;
+  }
+
+  .dock-search-result-icon {
+    @apply w-8 h-8 rounded-lg;
+    @apply bg-slate-100 dark:bg-slate-700;
+    @apply flex items-center justify-center;
+    @apply text-slate-500 dark:text-slate-400;
+  }
+
+  .dock-search-result-content {
+    @apply flex-1 min-w-0;
+    @apply flex flex-col;
+  }
+
+  .dock-search-result-title {
+    @apply text-sm font-medium text-slate-900 dark:text-slate-100;
+    @apply truncate;
+  }
+
+  .dock-search-result-desc {
+    @apply text-xs text-slate-500 dark:text-slate-400;
+    @apply truncate;
+  }
+
+  .dock-search-no-results {
+    @apply absolute bottom-full left-0 right-0 mb-2;
+    @apply bg-white dark:bg-slate-800;
+    @apply rounded-xl shadow-xl;
+    @apply border border-slate-200 dark:border-slate-700;
+    @apply px-4 py-6 text-center;
+    @apply text-sm text-slate-500;
+  }
+
+  /* External Link Item Styles */
+  .dock-external-link {
+    @apply relative flex items-center justify-center;
+    @apply w-12 h-12 rounded-xl;
+    @apply bg-gradient-to-br from-slate-100 to-slate-200;
+    @apply dark:from-slate-700 dark:to-slate-800;
+    @apply transition-all duration-200 ease-out;
+    @apply cursor-pointer select-none;
+    @apply border border-slate-200/50 dark:border-slate-600/50;
+  }
+
+  .dock-external-link:hover {
+    @apply from-white to-slate-100;
+    @apply dark:from-slate-600 dark:to-slate-700;
+    @apply shadow-md;
+  }
+
+  .dock-external-badge {
+    @apply absolute -top-0.5 -right-0.5;
+    @apply w-4 h-4 rounded-full;
+    @apply bg-primary text-white;
+    @apply flex items-center justify-center;
+    @apply border border-white dark:border-slate-900;
+  }
+
+  /* Quick Action Item Styles */
+  .dock-quick-action {
+    @apply relative flex items-center justify-center;
+    @apply w-12 h-12 rounded-xl;
+    @apply transition-all duration-200 ease-out;
+    @apply cursor-pointer select-none;
+    @apply border border-transparent;
+  }
+
+  .dock-quick-action:hover {
+    @apply shadow-md;
+  }
+
+  .dock-quick-action:disabled {
+    @apply opacity-50 cursor-wait;
+  }
+
+  .dock-action-indicator {
+    @apply absolute top-1 right-1;
+    @apply w-2 h-2 rounded-full;
+    @apply bg-primary;
+    @apply animate-pulse;
+  }
+
+  /* Dock Item Tooltip */
+  .dock-item-tooltip {
+    @apply absolute -top-10 left-1/2 -translate-x-1/2;
+    @apply px-2 py-1 rounded-md;
+    @apply bg-slate-900 dark:bg-slate-700;
+    @apply text-xs text-white font-medium;
+    @apply whitespace-nowrap;
+    @apply pointer-events-none;
+    @apply opacity-0;
+    @apply transition-opacity duration-150;
+    @apply z-50;
+  }
+
+  .dock-item-tooltip::after {
+    content: '';
+    @apply absolute top-full left-1/2 -translate-x-1/2;
+    @apply border-4 border-transparent;
+    @apply border-t-slate-900 dark:border-t-slate-700;
+  }
+
+  .galaxy-dock-item:hover .dock-item-tooltip,
+  .dock-external-link:hover .dock-item-tooltip,
+  .dock-quick-action:hover .dock-item-tooltip {
+    @apply opacity-100;
+  }
+
+  /* Config Button */
+  .dock-config-btn {
+    @apply opacity-50 hover:opacity-100;
+  }
+
+  /* Dock Config Modal */
+  .dock-config-overlay {
+    @apply fixed inset-0 z-[100];
+    @apply flex items-center justify-center p-4;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+  }
+
+  .dock-config-modal {
+    @apply w-full max-w-2xl;
+    @apply bg-white dark:bg-slate-900;
+    @apply rounded-2xl shadow-2xl;
+    @apply border border-slate-200 dark:border-slate-700;
+    @apply overflow-hidden;
+  }
 }
 
 @layer utilities {

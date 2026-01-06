@@ -34,6 +34,25 @@ export class CEOErrorBoundary extends Component<Props, State> {
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error('[CEO ErrorBoundary] Caught error:', error, errorInfo);
 
+    // Auto-reload for chunk loading errors (deployment cache mismatch)
+    const isChunkError = 
+      error.message.includes('Failed to fetch dynamically imported module') ||
+      error.message.includes('Loading chunk') ||
+      error.message.includes('Loading CSS chunk') ||
+      error.message.includes('ChunkLoadError');
+
+    if (isChunkError) {
+      console.warn('[CEO ErrorBoundary] Chunk loading error detected, reloading page...');
+      // Clear cache and reload
+      if ('caches' in window) {
+        caches.keys().then((names) => {
+          names.forEach((name) => caches.delete(name));
+        });
+      }
+      window.location.reload();
+      return;
+    }
+
     this.setState({
       error,
       errorInfo,

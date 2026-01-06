@@ -685,3 +685,4 @@ export function DockConfigModal({ isOpen, onClose }: DockConfigModalProps) {
   );
 }
 
+

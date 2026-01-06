@@ -95,5 +95,5 @@ export const useAIAgents = () => useSupabaseTable({ table: 'ai_agents', orderBy:
 
 // Analytics hooks
 export const useEnrollments = () => useSupabaseTable({ table: 'member_enrollments', orderBy: 'created_at' });
-export const useMemberStatus = () => useSupabaseTable({ table: 'member_status_updates', orderBy: 'updated_at' });
+export const useMemberStatus = () => useSupabaseTable({ table: 'member_status_updates', orderBy: 'update_date' });
 

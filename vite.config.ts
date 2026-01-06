@@ -15,6 +15,8 @@ export default defineConfig({
       '@utils': path.resolve(__dirname, './src/utils'),
       '@types': path.resolve(__dirname, './src/types'),
     },
+    // Prevent multiple copies of React core from being bundled (common cause of scheduler/runtime crashes)
+    dedupe: ['react', 'react-dom', 'scheduler'],
   },
   optimizeDeps: {
     exclude: ['lucide-react'],
@@ -43,44 +45,56 @@ export default defineConfig({
         entryFileNames: 'assets/[name]-[hash].js',
         manualChunks: (id) => {
           if (id.includes('node_modules')) {
-            // Keep React and React-DOM together - CRITICAL for proper initialization
-            if (id.includes('react') || id.includes('react-dom')) {
+            // Normalize Windows paths so chunking is consistent across dev/build OSes.
+            // Rollup 'id' may contain backslashes on Windows.
+            const normalizedId = id.replace(/\\/g, '/');
+
+            // CRITICAL: Keep React core packages together to prevent scheduler conflicts
+            // This includes react, react-dom, and scheduler (react-dom's dependency)
+            if (
+              normalizedId.includes('/react/') ||
+              normalizedId.includes('/react-dom/') ||
+              normalizedId.includes('/scheduler/')
+            ) {
               return 'react-vendor';
             }
-            // FIX: Keep ALL Supabase packages together in ONE chunk to prevent circular dependencies
-            // This prevents the "Cannot access 'ae' before initialization" error in production
-            if (id.includes('@supabase')) {
-              return 'supabase-vendor';
-            }
-            // Router
-            if (id.includes('react-router')) {
+            // Router - must check before generic 'react' catch
+            if (normalizedId.includes('react-router')) {
               return 'router';
             }
-            // Charts - lazy load (heavy library)
-            if (id.includes('recharts')) {
-              return 'charts';
+            // FIX: Keep ALL Supabase packages together in ONE chunk to prevent circular dependencies
+            if (normalizedId.includes('@supabase')) {
+              return 'supabase-vendor';
+            }
+            // React Query (TanStack) - has React peer dep
+            if (normalizedId.includes('@tanstack')) {
+              return 'query';
             }
             // Office document libraries - lazy load (very heavy)
-            if (id.includes('xlsx') || id.includes('jspdf') || id.includes('pptxgenjs')) {
+            if (normalizedId.includes('xlsx') || normalizedId.includes('jspdf') || normalizedId.includes('pptxgenjs')) {
               return 'office';
             }
             // Data processing libraries
-            if (id.includes('papaparse') || id.includes('csv')) {
+            if (normalizedId.includes('papaparse') || normalizedId.includes('csv')) {
               return 'csv';
             }
-            // UI libraries - lazy load
-            if (id.includes('framer-motion') || id.includes('lucide-react')) {
+            // UI libraries - lazy load (framer-motion, lucide)
+            if (normalizedId.includes('framer-motion') || normalizedId.includes('lucide-react')) {
               return 'ui-libs';
             }
-            // React Query (TanStack)
-            if (id.includes('@tanstack')) {
-              return 'query';
-            }
             // Date libraries
-            if (id.includes('dayjs')) {
+            if (normalizedId.includes('dayjs')) {
               return 'date';
             }
-            // Everything else
+            // Radix UI components - keep together
+            if (normalizedId.includes('@radix-ui')) {
+              return 'radix';
+            }
+            // DnD Kit
+            if (normalizedId.includes('@dnd-kit')) {
+              return 'dnd';
+            }
+            // Everything else goes to vendor
             return 'vendor';
           }
         },

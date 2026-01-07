@@ -56,6 +56,7 @@ async function fetchExternalLinks(
   dashboardContext?: DashboardContext
 ): Promise<ExternalLink[]> {
   try {
+    // First try with dashboard_context filter (if column exists)
     let query = supabase
       .from('external_project_links')
       .select('*')
@@ -68,14 +69,36 @@ async function fetchExternalLinks(
       query = query.or(`dashboard_context.eq.${dashboardContext},dashboard_context.eq.global,dashboard_context.is.null`);
     }
     
-    const { data, error } = await query.order('sort_order', { ascending: true });
+    let { data, error } = await query.order('sort_order', { ascending: true });
+
+    // If error mentions dashboard_context column, retry without the filter
+    // This handles cases where the migration hasn't been applied yet
+    if (error && error.message?.includes('dashboard_context')) {
+      console.warn('dashboard_context column not found, fetching all links');
+      const fallbackQuery = supabase
+        .from('external_project_links')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('is_active', true);
+      
+      const fallbackResult = await fallbackQuery.order('sort_order', { ascending: true });
+      data = fallbackResult.data;
+      error = fallbackResult.error;
+    }
 
     if (error) {
       console.warn('Error fetching external links:', error.message);
       return defaultExternalLinks;
     }
 
-    return (data as ExternalLink[]) || defaultExternalLinks;
+    // Ensure dashboard_context has a default value for older records
+    const normalizedData = (data || []).map(link => ({
+      ...link,
+      dashboard_context: link.dashboard_context || 'global',
+      thumbnail_url: link.thumbnail_url || null,
+    }));
+
+    return normalizedData as ExternalLink[];
   } catch (err) {
     console.warn('Failed to fetch external links:', err);
     return defaultExternalLinks;
@@ -139,7 +162,8 @@ export function useExternalLinks(dashboardContext?: DashboardContext) {
         ? Math.max(...externalLinks.map((l) => l.sort_order)) 
         : -1;
 
-      const { data, error } = await supabase
+      // Try with new columns first
+      let { data, error } = await supabase
         .from('external_project_links')
         .insert({
           user_id: user.id,
@@ -157,6 +181,28 @@ export function useExternalLinks(dashboardContext?: DashboardContext) {
         .select()
         .single();
 
+      // Retry without new columns if they don't exist yet
+      if (error && (error.message?.includes('dashboard_context') || error.message?.includes('thumbnail_url'))) {
+        console.warn('New columns not found, inserting without them');
+        const fallbackResult = await supabase
+          .from('external_project_links')
+          .insert({
+            user_id: user.id,
+            name: input.name,
+            url: input.url,
+            icon: input.icon || 'Globe',
+            description: input.description || null,
+            category: input.category || 'general',
+            sort_order: input.sort_order ?? maxOrder + 1,
+            is_active: input.is_active ?? true,
+            open_in_new_tab: input.open_in_new_tab ?? true,
+          })
+          .select()
+          .single();
+        data = fallbackResult.data;
+        error = fallbackResult.error;
+      }
+
       if (error) throw error;
       return data as ExternalLink;
     },
@@ -171,9 +217,32 @@ export function useExternalLinks(dashboardContext?: DashboardContext) {
     mutationFn: async ({ id, input }: { id: string; input: Partial<ExternalLinkInput> }) => {
       if (!user?.id) throw new Error('Not authenticated');
 
-      const { data, error } = await supabase
+      // Build update object with new columns
+      const updateData = {
+        ...(input.name !== undefined && { name: input.name }),
+        ...(input.url !== undefined && { url: input.url }),
+        ...(input.icon !== undefined && { icon: input.icon }),
+        ...(input.description !== undefined && { description: input.description }),
+        ...(input.category !== undefined && { category: input.category }),
+        ...(input.sort_order !== undefined && { sort_order: input.sort_order }),
+        ...(input.is_active !== undefined && { is_active: input.is_active }),
+        ...(input.open_in_new_tab !== undefined && { open_in_new_tab: input.open_in_new_tab }),
+        ...(input.dashboard_context !== undefined && { dashboard_context: input.dashboard_context }),
+        ...(input.thumbnail_url !== undefined && { thumbnail_url: input.thumbnail_url }),
+      };
+
+      let { data, error } = await supabase
         .from('external_project_links')
-        .update({
+        .update(updateData)
+        .eq('id', id)
+        .eq('user_id', user.id)
+        .select()
+        .single();
+
+      // Retry without new columns if they don't exist yet
+      if (error && (error.message?.includes('dashboard_context') || error.message?.includes('thumbnail_url'))) {
+        console.warn('New columns not found, updating without them');
+        const fallbackData = {
           ...(input.name !== undefined && { name: input.name }),
           ...(input.url !== undefined && { url: input.url }),
           ...(input.icon !== undefined && { icon: input.icon }),
@@ -182,13 +251,17 @@ export function useExternalLinks(dashboardContext?: DashboardContext) {
           ...(input.sort_order !== undefined && { sort_order: input.sort_order }),
           ...(input.is_active !== undefined && { is_active: input.is_active }),
           ...(input.open_in_new_tab !== undefined && { open_in_new_tab: input.open_in_new_tab }),
-          ...(input.dashboard_context !== undefined && { dashboard_context: input.dashboard_context }),
-          ...(input.thumbnail_url !== undefined && { thumbnail_url: input.thumbnail_url }),
-        })
-        .eq('id', id)
-        .eq('user_id', user.id)
-        .select()
-        .single();
+        };
+        const fallbackResult = await supabase
+          .from('external_project_links')
+          .update(fallbackData)
+          .eq('id', id)
+          .eq('user_id', user.id)
+          .select()
+          .single();
+        data = fallbackResult.data;
+        error = fallbackResult.error;
+      }
 
       if (error) throw error;
       return data as ExternalLink;

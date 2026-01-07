@@ -517,27 +517,29 @@ export function CommandCenter() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 relative overflow-hidden">
-      {/* Animated Star Field Background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Nebula gradients */}
-        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-violet-900/20 rounded-full blur-[120px] animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-cyan-900/20 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '1s' }} />
-        <div className="absolute top-1/2 left-1/2 w-[400px] h-[400px] bg-pink-900/10 rounded-full blur-[80px] animate-pulse" style={{ animationDelay: '2s' }} />
-        
-        {/* Star particles */}
-        <div className="absolute inset-0" style={{
-          backgroundImage: `radial-gradient(2px 2px at 20px 30px, white, transparent),
-                           radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
-                           radial-gradient(1px 1px at 90px 40px, rgba(255,255,255,0.6), transparent),
-                           radial-gradient(2px 2px at 130px 80px, white, transparent),
-                           radial-gradient(1px 1px at 160px 120px, rgba(255,255,255,0.7), transparent)`,
-          backgroundSize: '200px 200px',
-        }} />
-      </div>
+    <div className="w-full h-full">
+      {/* Dark themed container with rounded corners */}
+      <div className="bg-slate-950 rounded-2xl relative overflow-hidden min-h-[calc(100vh-120px)]">
+        {/* Animated Star Field Background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none rounded-2xl">
+          {/* Nebula gradients */}
+          <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-violet-900/20 rounded-full blur-[120px] animate-pulse" />
+          <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-cyan-900/20 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '1s' }} />
+          <div className="absolute top-1/2 left-1/2 w-[400px] h-[400px] bg-pink-900/10 rounded-full blur-[80px] animate-pulse" style={{ animationDelay: '2s' }} />
+          
+          {/* Star particles */}
+          <div className="absolute inset-0" style={{
+            backgroundImage: `radial-gradient(2px 2px at 20px 30px, white, transparent),
+                             radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+                             radial-gradient(1px 1px at 90px 40px, rgba(255,255,255,0.6), transparent),
+                             radial-gradient(2px 2px at 130px 80px, white, transparent),
+                             radial-gradient(1px 1px at 160px 120px, rgba(255,255,255,0.7), transparent)`,
+            backgroundSize: '200px 200px',
+          }} />
+        </div>
 
-      {/* Content */}
-      <div className="relative z-10 px-4 md:px-8 py-6 md:py-8 max-w-7xl mx-auto">
+        {/* Content */}
+        <div className="relative z-10 px-4 md:px-8 py-6 md:py-8">
         {/* Header */}
         <motion.div
           className="mb-8"
@@ -716,6 +718,7 @@ export function CommandCenter() {
             })}
           </div>
         )}
+        </div>
       </div>
 
       {/* Add/Edit Modal */}

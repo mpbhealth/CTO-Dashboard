@@ -160,6 +160,7 @@ const BlogAdmin = lazy(() => import('./components/pages/admin/BlogAdmin').then(m
 const FAQAdmin = lazy(() => import('./components/pages/admin/FAQAdmin').then(m => ({ default: m.FAQAdmin })));
 const NotificationsAdmin = lazy(() => import('./components/pages/admin/NotificationsAdmin').then(m => ({ default: m.NotificationsAdmin })));
 const AdminSystemSettings = lazy(() => import('./components/pages/admin/SystemSettings').then(m => ({ default: m.SystemSettings })));
+const ProviderDirectory = lazy(() => import('./components/pages/admin/ProviderDirectory').then(m => ({ default: m.ProviderDirectory })));
 
 const LoadingFallback = () => (
   <div 
@@ -569,6 +570,7 @@ function DualDashboardContent() {
             <Route path="/admin/faq" element={<AdminLayout><FAQAdmin /></AdminLayout>} />
             <Route path="/admin/notifications" element={<AdminLayout><NotificationsAdmin /></AdminLayout>} />
             <Route path="/admin/settings" element={<AdminLayout><AdminSystemSettings /></AdminLayout>} />
+            <Route path="/admin/providers" element={<AdminLayout><ProviderDirectory /></AdminLayout>} />
 
             <Route path="*" element={<RoleBasedRedirect />} />
           </Routes>

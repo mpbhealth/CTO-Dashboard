@@ -7,4 +7,5 @@ export { BlogAdmin } from './BlogAdmin';
 export { FAQAdmin } from './FAQAdmin';
 export { NotificationsAdmin } from './NotificationsAdmin';
 export { SystemSettings } from './SystemSettings';
+export { ProviderDirectory } from './ProviderDirectory';
 

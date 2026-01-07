@@ -275,6 +275,84 @@ async function deleteCalendarEvent(
   }
 }
 
+async function updateCalendarEvent(
+  accessToken: string,
+  eventId: string,
+  event: {
+    subject?: string;
+    body?: string;
+    start?: string;
+    end?: string;
+    isAllDay?: boolean;
+    location?: string;
+    attendees?: string[];
+  },
+  userEmail?: string
+): Promise<CalendarEvent> {
+  const graphUrl = userEmail
+    ? `https://graph.microsoft.com/v1.0/users/${userEmail}/calendar/events/${eventId}`
+    : `https://graph.microsoft.com/v1.0/me/calendar/events/${eventId}`;
+
+  const eventBody: any = {};
+
+  if (event.subject !== undefined) {
+    eventBody.subject = event.subject;
+  }
+
+  if (event.start !== undefined) {
+    eventBody.start = {
+      dateTime: event.start,
+      timeZone: 'UTC',
+    };
+  }
+
+  if (event.end !== undefined) {
+    eventBody.end = {
+      dateTime: event.end,
+      timeZone: 'UTC',
+    };
+  }
+
+  if (event.isAllDay !== undefined) {
+    eventBody.isAllDay = event.isAllDay;
+  }
+
+  if (event.body !== undefined) {
+    eventBody.body = {
+      contentType: 'text',
+      content: event.body,
+    };
+  }
+
+  if (event.location !== undefined) {
+    eventBody.location = {
+      displayName: event.location,
+    };
+  }
+
+  if (event.attendees && event.attendees.length > 0) {
+    eventBody.attendees = event.attendees.map(email => ({
+      emailAddress: { address: email },
+      type: 'required',
+    }));
+  }
+
+  const response = await fetch(graphUrl, {
+    method: 'PATCH',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(eventBody),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to update event: ${response.statusText}`);
+  }
+
+  return await response.json();
+}
+
 Deno.serve(async (req: Request) => {
   // Handle CORS preflight requests - must return 200 OK for CORS to pass
   if (req.method === 'OPTIONS') {
@@ -368,6 +446,14 @@ Deno.serve(async (req: Request) => {
         await deleteCalendarEvent(accessToken, eventId);
         
         return new Response(JSON.stringify({ success: true }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      case 'updateEvent': {
+        const updatedEvent = await updateCalendarEvent(accessToken, eventId, event);
+        
+        return new Response(JSON.stringify({ event: updatedEvent }), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }

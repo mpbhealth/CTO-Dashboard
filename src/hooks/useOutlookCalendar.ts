@@ -320,6 +320,58 @@ export function useOutlookCalendar(options: UseOutlookCalendarOptions = {}) {
     }
   };
 
+  const updateEvent = async (eventId: string, eventData: Partial<CalendarEventCreate>) => {
+    if (isInDemoMode) {
+      // Update the event locally in demo mode
+      setEvents(prev => prev.map(e => {
+        if (e.id !== eventId) return e;
+        return {
+          ...e,
+          subject: eventData.subject || e.subject,
+          start: eventData.start ? { dateTime: eventData.start, timeZone: 'UTC' } : e.start,
+          end: eventData.end ? { dateTime: eventData.end, timeZone: 'UTC' } : e.end,
+          isAllDay: eventData.isAllDay ?? e.isAllDay,
+          location: eventData.location ? { displayName: eventData.location } : e.location,
+        };
+      }));
+      return;
+    }
+
+    try {
+      const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/outlook-calendar`;
+      
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({
+          action: 'updateEvent',
+          eventId,
+          event: eventData,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to update event: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      // Refresh events after update
+      await fetchEvents();
+      return data.event;
+    } catch (err) {
+      console.error('[useOutlookCalendar] Error updating event:', err);
+      throw err;
+    }
+  };
+
   // Get events for a specific date
   const getEventsForDate = useCallback((date: Date): CalendarEvent[] => {
     const dateStr = date.toISOString().split('T')[0];
@@ -359,6 +411,7 @@ export function useOutlookCalendar(options: UseOutlookCalendarOptions = {}) {
     syncStatus,
     fetchEvents,
     createEvent,
+    updateEvent,
     deleteEvent,
     getEventsForDate,
     getTodayEvents,

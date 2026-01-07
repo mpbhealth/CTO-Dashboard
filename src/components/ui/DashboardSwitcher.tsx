@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, 
@@ -6,20 +6,22 @@ import {
   Building2, 
   Monitor, 
   Globe,
-  Check
+  Check,
+  Rocket
 } from 'lucide-react';
 
 interface Dashboard {
   id: string;
   name: string;
   description: string;
-  path: string;
+  path: string | ((currentPath: string) => string);
   icon: React.ElementType;
   color: string;
   gradient: string;
+  isDynamic?: boolean;
 }
 
-const dashboards: Dashboard[] = [
+const baseDashboards: Dashboard[] = [
   {
     id: 'ceo',
     name: 'CEO Dashboard',
@@ -37,6 +39,22 @@ const dashboards: Dashboard[] = [
     icon: Monitor,
     color: 'text-slate-700',
     gradient: 'from-slate-700 to-slate-800'
+  },
+  {
+    id: 'command-center',
+    name: 'Command Center',
+    description: 'Your starship fleet of digital assets',
+    path: (currentPath: string) => {
+      // Navigate to the Command Center for the current dashboard context
+      if (currentPath.startsWith('/ceod')) {
+        return '/ceod/command-center';
+      }
+      return '/ctod/command-center';
+    },
+    icon: Rocket,
+    color: 'text-violet-600',
+    gradient: 'from-violet-500 to-cyan-500',
+    isDynamic: true
   },
   {
     id: 'admin',
@@ -60,11 +78,22 @@ export function DashboardSwitcher({ variant = 'dropdown', className = '' }: Dash
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  // Resolve dynamic paths for dashboards
+  const dashboards = useMemo(() => {
+    return baseDashboards.map(d => ({
+      ...d,
+      resolvedPath: typeof d.path === 'function' ? d.path(location.pathname) : d.path
+    }));
+  }, [location.pathname]);
+
   // Determine current dashboard based on route
-  const getCurrentDashboard = (): Dashboard => {
+  const getCurrentDashboard = () => {
     const path = location.pathname;
     if (path.startsWith('/admin')) {
       return dashboards.find(d => d.id === 'admin')!;
+    }
+    if (path.includes('/command-center')) {
+      return dashboards.find(d => d.id === 'command-center')!;
     }
     if (path.startsWith('/ceod')) {
       return dashboards.find(d => d.id === 'ceo')!;
@@ -106,9 +135,9 @@ export function DashboardSwitcher({ variant = 'dropdown', className = '' }: Dash
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const handleSwitch = (dashboard: Dashboard) => {
+  const handleSwitch = (dashboard: typeof dashboards[0]) => {
     setIsOpen(false);
-    navigate(dashboard.path);
+    navigate(dashboard.resolvedPath);
   };
 
   const CurrentIcon = currentDashboard.icon;
@@ -261,10 +290,21 @@ export function FloatingDashboardSwitcher() {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const getCurrentDashboard = (): Dashboard => {
+  // Resolve dynamic paths for dashboards
+  const dashboards = useMemo(() => {
+    return baseDashboards.map(d => ({
+      ...d,
+      resolvedPath: typeof d.path === 'function' ? d.path(location.pathname) : d.path
+    }));
+  }, [location.pathname]);
+
+  const getCurrentDashboard = () => {
     const path = location.pathname;
     if (path.startsWith('/admin')) {
       return dashboards.find(d => d.id === 'admin')!;
+    }
+    if (path.includes('/command-center')) {
+      return dashboards.find(d => d.id === 'command-center')!;
     }
     if (path.startsWith('/ceod')) {
       return dashboards.find(d => d.id === 'ceo')!;
@@ -288,9 +328,9 @@ export function FloatingDashboardSwitcher() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleSwitch = (dashboard: Dashboard) => {
+  const handleSwitch = (dashboard: typeof dashboards[0]) => {
     setIsOpen(false);
-    navigate(dashboard.path);
+    navigate(dashboard.resolvedPath);
   };
 
   const CurrentIcon = currentDashboard.icon;

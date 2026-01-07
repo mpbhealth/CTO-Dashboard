@@ -119,6 +119,7 @@ const CEODepartmentFinance = lazy(() => import('./components/pages/ceod/CEODepar
 const CEODepartmentSaudeMAX = lazy(() => import('./components/pages/ceod/CEODepartmentSaudeMAX').then(m => ({ default: m.CEODepartmentSaudeMAX })));
 const SharedOverview = lazy(() => import('./components/pages/shared/SharedOverview').then(m => ({ default: m.SharedOverview })));
 const AuditLogViewer = lazy(() => import('./components/pages/shared/AuditLogViewer').then(m => ({ default: m.AuditLogViewer })));
+const CommandCenter = lazy(() => import('./components/pages/shared/CommandCenter').then(m => ({ default: m.CommandCenter })));
 const AuthDiagnostics = lazy(() => import('./components/pages/AuthDiagnostics'));
 const DiagnosticsDashboard = lazy(() => import('./components/pages/DiagnosticsDashboard'));
 const Settings = lazy(() => import('./components/pages/Settings'));
@@ -449,6 +450,9 @@ function DualDashboardContent() {
             {/* CTO Settings */}
             <Route path="/ctod/settings" element={<CTOOnly><Settings /></CTOOnly>} />
 
+            {/* CTO Command Center */}
+            <Route path="/ctod/command-center" element={<CTOOnly><CommandCenter /></CTOOnly>} />
+
             <Route path="/ceod/home" element={<CEOOnly><CEODashboardLayout><CEOHome /></CEODashboardLayout></CEOOnly>} />
             <Route path="/ceod/organizer" element={<CEOOnly><CEODashboardLayout><DailyOrganizer dashboardRole="ceo" /></CEODashboardLayout></CEOOnly>} />
 
@@ -521,6 +525,9 @@ function DualDashboardContent() {
 
             {/* CEO Settings */}
             <Route path="/ceod/settings" element={<CEOOnly><CEODashboardLayout><Settings /></CEODashboardLayout></CEOOnly>} />
+
+            {/* CEO Command Center */}
+            <Route path="/ceod/command-center" element={<CEOOnly><CEODashboardLayout><CommandCenter /></CEODashboardLayout></CEOOnly>} />
 
             <Route path="/shared/overview" element={<SharedOverview />} />
             <Route path="/shared/audit" element={<AuditLogViewer />} />

@@ -3,6 +3,11 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 
 /**
+ * Dashboard context for filtering links
+ */
+export type DashboardContext = 'ceo' | 'cto' | 'global';
+
+/**
  * External project link type
  */
 export interface ExternalLink {
@@ -16,6 +21,8 @@ export interface ExternalLink {
   sort_order: number;
   is_active: boolean;
   open_in_new_tab: boolean;
+  dashboard_context: DashboardContext;
+  thumbnail_url: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -32,6 +39,8 @@ export interface ExternalLinkInput {
   sort_order?: number;
   is_active?: boolean;
   open_in_new_tab?: boolean;
+  dashboard_context?: DashboardContext;
+  thumbnail_url?: string;
 }
 
 /**
@@ -40,16 +49,26 @@ export interface ExternalLinkInput {
 const defaultExternalLinks: ExternalLink[] = [];
 
 /**
- * Fetch external links for the current user
+ * Fetch external links for the current user, optionally filtered by dashboard context
  */
-async function fetchExternalLinks(userId: string): Promise<ExternalLink[]> {
+async function fetchExternalLinks(
+  userId: string, 
+  dashboardContext?: DashboardContext
+): Promise<ExternalLink[]> {
   try {
-    const { data, error } = await supabase
+    let query = supabase
       .from('external_project_links')
       .select('*')
       .eq('user_id', userId)
-      .eq('is_active', true)
-      .order('sort_order', { ascending: true });
+      .eq('is_active', true);
+    
+    // Filter by dashboard context if provided
+    if (dashboardContext) {
+      // Include links for the specific dashboard OR global links
+      query = query.or(`dashboard_context.eq.${dashboardContext},dashboard_context.eq.global,dashboard_context.is.null`);
+    }
+    
+    const { data, error } = await query.order('sort_order', { ascending: true });
 
     if (error) {
       console.warn('Error fetching external links:', error.message);
@@ -64,16 +83,21 @@ async function fetchExternalLinks(userId: string): Promise<ExternalLink[]> {
 }
 
 /**
- * Hook to manage external project links for the command dock
+ * Hook to manage external project links for the command dock and Command Center
  * 
+ * @param dashboardContext - Optional filter for CEO/CTO specific links
  * @returns Object containing external links, loading state, and CRUD functions
  * 
  * @example
  * ```tsx
- * const { externalLinks, addLink, updateLink, deleteLink, reorderLinks } = useExternalLinks();
+ * // Get all links (for dock)
+ * const { externalLinks } = useExternalLinks();
+ * 
+ * // Get CEO-specific links (for Command Center)
+ * const { externalLinks } = useExternalLinks('ceo');
  * 
  * // Add a new link
- * await addLink({ name: 'GitHub', url: 'https://github.com', icon: 'Github' });
+ * await addLink({ name: 'GitHub', url: 'https://github.com', icon: 'Github', dashboard_context: 'cto' });
  * 
  * // Update a link
  * await updateLink('link-id', { name: 'New Name' });
@@ -85,11 +109,11 @@ async function fetchExternalLinks(userId: string): Promise<ExternalLink[]> {
  * await reorderLinks(['link-1', 'link-2', 'link-3']);
  * ```
  */
-export function useExternalLinks() {
+export function useExternalLinks(dashboardContext?: DashboardContext) {
   const { user, profileReady } = useAuth();
   const queryClient = useQueryClient();
 
-  const queryKey = ['external-links', user?.id];
+  const queryKey = ['external-links', user?.id, dashboardContext];
 
   // Fetch external links
   const {
@@ -99,7 +123,7 @@ export function useExternalLinks() {
     refetch,
   } = useQuery({
     queryKey,
-    queryFn: () => fetchExternalLinks(user!.id),
+    queryFn: () => fetchExternalLinks(user!.id, dashboardContext),
     enabled: profileReady && !!user?.id,
     staleTime: 1000 * 60 * 5, // 5 minutes
     gcTime: 1000 * 60 * 30, // 30 minutes
@@ -127,6 +151,8 @@ export function useExternalLinks() {
           sort_order: input.sort_order ?? maxOrder + 1,
           is_active: input.is_active ?? true,
           open_in_new_tab: input.open_in_new_tab ?? true,
+          dashboard_context: input.dashboard_context || dashboardContext || 'global',
+          thumbnail_url: input.thumbnail_url || null,
         })
         .select()
         .single();
@@ -135,7 +161,8 @@ export function useExternalLinks() {
       return data as ExternalLink;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey });
+      // Invalidate all external links queries to refresh everywhere
+      queryClient.invalidateQueries({ queryKey: ['external-links'] });
     },
   });
 
@@ -155,6 +182,8 @@ export function useExternalLinks() {
           ...(input.sort_order !== undefined && { sort_order: input.sort_order }),
           ...(input.is_active !== undefined && { is_active: input.is_active }),
           ...(input.open_in_new_tab !== undefined && { open_in_new_tab: input.open_in_new_tab }),
+          ...(input.dashboard_context !== undefined && { dashboard_context: input.dashboard_context }),
+          ...(input.thumbnail_url !== undefined && { thumbnail_url: input.thumbnail_url }),
         })
         .eq('id', id)
         .eq('user_id', user.id)
@@ -165,7 +194,7 @@ export function useExternalLinks() {
       return data as ExternalLink;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey });
+      queryClient.invalidateQueries({ queryKey: ['external-links'] });
     },
   });
 
@@ -183,7 +212,7 @@ export function useExternalLinks() {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey });
+      queryClient.invalidateQueries({ queryKey: ['external-links'] });
     },
   });
 
@@ -228,7 +257,7 @@ export function useExternalLinks() {
       }
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey });
+      queryClient.invalidateQueries({ queryKey: ['external-links'] });
     },
   });
 
@@ -248,4 +277,3 @@ export function useExternalLinks() {
     isReordering: reorderMutation.isPending,
   };
 }
-

@@ -13,9 +13,13 @@ import {
   ExternalLink,
   AlertCircle,
   CheckCircle,
-  X
+  X,
+  Settings,
+  Link2
 } from 'lucide-react';
 import { useOutlookCalendar, CalendarEvent, CalendarEventCreate } from '../../hooks/useOutlookCalendar';
+import OutlookSetupModal from './OutlookSetupModal';
+import EventDetailModal from './EventDetailModal';
 
 interface OrganizerCalendarProps {
   compact?: boolean;
@@ -31,9 +35,14 @@ export default function OrganizerCalendar({ compact = false }: OrganizerCalendar
     syncStatus,
     fetchEvents,
     createEvent,
+    deleteEvent,
     getTodayEvents,
     refresh
   } = useOutlookCalendar({ autoRefresh: true });
+
+  const [showOutlookSetup, setShowOutlookSetup] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
+  const [showEventDetail, setShowEventDetail] = useState(false);
 
   const [currentWeekStart, setCurrentWeekStart] = useState(() => {
     const now = new Date();
@@ -205,10 +214,13 @@ export default function OrganizerCalendar({ compact = false }: OrganizerCalendar
 
           <div className="flex items-center space-x-2">
             {!isConnected && (
-              <span className="text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded flex items-center space-x-1">
-                <AlertCircle className="w-3 h-3" />
-                <span>{isInDemoMode ? 'Demo Mode' : 'Outlook not connected'}</span>
-              </span>
+              <button
+                onClick={() => setShowOutlookSetup(true)}
+                className="text-xs text-amber-600 bg-amber-50 hover:bg-amber-100 px-2 py-1 rounded flex items-center space-x-1 transition-colors cursor-pointer"
+              >
+                <Link2 className="w-3 h-3" />
+                <span>{isInDemoMode ? 'Demo Mode' : 'Connect Outlook'}</span>
+              </button>
             )}
             {isConnected && (
               <span className="text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded flex items-center space-x-1">
@@ -223,6 +235,15 @@ export default function OrganizerCalendar({ compact = false }: OrganizerCalendar
               <Plus className="w-4 h-4" />
               <span>Add Event</span>
             </button>
+            {!isConnected && (
+              <button
+                onClick={() => setShowOutlookSetup(true)}
+                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                title="Configure Outlook"
+              >
+                <Settings className="w-4 h-4" />
+              </button>
+            )}
             <button
               onClick={refresh}
               disabled={loading}
@@ -301,7 +322,11 @@ export default function OrganizerCalendar({ compact = false }: OrganizerCalendar
                       key={event.id}
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      className={`p-1.5 rounded text-xs cursor-pointer hover:shadow-sm transition-shadow ${getEventColor(event)}`}
+                      onClick={() => {
+                        setSelectedEvent(event);
+                        setShowEventDetail(true);
+                      }}
+                      className={`p-1.5 rounded text-xs cursor-pointer hover:shadow-md hover:scale-105 transition-all ${getEventColor(event)}`}
                       title={`${event.subject}\n${formatTime(event.start.dateTime)} - ${formatTime(event.end.dateTime)}`}
                     >
                       <div className="font-medium truncate">{event.subject}</div>
@@ -337,7 +362,11 @@ export default function OrganizerCalendar({ compact = false }: OrganizerCalendar
             todayEvents.map(event => (
               <div
                 key={event.id}
-                className={`p-3 rounded-lg border ${getEventColor(event)}`}
+                onClick={() => {
+                  setSelectedEvent(event);
+                  setShowEventDetail(true);
+                }}
+                className={`p-3 rounded-lg border cursor-pointer hover:shadow-md transition-all ${getEventColor(event)}`}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
@@ -366,6 +395,7 @@ export default function OrganizerCalendar({ compact = false }: OrganizerCalendar
                       href={event.webLink}
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={e => e.stopPropagation()}
                       className="p-1 text-slate-400 hover:text-slate-600"
                     >
                       <ExternalLink className="w-4 h-4" />
@@ -500,6 +530,29 @@ export default function OrganizerCalendar({ compact = false }: OrganizerCalendar
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Outlook Setup Modal */}
+      <OutlookSetupModal
+        isOpen={showOutlookSetup}
+        onClose={() => setShowOutlookSetup(false)}
+        onSuccess={() => {
+          refresh();
+        }}
+      />
+
+      {/* Event Detail Modal */}
+      <EventDetailModal
+        event={selectedEvent}
+        isOpen={showEventDetail}
+        onClose={() => {
+          setShowEventDetail(false);
+          setSelectedEvent(null);
+        }}
+        onDelete={async (eventId) => {
+          await deleteEvent(eventId);
+        }}
+        isConnected={isConnected}
+      />
     </div>
   );
 }

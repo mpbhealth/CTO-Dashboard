@@ -147,10 +147,7 @@ export default function NotepadWithSharing({
     try {
       setSaving(true);
       setError(null);
-      await updateNote(editingNote.id, {
-        title: editTitle || undefined,
-        content: editContent
-      });
+      await updateNote(editingNote.id, editContent, editTitle || undefined);
       setEditingNote(null);
       setEditTitle('');
       setEditContent('');

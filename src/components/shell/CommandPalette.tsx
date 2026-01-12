@@ -144,7 +144,7 @@ export function CommandPalette({ onClose }: CommandPaletteProps) {
         cmd.action();
       }
     },
-    [router, onClose]
+    [navigate, onClose]
   );
 
   // Keyboard navigation

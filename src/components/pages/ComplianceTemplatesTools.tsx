@@ -154,7 +154,7 @@ const ComplianceTemplatesTools: React.FC = () => {
 
       {/* Evidence Uploader */}
       {showUploader && (
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Upload Evidence</h2>
           <EvidenceUploader
             category="templates-tools"
@@ -180,7 +180,7 @@ const ComplianceTemplatesTools: React.FC = () => {
       </div>
 
       {/* Templates Grid */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Available Templates</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -283,7 +283,7 @@ const ComplianceTemplatesTools: React.FC = () => {
       </div>
 
       {/* Quick Reference Guide */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Reference</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

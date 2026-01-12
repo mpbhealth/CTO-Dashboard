@@ -325,56 +325,56 @@ export function CEOFinance() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
             <div className="flex items-center justify-between mb-2">
-              <TrendingUp className="text-green-600" size={20} />
-              <span className="text-xs font-medium text-gray-500">REVENUE</span>
+              <TrendingUp className="text-emerald-600" size={20} />
+              <span className="text-xs font-medium text-slate-500">REVENUE</span>
             </div>
-            <div className="text-2xl font-bold text-gray-900">{formatCurrency(metrics.totalRevenue)}</div>
-            <div className="text-sm text-gray-500">Total Revenue</div>
+            <div className="text-2xl font-bold text-slate-900">{formatCurrency(metrics.totalRevenue)}</div>
+            <div className="text-sm text-slate-500">Total Revenue</div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
             <div className="flex items-center justify-between mb-2">
               <TrendingDown className="text-red-600" size={20} />
-              <span className="text-xs font-medium text-gray-500">EXPENSES</span>
+              <span className="text-xs font-medium text-slate-500">EXPENSES</span>
             </div>
-            <div className="text-2xl font-bold text-gray-900">{formatCurrency(metrics.totalExpenses)}</div>
-            <div className="text-sm text-gray-500">Total Expenses</div>
+            <div className="text-2xl font-bold text-slate-900">{formatCurrency(metrics.totalExpenses)}</div>
+            <div className="text-sm text-slate-500">Total Expenses</div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
             <div className="flex items-center justify-between mb-2">
               <DollarSign className="text-indigo-500" size={20} />
-              <span className="text-xs font-medium text-gray-500">AR</span>
+              <span className="text-xs font-medium text-slate-500">AR</span>
             </div>
-            <div className="text-2xl font-bold text-gray-900">{formatCurrency(metrics.accountsReceivable)}</div>
-            <div className="text-sm text-gray-500">Receivables</div>
+            <div className="text-2xl font-bold text-slate-900">{formatCurrency(metrics.accountsReceivable)}</div>
+            <div className="text-sm text-slate-500">Receivables</div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
             <div className="flex items-center justify-between mb-2">
-              <AlertCircle className="text-orange-600" size={20} />
-              <span className="text-xs font-medium text-gray-500">AP</span>
+              <AlertCircle className="text-amber-600" size={20} />
+              <span className="text-xs font-medium text-slate-500">AP</span>
             </div>
-            <div className="text-2xl font-bold text-gray-900">{formatCurrency(metrics.accountsPayable)}</div>
-            <div className="text-sm text-gray-500">Payables</div>
+            <div className="text-2xl font-bold text-slate-900">{formatCurrency(metrics.accountsPayable)}</div>
+            <div className="text-sm text-slate-500">Payables</div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
             <div className="flex items-center justify-between mb-2">
               <TrendingUp className="text-purple-600" size={20} />
-              <span className="text-xs font-medium text-gray-500">PROFIT</span>
+              <span className="text-xs font-medium text-slate-500">PROFIT</span>
             </div>
-            <div className="text-2xl font-bold text-gray-900">{formatCurrency(metrics.netProfit)}</div>
-            <div className="text-sm text-gray-500">Net Profit</div>
+            <div className="text-2xl font-bold text-slate-900">{formatCurrency(metrics.netProfit)}</div>
+            <div className="text-sm text-slate-500">Net Profit</div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
           <div className="flex items-center gap-2 mb-4">
-            <Filter size={20} className="text-gray-600" />
-            <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
+            <Filter size={20} className="text-slate-600" />
+            <h2 className="text-lg font-semibold text-slate-900">Filters</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div>
@@ -414,8 +414,8 @@ export function CEOFinance() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
               <BarChart3 size={20} />
               Revenue vs Expenses (12 Months)
             </h2>
@@ -446,8 +446,8 @@ export function CEOFinance() {
             </ResponsiveContainer>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
               <PieChart size={20} />
               Category Breakdown
             </h2>
@@ -472,8 +472,8 @@ export function CEOFinance() {
             </ResponsiveContainer>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
               <Calendar size={20} />
               Cash Flow Analysis
             </h2>
@@ -490,8 +490,8 @@ export function CEOFinance() {
             </ResponsiveContainer>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Top Vendors & Customers</h2>
+          <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-slate-900 mb-4">Top Vendors & Customers</h2>
             <div className="w-full space-y-3 max-h-[300px] overflow-y-auto">
               {topVendorsCustomers.map((item, index) => (
                 <div key={item.name} className="flex items-center justify-between">
@@ -508,9 +508,9 @@ export function CEOFinance() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-          <div className="p-6 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">Recent Transactions</h2>
+        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+          <div className="p-6 border-b border-slate-200">
+            <h2 className="text-lg font-semibold text-slate-900">Recent Transactions</h2>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -567,16 +567,16 @@ export function CEOFinance() {
         </div>
 
         {uploadedFiles.length > 0 && (
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <FileSpreadsheet size={20} className="text-[#1a3d97]" />
+          <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
+              <FileSpreadsheet size={20} className="text-indigo-600" />
               Uploaded Files
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {uploadedFiles.map((file: any) => (
                 <div
                   key={file.id}
-                  className="border border-gray-200 rounded-lg p-4 hover:border-[#1a3d97] transition-colors"
+                  className="border border-slate-200 rounded-xl p-4 hover:border-indigo-300 transition-colors shadow-sm"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">

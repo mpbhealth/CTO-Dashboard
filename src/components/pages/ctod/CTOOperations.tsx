@@ -126,56 +126,56 @@ export function CTOOperations() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
             <div className="flex items-center justify-between mb-2">
               <TrendingDown className="text-red-600" size={20} />
-              <span className="text-xs font-medium text-gray-500">TOTAL</span>
+              <span className="text-xs font-medium text-slate-500">TOTAL</span>
             </div>
-            <div className="text-2xl font-bold text-gray-900">{metrics.totalCancellations}</div>
-            <div className="text-sm text-gray-500">Cancellations</div>
+            <div className="text-2xl font-bold text-slate-900">{metrics.totalCancellations}</div>
+            <div className="text-sm text-slate-500">Cancellations</div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
             <div className="flex items-center justify-between mb-2">
               <DollarSign className="text-orange-600" size={20} />
-              <span className="text-xs font-medium text-gray-500">MRR LOST</span>
+              <span className="text-xs font-medium text-slate-500">MRR LOST</span>
             </div>
-            <div className="text-2xl font-bold text-gray-900">${(metrics.totalMrrLost / 1000).toFixed(1)}K</div>
-            <div className="text-sm text-gray-500">Revenue Impact</div>
+            <div className="text-2xl font-bold text-slate-900">${(metrics.totalMrrLost / 1000).toFixed(1)}K</div>
+            <div className="text-sm text-slate-500">Revenue Impact</div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
             <div className="flex items-center justify-between mb-2">
-              <Users className="text-indigo-600" size={20} />
-              <span className="text-xs font-medium text-gray-500">SAVES</span>
+              <Users className="text-sky-600" size={20} />
+              <span className="text-xs font-medium text-slate-500">SAVES</span>
             </div>
-            <div className="text-2xl font-bold text-gray-900">{metrics.saveSuccessful}</div>
-            <div className="text-sm text-gray-500">Retained</div>
+            <div className="text-2xl font-bold text-slate-900">{metrics.saveSuccessful}</div>
+            <div className="text-sm text-slate-500">Retained</div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
             <div className="flex items-center justify-between mb-2">
-              <AlertTriangle className="text-yellow-600" size={20} />
-              <span className="text-xs font-medium text-gray-500">ATTEMPTS</span>
+              <AlertTriangle className="text-amber-600" size={20} />
+              <span className="text-xs font-medium text-slate-500">ATTEMPTS</span>
             </div>
-            <div className="text-2xl font-bold text-gray-900">{metrics.saveAttempted}</div>
-            <div className="text-sm text-gray-500">Save Efforts</div>
+            <div className="text-2xl font-bold text-slate-900">{metrics.saveAttempted}</div>
+            <div className="text-sm text-slate-500">Save Efforts</div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
             <div className="flex items-center justify-between mb-2">
-              <TrendingDown className="text-green-600" size={20} />
-              <span className="text-xs font-medium text-gray-500">SAVE RATE</span>
+              <TrendingDown className="text-emerald-600" size={20} />
+              <span className="text-xs font-medium text-slate-500">SAVE RATE</span>
             </div>
-            <div className="text-2xl font-bold text-gray-900">{metrics.saveRate}%</div>
-            <div className="text-sm text-gray-500">Win-back Rate</div>
+            <div className="text-2xl font-bold text-slate-900">{metrics.saveRate}%</div>
+            <div className="text-sm text-slate-500">Win-back Rate</div>
           </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Filters</h2>
+            <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+              <h2 className="text-lg font-semibold text-slate-900 mb-4">Filters</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">From Date</label>
@@ -213,8 +213,8 @@ export function CTOOperations() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Churn Trend (Last 6 Months)</h2>
+            <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+              <h2 className="text-lg font-semibold text-slate-900 mb-4">Churn Trend (Last 6 Months)</h2>
               <ResponsiveContainer width="100%" height={250}>
                 <LineChart data={trendData}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -226,10 +226,10 @@ export function CTOOperations() {
               </ResponsiveContainer>
             </div>
 
-            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+            <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-200">
+                  <thead className="bg-slate-50 border-b border-slate-200">
                     <tr>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase">Date</th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase">Member</th>
@@ -285,8 +285,8 @@ export function CTOOperations() {
           </div>
 
           <div className="space-y-4">
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
-              <h3 className="text-sm font-semibold text-gray-900 mb-4">Top Cancellation Reasons</h3>
+            <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+              <h3 className="text-sm font-semibold text-slate-900 mb-4">Top Cancellation Reasons</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={reasonBreakdown} layout="vertical">
                   <CartesianGrid strokeDasharray="3 3" />
@@ -298,7 +298,7 @@ export function CTOOperations() {
               </ResponsiveContainer>
             </div>
 
-            <div className="bg-gradient-to-br from-sky-600 to-blue-700 rounded-lg p-6 text-white">
+            <div className="bg-gradient-to-br from-sky-500 to-sky-600 rounded-xl p-6 text-white shadow-lg">
               <h3 className="font-semibold text-lg mb-2">Shared Data Access</h3>
               <p className="text-indigo-100 text-sm mb-4">
                 This operations data is shared with the CEO dashboard for cross-functional collaboration.

@@ -89,7 +89,7 @@ export function CEOConciergeNotes() {
           </button>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
           <div className="w-full space-y-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
@@ -157,7 +157,7 @@ export function CEOConciergeNotes() {
 
         <div className="w-full space-y-4">
           {filteredNotes.length === 0 ? (
-            <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-12 text-center">
               <FileText className="mx-auto text-gray-400 mb-4" size={48} />
               <p className="text-gray-500 text-lg">No notes found matching your search criteria</p>
             </div>
@@ -165,7 +165,7 @@ export function CEOConciergeNotes() {
             filteredNotes.map((note) => (
               <div
                 key={note.staging_id}
-                className="bg-white rounded-lg border border-gray-200 p-6 hover:border-[#1a3d97] transition-colors"
+                className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 hover:border-[#1a3d97] transition-colors"
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3">

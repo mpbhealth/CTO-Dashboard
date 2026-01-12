@@ -40,10 +40,10 @@ export function CEOHome() {
   }, [profile]);
 
   const LoadingFallback = () => (
-    <div className="bg-white rounded-xl md:rounded-2xl shadow-sm border border-gray-200 p-4 md:p-6">
+    <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 md:p-6">
       <div className="animate-pulse space-y-3">
-        <div className="h-4 bg-gray-200 rounded w-1/3"></div>
-        <div className="h-20 bg-gray-200 rounded"></div>
+        <div className="h-4 bg-slate-200 rounded w-1/3"></div>
+        <div className="h-20 bg-slate-200 rounded"></div>
       </div>
     </div>
   );
@@ -161,8 +161,8 @@ export function CEOHome() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         <div className="lg:col-span-2 space-y-4 sm:space-y-6">
           {/* Top Priorities Card */}
-          <div className="bg-white rounded-xl md:rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-            <div className="p-4 sm:p-6 border-b border-gray-200">
+          <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div className="p-4 sm:p-6 border-b border-slate-200">
               <h2 className="text-base sm:text-lg font-semibold text-gray-900 flex items-center gap-2">
                 <Target size={20} className="text-indigo-500" />
                 Top Priorities
@@ -221,8 +221,8 @@ export function CEOHome() {
           </div>
 
           {/* Shared from CTO Card */}
-          <div className="bg-white rounded-xl md:rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-            <div className="p-4 sm:p-6 border-b border-gray-200">
+          <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div className="p-4 sm:p-6 border-b border-slate-200">
               <h2 className="text-base sm:text-lg font-semibold text-gray-900 flex items-center gap-2">
                 <Share2 size={20} className="text-indigo-500" />
                 Shared from CTO
@@ -289,7 +289,7 @@ export function CEOHome() {
         {/* Sidebar column */}
         <div className="space-y-4 sm:space-y-6">
           {/* Quick Actions Card */}
-          <div className="bg-white rounded-xl md:rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6">
+          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6">
             <h2 className="text-base sm:text-lg font-semibold text-gray-900 flex items-center gap-2 mb-4">
               <TrendingUp size={20} className="text-indigo-500" />
               Quick Actions
@@ -368,7 +368,7 @@ export function CEOHome() {
           </div>
 
           {/* Company Health Card */}
-          <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl md:rounded-2xl shadow-lg p-4 sm:p-6 text-white">
+          <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl shadow-lg p-4 sm:p-6 text-white">
             <CheckCircle size={28} className="mb-3" />
             <h3 className="font-semibold text-lg mb-2">Company Health</h3>
             <p className="text-indigo-100 text-sm mb-4">
@@ -387,7 +387,7 @@ export function CEOHome() {
           </div>
 
           {/* Upcoming Card */}
-          <div className="bg-white rounded-xl md:rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6">
+          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6">
             <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">
               Upcoming
             </h2>

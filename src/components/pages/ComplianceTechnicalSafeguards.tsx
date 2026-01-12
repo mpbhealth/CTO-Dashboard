@@ -148,7 +148,7 @@ const ComplianceTechnicalSafeguards: React.FC = () => {
         const categoryControls = controls.filter(c => c.category === category);
         
         return (
-          <div key={category} className="bg-white rounded-lg border border-gray-200 p-6">
+          <div key={category} className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center space-x-2">
               <Shield className="w-5 h-5 text-purple-600" />
               <span>{category} Controls</span>

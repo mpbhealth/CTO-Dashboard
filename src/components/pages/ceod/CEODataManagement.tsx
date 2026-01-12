@@ -166,7 +166,7 @@ export function CEODataManagement() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
             <div className="flex items-center justify-between mb-2">
               <Database className="text-[#1a3d97]" size={20} />
               <span className="text-xs font-medium text-gray-500">TOTAL</span>
@@ -175,7 +175,7 @@ export function CEODataManagement() {
             <div className="text-sm text-gray-500">All Uploads</div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
             <div className="flex items-center justify-between mb-2">
               <CheckCircle className="text-green-600" size={20} />
               <span className="text-xs font-medium text-gray-500">COMPLETED</span>
@@ -184,7 +184,7 @@ export function CEODataManagement() {
             <div className="text-sm text-gray-500">Successful</div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
             <div className="flex items-center justify-between mb-2">
               <AlertCircle className="text-red-600" size={20} />
               <span className="text-xs font-medium text-gray-500">FAILED</span>
@@ -193,7 +193,7 @@ export function CEODataManagement() {
             <div className="text-sm text-gray-500">Errors</div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
             <div className="flex items-center justify-between mb-2">
               <RefreshCw className="text-yellow-600" size={20} />
               <span className="text-xs font-medium text-gray-500">PENDING</span>
@@ -301,7 +301,7 @@ export function CEODataManagement() {
 
         {activeTab === 'uploads' && (
           <div className="space-y-4">
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
               <div className="flex items-center gap-2 mb-4">
                 <Filter size={20} className="text-gray-600" />
                 <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
@@ -339,7 +339,7 @@ export function CEODataManagement() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
               <div className="p-6 border-b border-gray-200 flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-gray-900">Department Uploads</h2>
                 <button

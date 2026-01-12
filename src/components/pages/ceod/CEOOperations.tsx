@@ -177,7 +177,7 @@ export function CEOOperations() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
             <div className="flex items-center justify-between mb-2">
               <TrendingDown className="text-red-600" size={20} />
               <span className="text-xs font-medium text-gray-500">TOTAL</span>
@@ -186,7 +186,7 @@ export function CEOOperations() {
             <div className="text-sm text-gray-500">Cancellations</div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
             <div className="flex items-center justify-between mb-2">
               <DollarSign className="text-orange-600" size={20} />
               <span className="text-xs font-medium text-gray-500">MRR LOST</span>
@@ -195,7 +195,7 @@ export function CEOOperations() {
             <div className="text-sm text-gray-500">Revenue Impact</div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
             <div className="flex items-center justify-between mb-2">
               <Users className="text-indigo-500" size={20} />
               <span className="text-xs font-medium text-gray-500">SAVES</span>
@@ -204,7 +204,7 @@ export function CEOOperations() {
             <div className="text-sm text-gray-500">Retained</div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
             <div className="flex items-center justify-between mb-2">
               <AlertTriangle className="text-yellow-600" size={20} />
               <span className="text-xs font-medium text-gray-500">ATTEMPTS</span>
@@ -213,7 +213,7 @@ export function CEOOperations() {
             <div className="text-sm text-gray-500">Save Efforts</div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
             <div className="flex items-center justify-between mb-2">
               <TrendingDown className="text-green-600" size={20} />
               <span className="text-xs font-medium text-gray-500">SAVE RATE</span>
@@ -225,7 +225,7 @@ export function CEOOperations() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Filters</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <div>
@@ -264,7 +264,7 @@ export function CEOOperations() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Churn Trend (Last 6 Months)</h2>
               <ResponsiveContainer width="100%" height={250}>
                 <LineChart data={trendData}>
@@ -277,7 +277,7 @@ export function CEOOperations() {
               </ResponsiveContainer>
             </div>
 
-            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead className="bg-gray-50 border-b border-gray-200">
@@ -336,7 +336,7 @@ export function CEOOperations() {
           </div>
 
           <div className="w-full space-y-4">
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
               <h3 className="text-sm font-semibold text-gray-900 mb-4">Top Cancellation Reasons</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={reasonBreakdown} layout="vertical">
@@ -351,7 +351,7 @@ export function CEOOperations() {
           </div>
 
       {uploadedFiles.length > 0 && (
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
             <FileSpreadsheet size={20} className="text-[#1a3d97]" />
             Uploaded Files

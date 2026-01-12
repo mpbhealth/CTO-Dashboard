@@ -121,7 +121,7 @@ export function CTOFiles() {
       </div>
 
       {/* Upload Section */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+      <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Upload File</h2>
 
         <div className="flex items-center gap-4">
@@ -179,7 +179,7 @@ export function CTOFiles() {
 
       {/* Files List */}
       {resources.length === 0 ? (
-        <div className="bg-white rounded-lg border border-gray-200 p-12 text-center shadow-sm">
+        <div className="bg-white rounded-xl border border-slate-200 p-12 text-center shadow-sm">
           <FileText className="mx-auto text-gray-400 mb-4" size={64} />
           <h3 className="text-xl font-semibold text-gray-900 mb-2">No files yet</h3>
           <p className="text-gray-500">Upload your first file to get started</p>
@@ -191,11 +191,11 @@ export function CTOFiles() {
             {resources.map((resource) => (
               <div
                 key={resource.id}
-                className="bg-white rounded-lg border border-gray-200 p-4 hover:border-blue-500 transition-colors shadow-sm"
+                className="bg-white rounded-xl border border-slate-200 p-4 hover:border-sky-300 transition-colors shadow-sm"
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center flex-shrink-0">
+                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-sky-500 to-sky-600 flex items-center justify-center flex-shrink-0">
                       <FileText size={20} className="text-white" />
                     </div>
                     <div className="flex-1 min-w-0">

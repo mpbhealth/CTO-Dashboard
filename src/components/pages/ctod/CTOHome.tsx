@@ -102,10 +102,10 @@ export function CTOHome() {
               <div
                 key={kpi.label}
                 className="
-                  bg-white rounded-xl md:rounded-2xl shadow-sm 
-                  border border-gray-200 
+                  bg-white rounded-xl shadow-sm 
+                  border border-slate-200 
                   p-4 sm:p-5 md:p-6
-                  hover:border-indigo-200 hover:shadow-md
+                  hover:border-sky-200 hover:shadow-md
                   transition-all duration-200
                   touch-manipulation
                 "
@@ -137,7 +137,7 @@ export function CTOHome() {
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           {/* Recent Resources Card */}
-          <div className="lg:col-span-2 bg-white rounded-xl md:rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
             <div className="p-4 sm:p-6 border-b border-gray-200">
               <h2 className="text-base sm:text-lg font-semibold text-gray-900 flex items-center gap-2">
                 <FileText size={20} className="text-indigo-500" />
@@ -207,7 +207,7 @@ export function CTOHome() {
           {/* Sidebar */}
           <div className="space-y-4 sm:space-y-6">
             {/* Quick Actions Card */}
-            <div className="bg-white rounded-xl md:rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6">
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6">
               <h2 className="text-base sm:text-lg font-semibold text-gray-900 flex items-center gap-2 mb-4">
                 <BarChart3 size={20} className="text-indigo-500" />
                 Quick Actions
@@ -217,8 +217,8 @@ export function CTOHome() {
                   className="
                     flex items-center justify-between
                     w-full px-4 py-3 
-                    bg-indigo-50 text-indigo-700 rounded-xl 
-                    hover:bg-indigo-100 active:bg-indigo-200
+                    bg-sky-50 text-sky-700 rounded-lg 
+                    hover:bg-sky-100 active:bg-sky-200
                     active:scale-[0.98]
                     transition-all duration-200 
                     font-medium text-sm
@@ -236,8 +236,8 @@ export function CTOHome() {
                   className="
                     flex items-center justify-between
                     w-full px-4 py-3 
-                    bg-gray-50 text-gray-700 rounded-xl 
-                    hover:bg-gray-100 active:bg-gray-200
+                    bg-slate-50 text-slate-700 rounded-lg 
+                    hover:bg-slate-100 active:bg-slate-200
                     active:scale-[0.98]
                     transition-all duration-200 
                     font-medium text-sm
@@ -255,8 +255,8 @@ export function CTOHome() {
                   className="
                     flex items-center justify-between
                     w-full px-4 py-3 
-                    bg-gray-50 text-gray-700 rounded-xl 
-                    hover:bg-gray-100 active:bg-gray-200
+                    bg-slate-50 text-slate-700 rounded-lg 
+                    hover:bg-slate-100 active:bg-slate-200
                     active:scale-[0.98]
                     transition-all duration-200 
                     font-medium text-sm
@@ -274,7 +274,7 @@ export function CTOHome() {
             </div>
 
             {/* Security Status Card */}
-            <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl md:rounded-2xl shadow-lg p-4 sm:p-6 text-white">
+            <div className="bg-gradient-to-br from-sky-500 to-sky-600 rounded-xl shadow-lg p-4 sm:p-6 text-white">
               <Shield size={28} className="mb-3" />
               <h3 className="font-semibold text-base sm:text-lg mb-2">Security Status</h3>
               <p className="text-blue-100 text-sm mb-4">

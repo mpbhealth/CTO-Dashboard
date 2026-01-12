@@ -174,7 +174,7 @@ const ComplianceCommandCenter: React.FC = () => {
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg p-6 text-white">
+      <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl p-6 shadow-lg text-white">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold mb-2">Compliance Command Center</h1>
@@ -214,7 +214,7 @@ const ComplianceCommandCenter: React.FC = () => {
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
+      <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
         <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center space-x-2">
           <Activity className="w-5 h-5" />
           <span>Quick Actions</span>
@@ -236,7 +236,7 @@ const ComplianceCommandCenter: React.FC = () => {
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* My Queue */}
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
               <Clock className="w-5 h-5" />
@@ -291,7 +291,7 @@ const ComplianceCommandCenter: React.FC = () => {
         </div>
 
         {/* Recent Activity */}
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
               <Activity className="w-5 h-5" />
@@ -343,7 +343,7 @@ const ComplianceCommandCenter: React.FC = () => {
       </div>
 
       {/* Sections Overview */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
+      <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">
           Compliance Sections
         </h2>

@@ -196,7 +196,7 @@ View detailed report: ${window.location.href}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
             <div className="flex items-center justify-between mb-2">
               <TrendingUp className={color} size={20} />
               <span className="text-xs font-medium text-gray-500">TOTAL</span>
@@ -205,7 +205,7 @@ View detailed report: ${window.location.href}
             <div className="text-sm text-gray-500">Uploads</div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
             <div className="flex items-center justify-between mb-2">
               <CheckCircle className="text-green-600" size={20} />
               <span className="text-xs font-medium text-gray-500">SUCCESS</span>
@@ -214,7 +214,7 @@ View detailed report: ${window.location.href}
             <div className="text-sm text-gray-500">{stats?.completedUploads ?? 0} completed</div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
             <div className="flex items-center justify-between mb-2">
               <AlertCircle className="text-red-600" size={20} />
               <span className="text-xs font-medium text-gray-500">FAILED</span>
@@ -223,7 +223,7 @@ View detailed report: ${window.location.href}
             <div className="text-sm text-gray-500">Errors</div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
             <div className="flex items-center justify-between mb-2">
               <Calendar className={color} size={20} />
               <span className="text-xs font-medium text-gray-500">ROWS</span>
@@ -234,7 +234,7 @@ View detailed report: ${window.location.href}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Upload Trends (Last 7 Days)</h3>
             <ResponsiveContainer width="100%" height={250}>
               <LineChart data={chartData}>
@@ -250,7 +250,7 @@ View detailed report: ${window.location.href}
             </ResponsiveContainer>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Status Distribution</h3>
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={[
@@ -269,7 +269,7 @@ View detailed report: ${window.location.href}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 bg-white rounded-lg border border-gray-200">
+          <div className="lg:col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm">
             <div className="p-6 border-b border-gray-200">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold text-gray-900">Upload History</h2>

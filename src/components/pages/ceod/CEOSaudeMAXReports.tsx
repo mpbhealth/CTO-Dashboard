@@ -185,7 +185,7 @@ export function CEOSaudeMAXReports() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
             <div className="flex items-center justify-between mb-2">
               <Users className="text-[#a855f7]" size={20} />
               <span className="text-xs font-medium text-gray-500">TOTAL</span>
@@ -194,7 +194,7 @@ export function CEOSaudeMAXReports() {
             <div className="text-sm text-gray-500">Total Members</div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
             <div className="flex items-center justify-between mb-2">
               <TrendingUp className="text-green-600" size={20} />
               <span className="text-xs font-medium text-gray-500">ACTIVE</span>
@@ -203,7 +203,7 @@ export function CEOSaudeMAXReports() {
             <div className="text-sm text-gray-500">Active Members</div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
             <div className="flex items-center justify-between mb-2">
               <Target className="text-indigo-500" size={20} />
               <span className="text-xs font-medium text-gray-500">ENGAGEMENT</span>
@@ -212,7 +212,7 @@ export function CEOSaudeMAXReports() {
             <div className="text-sm text-gray-500">Avg Score</div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
             <div className="flex items-center justify-between mb-2">
               <Award className="text-yellow-600" size={20} />
               <span className="text-xs font-medium text-gray-500">SATISFACTION</span>
@@ -221,7 +221,7 @@ export function CEOSaudeMAXReports() {
             <div className="text-sm text-gray-500">Avg Rating</div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
             <div className="flex items-center justify-between mb-2">
               <TrendingUp className="text-green-600" size={20} />
               <span className="text-xs font-medium text-gray-500">HEALTH</span>
@@ -231,7 +231,7 @@ export function CEOSaudeMAXReports() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
           <div className="flex items-center gap-2 mb-4">
             <Filter size={20} className="text-gray-600" />
             <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
@@ -289,7 +289,7 @@ export function CEOSaudeMAXReports() {
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-          <div className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 sm:p-6">
             <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
               <Calendar size={20} />
               Enrollment Trend (12 Months)
@@ -310,7 +310,7 @@ export function CEOSaudeMAXReports() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 sm:p-6">
             <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
               <Target size={20} />
               Program Distribution
@@ -332,7 +332,7 @@ export function CEOSaudeMAXReports() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
           <div className="p-4 sm:p-6 border-b border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900">Member Records</h2>
           </div>
@@ -389,7 +389,7 @@ export function CEOSaudeMAXReports() {
         </div>
 
         {uploadedFiles.length > 0 && (
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
               <FileSpreadsheet size={20} className="text-[#a855f7]" />
               Uploaded Files

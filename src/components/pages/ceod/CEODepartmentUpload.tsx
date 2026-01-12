@@ -301,7 +301,7 @@ export function CEODepartmentUpload() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Select Department</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {DEPARTMENT_OPTIONS.map((dept) => (
@@ -340,7 +340,7 @@ export function CEODepartmentUpload() {
         </div>
 
         {selectedDepartment && (
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Upload File</h2>
             <form
               onDragEnter={handleDrag}

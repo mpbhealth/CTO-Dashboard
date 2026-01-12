@@ -104,7 +104,7 @@ const ComplianceTraining: React.FC = () => {
       </div>
 
       {/* Training Programs */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Training Programs</h2>
         <div className="space-y-4">
           {trainings.map((training) => {
@@ -175,7 +175,7 @@ const ComplianceTraining: React.FC = () => {
 
       {/* Recent Completions */}
       {attendance.length > 0 && (
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Completions</h2>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">

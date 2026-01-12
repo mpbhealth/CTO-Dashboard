@@ -221,14 +221,18 @@ export default {
       backdropBlur: {
         'xs': '2px',
       },
-      // shadcn/ui border radius using CSS variable
+      // Standardized border radius scale for consistent UI
       borderRadius: {
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)',
-        '2xl': '1rem',
-        '3xl': '1.5rem',
-        '4xl': '2rem',
+        none: '0',
+        sm: '0.25rem',      // 4px - subtle rounding
+        DEFAULT: '0.375rem', // 6px - default
+        md: '0.5rem',        // 8px - medium elements
+        lg: '0.75rem',       // 12px - buttons, inputs
+        xl: '1rem',          // 16px - cards, panels
+        '2xl': '1.25rem',    // 20px - large cards
+        '3xl': '1.5rem',     // 24px - modals
+        '4xl': '2rem',       // 32px - extra large
+        full: '9999px',      // pill/circle
       },
     },
   },

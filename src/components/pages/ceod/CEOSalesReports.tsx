@@ -147,7 +147,7 @@ export function CEOSalesReports() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
             <div className="flex items-center justify-between mb-2">
               <DollarSign className="text-[#1a3d97]" size={20} />
               <span className="text-xs font-medium text-gray-500">MTD</span>
@@ -156,7 +156,7 @@ export function CEOSalesReports() {
             <div className="text-sm text-gray-500">This Month</div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
             <div className="flex items-center justify-between mb-2">
               <TrendingUp className="text-[#00A896]" size={20} />
               <span className="text-xs font-medium text-gray-500">QTD</span>
@@ -165,7 +165,7 @@ export function CEOSalesReports() {
             <div className="text-sm text-gray-500">This Quarter</div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
             <div className="flex items-center justify-between mb-2">
               <Target className="text-indigo-500" size={20} />
               <span className="text-xs font-medium text-gray-500">AVG DEAL</span>
@@ -174,7 +174,7 @@ export function CEOSalesReports() {
             <div className="text-sm text-gray-500">Deal Size</div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
             <div className="flex items-center justify-between mb-2">
               <Users className="text-green-600" size={20} />
               <span className="text-xs font-medium text-gray-500">PIPELINE</span>
@@ -186,7 +186,7 @@ export function CEOSalesReports() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Filters</h2>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
                 <div>
@@ -240,7 +240,7 @@ export function CEOSalesReports() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Channel Attribution</h2>
               <ResponsiveContainer width="100%" height={250}>
                 <PieChart>
@@ -263,7 +263,7 @@ export function CEOSalesReports() {
               </ResponsiveContainer>
             </div>
 
-            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead className="bg-gray-50 border-b border-gray-200">
@@ -306,7 +306,7 @@ export function CEOSalesReports() {
           </div>
 
           <div className="w-full space-y-4">
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
               <div className="flex items-center gap-2 mb-4">
                 <Award size={20} className="text-[#1a3d97]" />
                 <h3 className="text-sm font-semibold text-gray-900">Top Performers</h3>

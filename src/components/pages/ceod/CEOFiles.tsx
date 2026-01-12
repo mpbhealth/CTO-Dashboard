@@ -100,7 +100,7 @@ export function CEOFiles() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
           <div className="flex items-center gap-4">
             <div className="flex-1">
               <input
@@ -136,7 +136,7 @@ export function CEOFiles() {
         </div>
 
         {resources.length === 0 ? (
-          <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-12 text-center">
             <FileText className="mx-auto text-gray-400 mb-4" size={64} />
             <h3 className="text-xl font-semibold text-gray-900 mb-2">No files yet</h3>
             <p className="text-gray-500">Upload your first file to get started</p>
@@ -146,7 +146,7 @@ export function CEOFiles() {
             {resources.map((resource) => (
               <div
                 key={resource.id}
-                className="bg-white rounded-lg border border-gray-200 p-4 hover:border-[#1a3d97] transition-colors"
+                className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 hover:border-[#1a3d97] transition-colors"
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3">

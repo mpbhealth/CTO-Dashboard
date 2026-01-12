@@ -241,7 +241,7 @@ const EmployeeDocumentStorage: React.FC = () => {
         </div>
       )}
 
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-3 md:space-y-0 mb-4">
           <div className="flex items-center space-x-2 flex-1">
             <Search className="w-5 h-5 text-gray-400" />

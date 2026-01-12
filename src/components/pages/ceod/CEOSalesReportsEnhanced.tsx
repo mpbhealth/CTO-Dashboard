@@ -761,7 +761,7 @@ export function CEOSalesReportsEnhanced() {
       </div>
 
       {uploadedFiles.length > 0 && (
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
             <FileSpreadsheet size={20} className="text-[#1a3d97]" />
             Uploaded Files

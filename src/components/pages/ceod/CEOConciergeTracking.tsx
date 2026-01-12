@@ -189,7 +189,7 @@ export function CEOConciergeTracking() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
             <div className="flex items-center justify-between mb-2">
               <TrendingUp className="text-[#1a3d97]" size={20} />
               <span className="text-xs font-medium text-gray-500">TOTAL</span>
@@ -198,7 +198,7 @@ export function CEOConciergeTracking() {
             <div className="text-sm text-gray-500">Touchpoints</div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
             <div className="flex items-center justify-between mb-2">
               <Clock className="text-[#00A896]" size={20} />
               <span className="text-xs font-medium text-gray-500">AVG</span>
@@ -207,7 +207,7 @@ export function CEOConciergeTracking() {
             <div className="text-sm text-gray-500">Duration</div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
             <div className="flex items-center justify-between mb-2">
               <CheckCircle className="text-green-600" size={20} />
               <span className="text-xs font-medium text-gray-500">RESOLVED</span>
@@ -216,7 +216,7 @@ export function CEOConciergeTracking() {
             <div className="text-sm text-gray-500">Issues Closed</div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
             <div className="flex items-center justify-between mb-2">
               <TrendingUp className="text-indigo-500" size={20} />
               <span className="text-xs font-medium text-gray-500">SLA</span>
@@ -228,7 +228,7 @@ export function CEOConciergeTracking() {
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <div className="lg:col-span-3 space-y-4">
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
               <div className="flex items-center gap-2 mb-4">
                 <Filter size={20} className="text-gray-600" />
                 <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
@@ -300,7 +300,7 @@ export function CEOConciergeTracking() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead className="bg-gray-50 border-b border-gray-200">
@@ -375,7 +375,7 @@ export function CEOConciergeTracking() {
           </div>
 
           <div className="w-full space-y-4">
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
               <div className="flex items-center gap-2 mb-4">
                 <User size={20} className="text-[#1a3d97]" />
                 <h3 className="text-sm font-semibold text-gray-900">Top Agents</h3>
@@ -401,7 +401,7 @@ export function CEOConciergeTracking() {
         </div>
 
         {uploadedFiles.length > 0 && (
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
               <FileSpreadsheet size={20} className="text-[#1a3d97]" />
               Uploaded Files

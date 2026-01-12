@@ -147,7 +147,7 @@ const ComplianceBAAs: React.FC = () => {
       </div>
 
       {/* BAAs Timeline */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center space-x-2">
           <Calendar className="w-5 h-5" />
           <span>Renewal Timeline</span>
@@ -193,7 +193,7 @@ const ComplianceBAAs: React.FC = () => {
       </div>
 
       {/* BAAs Table */}
-      <div className="bg-white rounded-lg border border-gray-200">
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">

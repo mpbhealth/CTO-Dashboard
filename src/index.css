@@ -110,9 +110,138 @@
 }
 
 @layer components {
+  /* ================================
+     Standardized Dashboard Card System
+     ================================ */
+  
+  /* Base dashboard card - white background with subtle border */
+  .dashboard-card {
+    @apply bg-white rounded-xl shadow-sm border border-slate-200;
+    @apply p-4 md:p-6;
+    @apply transition-all duration-200;
+  }
+  
+  .dashboard-card-hover {
+    @apply hover:shadow-md hover:border-slate-300;
+    @apply transition-shadow duration-200;
+  }
+  
+  /* Gradient stat cards - colorful KPI/metric cards */
+  .stat-card {
+    @apply rounded-xl shadow-lg p-4 md:p-6;
+    @apply text-white;
+    @apply transition-all duration-200;
+  }
+  
+  .stat-card-sky {
+    @apply bg-gradient-to-br from-sky-500 to-sky-600;
+  }
+  
+  .stat-card-indigo {
+    @apply bg-gradient-to-br from-indigo-500 to-indigo-600;
+  }
+  
+  .stat-card-emerald {
+    @apply bg-gradient-to-br from-emerald-500 to-emerald-600;
+  }
+  
+  .stat-card-amber {
+    @apply bg-gradient-to-br from-amber-500 to-amber-600;
+  }
+  
+  .stat-card-purple {
+    @apply bg-gradient-to-br from-purple-500 to-purple-600;
+  }
+  
+  .stat-card-rose {
+    @apply bg-gradient-to-br from-rose-500 to-rose-600;
+  }
+  
+  .stat-card-teal {
+    @apply bg-gradient-to-br from-teal-500 to-teal-600;
+  }
+  
+  .stat-card-cyan {
+    @apply bg-gradient-to-br from-cyan-500 to-cyan-600;
+  }
+  
+  /* Panel card - for grouped content sections */
+  .panel-card {
+    @apply bg-white rounded-xl shadow-sm border border-slate-200;
+    @apply overflow-hidden;
+  }
+  
+  .panel-card-header {
+    @apply px-4 py-3 md:px-6 md:py-4 border-b border-slate-200;
+    @apply flex items-center justify-between;
+  }
+  
+  .panel-card-body {
+    @apply p-4 md:p-6;
+  }
+  
+  /* Standardized button styles */
+  .btn-primary {
+    @apply px-4 py-2 rounded-lg;
+    @apply bg-sky-600 hover:bg-sky-700 text-white;
+    @apply font-medium text-sm;
+    @apply transition-colors duration-200;
+    @apply flex items-center gap-2;
+  }
+  
+  .btn-secondary {
+    @apply px-4 py-2 rounded-lg;
+    @apply bg-slate-100 hover:bg-slate-200 text-slate-700;
+    @apply font-medium text-sm;
+    @apply transition-colors duration-200;
+    @apply flex items-center gap-2;
+  }
+  
+  .btn-outline {
+    @apply px-4 py-2 rounded-lg;
+    @apply border border-slate-300 hover:bg-slate-50 text-slate-700;
+    @apply font-medium text-sm;
+    @apply transition-colors duration-200;
+    @apply flex items-center gap-2;
+  }
+  
+  .btn-danger {
+    @apply px-4 py-2 rounded-lg;
+    @apply bg-red-600 hover:bg-red-700 text-white;
+    @apply font-medium text-sm;
+    @apply transition-colors duration-200;
+    @apply flex items-center gap-2;
+  }
+  
+  /* Standardized input styles */
+  .input-field {
+    @apply w-full px-3 py-2 rounded-lg;
+    @apply border border-slate-300;
+    @apply focus:ring-2 focus:ring-sky-500 focus:border-sky-500;
+    @apply transition-all duration-200;
+    @apply placeholder:text-slate-400;
+  }
+  
+  /* Icon container styles */
+  .icon-container {
+    @apply rounded-lg flex items-center justify-center;
+  }
+  
+  .icon-container-sm {
+    @apply w-8 h-8;
+  }
+  
+  .icon-container-md {
+    @apply w-10 h-10;
+  }
+  
+  .icon-container-lg {
+    @apply w-12 h-12;
+  }
+
   /* Mobile-first card component */
   .mobile-card {
-    @apply bg-white rounded-2xl shadow-mobile p-4 md:p-6;
+    @apply bg-white rounded-xl shadow-mobile p-4 md:p-6;
     @apply border border-gray-100;
     @apply transition-all duration-200;
   }

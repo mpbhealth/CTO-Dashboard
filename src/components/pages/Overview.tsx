@@ -264,7 +264,7 @@ export default function Overview() {
         transition={{ duration: 0.5, delay: 0.1 }}
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
       >
-        <div className="bg-gradient-to-br from-sky-500 to-sky-700 p-6 rounded-xl shadow-lg text-white">
+        <div className="bg-gradient-to-br from-sky-500 to-sky-600 p-6 rounded-xl shadow-lg text-white">
           <div className="flex items-center justify-between mb-4">
             <Building2 className="w-10 h-10 opacity-80" />
             <span className="text-3xl font-bold">{orgMetrics.departments}</span>
@@ -273,7 +273,7 @@ export default function Overview() {
           <p className="text-sky-100 text-sm mt-1">{orgMetrics.totalHeadcount} total employees</p>
         </div>
 
-        <div className="bg-gradient-to-br from-emerald-500 to-emerald-700 p-6 rounded-xl shadow-lg text-white">
+        <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 p-6 rounded-xl shadow-lg text-white">
           <div className="flex items-center justify-between mb-4">
             <DollarSign className="w-10 h-10 opacity-80" />
             <span className="text-3xl font-bold">
@@ -284,7 +284,7 @@ export default function Overview() {
           <p className="text-emerald-100 text-sm mt-1">${(orgMetrics.saasSpend / 1000).toFixed(1)}K monthly SaaS spend</p>
         </div>
 
-        <div className="bg-gradient-to-br from-indigo-500 to-indigo-700 p-6 rounded-xl shadow-lg text-white">
+        <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 p-6 rounded-xl shadow-lg text-white">
           <div className="flex items-center justify-between mb-4">
             <Briefcase className="w-10 h-10 opacity-80" />
             <span className="text-3xl font-bold">{orgMetrics.activeProjects}</span>
@@ -293,7 +293,7 @@ export default function Overview() {
           <p className="text-indigo-100 text-sm mt-1">{orgMetrics.completedProjects} completed</p>
         </div>
 
-        <div className="bg-gradient-to-br from-amber-500 to-amber-700 p-6 rounded-xl shadow-lg text-white">
+        <div className="bg-gradient-to-br from-amber-500 to-amber-600 p-6 rounded-xl shadow-lg text-white">
           <div className="flex items-center justify-between mb-4">
             <Shield className="w-10 h-10 opacity-80" />
             <span className="text-3xl font-bold">{orgMetrics.completedAudits}</span>
@@ -333,7 +333,7 @@ export default function Overview() {
             IT Support Tickets
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-slate-600">Open Tickets</p>
@@ -348,22 +348,22 @@ export default function Overview() {
               </p>
             </div>
 
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-slate-600">Avg Resolution</p>
-                  <p className="text-2xl font-bold text-green-600 mt-1">
+                  <p className="text-2xl font-bold text-emerald-600 mt-1">
                     {(ticketStats?.avg_resolution_time_hours ?? 0).toFixed(1)}h
                   </p>
                 </div>
-                <Clock className="w-8 h-8 text-green-400" />
+                <Clock className="w-8 h-8 text-emerald-400" />
               </div>
               <p className="text-xs text-slate-500 mt-2">
                 {ticketStats?.resolved_tickets ?? 0} resolved
               </p>
             </div>
 
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-slate-600">SLA Compliance</p>
@@ -378,7 +378,7 @@ export default function Overview() {
               </p>
             </div>
 
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-slate-600">Critical Tickets</p>

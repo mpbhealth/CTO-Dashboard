@@ -87,7 +87,7 @@ const ComplianceAdministration: React.FC = () => {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -144,7 +144,7 @@ const ComplianceAdministration: React.FC = () => {
       </div>
 
       {/* Documents List */}
-      <div className="bg-white rounded-lg border border-gray-200">
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">

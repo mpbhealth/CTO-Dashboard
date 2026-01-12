@@ -162,7 +162,7 @@ export default function ITSupport() {
 
       {stats && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-slate-600">Total Tickets</p>
@@ -172,7 +172,7 @@ export default function ITSupport() {
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-slate-600">Open Tickets</p>
@@ -182,7 +182,7 @@ export default function ITSupport() {
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-slate-600">Avg Resolution</p>
@@ -194,7 +194,7 @@ export default function ITSupport() {
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-slate-600">SLA Compliance</p>
@@ -210,7 +210,7 @@ export default function ITSupport() {
         </div>
       )}
 
-      <div className="bg-white rounded-lg shadow-sm border border-slate-200">
+      <div className="bg-white rounded-xl shadow-sm border border-slate-200">
         <div className="p-4 border-b border-slate-200">
           <div className="flex items-center gap-3">
             <div className="flex-1 relative">
@@ -424,7 +424,7 @@ export default function ITSupport() {
                                   {ticketLogs.map(log => (
                                     <div
                                       key={log.id}
-                                      className="bg-white rounded-lg p-4 shadow-sm border border-slate-200"
+                                      className="bg-white rounded-xl p-4 shadow-sm border border-slate-200"
                                     >
                                       <div className="flex items-start gap-3">
                                         <div className={`p-2 rounded-lg ${getActionTypeColor(log.action_type)}`}>

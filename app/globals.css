@@ -30,6 +30,14 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 199 89% 48%;
     --radius: 0.75rem;
+    
+    /* Standardized radius scale for UI consistency */
+    --radius-sm: 0.25rem;   /* 4px - subtle */
+    --radius-md: 0.5rem;    /* 8px - buttons, inputs */
+    --radius-lg: 0.75rem;   /* 12px - default cards */
+    --radius-xl: 1rem;      /* 16px - large cards */
+    --radius-2xl: 1.25rem;  /* 20px - panels */
+    --radius-3xl: 1.5rem;   /* 24px - modals */
 
     /* CommandOS Specific */
     --dock-blur: 20px;

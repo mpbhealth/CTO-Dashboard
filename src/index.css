@@ -456,3 +456,359 @@
     }
   }
 }
+
+/* ================================
+   GalaxyDock / Quick Links Dock
+   ================================ */
+
+@layer base {
+  :root {
+    /* CommandOS Dock Specific */
+    --dock-blur: 20px;
+    --dock-bg: rgba(255, 255, 255, 0.85);
+    --dock-border: rgba(255, 255, 255, 0.3);
+    --galaxy-glow: rgba(14, 165, 233, 0.5);
+  }
+
+  .dark {
+    /* CommandOS Dark Theme */
+    --dock-bg: rgba(15, 23, 42, 0.9);
+    --dock-border: rgba(51, 65, 85, 0.5);
+    --galaxy-glow: rgba(56, 189, 248, 0.4);
+  }
+}
+
+@layer components {
+  /* GalaxyDock Styles */
+  .galaxy-dock {
+    @apply fixed bottom-4 left-1/2 -translate-x-1/2 z-50;
+    @apply px-3 py-2 rounded-2xl;
+    @apply flex items-center gap-2;
+    background: var(--dock-bg);
+    backdrop-filter: blur(var(--dock-blur));
+    border: 1px solid var(--dock-border);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.12),
+      0 4px 16px rgba(0, 0, 0, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .galaxy-dock-item {
+    @apply relative flex items-center justify-center;
+    @apply w-12 h-12 rounded-xl;
+    @apply transition-all duration-200 ease-out;
+    @apply cursor-pointer select-none;
+  }
+
+  .galaxy-dock-item:hover {
+    @apply bg-white/20 dark:bg-white/10;
+  }
+
+  .galaxy-dock-item.active {
+    @apply bg-sky-500/20;
+  }
+
+  .galaxy-dock-item.active::after {
+    content: '';
+    @apply absolute -bottom-1.5 left-1/2 -translate-x-1/2;
+    @apply w-1 h-1 rounded-full bg-sky-500;
+  }
+
+  /* Command Palette Styles */
+  .command-palette {
+    @apply fixed inset-0 z-[100];
+    @apply flex items-start justify-center pt-[20vh];
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+  }
+
+  .command-palette-content {
+    @apply w-full max-w-xl;
+    @apply bg-white dark:bg-slate-900 rounded-2xl;
+    @apply shadow-2xl border border-slate-200 dark:border-slate-700;
+    @apply overflow-hidden;
+  }
+
+  /* Galaxy Map Modal */
+  .galaxy-map {
+    @apply fixed inset-0 z-[90];
+    @apply flex items-center justify-center p-4;
+    background: radial-gradient(ellipse at center, rgba(15, 23, 42, 0.95) 0%, rgba(2, 6, 23, 0.98) 100%);
+    backdrop-filter: blur(8px);
+  }
+
+  .galaxy-category {
+    @apply relative p-6 rounded-2xl;
+    @apply bg-white/5 border border-white/10;
+    @apply backdrop-blur-sm;
+  }
+
+  .galaxy-app-card {
+    @apply p-4 rounded-xl;
+    @apply bg-white/10 border border-white/20;
+    @apply hover:bg-white/20 hover:border-white/30;
+    @apply transition-all duration-200;
+    @apply cursor-pointer;
+  }
+
+  /* Glass morphism utilities */
+  .glass {
+    background: var(--dock-bg);
+    backdrop-filter: blur(var(--dock-blur));
+    border: 1px solid var(--dock-border);
+  }
+
+  .glass-dark {
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(51, 65, 85, 0.5);
+  }
+
+  /* Badge styles */
+  .dock-badge {
+    @apply absolute -top-1 -right-1;
+    @apply min-w-[18px] h-[18px] px-1;
+    @apply flex items-center justify-center;
+    @apply text-[10px] font-bold text-white;
+    @apply bg-red-500 rounded-full;
+    @apply border-2 border-white dark:border-slate-900;
+  }
+
+  /* Dock Divider */
+  .dock-divider {
+    @apply w-px h-8 mx-1;
+    @apply bg-slate-300/50 dark:bg-slate-600/50;
+  }
+
+  /* Dock Search Bar Styles */
+  .dock-search-trigger {
+    @apply w-12 h-12 rounded-xl;
+    @apply flex items-center justify-center;
+    @apply bg-transparent hover:bg-white/20 dark:hover:bg-white/10;
+    @apply transition-colors duration-200;
+    @apply cursor-pointer;
+  }
+
+  .dock-search-expanded {
+    @apply relative;
+    @apply bg-white dark:bg-slate-800;
+    @apply rounded-xl shadow-lg;
+    @apply border border-slate-200 dark:border-slate-700;
+    @apply overflow-visible;
+  }
+
+  .dock-search-input-wrapper {
+    @apply flex items-center gap-2 px-3 py-2;
+  }
+
+  .dock-search-input {
+    @apply flex-1 bg-transparent;
+    @apply text-sm text-slate-900 dark:text-slate-100;
+    @apply placeholder-slate-400;
+    @apply outline-none;
+    @apply min-w-0;
+  }
+
+  .dock-search-close {
+    @apply p-1 rounded-md;
+    @apply text-slate-400 hover:text-slate-600 dark:hover:text-slate-300;
+    @apply hover:bg-slate-100 dark:hover:bg-slate-700;
+    @apply transition-colors;
+  }
+
+  .dock-search-results {
+    @apply absolute bottom-full left-0 right-0 mb-2;
+    @apply bg-white dark:bg-slate-800;
+    @apply rounded-xl shadow-xl;
+    @apply border border-slate-200 dark:border-slate-700;
+    @apply max-h-80 overflow-y-auto;
+    @apply py-2;
+  }
+
+  .dock-search-result {
+    @apply w-full flex items-center gap-3 px-3 py-2;
+    @apply text-left transition-colors duration-100;
+    @apply hover:bg-slate-50 dark:hover:bg-slate-700/50;
+  }
+
+  .dock-search-result.selected {
+    @apply bg-sky-500/10;
+  }
+
+  .dock-search-result-icon {
+    @apply w-8 h-8 rounded-lg;
+    @apply bg-slate-100 dark:bg-slate-700;
+    @apply flex items-center justify-center;
+    @apply text-slate-500 dark:text-slate-400;
+  }
+
+  .dock-search-result-content {
+    @apply flex-1 min-w-0;
+    @apply flex flex-col;
+  }
+
+  .dock-search-result-title {
+    @apply text-sm font-medium text-slate-900 dark:text-slate-100;
+    @apply truncate;
+  }
+
+  .dock-search-result-desc {
+    @apply text-xs text-slate-500 dark:text-slate-400;
+    @apply truncate;
+  }
+
+  .dock-search-no-results {
+    @apply absolute bottom-full left-0 right-0 mb-2;
+    @apply bg-white dark:bg-slate-800;
+    @apply rounded-xl shadow-xl;
+    @apply border border-slate-200 dark:border-slate-700;
+    @apply px-4 py-6 text-center;
+    @apply text-sm text-slate-500;
+  }
+
+  /* External Link Item Styles */
+  .dock-external-link {
+    @apply relative flex items-center justify-center;
+    @apply w-12 h-12 rounded-xl;
+    @apply bg-gradient-to-br from-slate-100 to-slate-200;
+    @apply dark:from-slate-700 dark:to-slate-800;
+    @apply transition-all duration-200 ease-out;
+    @apply cursor-pointer select-none;
+    @apply border border-slate-200/50 dark:border-slate-600/50;
+  }
+
+  .dock-external-link:hover {
+    @apply from-white to-slate-100;
+    @apply dark:from-slate-600 dark:to-slate-700;
+    @apply shadow-md;
+  }
+
+  .dock-external-badge {
+    @apply absolute -top-0.5 -right-0.5;
+    @apply w-4 h-4 rounded-full;
+    @apply bg-sky-500 text-white;
+    @apply flex items-center justify-center;
+    @apply border border-white dark:border-slate-900;
+  }
+
+  /* Quick Action Item Styles */
+  .dock-quick-action {
+    @apply relative flex items-center justify-center;
+    @apply w-12 h-12 rounded-xl;
+    @apply transition-all duration-200 ease-out;
+    @apply cursor-pointer select-none;
+    @apply border border-transparent;
+  }
+
+  .dock-quick-action:hover {
+    @apply shadow-md;
+  }
+
+  .dock-quick-action:disabled {
+    @apply opacity-50 cursor-wait;
+  }
+
+  .dock-action-indicator {
+    @apply absolute top-1 right-1;
+    @apply w-2 h-2 rounded-full;
+    @apply bg-sky-500;
+    @apply animate-pulse;
+  }
+
+  /* Dock Item Tooltip */
+  .dock-item-tooltip {
+    @apply absolute -top-10 left-1/2 -translate-x-1/2;
+    @apply px-2 py-1 rounded-md;
+    @apply bg-slate-900 dark:bg-slate-700;
+    @apply text-xs text-white font-medium;
+    @apply whitespace-nowrap;
+    @apply pointer-events-none;
+    @apply opacity-0;
+    @apply transition-opacity duration-150;
+    @apply z-50;
+  }
+
+  .dock-item-tooltip::after {
+    content: '';
+    @apply absolute top-full left-1/2 -translate-x-1/2;
+    @apply border-4 border-transparent;
+    @apply border-t-slate-900 dark:border-t-slate-700;
+  }
+
+  .galaxy-dock-item:hover .dock-item-tooltip,
+  .dock-external-link:hover .dock-item-tooltip,
+  .dock-quick-action:hover .dock-item-tooltip {
+    @apply opacity-100;
+  }
+
+  /* Config Button */
+  .dock-config-btn {
+    @apply opacity-50 hover:opacity-100;
+  }
+
+  /* Dock Config Modal */
+  .dock-config-overlay {
+    @apply fixed inset-0 z-[100];
+    @apply flex items-center justify-center p-4;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+  }
+
+  .dock-config-modal {
+    @apply w-full max-w-2xl;
+    @apply bg-white dark:bg-slate-900;
+    @apply rounded-2xl shadow-2xl;
+    @apply border border-slate-200 dark:border-slate-700;
+    @apply overflow-hidden;
+  }
+}
+
+@layer utilities {
+  /* Animation utilities for dock magnification */
+  .dock-magnify {
+    transform-origin: bottom center;
+    will-change: transform;
+  }
+
+  /* Glow effects */
+  .glow-primary {
+    box-shadow: 0 0 20px var(--galaxy-glow);
+  }
+
+  /* Shine animation for loading states */
+  .animate-shine {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.1),
+      transparent
+    );
+    background-size: 200% 100%;
+    animation: shine 1.5s infinite;
+  }
+
+  @keyframes shine {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* Orbit animation for galaxy map */
+  .animate-orbit {
+    animation: orbit 20s linear infinite;
+  }
+
+  @keyframes orbit {
+    from { transform: rotate(0deg) translateX(100px) rotate(0deg); }
+    to { transform: rotate(360deg) translateX(100px) rotate(-360deg); }
+  }
+
+  /* Pulse glow for active states */
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 20px var(--galaxy-glow); }
+    50% { box-shadow: 0 0 40px var(--galaxy-glow); }
+  }
+}

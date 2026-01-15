@@ -224,14 +224,16 @@ function DualDashboardContent() {
   const [isMobile, setIsMobile] = useState(false);
 
   const isCEORoute = useMemo(() => location.pathname.startsWith('/ceod/'), [location.pathname]);
+  const isAdminRoute = useMemo(() => location.pathname.startsWith('/admin'), [location.pathname]);
 
   const shouldShowCTOSidebar = useMemo(() => {
     if (!profileReady) return false;
     if (isCEORoute) return false;
+    if (isAdminRoute) return false; // Admin routes use their own AdminSidebar
     const role = profile?.role?.toLowerCase();
     if (role === 'ceo') return false;
     return role === 'cto' || role === 'admin' || role === 'staff';
-  }, [profileReady, isCEORoute, profile?.role]);
+  }, [profileReady, isCEORoute, isAdminRoute, profile?.role]);
 
   const navigationItems = useMemo(() => {
     const role = profile?.role || 'staff';

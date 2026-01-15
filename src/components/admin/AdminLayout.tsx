@@ -89,12 +89,11 @@ function AdminLayoutContent({ children, showStatsBar = true }: AdminLayoutProps)
         {/* Stats Bar */}
         {showStatsBar && <AdminStatsBar />}
 
-        {/* Main content container */}
+        {/* Main content container - pb-24 for Galaxy Dock clearance */}
         <div 
-          className="w-full"
+          className="w-full pb-24"
           style={{
             paddingTop: isMobile && !showStatsBar ? 'max(4.5rem, calc(env(safe-area-inset-top) + 3.5rem))' : undefined,
-            paddingBottom: isMobile ? 'max(1rem, env(safe-area-inset-bottom))' : undefined,
           }}
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">

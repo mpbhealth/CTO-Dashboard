@@ -172,28 +172,37 @@ function handleProject(
 }
 
 /**
- * Create notification payload for compliance incidents
+ * Create notification payload for compliance tasks (high-priority/overdue)
  */
-function handleComplianceIncident(
+function handleComplianceTask(
   payload: RealtimePayload<Record<string, unknown>>
 ): NotificationPayload | null {
   const record = payload.new;
   if (!record) return null;
 
-  const severity = (record.severity as string)?.toLowerCase();
-  const priority: NotificationPriority = 
-    severity === 'critical' || severity === 'high' ? 'critical' : 
-    severity === 'medium' ? 'high' : 'info';
+  const priority = (record.priority as string)?.toLowerCase();
+  const status = (record.status as string)?.toLowerCase();
+  
+  // Only notify on high-priority or overdue tasks
+  if (priority !== 'high' && priority !== 'critical' && status !== 'overdue') {
+    return null;
+  }
+  
+  const notificationPriority: NotificationPriority = 
+    priority === 'critical' ? 'critical' : 
+    priority === 'high' ? 'high' : 'info';
+
+  const isNew = payload.eventType === 'INSERT';
 
   return {
     type: 'compliance_alert',
-    priority,
-    title: 'Compliance Incident',
-    body: record.title as string,
-    source_table: 'compliance_incidents',
+    priority: notificationPriority,
+    title: isNew ? 'New Compliance Task' : 'Compliance Task Updated',
+    body: (record.title || record.name) as string,
+    source_table: 'compliance_tasks',
     source_id: record.id as string,
     data: {
-      url: '/ctod/compliance/incidents',
+      url: '/ctod/compliance/tasks',
       actionType: 'navigate',
     },
   };
@@ -254,9 +263,9 @@ const ctoSubscriptions: SubscriptionConfig[] = [
     handler: handleProject,
   },
   {
-    table: 'compliance_incidents',
-    event: 'INSERT',
-    handler: handleComplianceIncident,
+    table: 'compliance_tasks',
+    event: '*',
+    handler: handleComplianceTask,
   },
   {
     table: 'tickets_cache',
@@ -274,9 +283,9 @@ const ceoSubscriptions: SubscriptionConfig[] = [
     handler: handleApiIncident,
   },
   {
-    table: 'compliance_incidents',
-    event: 'INSERT',
-    handler: handleComplianceIncident,
+    table: 'compliance_tasks',
+    event: '*',
+    handler: handleComplianceTask,
   },
 ];
 
@@ -313,6 +322,7 @@ export class RealtimeNotificationManager {
 
   /**
    * Subscribe to relevant database tables based on user role
+   * Note: Some tables may not exist or have realtime enabled - errors are handled gracefully
    */
   private subscribe(): void {
     if (this.isSubscribed) {
@@ -321,37 +331,55 @@ export class RealtimeNotificationManager {
 
     // Determine which subscriptions to use based on role
     const subscriptions = this.getSubscriptionsForRole();
+    let successCount = 0;
+    let errorCount = 0;
 
     subscriptions.forEach((config, index) => {
       const channelName = `notifications-${config.table}-${index}`;
       
-      const channel = supabase
-        .channel(channelName)
-        .on(
-          'postgres_changes',
-          {
-            event: config.event,
-            schema: 'public',
-            table: config.table,
-            filter: config.filter,
-          },
-          (payload) => {
-            this.handleDatabaseEvent(config, payload);
-          }
-        )
-        .subscribe((status) => {
-          if (status === 'SUBSCRIBED') {
-            logger.log(`Subscribed to ${config.table} changes`);
-          } else if (status === 'CHANNEL_ERROR') {
-            logger.error(`Error subscribing to ${config.table}`);
-          }
-        });
+      try {
+        const channel = supabase
+          .channel(channelName)
+          .on(
+            'postgres_changes',
+            {
+              event: config.event,
+              schema: 'public',
+              table: config.table,
+              filter: config.filter,
+            },
+            (payload) => {
+              this.handleDatabaseEvent(config, payload);
+            }
+          )
+          .subscribe((status, err) => {
+            if (status === 'SUBSCRIBED') {
+              successCount++;
+              logger.log(`Subscribed to ${config.table} changes`);
+            } else if (status === 'CHANNEL_ERROR') {
+              errorCount++;
+              // Log as warning instead of error - table might not exist or realtime not enabled
+              logger.warn(`Could not subscribe to ${config.table}: ${err?.message || 'Realtime may not be enabled for this table'}`);
+            } else if (status === 'TIMED_OUT') {
+              errorCount++;
+              logger.warn(`Subscription to ${config.table} timed out`);
+            }
+          });
 
-      this.channels.push(channel);
+        this.channels.push(channel);
+      } catch (error) {
+        errorCount++;
+        logger.warn(`Failed to create subscription for ${config.table}:`, error);
+      }
     });
 
     this.isSubscribed = true;
-    logger.log('Realtime notification subscriptions initialized');
+    
+    if (errorCount > 0) {
+      logger.warn(`Realtime notifications: ${successCount}/${subscriptions.length} subscriptions active. Run the 'enable_realtime_subscriptions' migration to fix.`);
+    } else {
+      logger.log('Realtime notification subscriptions initialized');
+    }
   }
 
   /**

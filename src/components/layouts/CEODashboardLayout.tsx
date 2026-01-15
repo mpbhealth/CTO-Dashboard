@@ -58,7 +58,7 @@ export function CEODashboardLayout({ children }: CEODashboardLayoutProps) {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50 overflow-hidden">
+    <div className="flex min-h-screen bg-gray-50 overflow-hidden pb-24">
       <Sidebar
         activeTab={activeTab}
         onTabChange={setActiveTab}

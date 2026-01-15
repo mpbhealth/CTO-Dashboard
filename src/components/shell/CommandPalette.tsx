@@ -91,7 +91,7 @@ export function CommandPalette({ onClose }: CommandPaletteProps) {
         title: 'Go to CEO Dashboard',
         description: 'Executive overview and KPIs',
         icon: LayoutDashboard,
-        href: '/ceo',
+        href: '/ceod/home',
       },
       {
         id: 'action-go-cto',
@@ -99,7 +99,7 @@ export function CommandPalette({ onClose }: CommandPaletteProps) {
         title: 'Go to CTO Dashboard',
         description: 'Technology and engineering metrics',
         icon: Terminal,
-        href: '/cto',
+        href: '/ctod/home',
       },
     ];
 

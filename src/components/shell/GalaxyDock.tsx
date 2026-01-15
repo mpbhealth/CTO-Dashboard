@@ -277,11 +277,11 @@ export function GalaxyDock({ onOpenMap }: GalaxyDockProps) {
 
   // Default apps if no pinned apps loaded yet
   const defaultApps: DockItem[] = [
-    { key: 'ceo-home', name: 'CEO Dashboard', icon: 'LayoutDashboard', href: '/ceo' },
-    { key: 'cto-home', name: 'CTO Dashboard', icon: 'Terminal', href: '/cto' },
-    { key: 'orbit', name: 'MPB Orbit', icon: 'Orbit', href: '/orbit' },
-    { key: 'tickets', name: 'IT Support', icon: 'Ticket', href: '/tickets' },
-    { key: 'settings', name: 'Settings', icon: 'Settings', href: '/settings' },
+    { key: 'ceo-home', name: 'CEO Dashboard', icon: 'LayoutDashboard', href: '/ceod/home' },
+    { key: 'cto-home', name: 'CTO Dashboard', icon: 'Terminal', href: '/ctod/home' },
+    { key: 'admin', name: 'Web Control Center', icon: 'Settings', href: '/admin' },
+    { key: 'tickets', name: 'IT Support', icon: 'Ticket', href: '/ctod/operations/it-support' },
+    { key: 'compliance', name: 'Compliance', icon: 'ShieldCheck', href: '/ctod/compliance' },
   ];
 
   const dockItems = isLoading ? defaultApps : (pinnedApps.length > 0 ? pinnedApps : defaultApps);

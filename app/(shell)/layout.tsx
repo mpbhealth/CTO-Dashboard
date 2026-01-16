@@ -53,11 +53,9 @@ function ShellLoading() {
  * Shell Layout
  * 
  * This layout wraps all authenticated routes and provides:
- * - Persistent AppShell with GalaxyDock, CommandPalette, and GalaxyMapModal
+ * - AppShell wrapper
  * - Authentication context
  * - React Query provider
- * 
- * The shell never unmounts during navigation, providing instant transitions
  */
 export default function ShellLayout({
   children,

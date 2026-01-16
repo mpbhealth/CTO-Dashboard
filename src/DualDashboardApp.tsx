@@ -320,7 +320,7 @@ function DualDashboardContent() {
   }
 
   return (
-    <div className="flex min-h-screen bg-slate-50 overflow-x-hidden pb-24">
+    <div className="flex min-h-screen bg-slate-50 overflow-x-hidden">
       {shouldShowCTOSidebar && (
         <Sidebar
           activeTab={activeTab}

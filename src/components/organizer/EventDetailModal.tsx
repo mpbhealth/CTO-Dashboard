@@ -8,7 +8,6 @@ import {
   Video,
   ExternalLink,
   Trash2,
-  Edit3,
   Calendar,
   AlertCircle,
   CheckCircle,
@@ -31,7 +30,7 @@ export default function EventDetailModal({
   isOpen,
   onClose,
   onDelete,
-  onEdit,
+  onEdit: _onEdit,
   isConnected
 }: EventDetailModalProps) {
   const [isDeleting, setIsDeleting] = useState(false);

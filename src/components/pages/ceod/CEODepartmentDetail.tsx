@@ -276,7 +276,7 @@ View detailed report: ${window.location.href}
                 <div className="flex items-center gap-2">
                   <select
                     value={dateRange}
-                    onChange={(e) => setDateRange(e.target.value as any)}
+                    onChange={(e) => setDateRange(e.target.value as '7d' | '30d' | '90d' | 'all')}
                     className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   >
                     <option value="7d">Last 7 days</option>

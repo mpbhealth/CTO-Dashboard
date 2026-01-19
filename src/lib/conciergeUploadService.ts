@@ -3,17 +3,14 @@ import Papa from 'papaparse';
 import {
   transformWeeklyMetricsFile,
   validateWeeklyMetric,
-  type TransformedWeeklyMetric,
 } from './conciergeWeeklyMetricsTransformer';
 import {
   transformDailyInteractionsFile,
   validateDailyInteraction,
-  type TransformedDailyInteraction,
 } from './conciergeDailyInteractionsTransformer';
 import {
   transformAfterHoursFile,
   validateAfterHoursCall,
-  type TransformedAfterHoursCall,
 } from './conciergeAfterHoursTransformer';
 
 export type ConciergeSubdepartment = 'weekly' | 'daily' | 'after_hours';
@@ -34,7 +31,7 @@ export interface UploadResult {
   errors: Array<{
     row: number;
     message: string;
-    data?: any;
+    data?: unknown;
   }>;
   warnings: Array<{
     row: number;
@@ -68,7 +65,7 @@ async function logUploadError(
   rowNumber: number,
   errorType: string,
   errorMessage: string,
-  rowData?: any
+  rowData?: unknown
 ): Promise<void> {
   try {
     await supabase.from('concierge_upload_errors').insert({
@@ -91,7 +88,7 @@ async function logDataQuality(
   severity: 'info' | 'warning' | 'error',
   message: string,
   affectedRows: number = 0,
-  details?: any
+  details?: unknown
 ): Promise<void> {
   try {
     await supabase.from('concierge_data_quality_log').insert({
@@ -126,7 +123,7 @@ export async function uploadWeeklyMetrics(
   try {
     const fileContent = await file.text();
 
-    const parseResult = await new Promise<Papa.ParseResult<any>>((resolve, reject) => {
+    const parseResult = await new Promise<Papa.ParseResult<Record<string, unknown>>>((resolve, reject) => {
       Papa.parse(fileContent, {
         header: true,
         skipEmptyLines: true,
@@ -146,7 +143,7 @@ export async function uploadWeeklyMetrics(
       throw new Error('No valid data found in file');
     }
 
-    const validRecords: any[] = [];
+    const validRecords: Record<string, unknown>[] = [];
     const agents = new Set<string>();
     const dateRanges = new Set<string>();
 
@@ -248,7 +245,7 @@ export async function uploadDailyInteractions(
   try {
     const fileContent = await file.text();
 
-    const parseResult = await new Promise<Papa.ParseResult<any>>((resolve, reject) => {
+    const parseResult = await new Promise<Papa.ParseResult<string[]>>((resolve, reject) => {
       Papa.parse(fileContent, {
         header: false,
         skipEmptyLines: true,
@@ -261,8 +258,8 @@ export async function uploadDailyInteractions(
       throw new Error(`CSV parsing failed: ${parseResult.errors[0].message}`);
     }
 
-    const dataAsObjects = parseResult.data.map((row: any[]) => {
-      const obj: any = {};
+    const dataAsObjects = parseResult.data.map((row: string[]) => {
+      const obj: Record<string, string> = {};
       row.forEach((val, idx) => {
         obj[`col_${idx}`] = val;
       });
@@ -276,7 +273,7 @@ export async function uploadDailyInteractions(
       throw new Error('No valid data found in file');
     }
 
-    const validRecords: any[] = [];
+    const validRecords: Record<string, unknown>[] = [];
     let totalInteractions = 0;
     let noCallsDays = 0;
 
@@ -377,7 +374,7 @@ export async function uploadAfterHoursCalls(
   try {
     const fileContent = await file.text();
 
-    const parseResult = await new Promise<Papa.ParseResult<any>>((resolve, reject) => {
+    const parseResult = await new Promise<Papa.ParseResult<string[]>>((resolve, reject) => {
       Papa.parse(fileContent, {
         header: false,
         skipEmptyLines: true,
@@ -390,8 +387,8 @@ export async function uploadAfterHoursCalls(
       throw new Error(`CSV parsing failed: ${parseResult.errors[0].message}`);
     }
 
-    const dataAsObjects = parseResult.data.map((row: any[]) => {
-      const obj: any = {};
+    const dataAsObjects = parseResult.data.map((row: string[]) => {
+      const obj: Record<string, string> = {};
       row.forEach((val, idx) => {
         obj[`col_${idx}`] = val;
       });
@@ -405,7 +402,7 @@ export async function uploadAfterHoursCalls(
       throw new Error('No valid data found in file');
     }
 
-    const validRecords: any[] = [];
+    const validRecords: Record<string, unknown>[] = [];
     let totalCalls = 0;
 
     for (let i = 0; i < transformed.length; i++) {

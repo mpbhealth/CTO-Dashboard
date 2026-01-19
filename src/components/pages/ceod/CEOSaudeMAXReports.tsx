@@ -17,14 +17,23 @@ interface SaudeMAXRecord {
   health_improvement: number | null;
 }
 
+interface UploadedFile {
+  id: string;
+  file_name: string;
+  department: string;
+  created_at: string;
+  row_count?: number;
+  status?: string;
+}
+
 export function CEOSaudeMAXReports() {
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   const [selectedProgram, setSelectedProgram] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
   const [showExportModal, setShowExportModal] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<any>(null);
-  const [fileData, setFileData] = useState<any[]>([]);
+  const [selectedFile, setSelectedFile] = useState<UploadedFile | null>(null);
+  const [fileData, setFileData] = useState<Record<string, unknown>[]>([]);
 
   const { data: records = [], isLoading } = useQuery({
     queryKey: ['saudemax_data'],
@@ -58,7 +67,7 @@ export function CEOSaudeMAXReports() {
     },
   });
 
-  const handleViewFile = async (file: any) => {
+  const handleViewFile = async (file: UploadedFile) => {
     setSelectedFile(file);
 
     const { data } = await supabase
@@ -395,7 +404,7 @@ export function CEOSaudeMAXReports() {
               Uploaded Files
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {uploadedFiles.map((file: any) => (
+              {uploadedFiles.map((file: UploadedFile) => (
                 <div
                   key={file.id}
                   className="border border-gray-200 rounded-lg p-4 hover:border-[#a855f7] transition-colors"

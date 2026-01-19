@@ -73,7 +73,7 @@ export default function AuthWrapper({ children }: AuthWrapperProps) {
       const currentPath = location.pathname;
       const isCEOPath = currentPath.startsWith('/ceod');
       const isCTOPath = currentPath.startsWith('/ctod');
-      const isSharedPath = currentPath.startsWith('/shared');
+      const _isSharedPath = currentPath.startsWith('/shared');
       const isRootPath = currentPath === '/' || currentPath === '';
       const isLoginPath = currentPath.startsWith('/login');
       const isAuthCallbackPath = currentPath.startsWith('/auth/callback');

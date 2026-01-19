@@ -2,18 +2,16 @@ import { parse } from 'csv-parse';
 import { stringify } from 'csv-stringify';
 import { Command } from 'commander';
 import * as fs from 'fs';
-import * as path from 'path';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 
-import { 
-  SourceRow, 
-  TargetRow, 
-  ProcessedRow, 
-  SourceRowSchema, 
+import {
+  TargetRow,
+  ProcessedRow,
+  SourceRowSchema,
   TARGET_COLUMNS,
   INACTIVE_STATUS_TERMS,
-  VALID_RECORD_TYPES 
+  VALID_RECORD_TYPES
 } from './schemas';
 
 import { 
@@ -88,8 +86,8 @@ export function parseAgentId(enrollmentSource: string | undefined): string {
  */
 function normalizeRecordType(recordType: string): 'enrollment' | 'status_update' | 'both' | null {
   const normalized = recordType.toLowerCase().trim();
-  if (VALID_RECORD_TYPES.includes(normalized as any)) {
-    return normalized as any;
+  if ((VALID_RECORD_TYPES as readonly string[]).includes(normalized)) {
+    return normalized as 'enrollment' | 'status_update' | 'both';
   }
   return null;
 }
@@ -105,50 +103,58 @@ export function isInactiveStatus(status: string | undefined): boolean {
 /**
  * Filter and validate source rows
  */
-function filterAndValidateRows(rows: any[]): ProcessedRow[] {
+function filterAndValidateRows(rows: Record<string, unknown>[]): ProcessedRow[] {
   const processedRows: ProcessedRow[] = [];
-  
+
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i];
-    
-    try {
-      // Validate against source schema
-      const validatedRow = SourceRowSchema.parse(row);
-      
-      // Check if member_id is not empty (required)
-      if (!validatedRow.member_id || !validatedRow.member_id.trim()) {
-        console.warn(`Row ${i + 1}: Skipping row with empty member_id`);
-        continue;
-      }
-      
-      // Normalize record type
-      const normalizedRecordType = normalizeRecordType(validatedRow.record_type);
-      if (!normalizedRecordType) {
-        console.warn(`Row ${i + 1}: Invalid record_type '${validatedRow.record_type}', skipping`);
-        continue;
-      }
-      
-      // Create processed row
-      const processedRow: ProcessedRow = {
-        member_id: validatedRow.member_id.trim(),
-        program_name: validatedRow.program_name?.trim() || '',
-        enrollment_date: validatedRow.enrollment_date?.trim(),
-        status_date: validatedRow.status_date?.trim(),
-        new_status: validatedRow.new_status?.trim(),
-        enrollment_source: validatedRow.enrollment_source?.trim(),
-        premium_amount: validatedRow.premium_amount?.trim(),
-        renewal_date: validatedRow.renewal_date?.trim(),
-        record_type: normalizedRecordType
-      };
-      
-      processedRows.push(processedRow);
-      
-    } catch (error) {
-      console.warn(`Row ${i + 1}: Validation failed -`, error);
+
+    // Skip null or undefined rows
+    if (!row) {
+      console.warn(`Row ${i + 1}: Skipping null/undefined row`);
       continue;
     }
+
+    // Use safeParse to avoid throwing errors
+    const parseResult = SourceRowSchema.safeParse(row);
+
+    if (!parseResult.success) {
+      const errorMessages = parseResult.error.issues.map(issue => issue.message).join(', ');
+      console.warn(`Row ${i + 1}: Validation failed - ${errorMessages}`);
+      continue;
+    }
+
+    const validatedRow = parseResult.data;
+
+    // Check if member_id is not empty (required)
+    if (!validatedRow.member_id || !validatedRow.member_id.trim()) {
+      console.warn(`Row ${i + 1}: Skipping row with empty member_id`);
+      continue;
+    }
+
+    // Normalize record type
+    const normalizedRecordType = normalizeRecordType(validatedRow.record_type);
+    if (!normalizedRecordType) {
+      console.warn(`Row ${i + 1}: Invalid record_type '${validatedRow.record_type}', skipping`);
+      continue;
+    }
+
+    // Create processed row
+    const processedRow: ProcessedRow = {
+      member_id: validatedRow.member_id.trim(),
+      program_name: validatedRow.program_name?.trim() || '',
+      enrollment_date: validatedRow.enrollment_date?.trim(),
+      status_date: validatedRow.status_date?.trim(),
+      new_status: validatedRow.new_status?.trim(),
+      enrollment_source: validatedRow.enrollment_source?.trim(),
+      premium_amount: validatedRow.premium_amount?.trim(),
+      renewal_date: validatedRow.renewal_date?.trim(),
+      record_type: normalizedRecordType
+    };
+
+    processedRows.push(processedRow);
   }
-  
+
   return processedRows;
 }
 
@@ -296,17 +302,17 @@ export async function transformCsv(inputPath: string, outputPath: string): Promi
   const inputData = fs.readFileSync(inputPath, 'utf8');
   
   return new Promise((resolve, reject) => {
-    const rows: any[] = [];
-    
+    const rows: Record<string, unknown>[] = [];
+
     parse(inputData, {
       columns: true,
       skip_empty_lines: true,
       trim: true,
     })
-    .on('data', (row: any) => {
+    .on('data', (row: Record<string, unknown>) => {
       rows.push(row);
     })
-    .on('error', (err: any) => {
+    .on('error', (err: Error) => {
       reject(err);
     })
     .on('end', async () => {
@@ -334,7 +340,7 @@ export async function transformCsv(inputPath: string, outputPath: string): Promi
           stringify(mergedRows, {
             header: true,
             columns: TARGET_COLUMNS,
-          }, (err: any, output: any) => {
+          }, (err: Error | undefined, output: string) => {
             if (err) reject(err);
             else resolve(output);
           });

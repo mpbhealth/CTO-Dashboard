@@ -4,11 +4,9 @@ import {
   BarChart3,
   DollarSign,
   Image,
-  FileText,
   TrendingUp,
   Target,
   Users,
-  Mail,
   MousePointer,
 } from 'lucide-react';
 export function CEOMarketingDashboard() {
@@ -94,7 +92,7 @@ export function CEOMarketingDashboard() {
               return (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
+                  onClick={() => setActiveTab(tab.id as 'overview' | 'campaigns' | 'calendar' | 'budget' | 'assets')}
                   className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
                     activeTab === tab.id
                       ? 'border-purple-600 text-purple-600'
@@ -114,7 +112,6 @@ export function CEOMarketingDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {funnelMetrics.map((metric) => {
                 const Icon = metric.icon;
-                const isPositive = metric.trend.startsWith('+') || metric.trend.startsWith('-');
                 const trendColor = metric.trend.startsWith('+') ? 'text-green-600' : metric.trend.startsWith('-') && metric.label.includes('Cost') ? 'text-green-600' : 'text-red-600';
                 return (
                   <div key={metric.label} className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">

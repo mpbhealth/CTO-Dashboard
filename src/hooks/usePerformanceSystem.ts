@@ -191,9 +191,10 @@ function useProvideFeedback() {
 
       if (feedbackError) throw feedbackError;
       return { success: true };
-    } catch (err: any) {
-      setError(err.message);
-      return { success: false, error: err.message };
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'An error occurred';
+      setError(message);
+      return { success: false, error: message };
     } finally {
       setIsLoading(false);
     }

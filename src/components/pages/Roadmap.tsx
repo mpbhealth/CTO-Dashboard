@@ -7,7 +7,7 @@ import { supabase } from '../../lib/supabase';
 import { Database } from '../../types/database';
 
 type RoadmapItem = Database['public']['Tables']['roadmap_items']['Row'];
-type Project = Database['public']['Tables']['projects']['Row'];
+type _Project = Database['public']['Tables']['projects']['Row'];
 
 interface RoadmapFormData {
   title: string;
@@ -96,7 +96,7 @@ export default function Roadmap() {
   // Get suggested items to remove (not in projects)
   const itemsToRemove = roadmapItems.filter(item => {
     const shouldRemove = ['CarePilot Insurance AI', 'Crypto Optimizer Platform', 'OwnBite Food Scanner']
-      .some(name => item.title.includes('Insurance AI Platform') || item.title.includes('Financial Optimizer') || item.title.includes('Health Tech Scanner'));
+      .some(_name => item.title.includes('Insurance AI Platform') || item.title.includes('Financial Optimizer') || item.title.includes('Health Tech Scanner'));
     return shouldRemove;
   });
 

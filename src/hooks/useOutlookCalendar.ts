@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { isSupabaseConfigured } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 
 export interface CalendarEvent {
@@ -60,7 +60,6 @@ export interface UseOutlookCalendarOptions {
 // Demo events for when Outlook is not configured
 const generateDemoEvents = (startDate: Date, endDate: Date): CalendarEvent[] => {
   const events: CalendarEvent[] = [];
-  const now = new Date();
   
   // Generate some sample events
   const sampleEvents = [

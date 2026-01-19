@@ -16,9 +16,21 @@ interface Template {
   display_name: string;
   description: string;
   file_name_pattern: string;
-  expected_columns: any;
-  validation_rules: any;
+  expected_columns: Record<string, unknown>;
+  validation_rules: Record<string, unknown>;
   transformation_notes: string;
+}
+
+interface UploadHistoryItem {
+  id: string;
+  upload_batch_id: string;
+  subdepartment: string;
+  check_type: string;
+  severity: 'info' | 'warning' | 'error';
+  message: string;
+  affected_rows: number;
+  details: string | null;
+  created_at: string;
 }
 
 export function CEOConciergeUpload() {
@@ -30,7 +42,7 @@ export function CEOConciergeUpload() {
   const [dragActive, setDragActive] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [result, setResult] = useState<UploadResult | null>(null);
-  const [uploadHistory, setUploadHistory] = useState<any[]>([]);
+  const [uploadHistory, setUploadHistory] = useState<UploadHistoryItem[]>([]);
 
   useEffect(() => {
     loadTemplates();

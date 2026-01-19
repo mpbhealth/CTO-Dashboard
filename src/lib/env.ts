@@ -19,12 +19,12 @@ export function getEnvMode(): { isDev: boolean; isProd: boolean } {
 
   // Try Vite environment (client-side)
   try {
-    // @ts-ignore - import.meta.env is Vite-specific
+    // @ts-expect-error - import.meta.env is Vite-specific
     if (typeof import.meta !== 'undefined' && import.meta.env) {
       return {
-        // @ts-ignore
+        // @ts-expect-error - import.meta.env is Vite-specific
         isDev: !!import.meta.env.DEV,
-        // @ts-ignore
+        // @ts-expect-error - import.meta.env is Vite-specific
         isProd: !!import.meta.env.PROD,
       };
     }
@@ -51,9 +51,9 @@ export function getEnvVar(key: string): string | undefined {
 
   // Try Vite environment
   try {
-    // @ts-ignore
+    // @ts-expect-error - import.meta.env is Vite-specific
     if (typeof import.meta !== 'undefined' && import.meta.env) {
-      // @ts-ignore
+      // @ts-expect-error - import.meta.env is Vite-specific
       return import.meta.env[key];
     }
   } catch {

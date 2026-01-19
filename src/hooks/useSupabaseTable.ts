@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 
-interface UseSupabaseTableOptions<T> {
+interface UseSupabaseTableOptions<_T> {
   table: string;
   select?: string;
   orderBy?: string;

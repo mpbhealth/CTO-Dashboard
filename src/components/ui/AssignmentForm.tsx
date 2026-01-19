@@ -6,8 +6,8 @@ interface AssignmentFormProps {
   isOpen: boolean;
   initialData?: Partial<AssignmentCreateData>;
   projects?: Array<{ id: string; name: string }>;
-  onCreate?: (data: AssignmentCreateData) => Promise<any>;
-  onSubmit?: (data: AssignmentCreateData) => Promise<any>;
+  onCreate?: (data: AssignmentCreateData) => Promise<void>;
+  onSubmit?: (data: AssignmentCreateData) => Promise<void>;
   onClose: () => void;
   submitLabel?: string;
 }

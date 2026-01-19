@@ -44,7 +44,7 @@ type SortBy = 'name' | 'category' | 'clicks' | 'date';
 export default function QuickLinks() {
   const [links, setLinks] = useState<QuickLink[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [_error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [sortBy, setSortBy] = useState<SortBy>('name');
@@ -71,7 +71,7 @@ export default function QuickLinks() {
   });
 
   // Sort filtered links
-  const sortedFilteredLinks = [...filteredLinks].sort((a, b) => {
+  const _sortedFilteredLinks = [...filteredLinks].sort((a, b) => {
     switch (sortBy) {
       case 'name':
         return (a.name || '').localeCompare(b.name || '');

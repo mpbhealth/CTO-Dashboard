@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { MessageSquare, Download, Filter, Calendar, User, TrendingUp, Clock, CheckCircle, FileSpreadsheet, Eye } from 'lucide-react';
+import { MessageSquare, Download, Filter, User, TrendingUp, Clock, CheckCircle, FileSpreadsheet, Eye } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 import { useQuery } from '@tanstack/react-query';
 import { ExportModal } from '../../modals/ExportModal';
@@ -16,6 +16,17 @@ interface ConciergeInteraction {
   notes: string | null;
 }
 
+interface UploadedFile {
+  id: string;
+  department: string;
+  subdepartment?: string;
+  file_name: string;
+  batch_id: string;
+  row_count?: number;
+  status: string;
+  created_at: string;
+}
+
 export function CEOConciergeTracking() {
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
@@ -23,8 +34,8 @@ export function CEOConciergeTracking() {
   const [selectedChannel, setSelectedChannel] = useState('');
   const [selectedResult, setSelectedResult] = useState('');
   const [showExportModal, setShowExportModal] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<any>(null);
-  const [fileData, setFileData] = useState<any[]>([]);
+  const [selectedFile, setSelectedFile] = useState<UploadedFile | null>(null);
+  const [fileData, setFileData] = useState<Record<string, unknown>[]>([]);
 
   const { data: interactions = [], isLoading } = useQuery({
     queryKey: ['concierge_interactions'],
@@ -51,11 +62,11 @@ export function CEOConciergeTracking() {
         .limit(20);
 
       if (error) throw error;
-      return data;
+      return data as UploadedFile[];
     },
   });
 
-  const handleViewFile = async (file: any) => {
+  const handleViewFile = async (file: UploadedFile) => {
     setSelectedFile(file);
 
     let tableName = '';
@@ -407,7 +418,7 @@ export function CEOConciergeTracking() {
               Uploaded Files
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {uploadedFiles.map((file: any) => (
+              {uploadedFiles.map((file) => (
                 <div
                   key={file.id}
                   className="border border-gray-200 rounded-lg p-4 hover:border-[#1a3d97] transition-colors"

@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Users, Building2, Calendar, Plus, CreditCard as Edit, Trash2, TrendingUp, TrendingDown, DollarSign, Shield, Activity, Briefcase, CheckCircle2, AlertTriangle, Server, Code, Target, Clock, FileText, BarChart3, PieChart, Zap, Package, GitBranch, Ticket } from 'lucide-react';
+import { Users, Building2, Plus, CreditCard as Edit, Trash2, TrendingUp, DollarSign, Shield, Activity, Briefcase, CheckCircle2, AlertTriangle, Server, Code, Target, Clock, BarChart3, PieChart, Package, GitBranch, Ticket } from 'lucide-react';
 import {
   LineChart,
   Line,
@@ -39,14 +39,14 @@ export default function Overview() {
   const { data: teamMembers = [], loading: teamLoading, error: teamError, refetch: refetchTeam } = useTeamMembers();
   const { data: departments = [], loading: deptLoading } = useDepartments();
   const { data: employees = [], loading: empLoading } = useEmployeeProfiles();
-  const { data: departmentMetrics = [], loading: metricsLoading } = useDepartmentMetrics();
-  const { data: projects = [], loading: projectsLoading } = useProjects();
-  const { 
-    data: saasExpenses = [], 
-    metrics: saasMetrics = { totalMonthly: 0, totalAnnual: 0, totalTools: 0, totalDepartments: 0, renewingNext30Days: 0 }, 
-    loading: saasLoading 
+  const { data: _departmentMetrics = [], loading: _metricsLoading } = useDepartmentMetrics();
+  const { data: projects = [], loading: _projectsLoading } = useProjects();
+  const {
+    data: _saasExpenses = [],
+    metrics: saasMetrics = { totalMonthly: 0, totalAnnual: 0, totalTools: 0, totalDepartments: 0, renewingNext30Days: 0 },
+    loading: _saasLoading
   } = useSaaSExpenses();
-  const { data: audits = [], loading: auditsLoading } = useAudits();
+  const { data: audits = [], loading: _auditsLoading } = useAudits();
   const { stats: ticketStats, loading: ticketStatsLoading } = useTicketStats();
   const { trends: ticketTrends, loading: ticketTrendsLoading } = useTicketTrends(10);
 

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -215,7 +215,7 @@ export function CommandPalette({ onClose }: CommandPaletteProps) {
                     <div className="px-2 py-1 text-xs font-semibold text-slate-500 uppercase">
                       Apps
                     </div>
-                    {groupedCommands.app.map((cmd, idx) => {
+                    {groupedCommands.app.map((cmd) => {
                       const globalIdx = filteredCommands.indexOf(cmd);
                       return (
                         <CommandRow

@@ -1,12 +1,12 @@
-export function exportToPresentation(data: any) {
+export function exportToPresentation(data: Record<string, unknown>) {
   console.log('Exporting to presentation:', data);
 }
 
-export function formatSlideContent(content: any) {
+export function formatSlideContent(content: Record<string, unknown>) {
   return content;
 }
 
-export function generatePresentationData(roadmapItems: any[]) {
+export function generatePresentationData(roadmapItems: Record<string, unknown>[]) {
   if (!roadmapItems || !Array.isArray(roadmapItems)) {
     return { slides: [] };
   }
@@ -41,12 +41,12 @@ export function generatePresentationData(roadmapItems: any[]) {
   return { slides };
 }
 
-export function exportToPowerPoint(data: any) {
+export function exportToPowerPoint(data: Record<string, unknown>) {
   console.log('Exporting to PowerPoint:', data);
 }
 
 export const GraphicsUtils = {
-  createChart: (data: any) => data,
+  createChart: (data: Record<string, unknown>) => data,
   formatImage: (url: string) => url,
   generateDefaultGraphics: (layout: string, theme: string) => {
     return [];

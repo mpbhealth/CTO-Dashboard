@@ -1,12 +1,12 @@
 import { useState, useMemo } from 'react';
-import { 
-  Edit, 
-  Trash2, 
-  Plus, 
-  Mail, 
-  Phone, 
-  Search, 
-  Filter, 
+import {
+  Edit,
+  Trash2,
+  Plus,
+  Mail,
+  Phone,
+  Search,
+  Filter,
   ChevronDown,
   UserCircle,
   Briefcase,
@@ -14,9 +14,7 @@ import {
   Calendar,
   Star,
   TrendingUp,
-  MoreVertical,
-  Eye,
-  ClipboardCheck
+  MoreVertical
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';

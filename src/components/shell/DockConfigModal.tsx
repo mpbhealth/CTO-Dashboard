@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   X, 
@@ -383,13 +383,12 @@ export function DockConfigModal({ isOpen, onClose }: DockConfigModalProps) {
   const [showForm, setShowForm] = useState(false);
   const [editingItem, setEditingItem] = useState<ExternalLink | QuickAction | null>(null);
 
-  const { 
-    externalLinks, 
-    addLink, 
-    updateLink, 
-    deleteLink, 
+  const {
+    externalLinks,
+    addLink,
+    updateLink,
+    deleteLink,
     reorderLinks,
-    isAdding: isAddingLink,
     isDeleting: isDeletingLink,
   } = useExternalLinks();
 
@@ -399,7 +398,6 @@ export function DockConfigModal({ isOpen, onClose }: DockConfigModalProps) {
     updateAction,
     deleteAction,
     reorderActions,
-    isAdding: isAddingAction,
     isDeleting: isDeletingAction,
   } = useQuickActions();
 

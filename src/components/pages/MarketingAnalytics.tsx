@@ -165,7 +165,7 @@ export default function MarketingAnalytics() {
           });
         }
         return acc;
-      }, [] as any[])
+      }, [] as Array<{ date: string; users: number; pageviews: number; sessions: number }>)
     : [
         { date: '01/07', users: 1420, pageviews: 4240, sessions: 1820 },
         { date: '02/07', users: 1530, pageviews: 4450, sessions: 1950 },
@@ -174,9 +174,9 @@ export default function MarketingAnalytics() {
 
   // Use real data only - no demo data
   const finalTrafficSourcesData = trafficSourcesData || [];
-  const campaignPerformanceData: any[] = [];
-  const conversionFunnelData: any[] = [];
-  const topPagesData: any[] = [];
+  const campaignPerformanceData: Array<{ campaign: string; visitors: number; conversions: number; revenue: number; roi: number }> = [];
+  const conversionFunnelData: Array<{ stage: string; value: number; color: string }> = [];
+  const topPagesData: Array<{ url: string; pageviews: number; avgTime: string; bounceRate: string }> = [];
 
   const timeRanges = [
     { value: '7d', label: 'Last 7 days' },
@@ -226,7 +226,7 @@ export default function MarketingAnalytics() {
     
     try {
       // Get current user for created_by field
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user: _user } } = await supabase.auth.getUser();
       
       // First check if a marketing integration record exists
       const { data: existing, error: fetchError } = await supabase

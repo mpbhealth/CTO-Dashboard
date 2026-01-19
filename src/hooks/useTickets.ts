@@ -104,8 +104,14 @@ export function useTicketStats() {
   return { stats, loading, error };
 }
 
+interface TicketTrend {
+  date: string;
+  created: number;
+  closed: number;
+}
+
 export function useTicketTrends(days: number = 30) {
-  const [trends, setTrends] = useState<any[]>([]);
+  const [trends, setTrends] = useState<TicketTrend[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -154,7 +160,7 @@ export function useTicketTrends(days: number = 30) {
 }
 
 export function useTickets() {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<Record<string, unknown>[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -168,8 +174,8 @@ export function useTickets() {
 
       if (ticketsError) throw ticketsError;
       setData(tickets || []);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);
     }
@@ -179,23 +185,23 @@ export function useTickets() {
     fetchData();
   }, []);
 
-  const addTicket = async (ticket: any) => {
+  const addTicket = async (ticket: Record<string, unknown>) => {
     try {
       const { error } = await supabase.from('tickets_cache').insert([ticket]);
       if (error) throw error;
       await fetchData();
-    } catch (err: any) {
-      throw new Error(err.message);
+    } catch (err) {
+      throw new Error(err instanceof Error ? err.message : 'An error occurred');
     }
   };
 
-  const updateTicket = async (id: string, updates: any) => {
+  const updateTicket = async (id: string, updates: Record<string, unknown>) => {
     try {
       const { error } = await supabase.from('tickets_cache').update(updates).eq('id', id);
       if (error) throw error;
       await fetchData();
-    } catch (err: any) {
-      throw new Error(err.message);
+    } catch (err) {
+      throw new Error(err instanceof Error ? err.message : 'An error occurred');
     }
   };
 
@@ -204,8 +210,8 @@ export function useTickets() {
       const { error } = await supabase.from('tickets_cache').delete().eq('id', id);
       if (error) throw error;
       await fetchData();
-    } catch (err: any) {
-      throw new Error(err.message);
+    } catch (err) {
+      throw new Error(err instanceof Error ? err.message : 'An error occurred');
     }
   };
 

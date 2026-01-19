@@ -4,7 +4,7 @@ import { X, Download, FileText, Table, FileSpreadsheet } from 'lucide-react';
 interface ExportModalProps {
   open: boolean;
   setOpen: (open: boolean) => void;
-  rows: any[];
+  rows: Record<string, unknown>[];
   defaultFilename?: string;
   title?: string;
 }
@@ -68,8 +68,8 @@ export function ExportModal({ open, setOpen, rows, defaultFilename = 'export', t
       URL.revokeObjectURL(url);
 
       setOpen(false);
-    } catch (error: any) {
-      alert(error.message || 'Export failed');
+    } catch (error: unknown) {
+      alert(error instanceof Error ? error.message : 'Export failed');
     } finally {
       setBusy(false);
     }

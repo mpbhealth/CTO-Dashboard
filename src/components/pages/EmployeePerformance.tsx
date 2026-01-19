@@ -71,7 +71,7 @@ export default function EmployeePerformance() {
   const { data: reviews = [], isLoading: reviewsLoading } = useEmployeeReviews(selectedEmployee || undefined);
   const { data: feedback = [], isLoading: feedbackLoading } = useEmployeeFeedback(selectedEmployee || undefined);
   const { data: kpiMeasurements = [], isLoading: kpiLoading } = useEmployeeKpis(selectedEmployee || undefined);
-  const { data: careerPlans = [], isLoading: careerLoading } = useCareerDevelopmentPlans(selectedEmployee || undefined);
+  const { data: _careerPlans = [], isLoading: careerLoading } = useCareerDevelopmentPlans(selectedEmployee || undefined);
   
   // Create dummy data for missing features
   const goals: Array<{id: string; employee_id: string; status: string}> = [];

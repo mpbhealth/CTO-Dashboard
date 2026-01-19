@@ -16,11 +16,11 @@ function getSupabaseEnv() {
   // This is wrapped in try-catch because import.meta may not exist in Node.js
   if (!url || !key) {
     try {
-      // @ts-ignore - import.meta.env is Vite-specific
+      // @ts-expect-error import.meta.env is Vite-specific and not recognized by TypeScript
       if (typeof import.meta !== 'undefined' && import.meta.env) {
-        // @ts-ignore
+        // @ts-expect-error import.meta.env.VITE_SUPABASE_URL is Vite-specific
         url = url || import.meta.env.VITE_SUPABASE_URL || '';
-        // @ts-ignore
+        // @ts-expect-error import.meta.env.VITE_SUPABASE_ANON_KEY is Vite-specific
         key = key || import.meta.env.VITE_SUPABASE_ANON_KEY || '';
       }
     } catch {
@@ -62,12 +62,12 @@ function getEnvMode() {
 
   // Try Vite environment
   try {
-    // @ts-ignore
+    // @ts-expect-error import.meta.env is Vite-specific and not recognized by TypeScript
     if (typeof import.meta !== 'undefined' && import.meta.env) {
       return {
-        // @ts-ignore
+        // @ts-expect-error import.meta.env.DEV is Vite-specific
         isDev: !!import.meta.env.DEV,
-        // @ts-ignore
+        // @ts-expect-error import.meta.env.PROD is Vite-specific
         isProd: !!import.meta.env.PROD,
       };
     }

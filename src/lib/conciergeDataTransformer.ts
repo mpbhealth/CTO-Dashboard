@@ -30,11 +30,11 @@ export interface ConciergeUploadResult {
   totalRows: number;
   validRows: number;
   errors: Array<{ row: number; errors: string[] }>;
-  summary: any;
-  data: any[];
+  summary: Record<string, unknown>;
+  data: unknown[];
 }
 
-export function detectConciergeReportType(data: any[]): ConciergeReportType | null {
+export function detectConciergeReportType(data: Record<string, unknown>[]): ConciergeReportType | null {
   if (!data || data.length === 0) return null;
 
   const firstRow = data[0];
@@ -92,7 +92,7 @@ export function detectConciergeReportType(data: any[]): ConciergeReportType | nu
 }
 
 export function transformConciergeData(
-  data: any[],
+  data: Record<string, unknown>[],
   reportType: ConciergeReportType
 ): ConciergeUploadResult {
   switch (reportType) {
@@ -224,11 +224,11 @@ export function getConciergeUploadTableName(reportType: ConciergeReportType): st
   }
 }
 
-export function formatConciergeRowForInsert(row: any, reportType: ConciergeReportType, uploadMetadata: {
+export function formatConciergeRowForInsert(row: Record<string, unknown>, reportType: ConciergeReportType, uploadMetadata: {
   uploadedBy?: string;
   uploadBatchId?: string;
   sheetName?: string;
-}): any {
+}): Record<string, unknown> {
   const baseFields = {
     uploaded_by: uploadMetadata.uploadedBy || null,
     upload_batch_id: uploadMetadata.uploadBatchId || null,

@@ -219,7 +219,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     initializingRef.current = true;
 
     const queryRole = getDemoRoleFromQuery();
-    const savedDemoMode = localStorage.getItem(DEMO_MODE_KEY) === 'true';
+    const _savedDemoMode = localStorage.getItem(DEMO_MODE_KEY) === 'true';
     const savedDemoRole = localStorage.getItem(DEMO_ROLE_KEY) as 'ceo' | 'cto' | null;
 
     if (queryRole) {

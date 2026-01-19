@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { FormEvent, ChangeEvent } from 'react';
 import { useSaaSExpenses } from '../../hooks/useSaaSExpenses';
+import { SaaSExpense } from '../../types/common';
 import SaaSExpenseUploader from '../ui/SaaSExpenseUploader';
 import { CreditCard, TrendingUp, Calendar, DollarSign, Edit, Trash2, Plus } from 'lucide-react';
 import ExportDropdown from '../ui/ExportDropdown';
@@ -19,14 +20,14 @@ interface SaaSExpenseFormData {
 }
 
 export default function SaaSSpend() {
-  const { data: expenses, loading, error, metrics, refetch, addExpense, updateExpense, deleteExpense, bulkImport } = useSaaSExpenses();
+  const { data: expenses, loading, error, metrics, refetch: _refetch, addExpense, updateExpense, deleteExpense, bulkImport } = useSaaSExpenses();
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [showImporter, setShowImporter] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [selectedExpense, setSelectedExpense] = useState<any>(null);
+  const [selectedExpense, setSelectedExpense] = useState<SaaSExpense | null>(null);
   const [formData, setFormData] = useState<SaaSExpenseFormData>({
     department: '',
     application: '',
@@ -74,7 +75,7 @@ export default function SaaSSpend() {
     return { status: 'ok', color: 'bg-emerald-100 text-emerald-800' };
   };
 
-  const handleEditExpense = (expense: any) => {
+  const handleEditExpense = (expense: SaaSExpense) => {
     setSelectedExpense(expense);
     setFormData({
       department: expense.department,
@@ -90,7 +91,7 @@ export default function SaaSSpend() {
     setIsEditModalOpen(true);
   };
 
-  const handleDeleteExpense = async (expense: any) => {
+  const handleDeleteExpense = async (expense: SaaSExpense) => {
     if (window.confirm(`Are you sure you want to delete "${expense.application}"? This action cannot be undone.`)) {
       setDeletingId(expense.id);
       try {
@@ -171,7 +172,7 @@ export default function SaaSSpend() {
     }));
   };
 
-  const handleImportSuccess = (count: number) => {
+  const handleImportSuccess = (_count: number) => {
     // Refresh data after successful import
     // The hook will automatically refresh, no need to call refetch
   };

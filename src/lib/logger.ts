@@ -21,12 +21,12 @@ function getEnvMode(): { isDev: boolean; isProd: boolean } {
 
   // Try Vite environment (client-side)
   try {
-    // @ts-ignore - import.meta.env is Vite-specific
+    // @ts-expect-error import.meta.env is Vite-specific and not recognized by TypeScript
     if (typeof import.meta !== 'undefined' && import.meta.env) {
       return {
-        // @ts-ignore
+        // @ts-expect-error import.meta.env.DEV is Vite-specific
         isDev: !!import.meta.env.DEV,
-        // @ts-ignore
+        // @ts-expect-error import.meta.env.PROD is Vite-specific
         isProd: !!import.meta.env.PROD,
       };
     }

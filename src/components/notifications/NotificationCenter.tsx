@@ -21,7 +21,6 @@ import {
   Trash2,
 } from 'lucide-react';
 import { useNotifications } from '../../hooks/useNotifications';
-import { formatDistanceToNow } from '../../utils/dateUtils';
 import type { Notification, NotificationType, NotificationPriority } from '../../types/notifications';
 
 interface NotificationCenterProps {

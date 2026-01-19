@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Database, Upload, FileSpreadsheet, RefreshCw, History, CheckCircle, AlertCircle, Link as LinkIcon, Copy, Filter, Calendar, Share2 } from 'lucide-react';
+import { Database, Upload, FileSpreadsheet, RefreshCw, History, CheckCircle, AlertCircle, Copy, Filter, Share2 } from 'lucide-react';
 import { CEODataImporter } from '../../ui/CEODataImporter';
 import { useCEODataImport } from '../../../hooks/useCEODataImport';
 import { useQuery } from '@tanstack/react-query';
@@ -146,7 +146,7 @@ export function CEODataManagement() {
               onClick={() => {
                 const shareUrl = `${window.location.origin}/public/upload`;
                 navigator.clipboard.writeText(shareUrl);
-                const originalText = uploadLinkCopied;
+                const _originalText = uploadLinkCopied;
                 setUploadLinkCopied(true);
                 setTimeout(() => setUploadLinkCopied(false), 2000);
               }}

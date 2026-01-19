@@ -30,7 +30,7 @@ export interface Resource {
   workspace_id: string;
   type: ResourceType;
   title: string | null;
-  meta: Record<string, any>;
+  meta: Record<string, unknown>;
   visibility: Visibility;
   created_by: string;
   created_at: string;
@@ -61,7 +61,7 @@ export interface AuditLog {
   actor_profile_id: string | null;
   action: string;
   resource_id: string | null;
-  details: Record<string, any> | null;
+  details: Record<string, unknown> | null;
   created_at: string;
 }
 
@@ -180,7 +180,7 @@ export async function createResource(params: {
   workspaceId: string;
   type: ResourceType;
   title: string;
-  meta?: Record<string, any>;
+  meta?: Record<string, unknown>;
   visibility?: Visibility;
 }): Promise<Resource | null> {
   const profile = await getCurrentProfile();
@@ -451,7 +451,7 @@ export async function getSignedUrl(
 export async function logAudit(params: {
   action: string;
   resourceId?: string | null;
-  details?: Record<string, any>;
+  details?: Record<string, unknown>;
 }): Promise<void> {
   const profile = await getCurrentProfile();
   if (!profile) return;

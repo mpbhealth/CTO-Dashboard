@@ -88,3 +88,14 @@ export interface Audit {
   auditor?: string;
 }
 
+/** Form data for creating/editing compliance documents */
+export interface DocFormData {
+  section: string;
+  title: string;
+  slug: string;
+  content_md: string;
+  status: 'draft' | 'in_review' | 'approved';
+  reviewers: string[];
+  tags: string[];
+}
+

@@ -66,7 +66,7 @@ interface SyncLog {
   operation: string;
   status: 'success' | 'failed' | 'in_progress';
   message: string | null;
-  details: Record<string, any>;
+  details: Record<string, unknown>;
   duration_ms: number | null;
   records_processed: number;
   timestamp: string;

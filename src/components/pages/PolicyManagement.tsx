@@ -4,7 +4,6 @@ import {
   FileText,
   Plus,
   Search,
-  Filter,
   Download,
   Edit,
   Trash2,
@@ -23,6 +22,18 @@ import { supabase } from '../../lib/supabase';
 import { usePolicyDocuments } from '../../hooks/useOrganizationalData';
 import { useDepartments } from '../../hooks/useOrganizationalData';
 import AddPolicyModal from '../modals/AddPolicyModal';
+import { Database } from '../../types/database';
+
+type PolicyDocument = Database['public']['Tables']['policy_documents']['Row'];
+
+interface PolicyHistoryItem {
+  id: string;
+  version: string;
+  status: string;
+  modified_by: string;
+  modified_at: string;
+  changes: string;
+}
 
 export default function PolicyManagement() {
   const { data: policies, loading: policiesLoading, error: policiesError, refetch: refetchPolicies } = usePolicyDocuments();
@@ -35,9 +46,9 @@ export default function PolicyManagement() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [expandedPolicy, setExpandedPolicy] = useState<string | null>(null);
   const [showHistory, setShowHistory] = useState(false);
-  const [selectedPolicyForHistory, setSelectedPolicyForHistory] = useState<any>(null);
+  const [selectedPolicyForHistory, setSelectedPolicyForHistory] = useState<PolicyDocument | null>(null);
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
-  const [policyHistory, setPolicyHistory] = useState<any[]>([]);
+  const [policyHistory, setPolicyHistory] = useState<PolicyHistoryItem[]>([]);
 
   const loading = policiesLoading || departmentsLoading;
   const error = policiesError;
@@ -60,7 +71,7 @@ export default function PolicyManagement() {
     refetchPolicies();
   };
 
-  const handleDeletePolicy = async (policy) => {
+  const handleDeletePolicy = async (policy: PolicyDocument) => {
     if (window.confirm(`Are you sure you want to delete "${policy.title}"? This action cannot be undone.`)) {
       setDeletingId(policy.id);
       try {
@@ -80,7 +91,7 @@ export default function PolicyManagement() {
     }
   };
 
-  const downloadPolicy = async (policy: any) => {
+  const downloadPolicy = async (policy: PolicyDocument) => {
     setDownloadingId(policy.id);
     try {
       // Create a formatted document for download
@@ -114,7 +125,7 @@ Last Updated: ${new Date(policy.updated_at).toLocaleDateString()}
     }
   };
 
-  const viewPolicyHistory = async (policy: any) => {
+  const viewPolicyHistory = async (policy: PolicyDocument) => {
     setSelectedPolicyForHistory(policy);
     setShowHistory(true);
     
@@ -147,12 +158,12 @@ Last Updated: ${new Date(policy.updated_at).toLocaleDateString()}
     ]);
   };
 
-  const getDepartmentName = (departmentId) => {
+  const getDepartmentName = (departmentId: string | null) => {
     const department = departments?.find(d => d.id === departmentId);
     return department?.name || 'All Departments';
   };
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
       case 'approved':
         return 'bg-emerald-100 text-emerald-800';
@@ -165,7 +176,7 @@ Last Updated: ${new Date(policy.updated_at).toLocaleDateString()}
     }
   };
 
-  const getStatusIcon = (status) => {
+  const getStatusIcon = (status: string) => {
     switch (status) {
       case 'approved':
         return <CheckCircle className="w-4 h-4" />;
@@ -178,7 +189,7 @@ Last Updated: ${new Date(policy.updated_at).toLocaleDateString()}
     }
   };
 
-  const getTypeLabel = (type) => {
+  const getTypeLabel = (type: string) => {
     switch (type) {
       case 'policy':
         return 'HR Policy';

@@ -10,7 +10,6 @@ import {
   Clock,
   AlertTriangle,
   Trash2,
-  Eye,
 } from 'lucide-react';
 import {
   useEmployeeDocuments,
@@ -27,7 +26,7 @@ const EmployeeDocumentStorage: React.FC = () => {
   const [filterType, setFilterType] = useState<DocumentType | 'all'>('all');
   const [filterStatus, setFilterStatus] = useState<ApprovalStatus | 'all'>('all');
   const [showUploadModal, setShowUploadModal] = useState(false);
-  const [selectedDoc, setSelectedDoc] = useState<EmployeeComplianceDocument | null>(null);
+  const [_selectedDoc, _setSelectedDoc] = useState<EmployeeComplianceDocument | null>(null);
 
   const { data: documents = [], isLoading } = useEmployeeDocuments({
     documentType: filterType !== 'all' ? filterType : undefined,

@@ -29,7 +29,7 @@ Command.displayName = CommandPrimitive.displayName;
 /**
  * Command dialog - opens command palette in a dialog
  */
-interface CommandDialogProps extends DialogProps {}
+type CommandDialogProps = DialogProps;
 
 const CommandDialog = ({ children, ...props }: CommandDialogProps) => {
   return (

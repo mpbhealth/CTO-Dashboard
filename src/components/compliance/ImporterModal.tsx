@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, Upload, AlertCircle, CheckCircle2, Download } from 'lucide-react';
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
 
 interface ColumnMapping {
   sourceColumn: string;
@@ -51,60 +51,66 @@ export const ImporterModal: React.FC<ImporterModalProps> = ({
     }
   };
 
-  const parseFile = (file: File) => {
-    const reader = new FileReader();
-    
-    reader.onload = (e) => {
-      try {
-        const data = e.target?.result;
-        let workbook: XLSX.WorkBook;
-        
-        if (file.name.endsWith('.csv')) {
-          workbook = XLSX.read(data, { type: 'binary' });
-        } else {
-          workbook = XLSX.read(data, { type: 'array' });
-        }
+  const parseFile = async (file: File) => {
+    try {
+      const workbook = new ExcelJS.Workbook();
+      const arrayBuffer = await file.arrayBuffer();
 
-        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-        const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 }) as unknown[][];
+      if (file.name.endsWith('.csv')) {
+        const text = await file.text();
+        const lines = text.split('\n').map(line => line.split(',').map(cell => cell.trim().replace(/^"|"$/g, '')));
+        const worksheet = workbook.addWorksheet('Sheet1');
+        lines.forEach(row => worksheet.addRow(row));
+      } else {
+        await workbook.xlsx.load(arrayBuffer);
+      }
 
-        if (jsonData.length > 0) {
-          const headerRow = jsonData[0] as string[];
-          setHeaders(headerRow);
-          
-          const dataRows = jsonData.slice(1, 6); // Preview first 5 rows
-          setPreviewData(dataRows.map(row => {
-            const obj: Record<string, unknown> = {};
-            headerRow.forEach((header, idx) => {
+      const worksheet = workbook.worksheets[0];
+      if (!worksheet) {
+        throw new Error('No worksheet found');
+      }
+
+      const jsonData: unknown[][] = [];
+      worksheet.eachRow((row, _rowNumber) => {
+        const rowValues: unknown[] = [];
+        row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+          rowValues[colNumber - 1] = cell.value;
+        });
+        jsonData.push(rowValues);
+      });
+
+      if (jsonData.length > 0) {
+        const headerRow = jsonData[0] as string[];
+        setHeaders(headerRow.filter(h => h != null));
+
+        const dataRows = jsonData.slice(1, 6); // Preview first 5 rows
+        setPreviewData(dataRows.map(row => {
+          const obj: Record<string, unknown> = {};
+          headerRow.forEach((header, idx) => {
+            if (header != null) {
               obj[header] = row[idx];
-            });
-            return obj;
-          }));
-
-          // Auto-map columns with matching names
-          const autoMappings: Record<string, string> = {};
-          columnMappings.forEach(mapping => {
-            const matchingHeader = headerRow.find(
-              h => h.toLowerCase() === mapping.targetField.toLowerCase()
-            );
-            if (matchingHeader) {
-              autoMappings[mapping.targetField] = matchingHeader;
             }
           });
-          setMappings(autoMappings);
+          return obj;
+        }));
 
-          setStep('map');
-        }
-      } catch (error) {
-        console.error('Failed to parse file:', error);
-        alert('Failed to parse file. Please check the file format.');
+        // Auto-map columns with matching names
+        const autoMappings: Record<string, string> = {};
+        columnMappings.forEach(mapping => {
+          const matchingHeader = headerRow.find(
+            h => h && h.toString().toLowerCase() === mapping.targetField.toLowerCase()
+          );
+          if (matchingHeader) {
+            autoMappings[mapping.targetField] = matchingHeader.toString();
+          }
+        });
+        setMappings(autoMappings);
+
+        setStep('map');
       }
-    };
-
-    if (file.name.endsWith('.csv')) {
-      reader.readAsBinaryString(file);
-    } else {
-      reader.readAsArrayBuffer(file);
+    } catch (error) {
+      console.error('Failed to parse file:', error);
+      alert('Failed to parse file. Please check the file format.');
     }
   };
 
@@ -117,37 +123,51 @@ export const ImporterModal: React.FC<ImporterModalProps> = ({
     return requiredFields.every(field => mappings[field.targetField]);
   };
 
-  const transformData = (): Promise<Record<string, unknown>[]> => {
+  const transformData = async (): Promise<Record<string, unknown>[]> => {
     if (!file) return [];
 
-    const reader = new FileReader();
-    return new Promise((resolve) => {
-      reader.onload = (e) => {
-        const data = e.target?.result;
-        const workbook = file.name.endsWith('.csv')
-          ? XLSX.read(data, { type: 'binary' })
-          : XLSX.read(data, { type: 'array' });
+    const workbook = new ExcelJS.Workbook();
+    const arrayBuffer = await file.arrayBuffer();
 
-        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-        const jsonData = XLSX.utils.sheet_to_json(firstSheet) as Record<string, unknown>[];
+    if (file.name.endsWith('.csv')) {
+      const text = await file.text();
+      const lines = text.split('\n').map(line => line.split(',').map(cell => cell.trim().replace(/^"|"$/g, '')));
+      const worksheet = workbook.addWorksheet('Sheet1');
+      lines.forEach(row => worksheet.addRow(row));
+    } else {
+      await workbook.xlsx.load(arrayBuffer);
+    }
 
-        const transformed = jsonData.map(row => {
-          const transformedRow: Record<string, unknown> = {};
-          Object.entries(mappings).forEach(([targetField, sourceColumn]) => {
-            transformedRow[targetField] = row[sourceColumn];
-          });
-          return transformedRow;
-        });
+    const worksheet = workbook.worksheets[0];
+    if (!worksheet) return [];
 
-        resolve(transformed);
-      };
-
-      if (file.name.endsWith('.csv')) {
-        reader.readAsBinaryString(file);
-      } else {
-        reader.readAsArrayBuffer(file);
-      }
+    const headerRow: string[] = [];
+    worksheet.getRow(1).eachCell((cell, colNumber) => {
+      headerRow[colNumber - 1] = cell.value?.toString() || '';
     });
+
+    const jsonData: Record<string, unknown>[] = [];
+    worksheet.eachRow((row, rowNumber) => {
+      if (rowNumber === 1) return; // Skip header
+      const rowObj: Record<string, unknown> = {};
+      row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+        const header = headerRow[colNumber - 1];
+        if (header) {
+          rowObj[header] = cell.value;
+        }
+      });
+      jsonData.push(rowObj);
+    });
+
+    const transformed = jsonData.map(row => {
+      const transformedRow: Record<string, unknown> = {};
+      Object.entries(mappings).forEach(([targetField, sourceColumn]) => {
+        transformedRow[targetField] = row[sourceColumn];
+      });
+      return transformedRow;
+    });
+
+    return transformed;
   };
 
   const handleImport = async () => {
@@ -170,13 +190,49 @@ export const ImporterModal: React.FC<ImporterModalProps> = ({
     }
   };
 
-  const handleDownloadTemplate = () => {
+  const handleDownloadTemplate = async () => {
     if (!templateData) return;
 
-    const worksheet = XLSX.utils.json_to_sheet(templateData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Template');
-    XLSX.writeFile(workbook, `${title.replace(/\s+/g, '_')}_template.xlsx`);
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Template');
+
+    // Add headers from first row keys
+    if (templateData.length > 0) {
+      const headers = Object.keys(templateData[0]);
+      worksheet.addRow(headers);
+
+      // Style header row
+      const headerRow = worksheet.getRow(1);
+      headerRow.font = { bold: true };
+      headerRow.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFE0E0E0' }
+      };
+
+      // Add data rows
+      templateData.forEach(row => {
+        const values = headers.map(h => row[h]);
+        worksheet.addRow(values);
+      });
+
+      // Auto-fit columns
+      worksheet.columns.forEach(column => {
+        column.width = 15;
+      });
+    }
+
+    // Generate and download file
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${title.replace(/\s+/g, '_')}_template.xlsx`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   const reset = () => {

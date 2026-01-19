@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import {
@@ -164,80 +164,6 @@ function SortableDockItem({
 }
 
 /**
- * Regular Dock Item (non-sortable) with Magnification Effect
- */
-function DockItemButton({
-  item,
-  mouseX,
-  isActive,
-}: {
-  item: DockItem;
-  mouseX: ReturnType<typeof useMotionValue<number>>;
-  isActive: boolean;
-}) {
-  const navigate = useNavigate();
-  const ref = useRef<HTMLButtonElement>(null);
-
-  // Calculate distance from mouse for magnification
-  const distance = useTransform(mouseX, (val) => {
-    const bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
-    return val - bounds.x - bounds.width / 2;
-  });
-
-  // Scale based on distance (closer = larger)
-  const baseSize = 48;
-  const maxScale = 1.5;
-  const magnifyRange = 150;
-
-  const scale = useTransform(distance, [-magnifyRange, 0, magnifyRange], [1, maxScale, 1]);
-  const springScale = useSpring(scale, { mass: 0.1, stiffness: 150, damping: 12 });
-  const size = useTransform(springScale, (s) => s * baseSize);
-
-  const Icon = iconMap[item.icon] || LayoutDashboard;
-
-  const handleClick = useCallback(() => {
-    navigate(item.href);
-  }, [navigate, item.href]);
-
-  return (
-    <motion.button
-      ref={ref}
-      onClick={handleClick}
-      className={`
-        galaxy-dock-item dock-magnify relative
-        ${isActive ? 'active' : ''}
-      `}
-      style={{
-        width: size,
-        height: size,
-      }}
-      whileTap={{ scale: 0.95 }}
-      title={item.name}
-    >
-      <Icon className="w-6 h-6 text-slate-700 dark:text-slate-200" />
-      
-      {/* Badge */}
-      {item.badge && item.badge > 0 && (
-        <span className="dock-badge">
-          {item.badge > 99 ? '99+' : item.badge}
-        </span>
-      )}
-
-      {/* Active indicator */}
-      {isActive && (
-        <motion.span
-          className="absolute -bottom-1.5 left-1/2 w-1 h-1 rounded-full bg-primary"
-          layoutId="dock-active-indicator"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          style={{ x: '-50%' }}
-        />
-      )}
-    </motion.button>
-  );
-}
-
-/**
  * GalaxyDock - Mac-style floating dock with magnification effect
  * 
  * Features:
@@ -309,7 +235,7 @@ export function GalaxyDock({ onOpenMap }: GalaxyDockProps) {
     }
   };
 
-  const handleActionExecuted = (action: unknown, result: { success: boolean; message: string }) => {
+  const handleActionExecuted = (_action: unknown, result: { success: boolean; message: string }) => {
     // Could show a toast notification here
     console.log('Action executed:', result.message);
   };

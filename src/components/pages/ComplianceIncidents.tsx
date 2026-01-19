@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, AlertTriangle, Search, Filter } from 'lucide-react';
 import { useIncidents, useCreateIncident } from '../../hooks/useComplianceData';
-import { SeverityChip, TaskStatusChip } from '../compliance/ComplianceChips';
+import { SeverityChip } from '../compliance/ComplianceChips';
 import type { IncidentSeverity, IncidentFormData } from '../../types/compliance';
 
 const ComplianceIncidents: React.FC = () => {

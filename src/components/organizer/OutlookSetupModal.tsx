@@ -12,8 +12,7 @@ import {
   RefreshCw,
   Eye,
   EyeOff,
-  HelpCircle,
-  Copy
+  HelpCircle
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
@@ -41,7 +40,7 @@ export default function OutlookSetupModal({ isOpen, onClose, onSuccess }: Outloo
   const [showSecret, setShowSecret] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [testResult, setTestResult] = useState<'pending' | 'success' | 'error'>('pending');
+  const [_testResult, setTestResult] = useState<'pending' | 'success' | 'error'>('pending');
 
   // All executive and admin roles can configure Outlook
   const isAdmin = ['admin', 'cto', 'ceo', 'cfo', 'cmo'].includes(profile?.role || '');
@@ -121,7 +120,7 @@ export default function OutlookSetupModal({ isOpen, onClose, onSuccess }: Outloo
     onClose();
   };
 
-  const copyToClipboard = (text: string) => {
+  const _copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
   };
 

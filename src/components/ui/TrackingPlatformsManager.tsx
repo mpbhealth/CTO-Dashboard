@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   CheckCircle,
   AlertCircle,
@@ -28,18 +28,17 @@ interface TrackingPlatform {
   verification_status: string;
   error_message: string | null;
   is_enabled: boolean;
-  configuration: any;
+  configuration: Record<string, unknown>;
 }
 
 interface TrackingPlatformsManagerProps {
   propertyId: string;
-  propertyName: string;
+  _propertyName?: string;
   websiteUrl?: string;
 }
 
 export default function TrackingPlatformsManager({
   propertyId,
-  propertyName,
   websiteUrl
 }: TrackingPlatformsManagerProps) {
   const [platforms, setPlatforms] = useState<TrackingPlatform[]>([]);
@@ -48,11 +47,7 @@ export default function TrackingPlatformsManager({
   const [showInstallCode, setShowInstallCode] = useState<string | null>(null);
   const [showSecrets, setShowSecrets] = useState<Record<string, boolean>>({});
 
-  useEffect(() => {
-    fetchPlatforms();
-  }, [propertyId]);
-
-  const fetchPlatforms = async () => {
+  const fetchPlatforms = useCallback(async () => {
     try {
       setLoading(true);
       const { data, error } = await supabase
@@ -63,12 +58,16 @@ export default function TrackingPlatformsManager({
 
       if (error) throw error;
       setPlatforms(data || []);
-    } catch (err) {
-      console.error('Error fetching platforms:', err);
+    } catch {
+      console.error('Error fetching platforms');
     } finally {
       setLoading(false);
     }
-  };
+  }, [propertyId]);
+
+  useEffect(() => {
+    fetchPlatforms();
+  }, [fetchPlatforms]);
 
   const togglePlatform = async (platformId: string, currentState: boolean) => {
     try {
@@ -79,8 +78,8 @@ export default function TrackingPlatformsManager({
 
       if (error) throw error;
       await fetchPlatforms();
-    } catch (err) {
-      console.error('Error toggling platform:', err);
+    } catch {
+      console.error('Error toggling platform');
     }
   };
 
@@ -96,8 +95,8 @@ export default function TrackingPlatformsManager({
 
       if (error) throw error;
       await fetchPlatforms();
-    } catch (err) {
-      console.error('Error verifying connection:', err);
+    } catch {
+      console.error('Error verifying connection');
     }
   };
 
@@ -106,7 +105,7 @@ export default function TrackingPlatformsManager({
   };
 
   const getPlatformIcon = (platformName: string) => {
-    const icons: Record<string, any> = {
+    const icons: Record<string, React.ElementType> = {
       google_analytics: BarChart3,
       facebook_pixel: Facebook,
       instagram_shopping: Instagram,

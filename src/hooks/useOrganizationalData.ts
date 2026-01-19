@@ -220,8 +220,8 @@ export function usePolicyDocuments() {
       if (policiesError) throw policiesError;
       setData(policies || []);
       setError(null);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);
     }

@@ -1,25 +1,22 @@
-import { useState, Suspense } from 'react';
-import { 
-  useDepartments, 
-  useEmployeeProfiles, 
+import { useState } from 'react';
+import {
+  useDepartments,
+  useEmployeeProfiles,
   useDepartmentRelationships,
   useOrgChartPositions,
   Department,
   EmployeeProfile
 } from '../../hooks/useOrganizationalData';
-import { 
-  Building2, 
-  Users, 
-  GitBranch, 
-  Plus, 
-  Search, 
-  Filter, 
+import {
+  Building2,
+  Users,
+  GitBranch,
+  Plus,
+  Search,
   Save,
-  Download,
   Edit,
   BarChart3,
-  FileText, 
-  Settings,
+  FileText,
   CheckCircle,
   XCircle
 } from 'lucide-react';
@@ -61,7 +58,7 @@ export default function OrganizationalStructure() {
   // Selected items for editing/deleting
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeProfile | null>(null);
   const [selectedDepartment, setSelectedDepartment] = useState<Department | null>(null);
-  const [deleteTarget, setDeleteTarget] = useState<{ type: 'employee' | 'department'; item: any } | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<{ type: 'employee' | 'department'; item: EmployeeProfile | Department } | null>(null);
   
   // Toast state
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
@@ -592,9 +589,9 @@ export default function OrganizationalStructure() {
         }}
         onConfirm={handleConfirmDelete}
         title={`Delete ${deleteTarget?.type === 'employee' ? 'Employee' : 'Department'}`}
-        itemName={deleteTarget?.type === 'employee' 
-          ? `${deleteTarget.item.first_name} ${deleteTarget.item.last_name}` 
-          : deleteTarget?.item.name || ''
+        itemName={deleteTarget?.type === 'employee'
+          ? `${(deleteTarget.item as EmployeeProfile).first_name} ${(deleteTarget.item as EmployeeProfile).last_name}`
+          : (deleteTarget?.item as Department)?.name || ''
         }
         itemType={deleteTarget?.type || 'item'}
       />

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { FileText, Upload, Download, Share2, Trash2 } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useResources, useWorkspace, useCurrentProfile } from '../../../hooks/useDualDashboard';
 import { uploadFile, getSignedUrl } from '../../../lib/dualDashboard';
 import { ShareModal } from '../../modals/ShareModal';

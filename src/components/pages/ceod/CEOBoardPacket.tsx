@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { FileText, Download, Plus, Calendar, Users, X, Edit, Bold, Italic, Underline, List, ListOrdered, AlignLeft, AlignCenter, AlignRight, Save, Type } from 'lucide-react';
+import { FileText, Download, Plus, Calendar, Users, X, Edit, Bold, Italic, Underline, List, ListOrdered, AlignLeft, AlignCenter, AlignRight, Save } from 'lucide-react';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
@@ -23,9 +23,9 @@ export function CEOBoardPacket() {
   const [sectionContents, setSectionContents] = useState<SectionContent>({});
   const [currentSection, setCurrentSection] = useState<string>('');
   const [editorContent, setEditorContent] = useState('');
-  const [isBold, setIsBold] = useState(false);
-  const [isItalic, setIsItalic] = useState(false);
-  const [isUnderline, setIsUnderline] = useState(false);
+  const [isBold, _setIsBold] = useState(false);
+  const [isItalic, _setIsItalic] = useState(false);
+  const [isUnderline, _setIsUnderline] = useState(false);
   const [fontSize, setFontSize] = useState('14');
   const [newPacketTitle, setNewPacketTitle] = useState('');
   const [newPacketDate, setNewPacketDate] = useState('');

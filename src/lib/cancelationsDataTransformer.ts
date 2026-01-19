@@ -103,8 +103,6 @@ export function analyzeOutcome(notes: string): {
   contactAttempted: boolean;
   reviewRequested: boolean;
 } {
-  const notesLower = notes.toLowerCase();
-
   let type = 'Other';
   if (/left vm|voicemail|left message/i.test(notes)) type = 'VM Left';
   else if (/retained|keeping|staying/i.test(notes)) type = 'Retained';

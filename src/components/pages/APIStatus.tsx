@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Activity, CheckCircle, AlertTriangle, XCircle, Clock, Plus, Edit2, Trash2, Eye, RefreshCw, TrendingUp, AlertCircle, Calendar, Info } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
-import { handleError } from '../../lib/errorHandler';
 
 interface APIStatus {
   id: string; name: string; url: string; description?: string;
@@ -55,7 +54,7 @@ export default function APIStatus() {
       setApis([data, ...apis]);
       setApiForm({ name: '', url: '', description: '', status: 'Healthy', response_time: 0, uptime: 99.9, endpoint_count: 0 });
       setShowAddApi(false);
-    } catch (error) {
+    } catch {
       alert('Failed to add API');
     }
   };
@@ -68,7 +67,7 @@ export default function APIStatus() {
       setApis(apis.map(a => a.id === id ? data : a));
       setApiForm({ name: '', url: '', description: '', status: 'Healthy', response_time: 0, uptime: 99.9, endpoint_count: 0 });
       setEditApiId(null);
-    } catch (error) {
+    } catch {
       alert('Failed to update API');
     }
   };
@@ -79,7 +78,7 @@ export default function APIStatus() {
       await supabase.from('api_statuses').delete().eq('id', id);
       setApis(apis.filter(a => a.id !== id));
       setIncidents(incidents.filter(i => i.api_id !== id));
-    } catch (error) {
+    } catch {
       alert('Failed to delete API');
     }
   };
@@ -101,7 +100,7 @@ export default function APIStatus() {
       setIncidents([data, ...incidents]);
       setIncidentForm({ api_id: '', title: '', description: '', severity: 'warning', status: 'investigating', impact: '', resolution_notes: '' });
       setShowAddIncident(false);
-    } catch (error) {
+    } catch {
       alert('Failed to add incident');
     }
   };
@@ -109,7 +108,7 @@ export default function APIStatus() {
   const handleUpdateIncident = async (id: string, e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const updateData: any = { ...incidentForm };
+      const updateData: typeof incidentForm & { resolved_at?: string } = { ...incidentForm };
       if (incidentForm.status === 'resolved' && !incidents.find(i => i.id === id)?.resolved_at) {
         updateData.resolved_at = new Date().toISOString();
       }
@@ -118,7 +117,7 @@ export default function APIStatus() {
       setIncidents(incidents.map(i => i.id === id ? data : i));
       setIncidentForm({ api_id: '', title: '', description: '', severity: 'warning', status: 'investigating', impact: '', resolution_notes: '' });
       setEditIncidentId(null);
-    } catch (error) {
+    } catch {
       alert('Failed to update incident');
     }
   };
@@ -128,7 +127,7 @@ export default function APIStatus() {
     try {
       await supabase.from('api_incidents').delete().eq('id', id);
       setIncidents(incidents.filter(i => i.id !== id));
-    } catch (error) {
+    } catch {
       alert('Failed to delete incident');
     }
   };
@@ -176,7 +175,7 @@ export default function APIStatus() {
         <div className="md:col-span-2"><label className="block text-sm font-medium text-slate-700 mb-1">Description</label>
           <textarea value={apiForm.description} onChange={(e) => setApiForm({ ...apiForm, description: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" rows={2} /></div>
         <div><label className="block text-sm font-medium text-slate-700 mb-1">Status</label>
-          <select value={apiForm.status} onChange={(e) => setApiForm({ ...apiForm, status: e.target.value as any })} className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <select value={apiForm.status} onChange={(e) => setApiForm({ ...apiForm, status: e.target.value as 'Healthy' | 'Warning' | 'Down' })} className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             <option value="Healthy">Healthy</option><option value="Warning">Warning</option><option value="Down">Down</option></select></div>
         <div><label className="block text-sm font-medium text-slate-700 mb-1">Response Time (ms)</label>
           <input type="number" value={apiForm.response_time} onChange={(e) => setApiForm({ ...apiForm, response_time: parseInt(e.target.value) || 0 })} className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" /></div>
@@ -199,14 +198,14 @@ export default function APIStatus() {
           <select value={incidentForm.api_id} onChange={(e) => setIncidentForm({ ...incidentForm, api_id: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
             <option value="">Select API</option>{apis.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}</select></div>
         <div><label className="block text-sm font-medium text-slate-700 mb-1">Severity *</label>
-          <select value={incidentForm.severity} onChange={(e) => setIncidentForm({ ...incidentForm, severity: e.target.value as any })} className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <select value={incidentForm.severity} onChange={(e) => setIncidentForm({ ...incidentForm, severity: e.target.value as 'critical' | 'warning' | 'info' })} className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             <option value="critical">Critical</option><option value="warning">Warning</option><option value="info">Info</option></select></div>
         <div className="md:col-span-2"><label className="block text-sm font-medium text-slate-700 mb-1">Title *</label>
           <input type="text" value={incidentForm.title} onChange={(e) => setIncidentForm({ ...incidentForm, title: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required /></div>
         <div className="md:col-span-2"><label className="block text-sm font-medium text-slate-700 mb-1">Description *</label>
           <textarea value={incidentForm.description} onChange={(e) => setIncidentForm({ ...incidentForm, description: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" rows={3} required /></div>
         <div><label className="block text-sm font-medium text-slate-700 mb-1">Status</label>
-          <select value={incidentForm.status} onChange={(e) => setIncidentForm({ ...incidentForm, status: e.target.value as any })} className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <select value={incidentForm.status} onChange={(e) => setIncidentForm({ ...incidentForm, status: e.target.value as 'investigating' | 'identified' | 'monitoring' | 'resolved' })} className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             <option value="investigating">Investigating</option><option value="identified">Identified</option><option value="monitoring">Monitoring</option><option value="resolved">Resolved</option></select></div>
         <div><label className="block text-sm font-medium text-slate-700 mb-1">Impact</label>
           <input type="text" value={incidentForm.impact} onChange={(e) => setIncidentForm({ ...incidentForm, impact: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" /></div>

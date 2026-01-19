@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Users, BookOpen, Award, Download } from 'lucide-react';
+import { Users, BookOpen, Award, Download } from 'lucide-react';
 import { useTrainings, useTrainingAttendance } from '../../hooks/useComplianceData';
 import { ImporterModal } from '../compliance/ImporterModal';
 import { supabase } from '../../lib/supabase';
@@ -11,14 +11,14 @@ const ComplianceTraining: React.FC = () => {
   const { data: trainings = [], isLoading } = useTrainings();
   const { data: attendance = [] } = useTrainingAttendance(selectedTraining || undefined);
 
-  const handleImportAttendance = async (data: any[]) => {
+  const handleImportAttendance = async (data: Record<string, unknown>[]) => {
     try {
       const importData = data.map(row => ({
         training_id: selectedTraining,
         user_email: row.user_email || row.email,
         user_name: row.user_name || row.name,
         completed_at: row.completed_at || new Date().toISOString(),
-        score: row.score ? parseFloat(row.score) : null,
+        score: row.score ? parseFloat(String(row.score)) : null,
       }));
 
       const { error } = await supabase
@@ -31,10 +31,11 @@ const ComplianceTraining: React.FC = () => {
         success: importData.length,
         errors: [],
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       return {
         success: 0,
-        errors: [{ row: 0, message: error.message }],
+        errors: [{ row: 0, message: errorMessage }],
       };
     }
   };

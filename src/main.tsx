@@ -33,9 +33,10 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: false, // Don't refetch on window focus
       refetchOnMount: false, // Don't refetch on component mount if data exists
       refetchOnReconnect: true, // Refetch on reconnect (user came back online)
-      retry: (failureCount, error: any) => {
+      retry: (failureCount, error: unknown) => {
         // Don't retry on 404s or auth errors
-        if (error?.status === 404 || error?.status === 401 || error?.status === 403) {
+        const status = (error as { status?: number })?.status;
+        if (status === 404 || status === 401 || status === 403) {
           return false;
         }
         // Retry up to 2 times for other errors

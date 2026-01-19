@@ -169,7 +169,7 @@ export interface QuoteLeadsData {
 // Date range helper
 function getDateRange(range: string): { start: Date; end: Date; prevStart: Date; prevEnd: Date } {
   const now = new Date();
-  const end = new Date(now);
+  const _end = new Date(now);
   let start: Date;
   let prevStart: Date;
   let prevEnd: Date;

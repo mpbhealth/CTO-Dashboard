@@ -2,10 +2,71 @@ import { useState, useEffect } from 'react';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 
+interface DiagnosticsData {
+  timestamp?: string;
+  environment?: {
+    mode: string;
+    supabaseConfigured: boolean;
+    supabaseUrl: string;
+    supabaseKey: string;
+    demoMode: boolean;
+  };
+  auth?: {
+    loading: boolean;
+    hasUser: boolean;
+    userId: string;
+    userEmail: string;
+    hasProfile: boolean;
+    profileRole: string;
+    contextRole?: string;
+    isDemoMode: boolean;
+  };
+  cookies?: {
+    role: string;
+    displayName: string;
+  };
+  storage?: {
+    localStorageKeys: string[];
+    sessionStorageKeys: string[];
+    demoModeKey: string;
+    demoRoleKey: string;
+  };
+  browser?: {
+    userAgent: string;
+    cookiesEnabled: boolean;
+    onLine: boolean;
+  };
+}
+
+interface TestResult {
+  success: boolean;
+  hasSession?: boolean;
+  userId?: string;
+  hasProfile?: boolean;
+  profileData?: Record<string, unknown>;
+  canQuery?: boolean;
+  status?: number;
+  statusText?: string;
+  error?: string;
+  errorDetails?: {
+    code?: string;
+    details?: string;
+    hint?: string;
+  } | null;
+}
+
+interface TestResults {
+  sessionCheck?: TestResult;
+  profileQuery?: TestResult;
+  rlsPolicies?: TestResult;
+  connectivity?: TestResult;
+  error?: string;
+}
+
 export default function AuthDiagnostics() {
   const { user, profile, loading, isDemoMode } = useAuth();
-  const [diagnostics, setDiagnostics] = useState<any>({});
-  const [testResults, setTestResults] = useState<any>({});
+  const [diagnostics, setDiagnostics] = useState<DiagnosticsData>({});
+  const [testResults, setTestResults] = useState<TestResults>({});
   const [isRunningTests, setIsRunningTests] = useState(false);
 
   useEffect(() => {
@@ -54,7 +115,7 @@ export default function AuthDiagnostics() {
 
   const runDiagnosticTests = async () => {
     setIsRunningTests(true);
-    const results: any = {};
+    const results: TestResults = {};
 
     try {
       results.sessionCheck = await testSessionCheck();
@@ -98,15 +159,16 @@ export default function AuthDiagnostics() {
         .eq('id', user.id)
         .maybeSingle();
 
+      const pgError = error as { code?: string; details?: string; hint?: string } | null;
       return {
         success: !error,
         hasProfile: !!data,
         profileData: data,
         error: error?.message,
-        errorDetails: error ? {
-          code: (error as any).code,
-          details: (error as any).details,
-          hint: (error as any).hint,
+        errorDetails: pgError ? {
+          code: pgError.code,
+          details: pgError.details,
+          hint: pgError.hint,
         } : null,
       };
     } catch (error) {
@@ -119,7 +181,7 @@ export default function AuthDiagnostics() {
 
   const testRLSPolicies = async () => {
     try {
-      const { data, error } = await supabase
+      const { data: _data, error } = await supabase
         .from('profiles')
         .select('count')
         .limit(1);
@@ -299,7 +361,7 @@ export default function AuthDiagnostics() {
 
           {Object.keys(testResults).length > 0 && (
             <div className="mt-6 space-y-4">
-              {Object.entries(testResults).map(([key, result]: [string, any]) => (
+              {Object.entries(testResults).map(([key, result]) => (
                 <div key={key} className="border border-slate-200 rounded-lg p-4">
                   <h3 className="font-semibold text-slate-900 mb-2 capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</h3>
                   <pre className="text-xs bg-slate-50 p-3 rounded overflow-x-auto">

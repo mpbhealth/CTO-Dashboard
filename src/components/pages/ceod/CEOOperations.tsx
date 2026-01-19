@@ -17,13 +17,22 @@ interface Cancellation {
   mrr_lost: number;
 }
 
+interface UploadedFile {
+  id: string;
+  file_name: string;
+  department: string;
+  created_at: string;
+  row_count?: number;
+  status?: string;
+}
+
 export function CEOOperations() {
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   const [selectedReason, setSelectedReason] = useState('');
   const [showExportModal, setShowExportModal] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<any>(null);
-  const [fileData, setFileData] = useState<any[]>([]);
+  const [selectedFile, setSelectedFile] = useState<UploadedFile | null>(null);
+  const [fileData, setFileData] = useState<Record<string, unknown>[]>([]);
 
   const { data: cancellations = [], isLoading } = useQuery({
     queryKey: ['plan_cancellations'],
@@ -54,7 +63,7 @@ export function CEOOperations() {
     },
   });
 
-  const handleViewFile = async (file: any) => {
+  const handleViewFile = async (file: UploadedFile) => {
     setSelectedFile(file);
 
     const { data } = await supabase
@@ -357,7 +366,7 @@ export function CEOOperations() {
             Uploaded Files
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {uploadedFiles.map((file: any) => (
+            {uploadedFiles.map((file: UploadedFile) => (
               <div
                 key={file.id}
                 className="border border-gray-200 rounded-lg p-4 hover:border-[#1a3d97] transition-colors"

@@ -7,15 +7,12 @@ import {
   Filter,
   MapPin,
   Phone,
-  Mail,
-  Globe,
   Star,
   Building2,
   Stethoscope,
   CheckCircle,
   XCircle,
   Clock,
-  MoreVertical,
   Edit,
   Trash2,
   Eye,
@@ -180,7 +177,7 @@ export function ProviderDirectory() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [tierFilter, setTierFilter] = useState<string>('all');
   const [showFilters, setShowFilters] = useState(false);
-  const [selectedProvider, setSelectedProvider] = useState<Provider | null>(null);
+  const [_selectedProvider, _setSelectedProvider] = useState<Provider | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const filteredProviders = useMemo(() => {

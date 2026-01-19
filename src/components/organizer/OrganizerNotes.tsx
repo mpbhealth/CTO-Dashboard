@@ -13,7 +13,7 @@ import {
   AlertCircle,
   CheckCircle
 } from 'lucide-react';
-import { useNotes, Note } from '../../hooks/useNotes';
+import { useNotes } from '../../hooks/useNotes';
 
 interface OrganizerNotesProps {
   dashboardRole: 'ceo' | 'cto';

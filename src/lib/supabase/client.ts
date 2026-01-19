@@ -4,14 +4,14 @@ import { createBrowserClient } from '@supabase/ssr';
  * Environment variables for Supabase connection
  * Supports both Next.js (NEXT_PUBLIC_*) and Vite (VITE_*) formats
  */
-const supabaseUrl = 
-  process.env.NEXT_PUBLIC_SUPABASE_URL || 
-  (typeof import.meta !== 'undefined' ? (import.meta as any).env?.VITE_SUPABASE_URL : undefined) ||
+const supabaseUrl =
+  process.env.NEXT_PUBLIC_SUPABASE_URL ||
+  (typeof import.meta !== 'undefined' ? (import.meta as { env?: { VITE_SUPABASE_URL?: string } }).env?.VITE_SUPABASE_URL : undefined) ||
   '';
 
-const supabaseAnonKey = 
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 
-  (typeof import.meta !== 'undefined' ? (import.meta as any).env?.VITE_SUPABASE_ANON_KEY : undefined) ||
+const supabaseAnonKey =
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+  (typeof import.meta !== 'undefined' ? (import.meta as { env?: { VITE_SUPABASE_ANON_KEY?: string } }).env?.VITE_SUPABASE_ANON_KEY : undefined) ||
   '';
 
 /**

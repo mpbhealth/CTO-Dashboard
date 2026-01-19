@@ -3,7 +3,7 @@ import { ShoppingCart, Download, TrendingUp, DollarSign, Users, Target, Award } 
 import { supabase } from '../../../lib/supabase';
 import { useQuery } from '@tanstack/react-query';
 import { ExportModal } from '../../modals/ExportModal';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 interface SalesOrder {
   staging_id: string;

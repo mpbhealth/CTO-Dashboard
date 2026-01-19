@@ -71,8 +71,20 @@ export default defineConfig({
               return 'query';
             }
             // Office document libraries - lazy load (very heavy)
-            if (normalizedId.includes('xlsx') || normalizedId.includes('jspdf') || normalizedId.includes('pptxgenjs')) {
+            if (normalizedId.includes('exceljs') || normalizedId.includes('jspdf') || normalizedId.includes('pptxgenjs')) {
               return 'office';
+            }
+            // Charts library - separate chunk
+            if (normalizedId.includes('recharts') || normalizedId.includes('d3-')) {
+              return 'charts';
+            }
+            // Crypto and security utilities
+            if (normalizedId.includes('crypto-js')) {
+              return 'crypto';
+            }
+            // Zod validation
+            if (normalizedId.includes('zod')) {
+              return 'validation';
             }
             // Data processing libraries
             if (normalizedId.includes('papaparse') || normalizedId.includes('csv')) {

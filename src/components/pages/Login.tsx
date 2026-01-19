@@ -210,27 +210,27 @@ export default function Login() {
     setSuccess(null);
   };
 
-  const getRoleColor = (role: UserRole) => {
-    if (role === 'ceo') return 'from-slate-900 via-slate-800 to-slate-900';
-    if (role === 'cto') return 'from-slate-900 via-blue-950 to-slate-900';
+  const _getRoleColor = (_role: UserRole) => {
+    if (_role === 'ceo') return 'from-slate-900 via-slate-800 to-slate-900';
+    if (_role === 'cto') return 'from-slate-900 via-blue-950 to-slate-900';
     return 'from-slate-600 to-gray-600';
   };
 
-  const getRoleBorderColor = (role: UserRole) => {
-    if (role === 'ceo') return 'border-amber-500';
-    if (role === 'cto') return 'border-cyan-500';
+  const _getRoleBorderColor = (_role: UserRole) => {
+    if (_role === 'ceo') return 'border-amber-500';
+    if (_role === 'cto') return 'border-cyan-500';
     return 'border-slate-500';
   };
 
-  const getRoleTextColor = (role: UserRole) => {
-    if (role === 'ceo') return 'text-amber-600';
-    if (role === 'cto') return 'text-cyan-600';
+  const _getRoleTextColor = (_role: UserRole) => {
+    if (_role === 'ceo') return 'text-amber-600';
+    if (_role === 'cto') return 'text-cyan-600';
     return 'text-slate-600';
   };
 
-  const getRoleAccentColor = (role: UserRole) => {
-    if (role === 'ceo') return 'from-amber-400 via-amber-500 to-yellow-600';
-    if (role === 'cto') return 'from-cyan-400 via-blue-500 to-blue-600';
+  const _getRoleAccentColor = (_role: UserRole) => {
+    if (_role === 'ceo') return 'from-amber-400 via-amber-500 to-yellow-600';
+    if (_role === 'cto') return 'from-cyan-400 via-blue-500 to-blue-600';
     return 'from-slate-400 to-gray-500';
   };
 

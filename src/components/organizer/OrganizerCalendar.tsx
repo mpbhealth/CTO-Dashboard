@@ -6,12 +6,10 @@ import {
   ChevronRight,
   Clock,
   MapPin,
-  Users,
   Plus,
   RefreshCw,
   Video,
   ExternalLink,
-  AlertCircle,
   CheckCircle,
   X,
   Settings,
@@ -32,7 +30,7 @@ export default function OrganizerCalendar({ compact = false }: OrganizerCalendar
     error,
     isConnected,
     isInDemoMode,
-    syncStatus,
+    syncStatus: _syncStatus,
     fetchEvents,
     createEvent,
     deleteEvent,
@@ -53,7 +51,7 @@ export default function OrganizerCalendar({ compact = false }: OrganizerCalendar
   });
 
   const [showAddEvent, setShowAddEvent] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [_selectedDate, _setSelectedDate] = useState<Date | null>(null);
   const [newEvent, setNewEvent] = useState<Partial<CalendarEventCreate>>({
     subject: '',
     start: '',

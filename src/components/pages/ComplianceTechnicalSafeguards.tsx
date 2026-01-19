@@ -1,13 +1,15 @@
 import React from 'react';
 import { Shield, Lock, Key, Database, Eye, Server, CheckCircle2, XCircle, AlertCircle } from 'lucide-react';
 
+import type { LucideIcon } from 'lucide-react';
+
 interface SafeguardControl {
   id: string;
   name: string;
   description: string;
   category: 'Access' | 'Audit' | 'Integrity' | 'Transmission';
   status: 'implemented' | 'partial' | 'planned';
-  icon: any;
+  icon: LucideIcon;
 }
 
 const ComplianceTechnicalSafeguards: React.FC = () => {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FileText, Download, Upload, Wrench, Copy, CheckCircle2 } from 'lucide-react';
+import { FileText, Download, Upload, Wrench, Copy, CheckCircle2, type LucideIcon } from 'lucide-react';
 import { EvidenceUploader } from '../compliance/EvidenceUploader';
 import { RiskCalculatorModal } from '../compliance/RiskCalculatorModal';
 import { BreachImpactEstimatorModal } from '../compliance/BreachImpactEstimatorModal';
@@ -10,7 +10,7 @@ interface Template {
   name: string;
   description: string;
   category: 'Policy' | 'Form' | 'Letter' | 'Checklist' | 'Report';
-  icon: any;
+  icon: LucideIcon;
 }
 
 const ComplianceTemplatesTools: React.FC = () => {

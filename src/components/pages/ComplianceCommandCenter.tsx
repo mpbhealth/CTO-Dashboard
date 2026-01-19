@@ -8,7 +8,6 @@ import {
   FileCheck,
   Clock,
   TrendingUp,
-  Plus,
   Activity,
   Calendar,
   CheckCircle2,
@@ -18,7 +17,7 @@ import {
   useMyTasks,
   useAuditLog,
 } from '../../hooks/useComplianceData';
-import { TaskStatusChip, PriorityChip, SeverityChip } from '../compliance/ComplianceChips';
+import { TaskStatusChip, PriorityChip } from '../compliance/ComplianceChips';
 import type { KPIData } from '../../types/compliance';
 
 const ComplianceCommandCenter: React.FC = () => {

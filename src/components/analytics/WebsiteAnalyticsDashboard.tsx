@@ -1,14 +1,13 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Activity, 
-  BarChart3, 
-  Globe, 
-  MousePointer2, 
-  FileText, 
+import {
+  Activity,
+  BarChart3,
+  Globe,
+  MousePointer2,
+  FileText,
   FileSpreadsheet,
   Calendar,
-  RefreshCw,
   ExternalLink
 } from 'lucide-react';
 import RealTimeAnalytics from './RealTimeAnalytics';

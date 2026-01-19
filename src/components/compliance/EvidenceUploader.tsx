@@ -43,7 +43,7 @@ export const EvidenceUploader: React.FC<EvidenceUploaderProps> = ({
 
   const encryptionAvailable = isEncryptionConfigured();
 
-  const validateFile = (file: File): string | null => {
+  const validateFile = useCallback((file: File): string | null => {
     if (file.size > maxSizeMB * 1024 * 1024) {
       return `File size exceeds ${maxSizeMB}MB limit`;
     }
@@ -53,7 +53,7 @@ export const EvidenceUploader: React.FC<EvidenceUploaderProps> = ({
     }
 
     return null;
-  };
+  }, [maxSizeMB, allowedTypes]);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -80,7 +80,7 @@ export const EvidenceUploader: React.FC<EvidenceUploaderProps> = ({
         setError(null);
       }
     }
-  }, [maxSizeMB, allowedTypes]);
+  }, [validateFile]);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

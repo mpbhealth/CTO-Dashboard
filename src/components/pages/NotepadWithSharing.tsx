@@ -55,7 +55,7 @@ export default function NotepadWithSharing({
   const [error, setError] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [creationMode, setCreationMode] = useState<'personal' | 'for-other'>('personal');
-  const [targetRole, setTargetRole] = useState<'ceo' | 'cto'>(
+  const [targetRole, _setTargetRole] = useState<'ceo' | 'cto'>(
     dashboardRole === 'ceo' ? 'cto' : 'ceo'
   );
   const [sharePermission, setSharePermission] = useState<'view' | 'edit'>('view');

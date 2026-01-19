@@ -111,7 +111,7 @@ export class WhiteScreenDiagnostics {
     }
 
     try {
-      const { data, error } = await supabase.from('profiles').select('count').limit(1);
+      const { error } = await supabase.from('profiles').select('count').limit(1);
       if (error) {
         checks.push({
           name: 'Profiles Table Access',
@@ -126,12 +126,12 @@ export class WhiteScreenDiagnostics {
           message: 'Profiles table is accessible',
         });
       }
-    } catch (error) {
+    } catch (err) {
       checks.push({
         name: 'Profiles Table Access',
         status: 'warning' as const,
         message: 'Could not test profiles table',
-        details: error instanceof Error ? error.message : String(error),
+        details: err instanceof Error ? err.message : String(err),
       });
     }
 

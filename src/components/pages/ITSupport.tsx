@@ -6,12 +6,12 @@ import type { TicketFilters, TicketSortOptions, TicketStatus, TicketPriority, St
 
 export default function ITSupport() {
   const [filters, setFilters] = useState<TicketFilters>({});
-  const [sort, setSort] = useState<TicketSortOptions>({ field: 'created_at', direction: 'desc' });
+  const [sort, _setSort] = useState<TicketSortOptions>({ field: 'created_at', direction: 'desc' });
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [expandedTicket, setExpandedTicket] = useState<string | null>(null);
 
-  const { tickets, loading, syncing, syncTickets, refresh } = useTickets(filters, sort);
+  const { tickets, loading, syncing, syncTickets, _refresh } = useTickets(filters, sort);
   const { stats } = useTicketStats();
   const { logs, loading: logsLoading, syncLogs } = useStaffLogs();
 

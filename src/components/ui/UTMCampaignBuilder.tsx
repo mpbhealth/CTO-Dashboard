@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, Copy, CheckCircle, QrCode, Download, ExternalLink } from 'lucide-react';
+import { Link, Copy, CheckCircle, Download, ExternalLink } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
 interface UTMCampaignBuilderProps {
@@ -101,8 +101,8 @@ export default function UTMCampaignBuilder({ propertyId, baseUrl = '' }: UTMCamp
         setSaved(false);
         resetForm();
       }, 2000);
-    } catch (err) {
-      console.error('Error saving campaign:', err);
+    } catch {
+      console.error('Error saving campaign');
       alert('Failed to save campaign');
     } finally {
       setSaving(false);

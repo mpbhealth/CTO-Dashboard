@@ -12,7 +12,7 @@ interface FileViewerModalProps {
     created_at: string;
     file_url?: string;
   };
-  data: any[];
+  data: Record<string, unknown>[];
   onClose: () => void;
   onDownload: () => void;
 }

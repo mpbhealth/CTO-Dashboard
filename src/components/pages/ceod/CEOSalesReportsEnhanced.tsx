@@ -1,10 +1,10 @@
 import { useState, useMemo, useEffect } from 'react';
-import { ShoppingCart, Download, TrendingUp, DollarSign, Users, Target, Award, UserPlus, UserMinus, Phone, FileSpreadsheet, Eye, ChevronDown, ChevronUp, LayoutGrid, List } from 'lucide-react';
+import { ShoppingCart, Download, TrendingUp, DollarSign, Target, UserPlus, UserMinus, FileSpreadsheet, Eye, ChevronDown, ChevronUp, LayoutGrid, List } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 import { useQuery } from '@tanstack/react-query';
 import { ExportModal } from '../../modals/ExportModal';
 import { FileViewerModal } from '../../modals/FileViewerModal';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, FunnelChart, Funnel, LabelList } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 interface SalesOrder {
   staging_id: string;
@@ -44,6 +44,15 @@ interface SalesCancelation {
   retention_opportunity_score: number;
 }
 
+interface UploadedFile {
+  id: string;
+  file_name: string;
+  department: string;
+  created_at: string;
+  row_count?: number;
+  status?: string;
+}
+
 const COLORS = ['#1a3d97', '#00A896', '#02c9b3', '#2851c7', '#007f6d'];
 
 export function CEOSalesReportsEnhanced() {
@@ -53,8 +62,8 @@ export function CEOSalesReportsEnhanced() {
   const [selectedRep, setSelectedRep] = useState('');
   const [selectedChannel, setSelectedChannel] = useState('');
   const [showExportModal, setShowExportModal] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<any>(null);
-  const [fileData, setFileData] = useState<any[]>([]);
+  const [selectedFile, setSelectedFile] = useState<UploadedFile | null>(null);
+  const [fileData, setFileData] = useState<Record<string, unknown>[]>([]);
   
   // Mobile-specific state
   const [isMobile, setIsMobile] = useState(false);
@@ -129,7 +138,7 @@ export function CEOSalesReportsEnhanced() {
     },
   });
 
-  const handleViewFile = async (file: any) => {
+  const handleViewFile = async (file: UploadedFile) => {
     setSelectedFile(file);
 
     let tableName = '';
@@ -767,7 +776,7 @@ export function CEOSalesReportsEnhanced() {
             Uploaded Files
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {uploadedFiles.map((file: any) => (
+            {uploadedFiles.map((file: UploadedFile) => (
               <div
                 key={file.id}
                 className="border border-gray-200 rounded-lg p-4 hover:border-[#1a3d97] transition-colors"

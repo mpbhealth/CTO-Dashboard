@@ -208,7 +208,7 @@ export function ClaimsProcessing() {
   const totalPages = Math.ceil(totalCount / pageSize);
 
   // Stats
-  const pendingReviewCount = demoClaims.filter(c => ['submitted', 'under_review', 'pending_info'].includes(c.status)).length;
+  const _pendingReviewCount = demoClaims.filter(c => ['submitted', 'under_review', 'pending_info'].includes(c.status)).length;
   const approvedTodayCount = demoClaims.filter(c => c.status === 'approved').length;
 
   const handleApprove = (claim: Claim) => {

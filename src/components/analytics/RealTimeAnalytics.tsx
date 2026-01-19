@@ -1,14 +1,13 @@
 import { motion } from 'framer-motion';
-import { 
-  Users, 
-  Eye, 
-  TrendingUp, 
-  Globe, 
-  Monitor, 
-  Smartphone, 
+import {
+  Users,
+  Eye,
+  TrendingUp,
+  Globe,
+  Monitor,
+  Smartphone,
   Tablet,
-  Activity,
-  RefreshCw
+  Activity
 } from 'lucide-react';
 import { useRealTimeAnalytics } from '../../hooks/useWebsiteAnalytics';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';

@@ -6,7 +6,6 @@ import {
   Send,
   Clock,
   CheckCircle,
-  XCircle,
   Edit,
   Trash2,
   RefreshCw,

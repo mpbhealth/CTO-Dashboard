@@ -38,7 +38,7 @@ export interface NoteNotification {
   notification_type: 'shared' | 'edited' | 'unshared' | 'commented';
   is_read: boolean;
   sent_via: 'in-app' | 'email' | 'both';
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   created_at: string;
   note?: Note;
 }
@@ -117,7 +117,7 @@ export function useNotes(options: UseNotesOptions) {
     if (isInDemoMode) return loadDemoNotes(dashboardRole);
 
     // Try fetching with the enhanced schema first
-    let { data, error: fetchError } = await supabase
+    const { data, error: fetchError } = await supabase
       .from('notes')
       .select('*')
       .eq('created_by', user.id)

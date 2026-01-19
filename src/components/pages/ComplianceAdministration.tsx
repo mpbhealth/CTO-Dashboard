@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Plus, FileText, Search, Filter, Eye, Edit, Trash2 } from 'lucide-react';
-import { useComplianceDocs, useCreateDoc, useUpdateDoc, useDeleteDoc } from '../../hooks/useComplianceData';
+import { useComplianceDocs, useCreateDoc, useDeleteDoc } from '../../hooks/useComplianceData';
 import { PolicyStatusChip } from '../compliance/ComplianceChips';
 import { MarkdownEditor } from '../compliance/MarkdownEditor';
 import type { DocFormData } from '../../types/compliance';
@@ -267,7 +267,7 @@ const ComplianceAdministration: React.FC = () => {
                   </label>
                   <select
                     value={newDoc.status}
-                    onChange={(e) => setNewDoc({ ...newDoc, status: e.target.value as any })}
+                    onChange={(e) => setNewDoc({ ...newDoc, status: e.target.value as DocFormData['status'] })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="draft">Draft</option>

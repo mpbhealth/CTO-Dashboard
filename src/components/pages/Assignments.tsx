@@ -25,12 +25,29 @@ import { useAssignments } from '../../hooks/useAssignments';
 import { useProjects } from '../../hooks/useSupabaseData';
 import AssignmentForm from '../ui/AssignmentForm';
 import { AssignmentCreateData } from '../../types/Assignment';
-import { 
-  sendAssignmentViaTeams, 
+import {
+  sendAssignmentViaTeams,
   sendAssignmentViaEmail,
-  copyAssignmentToClipboard 
+  copyAssignmentToClipboard
 } from '../../utils/communicationHelpers';
 
+// Extended assignment type with joined fields from the database query
+interface AssignmentWithDetails {
+  id: string;
+  title: string;
+  description?: string | null;
+  status: 'todo' | 'in_progress' | 'done' | 'pending';
+  priority?: string;
+  project_id?: string | null;
+  due_date?: string | null;
+  assigned_to?: string | null;
+  employee_email?: string;
+  employee_name?: string;
+  teams_user_id?: string;
+  project_name?: string;
+  created_at?: string;
+  updated_at?: string;
+}
 
 export default function Assignments() {
   const { data: assignments, loading, error, refetch, addAssignment, updateAssignment, deleteAssignment } = useAssignments();
@@ -43,7 +60,7 @@ export default function Assignments() {
   const [activeTab, setActiveTab] = useState<'assignments' | 'monday'>('assignments');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [selectedAssignment, setSelectedAssignment] = useState<any>(null);
+  const [selectedAssignment, setSelectedAssignment] = useState<AssignmentWithDetails | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
@@ -67,7 +84,7 @@ export default function Assignments() {
     return result.data;
   };
 
-  const handleSendViaTeams = async (assignment: any) => {
+  const handleSendViaTeams = async (assignment: AssignmentWithDetails) => {
     if (!assignment.employee_email) {
       alert('No employee email found for this assignment.');
       return;
@@ -100,7 +117,7 @@ export default function Assignments() {
     setSendMethod(null);
   };
 
-  const handleSendViaEmail = async (assignment: any) => {
+  const handleSendViaEmail = async (assignment: AssignmentWithDetails) => {
     if (!assignment.employee_email) {
       alert('No employee email found for this assignment.');
       return;
@@ -132,7 +149,7 @@ export default function Assignments() {
     setSendMethod(null);
   };
 
-  const handleCopyAssignment = async (assignment: any) => {
+  const handleCopyAssignment = async (assignment: AssignmentWithDetails) => {
     const success = await copyAssignmentToClipboard(assignment, assignment.project_name);
     
     if (success) {
@@ -262,7 +279,7 @@ export default function Assignments() {
     }
   };
 
-  const handleDeleteAssignment = async (assignment: any) => {
+  const handleDeleteAssignment = async (assignment: AssignmentWithDetails) => {
     if (window.confirm(`Are you sure you want to delete "${assignment.title}"? This action cannot be undone.`)) {
       setDeletingId(assignment.id);
       try {
@@ -279,7 +296,7 @@ export default function Assignments() {
     }
   };
 
-  const openEditModal = (assignment: any) => {
+  const openEditModal = (assignment: AssignmentWithDetails) => {
     setSelectedAssignment(assignment);
     setFormData({
       title: assignment.title,
@@ -310,7 +327,7 @@ export default function Assignments() {
     done: filteredAssignments.filter(a => a.status === 'done')
   };
 
-  const renderKanbanColumn = (status: string, title: string, assignments: any[]) => (
+  const renderKanbanColumn = (status: string, title: string, assignments: AssignmentWithDetails[]) => (
     <div className="bg-slate-50 p-4 rounded-xl min-h-96">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-2">

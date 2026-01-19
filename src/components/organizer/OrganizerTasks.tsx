@@ -31,7 +31,7 @@ export default function OrganizerTasks({ maxTasks = 5 }: OrganizerTasksProps) {
   const [saveError, setSaveError] = useState<string | null>(null);
 
   // Get today's date string
-  const today = new Date().toISOString().split('T')[0];
+  const _today = new Date().toISOString().split('T')[0];
 
   // Filter and categorize tasks
   const { todayTasks, overdueTasks, upcomingTasks, inProgressTasks } = useMemo(() => {

@@ -24,12 +24,29 @@ import {
   topAdvisors
 } from '../../data/consolidatedMockData';
 
+interface SlideGraphic {
+  type: string;
+  position?: { x: number; y: number };
+  size?: { width: number; height: number };
+  style?: Record<string, unknown>;
+}
+
+interface SlideContent {
+  title?: string;
+  subtitle?: string;
+  bullets?: string[];
+  leftColumn?: { title?: string; bullets?: string[] };
+  rightColumn?: { title?: string; bullets?: string[] };
+  timelineItems?: { quarter: string; title: string; description?: string }[];
+  [key: string]: unknown;
+}
+
 interface PresentationSlide {
   id: string;
   title: string;
   layout: 'title' | 'content' | 'two-column' | 'image-content' | 'chart' | 'timeline' | 'custom';
-  content: any;
-  graphics: any[];
+  content: SlideContent;
+  graphics: SlideGraphic[];
   background: {
     type: 'solid' | 'gradient' | 'image';
     value: string;
@@ -131,7 +148,7 @@ export default function RoadmapPresentation() {
       title: 'MPB Health Technology Roadmap',
       author: 'Vinnie R. Tannous, CTO',
       theme: selectedTheme,
-      slides: slides.map((slide, index) => ({
+      slides: slides.map((slide) => ({
         ...slide,
         graphics: GraphicsUtils.generateDefaultGraphics(slide.layout, selectedTheme),
         background: {
@@ -419,7 +436,7 @@ export default function RoadmapPresentation() {
                 {slide.content.title}
               </h2>
               <div className="space-y-4">
-                {slide.content.timelineItems && slide.content.timelineItems.map((item: any, index: number) => (
+                {slide.content.timelineItems && slide.content.timelineItems.map((item, index) => (
                   <div key={index} className="flex items-start space-x-4">
                     <div className="flex flex-col items-center">
                       <div 
@@ -542,7 +559,7 @@ export default function RoadmapPresentation() {
           {Object.entries(themes).map(([key, theme]) => (
             <button
               key={key}
-              onClick={() => setSelectedTheme(key as any)}
+              onClick={() => setSelectedTheme(key as 'corporate' | 'modern' | 'minimal' | 'dark' | 'creative' | 'tech')}
               className={`
                 p-3 rounded-lg border-2 transition-all duration-200 text-left
                 ${selectedTheme === key 

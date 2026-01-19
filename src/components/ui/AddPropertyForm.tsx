@@ -1,8 +1,14 @@
 import { useState } from 'react';
 import { X } from 'lucide-react';
 
+interface PropertyFormData {
+  name: string;
+  value: string;
+  description: string;
+}
+
 interface AddPropertyFormProps {
-  onSubmit: (data: any) => Promise<void> | void;
+  onSubmit: (data: PropertyFormData) => Promise<void> | void;
   onClose: () => void;
   propertyType?: string;
 }

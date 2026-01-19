@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 
 export function useAudits() {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<Record<string, unknown>[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -16,8 +16,8 @@ export function useAudits() {
 
         if (auditsError) throw auditsError;
         setData(audits || []);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
       } finally {
         setLoading(false);
       }
@@ -28,14 +28,25 @@ export function useAudits() {
   return { data, loading, error };
 }
 
+interface ComplianceDashboardData {
+  overallScore?: number;
+  tasksCompleted?: number;
+  upcomingDeadlines?: number;
+  recentActivity: unknown[];
+  policies: { approved: number; inReview: number; overdue: number; total: number };
+  baas: { active: number; expiringSoon: number; expired: number; total: number };
+  incidents: { open: number; closed: number; bySeverity: { critical: number; high: number; medium: number; low: number } };
+  training: { completionRate: number; completedModules: number; totalModules: number; overdue: number };
+}
+
 export function useComplianceDashboard() {
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<ComplianceDashboardData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     async function fetchDashboard() {
       try {
-        const dashboardData = {
+        const dashboardData: ComplianceDashboardData = {
           overallScore: 85,
           tasksCompleted: 42,
           upcomingDeadlines: 3,
@@ -70,7 +81,7 @@ export function useComplianceDashboard() {
           }
         };
         setData(dashboardData);
-      } catch (error) {
+      } catch {
         setData({
           policies: { approved: 0, inReview: 0, overdue: 0, total: 0 },
           baas: { active: 0, expiringSoon: 0, expired: 0, total: 0 },
@@ -88,7 +99,7 @@ export function useComplianceDashboard() {
 }
 
 export function useTasks() {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<Record<string, unknown>[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -101,7 +112,7 @@ export function useTasks() {
 
         if (error) throw error;
         setData(tasks || []);
-      } catch (_error) {
+      } catch {
         // Error silently handled - loading state will complete
       } finally {
         setLoading(false);
@@ -118,7 +129,7 @@ export function useMyTasks() {
 }
 
 export function useAuditLog() {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<Record<string, unknown>[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -131,7 +142,7 @@ export function useAuditLog() {
 
         if (error) throw error;
         setData(logs || []);
-      } catch (_error) {
+      } catch {
         // Error silently handled - loading state will complete
       } finally {
         setLoading(false);
@@ -144,21 +155,21 @@ export function useAuditLog() {
 }
 
 export function useCreateTask() {
-  return async (task: any) => {
+  return async (task: Record<string, unknown>) => {
     const { error } = await supabase.from('compliance_tasks').insert([task]);
     if (error) throw error;
   };
 }
 
 export function useUpdateTask() {
-  return async (id: string, updates: any) => {
+  return async (id: string, updates: Record<string, unknown>) => {
     const { error } = await supabase.from('compliance_tasks').update(updates).eq('id', id);
     if (error) throw error;
   };
 }
 
 export function useComplianceDocs() {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<Record<string, unknown>[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchData = async () => {
@@ -170,7 +181,7 @@ export function useComplianceDocs() {
 
       if (error) throw error;
       setData(docs || []);
-    } catch (_error) {
+    } catch {
       // Error silently handled - loading state will complete
     } finally {
       setLoading(false);
@@ -185,14 +196,14 @@ export function useComplianceDocs() {
 }
 
 export function useCreateDoc() {
-  return async (doc: any) => {
+  return async (doc: Record<string, unknown>) => {
     const { error } = await supabase.from('compliance_documents').insert([doc]);
     if (error) throw error;
   };
 }
 
 export function useUpdateDoc() {
-  return async (id: string, updates: any) => {
+  return async (id: string, updates: Record<string, unknown>) => {
     const { error } = await supabase.from('compliance_documents').update(updates).eq('id', id);
     if (error) throw error;
   };
@@ -206,7 +217,7 @@ export function useDeleteDoc() {
 }
 
 export function usePHIAccessLogs() {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<Record<string, unknown>[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -219,7 +230,7 @@ export function usePHIAccessLogs() {
 
         if (error) throw error;
         setData(logs || []);
-      } catch (_error) {
+      } catch {
         // Error silently handled - loading state will complete
       } finally {
         setLoading(false);
@@ -232,14 +243,14 @@ export function usePHIAccessLogs() {
 }
 
 export function useLogPHIAccess() {
-  return async (log: any) => {
+  return async (log: Record<string, unknown>) => {
     const { error } = await supabase.from('phi_access_logs').insert([log]);
     if (error) throw error;
   };
 }
 
 export function useIncidents() {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<Record<string, unknown>[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchData = async () => {
@@ -251,7 +262,7 @@ export function useIncidents() {
 
       if (error) throw error;
       setData(incidents || []);
-    } catch (_error) {
+    } catch {
       // Error silently handled - loading state will complete
     } finally {
       setLoading(false);
@@ -266,14 +277,14 @@ export function useIncidents() {
 }
 
 export function useCreateIncident() {
-  return async (incident: any) => {
+  return async (incident: Record<string, unknown>) => {
     const { error } = await supabase.from('compliance_incidents').insert([incident]);
     if (error) throw error;
   };
 }
 
 export function useTrainings() {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<Record<string, unknown>[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -286,7 +297,7 @@ export function useTrainings() {
 
         if (error) throw error;
         setData(trainings || []);
-      } catch (_error) {
+      } catch {
         // Error silently handled - loading state will complete
       } finally {
         setLoading(false);
@@ -299,7 +310,7 @@ export function useTrainings() {
 }
 
 export function useTrainingAttendance() {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<Record<string, unknown>[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -312,7 +323,7 @@ export function useTrainingAttendance() {
 
         if (error) throw error;
         setData(attendance || []);
-      } catch (_error) {
+      } catch {
         // Error silently handled - loading state will complete
       } finally {
         setLoading(false);
@@ -325,7 +336,7 @@ export function useTrainingAttendance() {
 }
 
 export function useBAAs() {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<Record<string, unknown>[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchData = async () => {
@@ -337,7 +348,7 @@ export function useBAAs() {
 
       if (error) throw error;
       setData(baas || []);
-    } catch (_error) {
+    } catch {
       // Error silently handled - loading state will complete
     } finally {
       setLoading(false);
@@ -352,14 +363,14 @@ export function useBAAs() {
 }
 
 export function useCreateBAA() {
-  return async (baa: any) => {
+  return async (baa: Record<string, unknown>) => {
     const { error } = await supabase.from('business_associate_agreements').insert([baa]);
     if (error) throw error;
   };
 }
 
 export function useEmployeeDocuments() {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<Record<string, unknown>[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchData = async () => {
@@ -371,7 +382,7 @@ export function useEmployeeDocuments() {
 
       if (error) throw error;
       setData(docs || []);
-    } catch (_error) {
+    } catch {
       // Error silently handled - loading state will complete
     } finally {
       setLoading(false);
@@ -386,7 +397,7 @@ export function useEmployeeDocuments() {
 }
 
 export function useUploadEmployeeDocument() {
-  return async (document: any) => {
+  return async (document: Record<string, unknown>) => {
     const { error } = await supabase.from('employee_documents').insert([document]);
     if (error) throw error;
   };
@@ -400,7 +411,7 @@ export function useDeleteEmployeeDocument() {
 }
 
 export function useAuditSchedules() {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<Record<string, unknown>[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -413,7 +424,7 @@ export function useAuditSchedules() {
 
         if (error) throw error;
         setData(schedules || []);
-      } catch (_error) {
+      } catch {
         // Error silently handled - loading state will complete
       } finally {
         setLoading(false);
@@ -426,7 +437,7 @@ export function useAuditSchedules() {
 }
 
 export function useAuditFindings() {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<Record<string, unknown>[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -439,7 +450,7 @@ export function useAuditFindings() {
 
         if (error) throw error;
         setData(findings || []);
-      } catch (_error) {
+      } catch {
         // Error silently handled - loading state will complete
       } finally {
         setLoading(false);
@@ -452,14 +463,14 @@ export function useAuditFindings() {
 }
 
 export function useCreateAudit() {
-  return async (audit: any) => {
+  return async (audit: Record<string, unknown>) => {
     const { error } = await supabase.from('compliance_audits').insert([audit]);
     if (error) throw error;
   };
 }
 
 export function useUpdateAudit() {
-  return async (id: string, updates: any) => {
+  return async (id: string, updates: Record<string, unknown>) => {
     const { error } = await supabase.from('compliance_audits').update(updates).eq('id', id);
     if (error) throw error;
   };
@@ -473,7 +484,7 @@ export function useDeleteAudit() {
 }
 
 export function useExpiringDocuments(daysUntilExpiry: number = 90) {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<Record<string, unknown>[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -490,7 +501,7 @@ export function useExpiringDocuments(daysUntilExpiry: number = 90) {
 
         if (error) throw error;
         setData(docs || []);
-      } catch (error) {
+      } catch {
         setData([]);
       } finally {
         setLoading(false);

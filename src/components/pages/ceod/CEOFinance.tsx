@@ -17,8 +17,6 @@ import { useQuery } from '@tanstack/react-query';
 import { ExportModal } from '../../modals/ExportModal';
 import { FileViewerModal } from '../../modals/FileViewerModal';
 import {
-  LineChart,
-  Line,
   BarChart,
   Bar,
   PieChart as RechartsPie,
@@ -44,6 +42,16 @@ interface FinanceRecord {
   status: string | null;
 }
 
+interface UploadedFile {
+  id: string;
+  file_name: string;
+  batch_id: string;
+  department: string;
+  created_at: string;
+  row_count?: number;
+  status?: string;
+}
+
 const COLORS = ['#10b981', '#f59e0b', '#3b82f6', '#ef4444', '#8b5cf6', '#ec4899'];
 const CATEGORY_COLORS: Record<string, string> = {
   revenue: '#10b981',
@@ -59,8 +67,8 @@ export function CEOFinance() {
   const [dateTo, setDateTo] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [showExportModal, setShowExportModal] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<any>(null);
-  const [fileData, setFileData] = useState<any[]>([]);
+  const [selectedFile, setSelectedFile] = useState<UploadedFile | null>(null);
+  const [fileData, setFileData] = useState<Record<string, unknown>[]>([]);
 
   const { data: records = [], isLoading } = useQuery({
     queryKey: ['finance_records'],
@@ -91,7 +99,7 @@ export function CEOFinance() {
     },
   });
 
-  const handleViewFile = async (file: any) => {
+  const handleViewFile = async (file: UploadedFile) => {
     setSelectedFile(file);
 
     const { data } = await supabase
@@ -154,7 +162,7 @@ export function CEOFinance() {
       return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
     });
 
-    const qtdRecords = filteredRecords.filter((r) => {
+    const _qtdRecords = filteredRecords.filter((r) => {
       if (!r.record_date) return false;
       const date = new Date(r.record_date);
       const quarter = Math.floor(date.getMonth() / 3);
@@ -573,7 +581,7 @@ export function CEOFinance() {
               Uploaded Files
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {uploadedFiles.map((file: any) => (
+              {uploadedFiles.map((file: UploadedFile) => (
                 <div
                   key={file.id}
                   className="border border-slate-200 rounded-xl p-4 hover:border-indigo-300 transition-colors shadow-sm"

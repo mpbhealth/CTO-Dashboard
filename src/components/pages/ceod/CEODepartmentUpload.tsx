@@ -165,7 +165,7 @@ export function CEODepartmentUpload() {
                     errorMessage = `Authentication error: ${errorData.error}. Please refresh the page and log in again.`;
                   }
                 }
-              } catch (e) {
+              } catch {
                 if (response.status === 401 || response.status === 403) {
                   errorMessage = `Authentication failed (${response.status}). Please refresh the page and log in again.`;
                 } else {

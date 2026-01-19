@@ -1,14 +1,13 @@
 import { useState } from 'react';
-import { 
-  Award, 
-  BarChart3, 
-  Calendar, 
-  CheckCircle, 
-  Edit, 
-  FileText, 
-  Plus, 
+import {
+  Award,
+  BarChart3,
+  Calendar,
+  Edit,
+  FileText,
+  Plus,
   Search,
-  User, 
+  User,
   Users,
   TrendingUp,
   MessageSquare,
@@ -16,7 +15,7 @@ import {
   X
 } from 'lucide-react';
 import { useEmployeeProfiles } from "../../hooks/useOrganizationalData";
-import { usePerformanceSystem, PerformanceReview } from '../../hooks/usePerformanceSystem';
+import { usePerformanceSystem, PerformanceReview, EmployeeKpi, CareerDevelopmentPlan, EmployeeFeedback } from '../../hooks/usePerformanceSystem';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 // Create a client
@@ -47,10 +46,10 @@ function PerformanceEvaluation() {
   const { useEmployeeReviews, useEmployeeKpis, useCareerDevelopmentPlans, useEmployeeFeedback, useProvideFeedback } = usePerformanceSystem();
 
   // Fetch data based on selected employee
-  const { 
-    data: reviews, 
-    isLoading: reviewsLoading, 
-    error: reviewsError 
+  const {
+    data: reviews,
+    isLoading: reviewsLoading,
+    error: _reviewsError
   } = useEmployeeReviews(selectedEmployee || undefined);
   
   const { 
@@ -425,7 +424,7 @@ function PerformanceEvaluation() {
                       </div>
                     ) : kpis && kpis.length > 0 ? (
                       <div className="space-y-4">
-                        {kpis.map((kpi: any) => (
+                        {kpis.map((kpi: EmployeeKpi) => (
                           <div 
                             key={kpi.id} 
                             className="border border-slate-200 rounded-lg p-4 hover:shadow-sm transition-shadow"
@@ -501,7 +500,7 @@ function PerformanceEvaluation() {
                       </div>
                     ) : careerPlans && careerPlans.length > 0 ? (
                       <div className="space-y-4">
-                        {careerPlans.map((plan: any) => (
+                        {careerPlans.map((plan: CareerDevelopmentPlan) => (
                           <div 
                             key={plan.id} 
                             className="border border-slate-200 rounded-lg p-4 hover:shadow-sm transition-shadow"
@@ -593,7 +592,7 @@ function PerformanceEvaluation() {
                       </div>
                     ) : feedback && feedback.length > 0 ? (
                       <div className="space-y-4">
-                        {feedback.map((item: any) => (
+                        {feedback.map((item: EmployeeFeedback) => (
                           <div 
                             key={item.id} 
                             className="border border-slate-200 rounded-lg p-4 hover:shadow-sm transition-shadow"

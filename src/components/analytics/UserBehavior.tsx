@@ -11,7 +11,6 @@ import {
   FileText
 } from 'lucide-react';
 import { useUserBehavior, formatDuration } from '../../hooks/useWebsiteAnalytics';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface Props {
   dateRange: string;
@@ -93,8 +92,8 @@ export default function UserBehavior({ dateRange }: Props) {
     },
   ];
 
-  // Prepare chart data
-  const chartData = data.mostVisitedPages.slice(0, 8).map(page => ({
+  // Prepare chart data (prefixed with _ as it's prepared for future use)
+  const _chartData = data.mostVisitedPages.slice(0, 8).map(page => ({
     name: page.title.length > 40 ? page.title.substring(0, 40) + '...' : page.title,
     views: page.views,
     fullTitle: page.title,

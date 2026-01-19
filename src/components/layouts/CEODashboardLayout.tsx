@@ -10,7 +10,7 @@ export function CEODashboardLayout({ children }: CEODashboardLayoutProps) {
   const [activeTab, setActiveTab] = useState('ceo-home');
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
-  const [isTablet, setIsTablet] = useState(false);
+  const [_isTablet, setIsTablet] = useState(false);
 
   useEffect(() => {
     function checkScreenSize() {

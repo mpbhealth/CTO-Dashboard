@@ -1,16 +1,15 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  FileSpreadsheet, 
-  CheckCircle2, 
-  Clock, 
+import {
+  FileSpreadsheet,
+  CheckCircle2,
+  Clock,
   AlertCircle,
   RefreshCw,
   ChevronDown,
   Mail,
   Phone,
-  User,
-  Filter
+  User
 } from 'lucide-react';
 import { useQuoteLeads } from '../../hooks/useWebsiteAnalytics';
 

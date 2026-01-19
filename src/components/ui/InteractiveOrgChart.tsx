@@ -36,7 +36,7 @@ interface InteractiveOrgChartProps {
   relationships?: DepartmentRelationship[];
   positions?: OrgChartPosition[];
   editMode?: boolean;
-  onPositionUpdate?: (departmentId: string, x: number, y: number) => void;
+  _onPositionUpdate?: (departmentId: string, x: number, y: number) => void;
   onSelectDepartment?: (department: Department) => void;
 }
 
@@ -58,46 +58,46 @@ export default function InteractiveOrgChart({
   const [orgTree, setOrgTree] = useState<DepartmentNode[]>([]);
 
   useEffect(() => {
+    const buildOrgTree = (): DepartmentNode[] => {
+      const deptMap = new Map<string, DepartmentNode>();
+
+      departments.forEach(dept => {
+        const position = positions.find(p => p.department_id === dept.id);
+        deptMap.set(dept.id, {
+          ...dept,
+          children: [],
+          employees: employees.filter(e => e.department === dept.id || e.department === dept.name),
+          position: position ? { x: position.x_position, y: position.y_position } : undefined,
+        });
+      });
+
+      const rootNodes: DepartmentNode[] = [];
+      const childIds = new Set(relationships.map(r => r.child_department_id));
+
+      relationships.forEach(rel => {
+        const parent = deptMap.get(rel.parent_department_id);
+        const child = deptMap.get(rel.child_department_id);
+        if (parent && child) {
+          parent.children.push(child);
+        }
+      });
+
+      deptMap.forEach((node, id) => {
+        if (!childIds.has(id)) {
+          rootNodes.push(node);
+        }
+      });
+
+      if (rootNodes.length === 0 && deptMap.size > 0) {
+        return Array.from(deptMap.values()).slice(0, 10);
+      }
+
+      return rootNodes;
+    };
+
     const tree = buildOrgTree();
     setOrgTree(tree);
   }, [departments, employees, relationships, positions]);
-
-  const buildOrgTree = (): DepartmentNode[] => {
-    const deptMap = new Map<string, DepartmentNode>();
-
-    departments.forEach(dept => {
-      const position = positions.find(p => p.department_id === dept.id);
-      deptMap.set(dept.id, {
-        ...dept,
-        children: [],
-        employees: employees.filter(e => e.department === dept.id || e.department === dept.name),
-        position: position ? { x: position.x_position, y: position.y_position } : undefined,
-      });
-    });
-
-    const rootNodes: DepartmentNode[] = [];
-    const childIds = new Set(relationships.map(r => r.child_department_id));
-
-    relationships.forEach(rel => {
-      const parent = deptMap.get(rel.parent_department_id);
-      const child = deptMap.get(rel.child_department_id);
-      if (parent && child) {
-        parent.children.push(child);
-      }
-    });
-
-    deptMap.forEach((node, id) => {
-      if (!childIds.has(id)) {
-        rootNodes.push(node);
-      }
-    });
-
-    if (rootNodes.length === 0 && deptMap.size > 0) {
-      return Array.from(deptMap.values()).slice(0, 10);
-    }
-
-    return rootNodes;
-  };
 
   const toggleNode = (departmentId: string) => {
     setExpandedNodes(prev => {

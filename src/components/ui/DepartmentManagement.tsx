@@ -1,20 +1,15 @@
 import { useState, useMemo } from 'react';
-import { 
-  Edit, 
-  Trash2, 
-  Plus, 
-  Search, 
+import {
+  Edit,
+  Trash2,
+  Plus,
+  Search,
   Filter,
   ChevronDown,
   Building2,
   Users,
-  DollarSign,
   MapPin,
-  Mail,
-  UserCircle,
   ChevronRight,
-  MoreVertical,
-  Eye,
   GitBranch
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -67,7 +62,7 @@ export default function DepartmentManagement({
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
   const [viewMode, setViewMode] = useState<'table' | 'hierarchy'>('table');
   const [expandedDepartments, setExpandedDepartments] = useState<Set<string>>(new Set());
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [_activeDropdown, _setActiveDropdown] = useState<string | null>(null);
 
   const searchTerm = externalSearchTerm || internalSearchTerm;
 

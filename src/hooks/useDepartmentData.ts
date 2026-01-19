@@ -13,7 +13,7 @@ interface DepartmentUpload {
   rows_imported: number;
   rows_failed: number;
   status: 'pending' | 'processing' | 'completed' | 'failed' | 'approved' | 'rejected';
-  validation_errors?: any;
+  validation_errors?: Record<string, unknown>;
   batch_id: string;
   approved_by?: string;
   approved_at?: string;

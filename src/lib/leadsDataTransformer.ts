@@ -136,8 +136,6 @@ export function extractLeadInsights(notes: string): {
   forwardedTo?: string;
   sentiment: 'positive' | 'negative' | 'neutral';
 } {
-  const notesLower = notes.toLowerCase();
-
   const hasVoicemail = /left vm|voicemail|left message/i.test(notes);
   const hasAppointment = /scheduled|appointment|call scheduled/i.test(notes);
   const hasQuote = /quote|quoted|presented/i.test(notes);

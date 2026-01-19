@@ -1,18 +1,16 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Calendar, 
-  Users, 
-  CheckCircle, 
-  Clock, 
-  AlertCircle, 
-  RefreshCw, 
-  Plus, 
+import {
+  Calendar,
+  Users,
+  CheckCircle,
+  Clock,
+  AlertCircle,
+  RefreshCw,
   ExternalLink,
   Search,
   X,
-  FolderPlus,
-  Zap
+  FolderPlus
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
@@ -193,9 +191,9 @@ export default function MondayTasks() {
 
       // Flatten items from all boards
       const allTasks: MondayTask[] = [];
-      data.data.boards.forEach((board: any) => {
+      data.data.boards.forEach((board: { id: string; name: string; groups?: Array<{ id: string; title: string }>; items_page?: { items: Array<Record<string, unknown>> } }) => {
         if (board.items_page && Array.isArray(board.items_page.items)) {
-          board.items_page.items.forEach((item: any) => {
+          board.items_page.items.forEach((item: Record<string, unknown>) => {
             allTasks.push({
               ...item,
               board: {

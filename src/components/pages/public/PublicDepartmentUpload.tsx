@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Upload, FileSpreadsheet, CheckCircle, AlertCircle, ArrowLeft, Download, Eye } from 'lucide-react';
 import Papa from 'papaparse';
@@ -113,7 +113,7 @@ export function PublicDepartmentUpload() {
   const { department } = useParams<{ department: string }>();
   const navigate = useNavigate();
   const [file, setFile] = useState<File | null>(null);
-  const [parsedData, setParsedData] = useState<any[]>([]);
+  const [parsedData, setParsedData] = useState<Record<string, unknown>[]>([]);
   const [progress, setProgress] = useState<UploadProgress>({ status: 'idle', message: '' });
   const [showPreview, setShowPreview] = useState(false);
 
@@ -415,7 +415,7 @@ export function PublicDepartmentUpload() {
                   <tbody className="divide-y divide-gray-200 bg-white">
                     {parsedData.slice(0, 5).map((row, idx) => (
                       <tr key={idx} className="hover:bg-indigo-50/30 transition-colors">
-                        {Object.values(row).map((value: any, cellIdx) => (
+                        {Object.values(row).map((value: unknown, cellIdx) => (
                           <td key={cellIdx} className="px-5 py-3 text-gray-900 whitespace-nowrap">
                             {String(value)}
                           </td>

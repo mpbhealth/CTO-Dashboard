@@ -34,7 +34,9 @@ import {
   Headphones,
   PieChart,
   Briefcase,
-  Globe
+  Globe,
+  Command,
+  Upload
 } from 'lucide-react';
 
 export interface NavSubItem {
@@ -336,7 +338,28 @@ export function buildTabToRouteMap(items: NavItem[]): Record<string, string> {
   return map;
 }
 
+// Advisor Navigation Items
+export const advisorNavigationItems: NavItem[] = [
+  {
+    id: 'advisor-command-center',
+    label: 'Command Center',
+    path: '/advisor/command-center',
+    icon: Command,
+    category: 'main',
+    roles: ['admin', 'staff'],
+    submenu: [
+      { id: 'advisor-members', label: 'Members', path: '/advisor/command-center?tab=members', icon: Users },
+      { id: 'advisor-hierarchy', label: 'Hierarchy', path: '/advisor/command-center?tab=hierarchy', icon: GitBranch },
+      { id: 'advisor-analytics', label: 'Analytics', path: '/advisor/command-center?tab=analytics', icon: BarChart3 },
+      { id: 'advisor-import', label: 'Import Data', path: '/advisor/command-center?tab=import', icon: Upload }
+    ]
+  }
+];
+
 export function getNavigationForRole(role: string): NavItem[] {
+  if (role === 'advisor') {
+    return advisorNavigationItems;
+  }
   if (['ceo', 'cfo', 'cmo', 'admin'].includes(role)) {
     return ceoNavigationItems;
   }

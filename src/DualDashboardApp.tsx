@@ -124,6 +124,9 @@ const AuthDiagnostics = lazy(() => import('./components/pages/AuthDiagnostics'))
 const DiagnosticsDashboard = lazy(() => import('./components/pages/DiagnosticsDashboard'));
 const Settings = lazy(() => import('./components/pages/Settings'));
 
+// Advisor Command Center
+const AdvisorCommandCenter = lazy(() => import('./components/pages/advisor/AdvisorCommandCenter'));
+
 // Shared components (legacy)
 const SaaSSpend = lazy(() => import('./components/pages/SaaSSpend'));
 const AIAgents = lazy(() => import('./components/pages/AIAgents'));
@@ -573,6 +576,9 @@ function DualDashboardContent() {
             <Route path="/admin/notifications" element={<AdminLayout><NotificationsAdmin /></AdminLayout>} />
             <Route path="/admin/settings" element={<AdminLayout><AdminSystemSettings /></AdminLayout>} />
             <Route path="/admin/providers" element={<AdminLayout><ProviderDirectory /></AdminLayout>} />
+
+            {/* Advisor Command Center */}
+            <Route path="/advisor/command-center" element={<AdvisorCommandCenter />} />
 
             <Route path="*" element={<RoleBasedRedirect />} />
           </Routes>

@@ -9,6 +9,8 @@ import { CEODashboardLayout } from './components/layouts/CEODashboardLayout';
 import Sidebar from './components/Sidebar';
 import { AppShell } from './components/shell/AppShell';
 import { buildRouteToTabMap, buildTabToRouteMap, getNavigationForRole } from './config/navigation';
+import { AIAssistantProvider } from './providers/AIAssistantProvider';
+import { GlobalAIAssistant } from './components/ai/GlobalAIAssistant';
 
 const CTOHome = lazy(() => import('./components/pages/ctod/CTOHome').then(m => ({ default: m.CTOHome })));
 const CTOOperations = lazy(() => import('./components/pages/ctod/CTOOperations').then(m => ({ default: m.CTOOperations })));
@@ -591,8 +593,11 @@ function DualDashboardContent() {
 
 export default function DualDashboardApp() {
   return (
-    <AppShell>
-      <DualDashboardContent />
-    </AppShell>
+    <AIAssistantProvider>
+      <AppShell>
+        <DualDashboardContent />
+        <GlobalAIAssistant />
+      </AppShell>
+    </AIAssistantProvider>
   );
 }

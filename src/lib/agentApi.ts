@@ -39,10 +39,19 @@ export interface AgentApiError {
   status?: number;
 }
 
-// Get the API URL from environment variable, defaulting to localhost
+// Get the API URL from environment variable
+// Defaults to Supabase Edge Function URL if VITE_SUPABASE_URL is set
 const getAgentApiUrl = (): string => {
   const envUrl = import.meta.env.VITE_AGENT_API_URL;
-  return envUrl || 'http://localhost:3001';
+  if (envUrl) return envUrl;
+
+  // Default to Supabase Edge Function
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  if (supabaseUrl) {
+    return `${supabaseUrl}/functions/v1`;
+  }
+
+  return 'http://localhost:3001';
 };
 
 /**
@@ -57,7 +66,10 @@ export async function sendAgentMessage(
 ): Promise<ChatResponse> {
   const apiUrl = getAgentApiUrl();
 
-  const response = await fetch(`${apiUrl}/api/agent/chat`, {
+  // Use /agent-chat for Supabase Edge Functions, /api/agent/chat for custom backend
+  const endpoint = apiUrl.includes('supabase.co') ? `${apiUrl}/agent-chat` : `${apiUrl}/api/agent/chat`;
+
+  const response = await fetch(endpoint, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${accessToken}`,

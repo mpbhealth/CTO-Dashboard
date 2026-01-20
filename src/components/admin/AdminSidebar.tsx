@@ -27,7 +27,6 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useAdminStats } from './AdminStatsContext';
-import { DashboardSwitcher } from '../ui/DashboardSwitcher';
 
 interface NavItem {
   id: string;
@@ -270,13 +269,6 @@ export function AdminSidebar({ isExpanded, onToggle }: AdminSidebarProps) {
               )}
             </div>
           </div>
-
-          {/* Dashboard Switcher */}
-          {isExpanded && (
-            <div className="mb-4">
-              <DashboardSwitcher variant="dropdown" />
-            </div>
-          )}
 
           {/* Quick Search Hint */}
           {isExpanded && (

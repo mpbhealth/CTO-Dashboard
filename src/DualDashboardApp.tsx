@@ -11,6 +11,7 @@ import { AppShell } from './components/shell/AppShell';
 import { buildRouteToTabMap, buildTabToRouteMap, getNavigationForRole } from './config/navigation';
 import { AIAssistantProvider } from './providers/AIAssistantProvider';
 import { GlobalAIAssistant } from './components/ai/GlobalAIAssistant';
+import { UniversalDashboardSwitcher } from './components/ui/UniversalDashboardSwitcher';
 
 const CTOHome = lazy(() => import('./components/pages/ctod/CTOHome').then(m => ({ default: m.CTOHome })));
 const CTOOperations = lazy(() => import('./components/pages/ctod/CTOOperations').then(m => ({ default: m.CTOOperations })));
@@ -597,6 +598,7 @@ export default function DualDashboardApp() {
       <AppShell>
         <DualDashboardContent />
         <GlobalAIAssistant />
+        <UniversalDashboardSwitcher />
       </AppShell>
     </AIAssistantProvider>
   );

@@ -288,7 +288,7 @@ serve(async (req) => {
     const assistantMessage = openaiData.choices[0].message;
 
     // Handle tool calls if present
-    let toolResults: any[] = [];
+    const toolResults: any[] = [];
     if (assistantMessage.tool_calls && assistantMessage.tool_calls.length > 0) {
       for (const toolCall of assistantMessage.tool_calls) {
         const args = JSON.parse(toolCall.function.arguments);

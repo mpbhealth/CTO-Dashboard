@@ -1,6 +1,6 @@
 // Service Worker for MPB Health Dashboard PWA
 // Version is set at build time for proper cache invalidation
-const VERSION = '2.1.0';
+const VERSION = '2.1.1';
 const CACHE_NAME = 'mpb-dashboard-v' + VERSION;
 const urlsToCache = [
   '/',
@@ -191,14 +191,23 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     fetch(event.request)
       .then((response) => {
-        // Only cache successful responses from same origin
-        if (response.status === 200 && requestUrl.origin === self.location.origin) {
-          const responseToCache = response.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseToCache);
-          }).catch((err) => {
-            console.warn('[SW] Cache storage failed:', err);
-          });
+        // Only cache successful responses from same origin with valid response type
+        if (response.status === 200 &&
+            requestUrl.origin === self.location.origin &&
+            response.type === 'basic') {
+          try {
+            const responseToCache = response.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseToCache).catch((err) => {
+                // Silently ignore cache put errors - non-critical
+                console.debug('[SW] Cache put failed (non-critical):', err.message);
+              });
+            }).catch((err) => {
+              console.debug('[SW] Cache open failed:', err.message);
+            });
+          } catch (err) {
+            // Clone or cache failed - continue without caching
+          }
         }
         return response;
       })

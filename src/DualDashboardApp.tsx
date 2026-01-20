@@ -361,21 +361,21 @@ function DualDashboardContent() {
         </button>
       )}
 
-      <main 
+      <main
         className={`
           flex-1 overflow-y-auto overflow-x-hidden
-          ${isCEORoute
+          ${isCEORoute || isAdminRoute
             ? ''
             : `
               transition-all duration-300 ease-out
-              ${isMobile 
-                ? 'px-4 py-4' 
+              ${isMobile
+                ? 'px-4 py-4'
                 : 'px-6 md:px-8 lg:px-12 py-6 md:py-8'
-              } 
-              ${isSidebarExpanded 
-                ? 'md:pl-[21rem] lg:pl-[22rem]' 
-                : isMobile 
-                  ? 'pl-4' 
+              }
+              ${isSidebarExpanded
+                ? 'md:pl-[21rem] lg:pl-[22rem]'
+                : isMobile
+                  ? 'pl-4'
                   : 'md:pl-24 lg:pl-28'
               }
             `

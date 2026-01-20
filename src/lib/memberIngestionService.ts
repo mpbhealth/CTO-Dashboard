@@ -234,7 +234,7 @@ export function validateMemberData(
           memberData.email = value || undefined;
           break;
 
-        case 'date_of_birth':
+        case 'date_of_birth': {
           const dob = parseDate(value);
           if (!dob) {
             errors.push({
@@ -248,6 +248,7 @@ export function validateMemberData(
             memberData.date_of_birth = dob;
           }
           break;
+        }
 
         case 'enrollment_date':
           if (value) {
@@ -271,7 +272,7 @@ export function validateMemberData(
           }
           break;
 
-        case 'status':
+        case 'status': {
           const validStatuses = ['active', 'pending', 'inactive', 'cancelled', 'suspended'];
           if (value && !validStatuses.includes(value.toLowerCase())) {
             warnings.push({
@@ -285,6 +286,7 @@ export function validateMemberData(
             memberData.status = (value.toLowerCase() as Member['status']) || 'pending';
           }
           break;
+        }
 
         case 'zip_code':
           if (value && !isValidZipCode(value)) {

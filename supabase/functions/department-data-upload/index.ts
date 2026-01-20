@@ -155,7 +155,7 @@ Deno.serve(async (req: Request) => {
             };
             break;
 
-          case 'sales-leads':
+          case 'sales-leads': {
             const leadDate = row.Date || row.date || row.lead_date || row['Date'] || null;
             const leadName = row.Name || row.name || row.lead_name || row['Name'] || null;
             const leadSource = row.Source || row.source || row.lead_source || row['Source'] || null;
@@ -176,8 +176,9 @@ Deno.serve(async (req: Request) => {
               recent_notes: recentNotes,
             };
             break;
+          }
 
-          case 'sales-cancelations':
+          case 'sales-cancelations': {
             const memberName = row['Name:'] || row['Name'] || row.Name || row.name || row.member_name || row['MEMBER NAME'] || null;
             const cancelReason = row['Reason:'] || row['Reason'] || row.Reason || row.reason || row.cancelation_reason || row['CANCELATION REASON'] || null;
             const membershipType = row['Membership:'] || row['Membership'] || row.Membership || row.membership || row.membership_type || row['MEMBERSHIP TYPE'] || null;
@@ -194,6 +195,7 @@ Deno.serve(async (req: Request) => {
               outcome_notes: outcomeNotes,
             };
             break;
+          }
 
           case 'operations':
             processedRow = {

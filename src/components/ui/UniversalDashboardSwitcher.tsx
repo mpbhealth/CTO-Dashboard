@@ -119,16 +119,16 @@ export function UniversalDashboardSwitcher() {
   return (
     <div
       ref={containerRef}
-      className="fixed top-4 left-1/2 -translate-x-1/2 z-[100]"
+      className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[100]"
     >
       <AnimatePresence mode="wait">
         {!isExpanded ? (
           // Collapsed: Compact pill showing current dashboard
           <motion.button
             key="collapsed"
-            initial={{ opacity: 0, y: -20 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10, scale: 0.95 }}
+            exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ duration: 0.2 }}
             onClick={() => setIsExpanded(true)}
             className={`
@@ -163,9 +163,9 @@ export function UniversalDashboardSwitcher() {
           // Expanded: Full dashboard selector
           <motion.div
             key="expanded"
-            initial={{ opacity: 0, y: -10, scale: 0.95 }}
+            initial={{ opacity: 0, y: 10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -10, scale: 0.95 }}
+            exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
             className="
               bg-white/95 backdrop-blur-xl

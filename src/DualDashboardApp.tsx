@@ -167,6 +167,14 @@ const FAQAdmin = lazy(() => import('./components/pages/admin/FAQAdmin').then(m =
 const NotificationsAdmin = lazy(() => import('./components/pages/admin/NotificationsAdmin').then(m => ({ default: m.NotificationsAdmin })));
 const AdminSystemSettings = lazy(() => import('./components/pages/admin/SystemSettings').then(m => ({ default: m.SystemSettings })));
 const ProviderDirectory = lazy(() => import('./components/pages/admin/ProviderDirectory').then(m => ({ default: m.ProviderDirectory })));
+const AdminLiveView = lazy(() => import('./components/pages/admin/AdminLiveView').then(m => ({ default: m.AdminLiveView })));
+const AdminAnalytics = lazy(() => import('./components/pages/admin/AdminAnalytics').then(m => ({ default: m.AdminAnalytics })));
+const AdminTraffic = lazy(() => import('./components/pages/admin/AdminTraffic').then(m => ({ default: m.AdminTraffic })));
+const AdminMarketing = lazy(() => import('./components/pages/admin/AdminMarketing').then(m => ({ default: m.AdminMarketing })));
+const AdminDocuments = lazy(() => import('./components/pages/admin/AdminDocuments').then(m => ({ default: m.AdminDocuments })));
+const AdminSEOAnalytics = lazy(() => import('./components/pages/admin/AdminSEOAnalytics').then(m => ({ default: m.AdminSEOAnalytics })));
+const AdminSEOSettings = lazy(() => import('./components/pages/admin/AdminSEOSettings').then(m => ({ default: m.AdminSEOSettings })));
+const AdminHealthMonitor = lazy(() => import('./components/pages/admin/AdminHealthMonitor').then(m => ({ default: m.AdminHealthMonitor })));
 
 const LoadingFallback = () => (
   <div 
@@ -579,6 +587,14 @@ function DualDashboardContent() {
             <Route path="/admin/notifications" element={<AdminLayout><NotificationsAdmin /></AdminLayout>} />
             <Route path="/admin/settings" element={<AdminLayout><AdminSystemSettings /></AdminLayout>} />
             <Route path="/admin/providers" element={<AdminLayout><ProviderDirectory /></AdminLayout>} />
+            <Route path="/admin/live" element={<AdminLayout><AdminLiveView /></AdminLayout>} />
+            <Route path="/admin/analytics" element={<AdminLayout><AdminAnalytics /></AdminLayout>} />
+            <Route path="/admin/traffic" element={<AdminLayout><AdminTraffic /></AdminLayout>} />
+            <Route path="/admin/marketing" element={<AdminLayout><AdminMarketing /></AdminLayout>} />
+            <Route path="/admin/documents" element={<AdminLayout><AdminDocuments /></AdminLayout>} />
+            <Route path="/admin/seo-analytics" element={<AdminLayout><AdminSEOAnalytics /></AdminLayout>} />
+            <Route path="/admin/seo-settings" element={<AdminLayout><AdminSEOSettings /></AdminLayout>} />
+            <Route path="/admin/health" element={<AdminLayout><AdminHealthMonitor /></AdminLayout>} />
 
             {/* Advisor Command Center */}
             <Route path="/advisor/command-center" element={<AdvisorCommandCenter />} />

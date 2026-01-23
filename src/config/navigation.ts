@@ -106,6 +106,7 @@ export const ceoNavigationItems: NavItem[] = [
       { id: 'ceo-roadmap', label: 'Roadmap', path: '/ceod/development/roadmap', icon: Calendar },
       { id: 'ceo-roadmap-visualizer', label: 'Roadmap Visualizer', path: '/ceod/development/roadmap-visualizer', icon: Map },
       { id: 'ceo-roadmap-presentation', label: 'Roadmap Presentation', path: '/ceod/development/roadmap-presentation', icon: Presentation },
+      { id: 'ceo-platform-presentation', label: 'Platform Presentation', path: '/presentation', icon: Presentation },
       { id: 'ceo-projects', label: 'Projects', path: '/ceod/development/projects', icon: FolderKanban },
       { id: 'ceo-assignments', label: 'Assignments', path: '/ceod/development/assignments', icon: CheckSquare },
       { id: 'ceo-notepad', label: 'Notepad', path: '/ceod/development/notepad', icon: StickyNote }
@@ -202,12 +203,14 @@ export const ceoNavigationItems: NavItem[] = [
   },
 
   { id: 'ceo-board', label: 'Board Packet', path: '/ceod/board', icon: Briefcase, category: 'executive', roles: ['ceo', 'admin'] },
+  { id: 'ceo-platform-presentation-top', label: 'Platform Presentation', path: '/presentation', icon: Presentation, category: 'executive', roles: ['ceo', 'admin'], badge: 'New' },
   { id: 'ceo-files', label: 'Files & Documents', path: '/ceod/files', icon: FileText, category: 'executive', roles: ['ceo', 'admin'] },
 ];
 
 export const ctoNavigationItems: NavItem[] = [
   { id: 'cto-home', label: 'CTO Overview', path: '/ctod/home', icon: Building2, category: 'main', roles: ['cto', 'admin'] },
   { id: 'cto-daily-organizer', label: 'Daily Organizer', path: '/ctod/organizer', icon: LayoutGrid, category: 'main', roles: ['cto', 'admin', 'staff', 'manager'], badge: 'New' },
+  { id: 'cto-platform-presentation-top', label: 'Platform Presentation', path: '/presentation', icon: Presentation, category: 'main', roles: ['cto', 'admin'], badge: 'New' },
   { id: 'cto-files', label: 'Files & Documents', path: '/ctod/files', icon: FileText, category: 'main', roles: ['cto', 'admin', 'staff'] },
 
   {
@@ -241,6 +244,7 @@ export const ctoNavigationItems: NavItem[] = [
       { id: 'cto-roadmap', label: 'Roadmap', path: '/ctod/development/roadmap' },
       { id: 'cto-roadmap-visualizer', label: 'Roadmap Visualizer', path: '/ctod/development/roadmap-visualizer' },
       { id: 'cto-roadmap-presentation', label: 'Roadmap Presentation', path: '/ctod/development/roadmap-presentation' },
+      { id: 'cto-platform-presentation', label: 'Platform Presentation', path: '/presentation' },
       { id: 'cto-projects', label: 'Projects', path: '/ctod/development/projects' },
       { id: 'cto-monday-tasks', label: 'Monday Tasks', path: '/ctod/development/monday-tasks' },
       { id: 'cto-assignments', label: 'Assignments', path: '/ctod/development/assignments' },

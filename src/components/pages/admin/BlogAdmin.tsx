@@ -14,7 +14,7 @@ import {
   Image,
   MoreHorizontal,
 } from 'lucide-react';
-import { supabase, isSupabaseConfigured } from '../../../lib/supabase';
+import { mpbHealthSupabase, isMpbHealthConfigured } from '../../../lib/mpbHealthSupabase';
 
 interface Article {
   id: string;
@@ -123,7 +123,7 @@ export function BlogAdmin() {
   const fetchArticles = useCallback(async () => {
     setLoading(true);
 
-    if (!isSupabaseConfigured) {
+    if (!isMpbHealthConfigured) {
       let filtered = [...demoArticles];
 
       if (searchTerm) {
@@ -147,7 +147,7 @@ export function BlogAdmin() {
     }
 
     try {
-      let query = supabase
+      let query = mpbHealthSupabase
         .from('blog_articles')
         .select('*', { count: 'exact' });
 

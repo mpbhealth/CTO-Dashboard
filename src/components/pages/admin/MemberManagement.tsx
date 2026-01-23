@@ -15,7 +15,7 @@ import {
   ChevronRight,
   RefreshCw,
 } from 'lucide-react';
-import { supabase, isSupabaseConfigured } from '../../../lib/supabase';
+import { mpbHealthSupabase, isMpbHealthConfigured } from '../../../lib/mpbHealthSupabase';
 
 interface Member {
   id: string;
@@ -125,7 +125,7 @@ export function MemberManagement() {
   const fetchMembers = useCallback(async () => {
     setLoading(true);
     
-    if (!isSupabaseConfigured) {
+    if (!isMpbHealthConfigured) {
       // Use demo data
       let filtered = [...demoMembers];
       
@@ -152,7 +152,7 @@ export function MemberManagement() {
     }
 
     try {
-      let query = supabase
+      let query = mpbHealthSupabase
         .from('member_profiles')
         .select('*', { count: 'exact' });
 

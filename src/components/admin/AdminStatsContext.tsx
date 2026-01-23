@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
-import { supabase, isSupabaseConfigured } from '../../lib/supabase';
+import { mpbHealthSupabase, isMpbHealthConfigured } from '../../lib/mpbHealthSupabase';
 
 interface AdminStats {
   // Members
@@ -87,8 +87,8 @@ export function AdminStatsProvider({
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   const fetchStats = useCallback(async () => {
-    if (!isSupabaseConfigured) {
-      // Use demo data when Supabase isn't configured
+    if (!isMpbHealthConfigured) {
+      // Use demo data when MPB Health Supabase isn't configured
       setStats(demoStats);
       setLoading(false);
       setLastUpdated(new Date());
@@ -98,15 +98,15 @@ export function AdminStatsProvider({
     try {
       setError(null);
 
-      // Fetch member stats
+      // Fetch member stats from MPB Health backend
       const [
         { count: totalMembers },
         { count: activeMembers },
         { count: pendingMembers }
       ] = await Promise.all([
-        supabase.from('member_profiles').select('*', { count: 'exact', head: true }),
-        supabase.from('member_profiles').select('*', { count: 'exact', head: true }).eq('membership_status', 'active'),
-        supabase.from('member_profiles').select('*', { count: 'exact', head: true }).eq('membership_status', 'pending'),
+        mpbHealthSupabase.from('member_profiles').select('*', { count: 'exact', head: true }),
+        mpbHealthSupabase.from('member_profiles').select('*', { count: 'exact', head: true }).eq('membership_status', 'active'),
+        mpbHealthSupabase.from('member_profiles').select('*', { count: 'exact', head: true }).eq('membership_status', 'pending'),
       ]);
 
       // Fetch claims stats
@@ -119,9 +119,9 @@ export function AdminStatsProvider({
         { count: totalClaimsThisMonth },
         { count: claimsUnderReview }
       ] = await Promise.all([
-        supabase.from('claims').select('*', { count: 'exact', head: true }).in('status', ['submitted', 'pending_info']),
-        supabase.from('claims').select('*', { count: 'exact', head: true }).gte('submitted_date', startOfMonth.toISOString()),
-        supabase.from('claims').select('*', { count: 'exact', head: true }).eq('status', 'under_review'),
+        mpbHealthSupabase.from('claims').select('*', { count: 'exact', head: true }).in('status', ['submitted', 'pending_info']),
+        mpbHealthSupabase.from('claims').select('*', { count: 'exact', head: true }).gte('submitted_date', startOfMonth.toISOString()),
+        mpbHealthSupabase.from('claims').select('*', { count: 'exact', head: true }).eq('status', 'under_review'),
       ]);
 
       // Fetch support ticket stats
@@ -130,9 +130,9 @@ export function AdminStatsProvider({
         { count: unresolvedTickets },
         { count: criticalTickets }
       ] = await Promise.all([
-        supabase.from('support_tickets').select('*', { count: 'exact', head: true }).eq('status', 'open'),
-        supabase.from('support_tickets').select('*', { count: 'exact', head: true }).in('status', ['open', 'in_progress', 'waiting_member']),
-        supabase.from('support_tickets').select('*', { count: 'exact', head: true }).eq('priority', 'urgent'),
+        mpbHealthSupabase.from('support_tickets').select('*', { count: 'exact', head: true }).eq('status', 'open'),
+        mpbHealthSupabase.from('support_tickets').select('*', { count: 'exact', head: true }).in('status', ['open', 'in_progress', 'waiting_member']),
+        mpbHealthSupabase.from('support_tickets').select('*', { count: 'exact', head: true }).eq('priority', 'urgent'),
       ]);
 
       // Fetch transaction stats
@@ -140,11 +140,11 @@ export function AdminStatsProvider({
         { data: revenueData },
         { count: pendingTransactions }
       ] = await Promise.all([
-        supabase.from('transactions')
+        mpbHealthSupabase.from('transactions')
           .select('amount')
           .eq('status', 'completed')
           .gte('created_at', startOfMonth.toISOString()),
-        supabase.from('transactions').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
+        mpbHealthSupabase.from('transactions').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
       ]);
 
       const totalRevenue = revenueData?.reduce((sum, t) => sum + (Number(t.amount) || 0), 0) || 0;
@@ -155,9 +155,9 @@ export function AdminStatsProvider({
         { count: publishedArticles },
         { count: draftArticles }
       ] = await Promise.all([
-        supabase.from('blog_articles').select('*', { count: 'exact', head: true }),
-        supabase.from('blog_articles').select('*', { count: 'exact', head: true }).eq('status', 'published'),
-        supabase.from('blog_articles').select('*', { count: 'exact', head: true }).eq('status', 'draft'),
+        mpbHealthSupabase.from('blog_articles').select('*', { count: 'exact', head: true }),
+        mpbHealthSupabase.from('blog_articles').select('*', { count: 'exact', head: true }).eq('status', 'published'),
+        mpbHealthSupabase.from('blog_articles').select('*', { count: 'exact', head: true }).eq('status', 'draft'),
       ]);
 
       setStats({

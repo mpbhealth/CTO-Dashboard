@@ -12,7 +12,7 @@ import {
   Reply,
   Eye,
 } from 'lucide-react';
-import { supabase, isSupabaseConfigured } from '../../../lib/supabase';
+import { mpbHealthSupabase, isMpbHealthConfigured } from '../../../lib/mpbHealthSupabase';
 
 interface Ticket {
   id: string;
@@ -142,7 +142,7 @@ export function SupportTickets() {
   const fetchTickets = useCallback(async () => {
     setLoading(true);
 
-    if (!isSupabaseConfigured) {
+    if (!isMpbHealthConfigured) {
       let filtered = [...demoTickets];
 
       if (searchTerm) {
@@ -175,7 +175,7 @@ export function SupportTickets() {
     }
 
     try {
-      let query = supabase
+      let query = mpbHealthSupabase
         .from('support_tickets')
         .select('*', { count: 'exact' });
 

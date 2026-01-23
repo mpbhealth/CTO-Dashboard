@@ -1,0 +1,949 @@
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  Users,
+  Database,
+  Globe,
+  Smartphone,
+  LayoutDashboard,
+  HeadphonesIcon,
+  Ticket,
+  UserCog,
+  Building2,
+  CreditCard,
+  FileText,
+  Shield,
+  Zap,
+  ArrowRight,
+  ArrowLeftRight,
+  CheckCircle2,
+  Clock,
+  AlertTriangle,
+  ChevronLeft,
+  ChevronRight,
+  Play,
+  Pause,
+  Maximize2,
+  Server,
+  Mail,
+  Bell,
+  FileKey,
+  Upload,
+  Workflow,
+  Activity,
+  Link2,
+  Lock,
+  BarChart3,
+  RefreshCw,
+  Target,
+  Layers,
+  Cpu,
+  Network,
+  Boxes,
+  Monitor,
+  Briefcase,
+  Stethoscope,
+  CalendarCheck,
+  ClipboardList,
+} from 'lucide-react';
+
+// Animation variants
+const fadeInUp = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -20 },
+};
+
+const staggerContainer = {
+  animate: {
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const scaleIn = {
+  initial: { opacity: 0, scale: 0.8 },
+  animate: { opacity: 1, scale: 1 },
+  exit: { opacity: 0, scale: 0.8 },
+};
+
+const slideIn = {
+  initial: { opacity: 0, x: -30 },
+  animate: { opacity: 1, x: 0 },
+  exit: { opacity: 0, x: 30 },
+};
+
+// Animated connection line component
+function AnimatedLine({ className = '' }: { className?: string }) {
+  return (
+    <motion.div
+      className={`absolute bg-gradient-to-r from-blue-400 to-cyan-400 ${className}`}
+      initial={{ scaleX: 0 }}
+      animate={{ scaleX: 1 }}
+      transition={{ duration: 0.8, ease: 'easeOut' }}
+    />
+  );
+}
+
+// Pulsing dot component
+function PulsingDot({ color = 'bg-emerald-500' }: { color?: string }) {
+  return (
+    <span className="relative flex h-3 w-3">
+      <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${color} opacity-75`} />
+      <span className={`relative inline-flex rounded-full h-3 w-3 ${color}`} />
+    </span>
+  );
+}
+
+// Slide 1: Architecture Overview
+function ArchitectureSlide({ isActive }: { isActive: boolean }) {
+  const users = [
+    { icon: Users, label: 'Members', color: 'from-blue-500 to-blue-600' },
+    { icon: Briefcase, label: 'Advisors', color: 'from-purple-500 to-purple-600' },
+    { icon: UserCog, label: 'Employees', color: 'from-emerald-500 to-emerald-600' },
+    { icon: Building2, label: 'Vendors', color: 'from-amber-500 to-amber-600' },
+  ];
+
+  const memberFacingApps = [
+    { icon: Globe, label: 'MPB Health Website', sublabel: '+ Advisor Portal' },
+    { icon: Smartphone, label: 'MPB Mobile App', sublabel: 'Member Portal' },
+  ];
+
+  const internalApps = [
+    { icon: LayoutDashboard, label: 'CRM' },
+    { icon: Ticket, label: 'IT Support' },
+    { icon: FileText, label: 'Enrollment System', sublabel: '"E123 Killer"' },
+    { icon: UserCog, label: 'Member Lifecycle Admin' },
+    { icon: Stethoscope, label: 'Concierge Dashboard' },
+    { icon: Monitor, label: 'Internal Ops Dashboards' },
+    { icon: ClipboardList, label: 'Project Management' },
+    { icon: CreditCard, label: 'Billing & Finance' },
+  ];
+
+  const platformServices = [
+    { icon: Lock, label: 'Unified Login & Roles', desc: 'Security' },
+    { icon: Cpu, label: 'Unified API', desc: 'Business Rules' },
+    { icon: Mail, label: 'Messaging Hub', desc: 'Email/SMS/Notifications' },
+    { icon: CreditCard, label: 'Billing & Payments', desc: 'Transactions' },
+    { icon: Upload, label: 'Eligibility Transfer', desc: 'EDI/SFTP/API/CSV' },
+    { icon: CalendarCheck, label: 'Onboarding Orchestrator', desc: 'Member • Vendor • Employee' },
+    { icon: FileKey, label: 'Documents & Storage', desc: 'Secure Files' },
+    { icon: Workflow, label: 'Automations', desc: 'Scheduled Jobs' },
+    { icon: Activity, label: 'Audit & Analytics', desc: 'Monitoring' },
+    { icon: Link2, label: 'Integrations Layer', desc: 'Webhooks' },
+  ];
+
+  const externalPartners = [
+    'Vendors',
+    'TPAs',
+    'Carriers',
+    'Agencies',
+    'Payment Providers',
+  ];
+
+  return (
+    <motion.div
+      className="relative w-full h-full bg-gradient-to-br from-slate-50 via-white to-blue-50 p-8 overflow-hidden"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: isActive ? 1 : 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(30, 58, 138, 0.3) 1px, transparent 0)`,
+          backgroundSize: '40px 40px',
+        }} />
+      </div>
+
+      {/* Title */}
+      <motion.div
+        className="text-center mb-6"
+        variants={fadeInUp}
+        initial="initial"
+        animate="animate"
+      >
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-800 via-blue-900 to-slate-800 bg-clip-text text-transparent">
+          MPB Unified Platform
+        </h1>
+        <p className="text-lg text-slate-600 mt-1 font-medium">
+          One Source of Truth, Many Experiences
+        </p>
+      </motion.div>
+
+      <div className="flex gap-6 h-[calc(100%-120px)]">
+        {/* Main Content Area */}
+        <div className="flex-1 flex flex-col gap-4">
+          {/* Layer 1: Users */}
+          <motion.div
+            className="flex items-center gap-4"
+            variants={staggerContainer}
+            initial="initial"
+            animate="animate"
+          >
+            <div className="bg-slate-100 rounded-xl px-4 py-2 border border-slate-200">
+              <span className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                <Users className="w-4 h-4" /> Users
+              </span>
+            </div>
+            <div className="flex gap-3">
+              {users.map((user, idx) => (
+                <motion.div
+                  key={user.label}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-br ${user.color} text-white shadow-lg`}
+                  variants={scaleIn}
+                  transition={{ delay: idx * 0.1 }}
+                  whileHover={{ scale: 1.05, y: -2 }}
+                >
+                  <user.icon className="w-5 h-5" />
+                  <span className="font-medium text-sm">{user.label}</span>
+                </motion.div>
+              ))}
+            </div>
+            <motion.div
+              className="flex-1 flex items-center justify-center"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+            >
+              <ArrowRight className="w-6 h-6 text-slate-400 animate-pulse" />
+            </motion.div>
+          </motion.div>
+
+          {/* Layer 2: Applications */}
+          <motion.div
+            className="bg-white rounded-2xl p-5 shadow-lg border border-slate-200 relative overflow-hidden"
+            variants={fadeInUp}
+            initial="initial"
+            animate="animate"
+            transition={{ delay: 0.3 }}
+          >
+            {/* Gradient accent */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-cyan-500" />
+
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600">
+                <Boxes className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h3 className="font-bold text-slate-800">Applications</h3>
+                <p className="text-xs text-slate-500">One Codebase / Monorepo</p>
+              </div>
+            </div>
+
+            {/* Member/Advisor Facing Row */}
+            <div className="mb-3">
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Member & Advisor Facing</p>
+              <div className="flex gap-3">
+                {memberFacingApps.map((app, idx) => (
+                  <motion.div
+                    key={app.label}
+                    className="flex-1 flex items-center gap-3 px-4 py-3 rounded-xl bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-100 hover:shadow-md transition-all"
+                    whileHover={{ scale: 1.02 }}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.4 + idx * 0.1 }}
+                  >
+                    <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500">
+                      <app.icon className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-slate-800 text-sm">{app.label}</p>
+                      {app.sublabel && <p className="text-xs text-slate-500">{app.sublabel}</p>}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+            {/* Internal Tools Row */}
+            <div>
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Operations & Internal Tools</p>
+              <div className="grid grid-cols-4 gap-2">
+                {internalApps.map((app, idx) => (
+                  <motion.div
+                    key={app.label}
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 hover:bg-slate-100 transition-all"
+                    whileHover={{ scale: 1.02 }}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5 + idx * 0.05 }}
+                  >
+                    <app.icon className="w-4 h-4 text-slate-600" />
+                    <div>
+                      <p className="font-medium text-slate-700 text-xs">{app.label}</p>
+                      {app.sublabel && <p className="text-[10px] text-emerald-600 font-semibold">{app.sublabel}</p>}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+            <p className="text-center text-xs text-slate-500 mt-3 italic">
+              Different experiences — same platform and data
+            </p>
+          </motion.div>
+
+          {/* Animated Arrow */}
+          <motion.div
+            className="flex justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.7 }}
+          >
+            <div className="flex flex-col items-center">
+              <motion.div
+                animate={{ y: [0, 5, 0] }}
+                transition={{ repeat: Infinity, duration: 1.5 }}
+              >
+                <ArrowRight className="w-6 h-6 text-blue-500 rotate-90" />
+              </motion.div>
+            </div>
+          </motion.div>
+
+          {/* Layer 3: Shared Platform Services */}
+          <motion.div
+            className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-5 shadow-xl relative overflow-hidden"
+            variants={fadeInUp}
+            initial="initial"
+            animate="animate"
+            transition={{ delay: 0.6 }}
+          >
+            {/* Animated glow effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-cyan-500/10 animate-pulse" />
+
+            <div className="relative">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-500">
+                  <Layers className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-white">Shared Platform Services</h3>
+                  <p className="text-xs text-slate-400">Reusable Components</p>
+                </div>
+                <div className="ml-auto">
+                  <PulsingDot color="bg-emerald-400" />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-5 gap-2">
+                {platformServices.map((service, idx) => (
+                  <motion.div
+                    key={service.label}
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/10 backdrop-blur border border-white/10 hover:bg-white/20 transition-all"
+                    whileHover={{ scale: 1.05 }}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.8 + idx * 0.05 }}
+                  >
+                    <service.icon className="w-4 h-4 text-cyan-400" />
+                    <div>
+                      <p className="font-medium text-white text-[10px] leading-tight">{service.label}</p>
+                      <p className="text-[9px] text-slate-400">{service.desc}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+
+              <p className="text-center text-xs text-cyan-400 mt-3 font-medium">
+                Build once. Reuse everywhere. Govern centrally.
+              </p>
+            </div>
+          </motion.div>
+
+          {/* Animated Arrow */}
+          <motion.div
+            className="flex justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.9 }}
+          >
+            <motion.div
+              animate={{ y: [0, 5, 0] }}
+              transition={{ repeat: Infinity, duration: 1.5, delay: 0.5 }}
+            >
+              <ArrowRight className="w-6 h-6 text-blue-500 rotate-90" />
+            </motion.div>
+          </motion.div>
+
+          {/* Layer 4: Database */}
+          <motion.div
+            className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 rounded-2xl p-5 shadow-xl relative overflow-hidden"
+            variants={fadeInUp}
+            initial="initial"
+            animate="animate"
+            transition={{ delay: 0.8 }}
+          >
+            {/* Animated data particles */}
+            <div className="absolute inset-0 overflow-hidden">
+              {[...Array(20)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  className="absolute w-1 h-1 bg-white/30 rounded-full"
+                  style={{
+                    left: `${Math.random() * 100}%`,
+                    top: `${Math.random() * 100}%`,
+                  }}
+                  animate={{
+                    y: [0, -20, 0],
+                    opacity: [0.3, 0.8, 0.3],
+                  }}
+                  transition={{
+                    repeat: Infinity,
+                    duration: 2 + Math.random() * 2,
+                    delay: Math.random() * 2,
+                  }}
+                />
+              ))}
+            </div>
+
+            <div className="relative flex items-center gap-4">
+              <motion.div
+                className="p-4 rounded-2xl bg-white/20 backdrop-blur"
+                animate={{ rotate: [0, 5, -5, 0] }}
+                transition={{ repeat: Infinity, duration: 4 }}
+              >
+                <Database className="w-10 h-10 text-white" />
+              </motion.div>
+              <div>
+                <h3 className="font-bold text-white text-xl">MPB Database</h3>
+                <p className="text-cyan-200 font-medium">Single Source of Truth</p>
+                <p className="text-xs text-blue-200 mt-1">
+                  One member record • One eligibility status • One enrollment history • One billing ledger
+                </p>
+              </div>
+              <div className="ml-auto flex items-center gap-2">
+                <PulsingDot color="bg-emerald-400" />
+                <span className="text-xs text-emerald-300 font-medium">Live</span>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Right Side: External Partners */}
+        <motion.div
+          className="w-56 bg-white rounded-2xl p-4 shadow-lg border border-slate-200 flex flex-col"
+          variants={slideIn}
+          initial="initial"
+          animate="animate"
+          transition={{ delay: 1 }}
+        >
+          <div className="flex items-center gap-2 mb-4">
+            <div className="p-2 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500">
+              <Network className="w-4 h-4 text-white" />
+            </div>
+            <h3 className="font-bold text-slate-800 text-sm">External Partners</h3>
+          </div>
+
+          <div className="flex-1 flex flex-col gap-2">
+            {externalPartners.map((partner, idx) => (
+              <motion.div
+                key={partner}
+                className="px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-sm font-medium text-slate-700"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 1.1 + idx * 0.1 }}
+                whileHover={{ x: 4 }}
+              >
+                {partner}
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Connection indicator */}
+          <motion.div
+            className="mt-4 p-3 rounded-xl bg-gradient-to-br from-emerald-50 to-cyan-50 border border-emerald-200"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.5 }}
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <ArrowLeftRight className="w-4 h-4 text-emerald-600" />
+              <span className="text-xs font-semibold text-emerald-700">Eligibility Transfer</span>
+            </div>
+            <p className="text-[10px] text-slate-600">
+              Validated, logged, automated transfers
+            </p>
+            <div className="flex items-center gap-1 mt-2">
+              <PulsingDot color="bg-emerald-500" />
+              <span className="text-[10px] text-emerald-600">Active</span>
+            </div>
+          </motion.div>
+        </motion.div>
+      </div>
+
+      {/* Footer Takeaways */}
+      <motion.div
+        className="absolute bottom-4 left-8 right-8"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.2 }}
+      >
+        <div className="flex gap-4 justify-center">
+          {[
+            { icon: CheckCircle2, label: 'Consistency', desc: 'One truth across all systems', color: 'from-blue-500 to-blue-600' },
+            { icon: Zap, label: 'Speed', desc: 'Faster delivery with shared services', color: 'from-amber-500 to-orange-500' },
+            { icon: Shield, label: 'Control', desc: 'Central security, auditing, compliance', color: 'from-emerald-500 to-teal-500' },
+          ].map((item, idx) => (
+            <motion.div
+              key={item.label}
+              className="flex items-center gap-3 px-5 py-2 rounded-xl bg-white shadow-md border border-slate-200"
+              whileHover={{ scale: 1.05, y: -2 }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.3 + idx * 0.1 }}
+            >
+              <div className={`p-2 rounded-lg bg-gradient-to-br ${item.color}`}>
+                <item.icon className="w-4 h-4 text-white" />
+              </div>
+              <div>
+                <p className="font-bold text-slate-800 text-sm">{item.label}</p>
+                <p className="text-xs text-slate-500">{item.desc}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// Slide 2: Evolution Roadmap
+function EvolutionSlide({ isActive }: { isActive: boolean }) {
+  const columns = [
+    {
+      title: 'TODAY',
+      subtitle: 'Legacy + Disconnected',
+      color: 'from-slate-500 to-slate-600',
+      bgColor: 'from-slate-50 to-slate-100',
+      borderColor: 'border-slate-300',
+      icon: AlertTriangle,
+      iconColor: 'text-amber-500',
+      items: [
+        { text: 'Multiple systems with duplicated data', status: 'warning' },
+        { text: 'E123 handling enrollment externally', status: 'warning' },
+        { text: 'Fragile / manual eligibility transfers', status: 'error' },
+        { text: 'Website, portal, CRM in silos', status: 'warning' },
+        { text: 'Limited unified reporting', status: 'warning' },
+        { text: 'Separate onboarding workflows', status: 'warning' },
+      ],
+      callout: { type: 'error', text: 'Risk: Data inconsistencies + operational friction' },
+    },
+    {
+      title: 'TRANSITION',
+      subtitle: 'Parallel Run + Controlled Migration',
+      color: 'from-blue-500 to-indigo-600',
+      bgColor: 'from-blue-50 to-indigo-50',
+      borderColor: 'border-blue-300',
+      icon: RefreshCw,
+      iconColor: 'text-blue-500',
+      sections: [
+        {
+          label: 'A) Foundation',
+          items: ['Unified login + roles (RBAC)', 'Unified API + business rules', 'Audit logs baseline'],
+        },
+        {
+          label: 'B) Data Consolidation',
+          items: ['MPB Database = system of record', 'Sync jobs to validate legacy data', 'Master member profile'],
+        },
+        {
+          label: 'C) Eligibility Upgrade',
+          items: ['New transfer service (EDI/SFTP/API)', 'Validation, logging, retries'],
+        },
+        {
+          label: 'D) E123 Coexistence',
+          items: ['E123 continues short-term', 'MPB mirrors enrollment states', 'Side-by-side reconciliation'],
+        },
+      ],
+      callout: { type: 'info', text: 'Outcome: No downtime, controlled cutover' },
+    },
+    {
+      title: 'TARGET STATE',
+      subtitle: 'Unified Platform + E123 Replaced',
+      color: 'from-emerald-500 to-teal-600',
+      bgColor: 'from-emerald-50 to-teal-50',
+      borderColor: 'border-emerald-300',
+      icon: Target,
+      iconColor: 'text-emerald-500',
+      items: [
+        { text: 'E123 replaced by MPB Enrollment System', status: 'success', highlight: true },
+        { text: 'Member Management fully inside MPB', status: 'success' },
+        { text: 'All apps share same data/services', status: 'success' },
+        { text: 'CRM, Ticketing, Concierge unified', status: 'success' },
+        { text: 'Billing integrated end-to-end', status: 'success' },
+        { text: 'Onboarding unified (all types)', status: 'success' },
+        { text: 'Eligibility transfers automated', status: 'success' },
+        { text: 'Real-time reporting for all', status: 'success' },
+      ],
+      callout: { type: 'success', text: 'Result: One source of truth, faster execution, stronger governance' },
+    },
+  ];
+
+  const timelineSteps = [
+    { label: 'Foundation', status: 'complete' },
+    { label: 'Data Sync', status: 'current' },
+    { label: 'Parallel Run', status: 'upcoming' },
+    { label: 'Cutover & Decommission', status: 'upcoming' },
+  ];
+
+  return (
+    <motion.div
+      className="relative w-full h-full bg-gradient-to-br from-slate-50 via-white to-blue-50 p-8 overflow-hidden"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: isActive ? 1 : 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(30, 58, 138, 0.3) 1px, transparent 0)`,
+          backgroundSize: '40px 40px',
+        }} />
+      </div>
+
+      {/* Title */}
+      <motion.div
+        className="text-center mb-6"
+        variants={fadeInUp}
+        initial="initial"
+        animate="animate"
+      >
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-800 via-blue-900 to-slate-800 bg-clip-text text-transparent">
+          Platform Evolution
+        </h1>
+        <p className="text-lg text-slate-600 mt-1 font-medium">
+          Today → Transition → Target State
+        </p>
+      </motion.div>
+
+      {/* Three Columns */}
+      <div className="flex gap-4 h-[calc(100%-180px)]">
+        {columns.map((column, colIdx) => (
+          <motion.div
+            key={column.title}
+            className={`flex-1 bg-gradient-to-br ${column.bgColor} rounded-2xl p-5 shadow-lg border ${column.borderColor} flex flex-col relative overflow-hidden`}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: colIdx * 0.2 }}
+          >
+            {/* Header gradient bar */}
+            <div className={`absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r ${column.color}`} />
+
+            {/* Header */}
+            <div className="flex items-center gap-3 mb-4">
+              <div className={`p-2 rounded-lg bg-gradient-to-br ${column.color}`}>
+                <column.icon className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h3 className="font-bold text-slate-800">{column.title}</h3>
+                <p className="text-xs text-slate-500">{column.subtitle}</p>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-auto">
+              {column.items && (
+                <div className="space-y-2">
+                  {column.items.map((item, idx) => (
+                    <motion.div
+                      key={idx}
+                      className={`flex items-start gap-2 px-3 py-2 rounded-lg ${
+                        item.highlight
+                          ? 'bg-gradient-to-r from-emerald-100 to-teal-100 border border-emerald-300'
+                          : 'bg-white/60 border border-slate-200'
+                      }`}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.3 + colIdx * 0.2 + idx * 0.05 }}
+                    >
+                      {item.status === 'success' && <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />}
+                      {item.status === 'warning' && <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" />}
+                      {item.status === 'error' && <AlertTriangle className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" />}
+                      <span className={`text-xs ${item.highlight ? 'font-semibold text-emerald-800' : 'text-slate-700'}`}>
+                        {item.text}
+                      </span>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+
+              {column.sections && (
+                <div className="space-y-3">
+                  {column.sections.map((section, sIdx) => (
+                    <motion.div
+                      key={section.label}
+                      className="bg-white/60 rounded-lg p-3 border border-blue-200"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 + colIdx * 0.2 + sIdx * 0.1 }}
+                    >
+                      <p className="text-xs font-bold text-blue-700 mb-2">{section.label}</p>
+                      <div className="space-y-1">
+                        {section.items.map((item, iIdx) => (
+                          <div key={iIdx} className="flex items-center gap-2">
+                            <Clock className="w-3 h-3 text-blue-400" />
+                            <span className="text-[11px] text-slate-600">{item}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Callout */}
+            {column.callout && (
+              <motion.div
+                className={`mt-3 p-3 rounded-lg ${
+                  column.callout.type === 'error' ? 'bg-red-100 border border-red-300' :
+                  column.callout.type === 'info' ? 'bg-blue-100 border border-blue-300' :
+                  'bg-emerald-100 border border-emerald-300'
+                }`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8 + colIdx * 0.2 }}
+              >
+                <p className={`text-xs font-semibold ${
+                  column.callout.type === 'error' ? 'text-red-800' :
+                  column.callout.type === 'info' ? 'text-blue-800' :
+                  'text-emerald-800'
+                }`}>
+                  {column.callout.text}
+                </p>
+              </motion.div>
+            )}
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Migration Path Arrow */}
+      <motion.div
+        className="mt-6 relative"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1 }}
+      >
+        {/* Arrow background */}
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-400 via-blue-500 to-emerald-500 rounded-full h-2 top-1/2 -translate-y-1/2 opacity-20" />
+
+        {/* Animated progress line */}
+        <motion.div
+          className="absolute left-0 bg-gradient-to-r from-slate-500 via-blue-500 to-emerald-500 rounded-full h-2 top-1/2 -translate-y-1/2"
+          initial={{ width: '0%' }}
+          animate={{ width: '40%' }}
+          transition={{ duration: 2, ease: 'easeOut', delay: 1.2 }}
+        />
+
+        {/* Timeline steps */}
+        <div className="flex justify-between items-center relative px-8">
+          {timelineSteps.map((step, idx) => (
+            <motion.div
+              key={step.label}
+              className="flex flex-col items-center"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.2 + idx * 0.15 }}
+            >
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                step.status === 'complete' ? 'bg-gradient-to-br from-emerald-400 to-emerald-600' :
+                step.status === 'current' ? 'bg-gradient-to-br from-blue-400 to-blue-600 animate-pulse' :
+                'bg-slate-300'
+              }`}>
+                {step.status === 'complete' ? (
+                  <CheckCircle2 className="w-4 h-4 text-white" />
+                ) : step.status === 'current' ? (
+                  <RefreshCw className="w-4 h-4 text-white animate-spin" />
+                ) : (
+                  <Clock className="w-4 h-4 text-white" />
+                )}
+              </div>
+              <p className={`text-xs font-medium mt-2 ${
+                step.status === 'complete' ? 'text-emerald-700' :
+                step.status === 'current' ? 'text-blue-700' :
+                'text-slate-500'
+              }`}>
+                {step.label}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Migration label */}
+        <motion.p
+          className="text-center text-sm font-semibold text-slate-700 mt-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.8 }}
+        >
+          Migration Path: Parallel Run → Reconciliation → Cutover → Decommission Legacy
+        </motion.p>
+
+        {/* Cutover marker */}
+        <motion.div
+          className="absolute right-1/3 top-0 transform -translate-y-8"
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 2 }}
+        >
+          <div className="bg-gradient-to-br from-purple-500 to-pink-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg">
+            Cutover Moment
+          </div>
+        </motion.div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// Main Presentation Component
+export function PlatformPresentation() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  const slides = [
+    { id: 'architecture', title: 'Architecture Overview', component: ArchitectureSlide },
+    { id: 'evolution', title: 'Platform Evolution', component: EvolutionSlide },
+  ];
+
+  // Auto-advance slides
+  useEffect(() => {
+    if (isPlaying) {
+      const timer = setInterval(() => {
+        setCurrentSlide((prev) => (prev + 1) % slides.length);
+      }, 15000); // 15 seconds per slide
+      return () => clearInterval(timer);
+    }
+  }, [isPlaying, slides.length]);
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        setCurrentSlide((prev) => Math.min(prev + 1, slides.length - 1));
+      } else if (e.key === 'ArrowLeft') {
+        setCurrentSlide((prev) => Math.max(prev - 1, 0));
+      } else if (e.key === 'f' || e.key === 'F') {
+        toggleFullscreen();
+      } else if (e.key === 'Escape') {
+        setIsFullscreen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [slides.length]);
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+      setIsFullscreen(true);
+    } else {
+      document.exitFullscreen();
+      setIsFullscreen(false);
+    }
+  };
+
+  const CurrentSlideComponent = slides[currentSlide].component;
+
+  return (
+    <div className={`${isFullscreen ? 'fixed inset-0 z-50' : 'h-full'} flex flex-col bg-slate-900`}>
+      {/* Header Controls */}
+      <motion.div
+        className="flex items-center justify-between px-6 py-3 bg-slate-800 border-b border-slate-700"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+              <Layers className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h1 className="text-white font-bold text-lg">MPB Platform Presentation</h1>
+              <p className="text-slate-400 text-xs">Board Executive Overview</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Slide indicators */}
+        <div className="flex items-center gap-2">
+          {slides.map((slide, idx) => (
+            <button
+              key={slide.id}
+              onClick={() => setCurrentSlide(idx)}
+              className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
+                currentSlide === idx
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+              }`}
+            >
+              {slide.title}
+            </button>
+          ))}
+        </div>
+
+        {/* Controls */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setCurrentSlide((prev) => Math.max(prev - 1, 0))}
+            disabled={currentSlide === 0}
+            className="p-2 rounded-lg bg-slate-700 text-white hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+
+          <button
+            onClick={() => setIsPlaying(!isPlaying)}
+            className={`p-2 rounded-lg transition-all ${
+              isPlaying ? 'bg-amber-500 text-white' : 'bg-slate-700 text-white hover:bg-slate-600'
+            }`}
+          >
+            {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+          </button>
+
+          <button
+            onClick={() => setCurrentSlide((prev) => Math.min(prev + 1, slides.length - 1))}
+            disabled={currentSlide === slides.length - 1}
+            className="p-2 rounded-lg bg-slate-700 text-white hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+
+          <div className="w-px h-6 bg-slate-600 mx-2" />
+
+          <button
+            onClick={toggleFullscreen}
+            className="p-2 rounded-lg bg-slate-700 text-white hover:bg-slate-600 transition-all"
+          >
+            <Maximize2 className="w-5 h-5" />
+          </button>
+
+          <div className="ml-4 text-slate-400 text-sm">
+            {currentSlide + 1} / {slides.length}
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Slide Content */}
+      <div className="flex-1 relative overflow-hidden">
+        <AnimatePresence mode="wait">
+          <CurrentSlideComponent key={currentSlide} isActive={true} />
+        </AnimatePresence>
+      </div>
+
+      {/* Footer */}
+      <div className="px-6 py-2 bg-slate-800 border-t border-slate-700 flex items-center justify-between">
+        <p className="text-slate-500 text-xs">
+          Press <kbd className="px-1.5 py-0.5 bg-slate-700 rounded text-slate-300">←</kbd> <kbd className="px-1.5 py-0.5 bg-slate-700 rounded text-slate-300">→</kbd> to navigate • <kbd className="px-1.5 py-0.5 bg-slate-700 rounded text-slate-300">F</kbd> for fullscreen
+        </p>
+        <p className="text-slate-500 text-xs">
+          MPB Health Technology Team • {new Date().getFullYear()}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+export default PlatformPresentation;

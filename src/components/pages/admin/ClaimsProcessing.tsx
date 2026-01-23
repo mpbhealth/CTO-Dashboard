@@ -15,7 +15,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
-import { supabase, isSupabaseConfigured } from '../../../lib/supabase';
+import { mpbHealthSupabase, isMpbHealthConfigured } from '../../../lib/mpbHealthSupabase';
 
 interface Claim {
   id: string;
@@ -137,7 +137,7 @@ export function ClaimsProcessing() {
   const fetchClaims = useCallback(async () => {
     setLoading(true);
 
-    if (!isSupabaseConfigured) {
+    if (!isMpbHealthConfigured) {
       let filtered = [...demoClaims];
       
       if (searchTerm) {
@@ -163,7 +163,7 @@ export function ClaimsProcessing() {
     }
 
     try {
-      let query = supabase
+      let query = mpbHealthSupabase
         .from('claims')
         .select('*, member_profiles(first_name, last_name)', { count: 'exact' });
 

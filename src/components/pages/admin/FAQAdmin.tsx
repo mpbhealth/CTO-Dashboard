@@ -13,7 +13,7 @@ import {
   Save,
   X,
 } from 'lucide-react';
-import { supabase, isSupabaseConfigured } from '../../../lib/supabase';
+import { mpbHealthSupabase, isMpbHealthConfigured } from '../../../lib/mpbHealthSupabase';
 
 interface FAQItem {
   id: string;
@@ -104,7 +104,7 @@ export function FAQAdmin() {
   const fetchFaqs = useCallback(async () => {
     setLoading(true);
 
-    if (!isSupabaseConfigured) {
+    if (!isMpbHealthConfigured) {
       let filtered = [...demoFAQs];
 
       if (searchTerm) {
@@ -125,7 +125,7 @@ export function FAQAdmin() {
     }
 
     try {
-      let query = supabase.from('faq_items').select('*');
+      let query = mpbHealthSupabase.from('faq_items').select('*');
 
       if (searchTerm) {
         query = query.or(`title.ilike.%${searchTerm}%,content_html.ilike.%${searchTerm}%`);

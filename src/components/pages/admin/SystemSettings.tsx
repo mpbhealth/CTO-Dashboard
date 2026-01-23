@@ -14,7 +14,7 @@ import {
   Check,
   AlertCircle,
 } from 'lucide-react';
-import { supabase, isSupabaseConfigured } from '../../../lib/supabase';
+import { mpbHealthSupabase, isMpbHealthConfigured } from '../../../lib/mpbHealthSupabase';
 
 interface Setting {
   id: string;
@@ -96,7 +96,7 @@ export function SystemSettings() {
   const fetchSettings = useCallback(async () => {
     setLoading(true);
 
-    if (!isSupabaseConfigured) {
+    if (!isMpbHealthConfigured) {
       setSettings(demoSettings);
       setLoading(false);
       return;

@@ -14,7 +14,7 @@ import {
   Eye,
   Calendar,
 } from 'lucide-react';
-import { supabase, isSupabaseConfigured } from '../../../lib/supabase';
+import { mpbHealthSupabase, isMpbHealthConfigured } from '../../../lib/mpbHealthSupabase';
 
 interface Transaction {
   id: string;
@@ -123,7 +123,7 @@ export function TransactionsManagement() {
   const fetchTransactions = useCallback(async () => {
     setLoading(true);
 
-    if (!isSupabaseConfigured) {
+    if (!isMpbHealthConfigured) {
       let filtered = [...demoTransactions];
 
       if (searchTerm) {
@@ -151,7 +151,7 @@ export function TransactionsManagement() {
     }
 
     try {
-      let query = supabase
+      let query = mpbHealthSupabase
         .from('transactions')
         .select('*, member_profiles(first_name, last_name)', { count: 'exact' });
 

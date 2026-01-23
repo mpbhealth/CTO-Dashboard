@@ -509,7 +509,522 @@ function ArchitectureSlide({ isActive }: { isActive: boolean }) {
   );
 }
 
-// Slide 2: Evolution Roadmap
+// Slide 2: Data Hub Visualization
+function DataHubSlide({ isActive }: { isActive: boolean }) {
+  const platforms = [
+    { icon: Globe, label: 'MPB Website', sublabel: 'Member Portal', angle: 0, color: 'from-blue-500 to-cyan-500' },
+    { icon: Smartphone, label: 'Mobile App', sublabel: 'iOS & Android', angle: 45, color: 'from-purple-500 to-pink-500' },
+    { icon: LayoutDashboard, label: 'CRM', sublabel: 'Sales & Support', angle: 90, color: 'from-emerald-500 to-teal-500' },
+    { icon: Stethoscope, label: 'Concierge', sublabel: 'Member Care', angle: 135, color: 'from-amber-500 to-orange-500' },
+    { icon: Monitor, label: 'CTO Dashboard', sublabel: 'Operations', angle: 180, color: 'from-indigo-500 to-purple-500' },
+    { icon: FileText, label: 'Enrollment', sublabel: 'E123 Killer', angle: 225, color: 'from-rose-500 to-pink-500' },
+    { icon: CreditCard, label: 'Billing', sublabel: 'Payments', angle: 270, color: 'from-green-500 to-emerald-500' },
+    { icon: Ticket, label: 'IT Support', sublabel: 'Ticketing', angle: 315, color: 'from-sky-500 to-blue-500' },
+  ];
+
+  const vendors = [
+    { name: 'First Health', type: 'TPA', fileType: 'EDI 834' },
+    { name: 'PHCS', type: 'Network', fileType: 'CSV' },
+    { name: 'MultiPlan', type: 'Network', fileType: 'SFTP' },
+    { name: 'Zelis', type: 'Payments', fileType: 'API' },
+    { name: 'Change Healthcare', type: 'Claims', fileType: 'EDI 837' },
+    { name: 'RxBenefits', type: 'PBM', fileType: 'API' },
+  ];
+
+  const dataFlows = [
+    { label: 'Member Profiles', direction: 'bidirectional', color: 'text-blue-400' },
+    { label: 'Eligibility', direction: 'outbound', color: 'text-emerald-400' },
+    { label: 'Claims', direction: 'inbound', color: 'text-purple-400' },
+    { label: 'Payments', direction: 'bidirectional', color: 'text-amber-400' },
+  ];
+
+  return (
+    <motion.div
+      className="relative w-full h-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-8 overflow-hidden"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: isActive ? 1 : 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      {/* Animated Background Grid */}
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 opacity-20" style={{
+          backgroundImage: `
+            linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px)
+          `,
+          backgroundSize: '50px 50px',
+        }} />
+        {/* Radial glow from center */}
+        <div className="absolute inset-0 bg-gradient-radial from-blue-500/20 via-transparent to-transparent"
+          style={{
+            background: 'radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.15) 0%, transparent 50%)'
+          }}
+        />
+      </div>
+
+      {/* Floating particles */}
+      <div className="absolute inset-0 overflow-hidden">
+        {[...Array(30)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-1 h-1 bg-blue-400/40 rounded-full"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: [0, -30, 0],
+              x: [0, Math.random() * 20 - 10, 0],
+              opacity: [0.2, 0.6, 0.2],
+              scale: [1, 1.5, 1],
+            }}
+            transition={{
+              repeat: Infinity,
+              duration: 3 + Math.random() * 3,
+              delay: Math.random() * 2,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Title */}
+      <motion.div
+        className="text-center mb-4 relative z-10"
+        variants={fadeInUp}
+        initial="initial"
+        animate="animate"
+      >
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-400 bg-clip-text text-transparent">
+          Data Hub Architecture
+        </h1>
+        <p className="text-lg text-slate-400 mt-1 font-medium">
+          Database as Central Nervous System
+        </p>
+      </motion.div>
+
+      <div className="flex h-[calc(100%-140px)] gap-6 relative z-10">
+        {/* Left Panel - Data Flows */}
+        <motion.div
+          className="w-64 bg-white/5 backdrop-blur-lg rounded-2xl p-5 border border-white/10"
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-2 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600">
+              <Activity className="w-5 h-5 text-white" />
+            </div>
+            <h3 className="font-bold text-white">Data Flows</h3>
+          </div>
+
+          <div className="space-y-3">
+            {dataFlows.map((flow, idx) => (
+              <motion.div
+                key={flow.label}
+                className="p-3 rounded-xl bg-white/5 border border-white/10"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 + idx * 0.1 }}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span className={`font-semibold text-sm ${flow.color}`}>{flow.label}</span>
+                  <motion.div
+                    className="flex items-center gap-1"
+                    animate={{ x: flow.direction === 'outbound' ? [0, 3, 0] : flow.direction === 'inbound' ? [3, 0, 3] : [0, 2, 0, -2, 0] }}
+                    transition={{ repeat: Infinity, duration: 1.5 }}
+                  >
+                    {flow.direction === 'bidirectional' ? (
+                      <ArrowLeftRight className={`w-4 h-4 ${flow.color}`} />
+                    ) : flow.direction === 'outbound' ? (
+                      <ArrowRight className={`w-4 h-4 ${flow.color}`} />
+                    ) : (
+                      <ArrowRight className={`w-4 h-4 ${flow.color} rotate-180`} />
+                    )}
+                  </motion.div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                    <motion.div
+                      className={`h-full rounded-full ${flow.color.replace('text-', 'bg-')}`}
+                      initial={{ width: '0%' }}
+                      animate={{ width: '100%' }}
+                      transition={{
+                        repeat: Infinity,
+                        duration: 2,
+                        delay: idx * 0.3,
+                        ease: 'linear'
+                      }}
+                    />
+                  </div>
+                  <PulsingDot color={flow.color.replace('text-', 'bg-')} />
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Stats */}
+          <motion.div
+            className="mt-4 p-4 rounded-xl bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 border border-emerald-500/30"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1 }}
+          >
+            <div className="text-center">
+              <p className="text-2xl font-bold text-white">99.9%</p>
+              <p className="text-xs text-emerald-400">Data Consistency</p>
+            </div>
+            <div className="grid grid-cols-2 gap-2 mt-3">
+              <div className="text-center p-2 bg-white/5 rounded-lg">
+                <p className="text-lg font-bold text-cyan-400">150+</p>
+                <p className="text-[10px] text-slate-400">Tables</p>
+              </div>
+              <div className="text-center p-2 bg-white/5 rounded-lg">
+                <p className="text-lg font-bold text-purple-400">1M+</p>
+                <p className="text-[10px] text-slate-400">Records</p>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+
+        {/* Center - Hub Visualization */}
+        <div className="flex-1 relative flex items-center justify-center">
+          {/* Connection Lines from Hub to Platforms */}
+          <svg className="absolute inset-0 w-full h-full" style={{ zIndex: 0 }}>
+            <defs>
+              <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="rgba(59, 130, 246, 0.8)" />
+                <stop offset="100%" stopColor="rgba(6, 182, 212, 0.3)" />
+              </linearGradient>
+              <filter id="glow">
+                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                <feMerge>
+                  <feMergeNode in="coloredBlur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+            </defs>
+            {platforms.map((platform, idx) => {
+              const centerX = '50%';
+              const centerY = '50%';
+              const radius = 180;
+              const angleRad = (platform.angle * Math.PI) / 180;
+              const endX = 50 + (radius / 4) * Math.cos(angleRad);
+              const endY = 50 + (radius / 4) * Math.sin(angleRad);
+
+              return (
+                <motion.line
+                  key={idx}
+                  x1={centerX}
+                  y1={centerY}
+                  x2={`${endX}%`}
+                  y2={`${endY}%`}
+                  stroke="url(#lineGradient)"
+                  strokeWidth="2"
+                  filter="url(#glow)"
+                  initial={{ pathLength: 0, opacity: 0 }}
+                  animate={{ pathLength: 1, opacity: 1 }}
+                  transition={{ duration: 1, delay: 0.5 + idx * 0.1 }}
+                />
+              );
+            })}
+          </svg>
+
+          {/* Orbital Rings */}
+          <motion.div
+            className="absolute w-[360px] h-[360px] border border-blue-500/20 rounded-full"
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          />
+          <motion.div
+            className="absolute w-[450px] h-[450px] border border-cyan-500/10 rounded-full"
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1, rotate: 360 }}
+            transition={{ duration: 0.8, delay: 0.3, rotate: { duration: 60, repeat: Infinity, ease: 'linear' } }}
+          />
+          <motion.div
+            className="absolute w-[540px] h-[540px] border border-purple-500/10 rounded-full"
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1, rotate: -360 }}
+            transition={{ duration: 0.8, delay: 0.4, rotate: { duration: 90, repeat: Infinity, ease: 'linear' } }}
+          />
+
+          {/* Central Database Hub */}
+          <motion.div
+            className="relative z-10"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: 'spring', stiffness: 200, delay: 0.5 }}
+          >
+            {/* Outer glow ring */}
+            <motion.div
+              className="absolute -inset-8 rounded-full bg-gradient-to-r from-blue-500/30 via-cyan-500/30 to-purple-500/30 blur-xl"
+              animate={{
+                scale: [1, 1.2, 1],
+                opacity: [0.5, 0.8, 0.5]
+              }}
+              transition={{ repeat: Infinity, duration: 3 }}
+            />
+
+            {/* Inner glow ring */}
+            <motion.div
+              className="absolute -inset-4 rounded-full bg-gradient-to-r from-blue-400/40 to-cyan-400/40 blur-md"
+              animate={{ rotate: 360 }}
+              transition={{ repeat: Infinity, duration: 10, ease: 'linear' }}
+            />
+
+            {/* Main hub */}
+            <div className="relative w-36 h-36 rounded-full bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 flex items-center justify-center shadow-2xl border-4 border-blue-400/50">
+              {/* Animated ring inside */}
+              <motion.div
+                className="absolute inset-2 rounded-full border-2 border-cyan-400/50"
+                animate={{ rotate: -360 }}
+                transition={{ repeat: Infinity, duration: 8, ease: 'linear' }}
+              />
+
+              <div className="text-center z-10">
+                <motion.div
+                  animate={{
+                    y: [0, -3, 0],
+                    rotateY: [0, 10, 0, -10, 0]
+                  }}
+                  transition={{ repeat: Infinity, duration: 4 }}
+                >
+                  <Database className="w-12 h-12 text-white mx-auto mb-1" />
+                </motion.div>
+                <p className="text-white font-bold text-sm">MPB Database</p>
+                <p className="text-cyan-300 text-[10px]">Source of Truth</p>
+              </div>
+
+              {/* Data pulse effect */}
+              <motion.div
+                className="absolute inset-0 rounded-full border-4 border-cyan-400"
+                initial={{ scale: 1, opacity: 0.8 }}
+                animate={{ scale: 1.5, opacity: 0 }}
+                transition={{ repeat: Infinity, duration: 2, ease: 'easeOut' }}
+              />
+            </div>
+          </motion.div>
+
+          {/* Platform Nodes */}
+          {platforms.map((platform, idx) => {
+            const radius = 200;
+            const angleRad = (platform.angle * Math.PI) / 180;
+            const x = radius * Math.cos(angleRad);
+            const y = radius * Math.sin(angleRad);
+
+            return (
+              <motion.div
+                key={platform.label}
+                className="absolute"
+                style={{
+                  left: '50%',
+                  top: '50%',
+                  transform: `translate(-50%, -50%) translate(${x}px, ${y}px)`,
+                }}
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.8 + idx * 0.1, type: 'spring' }}
+                whileHover={{ scale: 1.15, zIndex: 20 }}
+              >
+                {/* Data flow indicator */}
+                <motion.div
+                  className="absolute inset-0 rounded-xl"
+                  animate={{
+                    boxShadow: [
+                      '0 0 0 0 rgba(59, 130, 246, 0)',
+                      '0 0 20px 5px rgba(59, 130, 246, 0.3)',
+                      '0 0 0 0 rgba(59, 130, 246, 0)',
+                    ],
+                  }}
+                  transition={{ repeat: Infinity, duration: 2, delay: idx * 0.2 }}
+                />
+
+                <div className={`relative px-4 py-3 rounded-xl bg-gradient-to-br ${platform.color} shadow-lg border border-white/20`}>
+                  <div className="flex items-center gap-2">
+                    <platform.icon className="w-5 h-5 text-white" />
+                    <div>
+                      <p className="text-white font-semibold text-xs">{platform.label}</p>
+                      <p className="text-white/70 text-[10px]">{platform.sublabel}</p>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
+
+          {/* Animated data packets flowing to center */}
+          {[...Array(8)].map((_, i) => {
+            const angle = (i * 45 * Math.PI) / 180;
+            const startRadius = 220;
+            const endRadius = 70;
+
+            return (
+              <motion.div
+                key={`packet-${i}`}
+                className="absolute w-2 h-2 rounded-full bg-cyan-400 shadow-lg shadow-cyan-400/50"
+                style={{
+                  left: '50%',
+                  top: '50%',
+                }}
+                animate={{
+                  x: [
+                    startRadius * Math.cos(angle),
+                    endRadius * Math.cos(angle),
+                  ],
+                  y: [
+                    startRadius * Math.sin(angle),
+                    endRadius * Math.sin(angle),
+                  ],
+                  opacity: [0, 1, 1, 0],
+                  scale: [0.5, 1, 1, 0.5],
+                }}
+                transition={{
+                  repeat: Infinity,
+                  duration: 2,
+                  delay: i * 0.25,
+                  ease: 'easeInOut',
+                }}
+              />
+            );
+          })}
+        </div>
+
+        {/* Right Panel - Vendor File Transfers */}
+        <motion.div
+          className="w-72 bg-white/5 backdrop-blur-lg rounded-2xl p-5 border border-white/10"
+          initial={{ opacity: 0, x: 30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-2 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600">
+              <Upload className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h3 className="font-bold text-white">Vendor Transfers</h3>
+              <p className="text-xs text-slate-400">Eligibility & Claims</p>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            {vendors.map((vendor, idx) => (
+              <motion.div
+                key={vendor.name}
+                className="p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all group"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.6 + idx * 0.1 }}
+                whileHover={{ x: 5 }}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-slate-600 to-slate-700 flex items-center justify-center">
+                      <Building2 className="w-4 h-4 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-white font-medium text-sm">{vendor.name}</p>
+                      <p className="text-slate-500 text-[10px]">{vendor.type}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 text-[10px] font-medium">
+                      {vendor.fileType}
+                    </span>
+                    <motion.div
+                      animate={{ x: [0, 5, 0] }}
+                      transition={{ repeat: Infinity, duration: 1.5, delay: idx * 0.2 }}
+                    >
+                      <ArrowRight className="w-4 h-4 text-emerald-400" />
+                    </motion.div>
+                  </div>
+                </div>
+
+                {/* Transfer progress animation */}
+                <div className="mt-2 h-1 bg-white/10 rounded-full overflow-hidden">
+                  <motion.div
+                    className="h-full bg-gradient-to-r from-emerald-400 to-cyan-400 rounded-full"
+                    initial={{ width: '0%', x: '-100%' }}
+                    animate={{ width: '100%', x: '100%' }}
+                    transition={{
+                      repeat: Infinity,
+                      duration: 2,
+                      delay: idx * 0.3,
+                      ease: 'linear',
+                    }}
+                  />
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Transfer Status */}
+          <motion.div
+            className="mt-4 p-4 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 border border-emerald-500/30"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.2 }}
+          >
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-emerald-400 font-semibold text-sm">Transfer Status</span>
+              <PulsingDot color="bg-emerald-400" />
+            </div>
+            <div className="grid grid-cols-3 gap-2 text-center">
+              <div className="p-2 bg-white/5 rounded-lg">
+                <p className="text-lg font-bold text-white">24</p>
+                <p className="text-[9px] text-slate-400">Daily Files</p>
+              </div>
+              <div className="p-2 bg-white/5 rounded-lg">
+                <p className="text-lg font-bold text-emerald-400">100%</p>
+                <p className="text-[9px] text-slate-400">Success Rate</p>
+              </div>
+              <div className="p-2 bg-white/5 rounded-lg">
+                <p className="text-lg font-bold text-cyan-400">&lt;5m</p>
+                <p className="text-[9px] text-slate-400">Avg Time</p>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      </div>
+
+      {/* Bottom Callouts */}
+      <motion.div
+        className="absolute bottom-4 left-8 right-8 z-10"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.5 }}
+      >
+        <div className="flex gap-4 justify-center">
+          {[
+            { icon: Database, label: 'Single Source', desc: 'One database, all platforms', color: 'from-blue-500 to-cyan-500' },
+            { icon: RefreshCw, label: 'Real-Time Sync', desc: 'Instant data propagation', color: 'from-emerald-500 to-teal-500' },
+            { icon: Shield, label: 'Secure Transfers', desc: 'Encrypted, logged, validated', color: 'from-purple-500 to-pink-500' },
+            { icon: Zap, label: 'Automated', desc: 'Zero manual intervention', color: 'from-amber-500 to-orange-500' },
+          ].map((item, idx) => (
+            <motion.div
+              key={item.label}
+              className="flex items-center gap-3 px-5 py-2 rounded-xl bg-white/10 backdrop-blur border border-white/10"
+              whileHover={{ scale: 1.05, y: -2 }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.6 + idx * 0.1 }}
+            >
+              <div className={`p-2 rounded-lg bg-gradient-to-br ${item.color}`}>
+                <item.icon className="w-4 h-4 text-white" />
+              </div>
+              <div>
+                <p className="font-bold text-white text-sm">{item.label}</p>
+                <p className="text-xs text-slate-400">{item.desc}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// Slide 3: Evolution Roadmap
 function EvolutionSlide({ isActive }: { isActive: boolean }) {
   const columns = [
     {
@@ -804,6 +1319,7 @@ export function PlatformPresentation() {
 
   const slides = [
     { id: 'architecture', title: 'Architecture Overview', component: ArchitectureSlide },
+    { id: 'datahub', title: 'Data Hub', component: DataHubSlide },
     { id: 'evolution', title: 'Platform Evolution', component: EvolutionSlide },
   ];
 

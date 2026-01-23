@@ -605,19 +605,19 @@ function DataHubSlide({ isActive }: { isActive: boolean }) {
       <div className="flex h-[calc(100%-140px)] gap-6 relative z-10">
         {/* Left Panel - Data Flows */}
         <motion.div
-          className="w-64 bg-white/5 backdrop-blur-lg rounded-2xl p-5 border border-white/10"
+          className="w-64 bg-white/5 backdrop-blur-lg rounded-2xl p-5 border border-white/10 flex flex-col overflow-hidden"
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <div className="flex items-center gap-3 mb-4">
+          <div className="flex items-center gap-3 mb-4 flex-shrink-0">
             <div className="p-2 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600">
               <Activity className="w-5 h-5 text-white" />
             </div>
             <h3 className="font-bold text-white">Data Flows</h3>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-3 overflow-y-auto flex-1 pr-1">
             {dataFlows.map((flow, idx) => (
               <motion.div
                 key={flow.label}
@@ -664,7 +664,7 @@ function DataHubSlide({ isActive }: { isActive: boolean }) {
 
           {/* Stats */}
           <motion.div
-            className="mt-4 p-4 rounded-xl bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 border border-emerald-500/30"
+            className="mt-4 p-4 rounded-xl bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 border border-emerald-500/30 flex-shrink-0"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1 }}
@@ -892,12 +892,12 @@ function DataHubSlide({ isActive }: { isActive: boolean }) {
 
         {/* Right Panel - Vendor File Transfers */}
         <motion.div
-          className="w-72 bg-white/5 backdrop-blur-lg rounded-2xl p-5 border border-white/10"
+          className="w-72 bg-white/5 backdrop-blur-lg rounded-2xl p-5 border border-white/10 flex flex-col overflow-hidden"
           initial={{ opacity: 0, x: 30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <div className="flex items-center gap-3 mb-4">
+          <div className="flex items-center gap-3 mb-4 flex-shrink-0">
             <div className="p-2 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600">
               <Upload className="w-5 h-5 text-white" />
             </div>
@@ -907,7 +907,7 @@ function DataHubSlide({ isActive }: { isActive: boolean }) {
             </div>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-2 overflow-y-auto flex-1 pr-1">
             {vendors.map((vendor, idx) => (
               <motion.div
                 key={vendor.name}
@@ -960,7 +960,7 @@ function DataHubSlide({ isActive }: { isActive: boolean }) {
 
           {/* Transfer Status */}
           <motion.div
-            className="mt-4 p-4 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 border border-emerald-500/30"
+            className="mt-4 p-4 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 border border-emerald-500/30 flex-shrink-0"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.2 }}

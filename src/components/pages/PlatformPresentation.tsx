@@ -523,12 +523,12 @@ function DataHubSlide({ isActive }: { isActive: boolean }) {
   ];
 
   const vendors = [
-    { name: 'First Health', type: 'TPA', fileType: 'EDI 834' },
-    { name: 'PHCS', type: 'Network', fileType: 'CSV' },
-    { name: 'MultiPlan', type: 'Network', fileType: 'SFTP' },
-    { name: 'Zelis', type: 'Payments', fileType: 'API' },
-    { name: 'Change Healthcare', type: 'Claims', fileType: 'EDI 837' },
-    { name: 'RxBenefits', type: 'PBM', fileType: 'API' },
+    { name: 'Zion Health', type: 'HealthShare', fileType: 'SFTP' },
+    { name: 'Sharewell', type: 'HealthShare', fileType: 'API' },
+    { name: 'Sedera', type: 'HealthShare', fileType: 'CSV' },
+    { name: 'ARM MEC', type: 'MEC', fileType: 'EDI 834' },
+    { name: 'Planstin', type: 'HealthShare', fileType: 'SFTP' },
+    { name: 'GreyStone Risk', type: 'Risk', fileType: 'API' },
   ];
 
   const dataFlows = [

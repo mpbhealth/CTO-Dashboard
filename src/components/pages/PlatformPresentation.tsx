@@ -6,7 +6,6 @@ import {
   Globe,
   Smartphone,
   LayoutDashboard,
-  HeadphonesIcon,
   Ticket,
   UserCog,
   Building2,
@@ -24,16 +23,13 @@ import {
   Play,
   Pause,
   Maximize2,
-  Server,
   Mail,
-  Bell,
   FileKey,
   Upload,
   Workflow,
   Activity,
   Link2,
   Lock,
-  BarChart3,
   RefreshCw,
   Target,
   Layers,
@@ -45,7 +41,24 @@ import {
   Stethoscope,
   CalendarCheck,
   ClipboardList,
+  Pencil,
+  LucideIcon,
 } from 'lucide-react';
+import { usePresentationEditor } from '@/hooks/usePresentationEditor';
+import { PresentationEditor } from '@/components/presentation/PresentationEditor';
+import type { IconName, PresentationConfig } from '@/config/presentationData';
+
+// Icon mapping for dynamic icon rendering
+const iconMap: Record<IconName, LucideIcon> = {
+  Users, Briefcase, UserCog, Building2, Globe, Smartphone,
+  LayoutDashboard, Ticket, FileText, Stethoscope, Monitor,
+  ClipboardList, CreditCard, Lock, Cpu, Mail, CalendarCheck,
+  FileKey, Workflow, Activity, Link2, Database, RefreshCw,
+  Shield, Zap, CheckCircle2, Clock, AlertTriangle, Target,
+  Upload, ArrowLeftRight, ArrowRight, Network, Layers, Boxes,
+};
+
+const getIcon = (name: IconName): LucideIcon => iconMap[name] || Database;
 
 // Animation variants
 const fadeInUp = {
@@ -74,18 +87,6 @@ const slideIn = {
   exit: { opacity: 0, x: 30 },
 };
 
-// Animated connection line component
-function AnimatedLine({ className = '' }: { className?: string }) {
-  return (
-    <motion.div
-      className={`absolute bg-gradient-to-r from-blue-400 to-cyan-400 ${className}`}
-      initial={{ scaleX: 0 }}
-      animate={{ scaleX: 1 }}
-      transition={{ duration: 0.8, ease: 'easeOut' }}
-    />
-  );
-}
-
 // Pulsing dot component
 function PulsingDot({ color = 'bg-emerald-500' }: { color?: string }) {
   return (
@@ -97,54 +98,20 @@ function PulsingDot({ color = 'bg-emerald-500' }: { color?: string }) {
 }
 
 // Slide 1: Architecture Overview
-function ArchitectureSlide({ isActive }: { isActive: boolean }) {
-  const users = [
-    { icon: Users, label: 'Members', color: 'from-blue-500 to-blue-600' },
-    { icon: Briefcase, label: 'Advisors', color: 'from-purple-500 to-purple-600' },
-    { icon: UserCog, label: 'Employees', color: 'from-emerald-500 to-emerald-600' },
-    { icon: Building2, label: 'Vendors', color: 'from-amber-500 to-amber-600' },
-  ];
-
-  const memberFacingApps = [
-    { icon: Globe, label: 'MPB Health Website', sublabel: '+ Advisor Portal' },
-    { icon: Smartphone, label: 'MPB Mobile App', sublabel: 'Member Portal' },
-  ];
-
-  const internalApps = [
-    { icon: LayoutDashboard, label: 'CRM' },
-    { icon: Ticket, label: 'IT Support' },
-    { icon: FileText, label: 'Enrollment System', sublabel: '"E123 Killer"' },
-    { icon: UserCog, label: 'Member Lifecycle Admin' },
-    { icon: Stethoscope, label: 'Concierge Dashboard' },
-    { icon: Monitor, label: 'Internal Ops Dashboards' },
-    { icon: ClipboardList, label: 'Project Management' },
-    { icon: CreditCard, label: 'Billing & Finance' },
-  ];
-
-  const platformServices = [
-    { icon: Lock, label: 'Unified Login & Roles', desc: 'Security' },
-    { icon: Cpu, label: 'Unified API', desc: 'Business Rules' },
-    { icon: Mail, label: 'Messaging Hub', desc: 'Email/SMS/Notifications' },
-    { icon: CreditCard, label: 'Billing & Payments', desc: 'Transactions' },
-    { icon: Upload, label: 'Eligibility Transfer', desc: 'EDI/SFTP/API/CSV' },
-    { icon: CalendarCheck, label: 'Onboarding Orchestrator', desc: 'Member • Vendor • Employee' },
-    { icon: FileKey, label: 'Documents & Storage', desc: 'Secure Files' },
-    { icon: Workflow, label: 'Automations', desc: 'Scheduled Jobs' },
-    { icon: Activity, label: 'Audit & Analytics', desc: 'Monitoring' },
-    { icon: Link2, label: 'Integrations Layer', desc: 'Webhooks' },
-  ];
-
-  const externalPartners = [
-    'Vendors',
-    'TPAs',
-    'Carriers',
-    'Agencies',
-    'Payment Providers',
-  ];
-
+function ArchitectureSlide({
+  isActive,
+  config,
+  isEditMode,
+}: {
+  isActive: boolean;
+  config: PresentationConfig['architecture'];
+  isEditMode: boolean;
+}) {
   return (
     <motion.div
-      className="relative w-full h-full bg-gradient-to-br from-slate-50 via-white to-blue-50 p-8 overflow-hidden"
+      className={`relative w-full h-full bg-gradient-to-br from-slate-50 via-white to-blue-50 p-8 overflow-hidden ${
+        isEditMode ? 'ring-4 ring-blue-400 ring-inset' : ''
+      }`}
       initial={{ opacity: 0 }}
       animate={{ opacity: isActive ? 1 : 0 }}
       transition={{ duration: 0.5 }}
@@ -188,18 +155,21 @@ function ArchitectureSlide({ isActive }: { isActive: boolean }) {
               </span>
             </div>
             <div className="flex gap-3">
-              {users.map((user, idx) => (
-                <motion.div
-                  key={user.label}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-br ${user.color} text-white shadow-lg`}
-                  variants={scaleIn}
-                  transition={{ delay: idx * 0.1 }}
-                  whileHover={{ scale: 1.05, y: -2 }}
-                >
-                  <user.icon className="w-5 h-5" />
-                  <span className="font-medium text-sm">{user.label}</span>
-                </motion.div>
-              ))}
+              {config.users.map((user, idx) => {
+                const Icon = getIcon(user.icon);
+                return (
+                  <motion.div
+                    key={user.id}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-br ${user.color} text-white shadow-lg`}
+                    variants={scaleIn}
+                    transition={{ delay: idx * 0.1 }}
+                    whileHover={{ scale: 1.05, y: -2 }}
+                  >
+                    <Icon className="w-5 h-5" />
+                    <span className="font-medium text-sm">{user.label}</span>
+                  </motion.div>
+                );
+              })}
             </div>
             <motion.div
               className="flex-1 flex items-center justify-center"
@@ -236,24 +206,27 @@ function ArchitectureSlide({ isActive }: { isActive: boolean }) {
             <div className="mb-3">
               <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Member & Advisor Facing</p>
               <div className="flex gap-3">
-                {memberFacingApps.map((app, idx) => (
-                  <motion.div
-                    key={app.label}
-                    className="flex-1 flex items-center gap-3 px-4 py-3 rounded-xl bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-100 hover:shadow-md transition-all"
-                    whileHover={{ scale: 1.02 }}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.4 + idx * 0.1 }}
-                  >
-                    <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500">
-                      <app.icon className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-slate-800 text-sm">{app.label}</p>
-                      {app.sublabel && <p className="text-xs text-slate-500">{app.sublabel}</p>}
-                    </div>
-                  </motion.div>
-                ))}
+                {config.memberApps.map((app, idx) => {
+                  const Icon = getIcon(app.icon);
+                  return (
+                    <motion.div
+                      key={app.id}
+                      className="flex-1 flex items-center gap-3 px-4 py-3 rounded-xl bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-100 hover:shadow-md transition-all"
+                      whileHover={{ scale: 1.02 }}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.4 + idx * 0.1 }}
+                    >
+                      <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500">
+                        <Icon className="w-5 h-5 text-white" />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-slate-800 text-sm">{app.label}</p>
+                        {app.sublabel && <p className="text-xs text-slate-500">{app.sublabel}</p>}
+                      </div>
+                    </motion.div>
+                  );
+                })}
               </div>
             </div>
 
@@ -261,22 +234,25 @@ function ArchitectureSlide({ isActive }: { isActive: boolean }) {
             <div>
               <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Operations & Internal Tools</p>
               <div className="grid grid-cols-4 gap-2">
-                {internalApps.map((app, idx) => (
-                  <motion.div
-                    key={app.label}
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 hover:bg-slate-100 transition-all"
-                    whileHover={{ scale: 1.02 }}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5 + idx * 0.05 }}
-                  >
-                    <app.icon className="w-4 h-4 text-slate-600" />
-                    <div>
-                      <p className="font-medium text-slate-700 text-xs">{app.label}</p>
-                      {app.sublabel && <p className="text-[10px] text-emerald-600 font-semibold">{app.sublabel}</p>}
-                    </div>
-                  </motion.div>
-                ))}
+                {config.internalApps.map((app, idx) => {
+                  const Icon = getIcon(app.icon);
+                  return (
+                    <motion.div
+                      key={app.id}
+                      className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 hover:bg-slate-100 transition-all"
+                      whileHover={{ scale: 1.02 }}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.5 + idx * 0.05 }}
+                    >
+                      <Icon className="w-4 h-4 text-slate-600" />
+                      <div>
+                        <p className="font-medium text-slate-700 text-xs">{app.label}</p>
+                        {app.sublabel && <p className="text-[10px] text-emerald-600 font-semibold">{app.sublabel}</p>}
+                      </div>
+                    </motion.div>
+                  );
+                })}
               </div>
             </div>
 
@@ -328,22 +304,25 @@ function ArchitectureSlide({ isActive }: { isActive: boolean }) {
               </div>
 
               <div className="grid grid-cols-5 gap-2">
-                {platformServices.map((service, idx) => (
-                  <motion.div
-                    key={service.label}
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/10 backdrop-blur border border-white/10 hover:bg-white/20 transition-all"
-                    whileHover={{ scale: 1.05 }}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.8 + idx * 0.05 }}
-                  >
-                    <service.icon className="w-4 h-4 text-cyan-400" />
-                    <div>
-                      <p className="font-medium text-white text-[10px] leading-tight">{service.label}</p>
-                      <p className="text-[9px] text-slate-400">{service.desc}</p>
-                    </div>
-                  </motion.div>
-                ))}
+                {config.services.map((service, idx) => {
+                  const Icon = getIcon(service.icon);
+                  return (
+                    <motion.div
+                      key={service.id}
+                      className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/10 backdrop-blur border border-white/10 hover:bg-white/20 transition-all"
+                      whileHover={{ scale: 1.05 }}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.8 + idx * 0.05 }}
+                    >
+                      <Icon className="w-4 h-4 text-cyan-400" />
+                      <div>
+                        <p className="font-medium text-white text-[10px] leading-tight">{service.label}</p>
+                        <p className="text-[9px] text-slate-400">{service.desc}</p>
+                      </div>
+                    </motion.div>
+                  );
+                })}
               </div>
 
               <p className="text-center text-xs text-cyan-400 mt-3 font-medium">
@@ -437,9 +416,9 @@ function ArchitectureSlide({ isActive }: { isActive: boolean }) {
           </div>
 
           <div className="flex-1 flex flex-col gap-2">
-            {externalPartners.map((partner, idx) => (
+            {config.partners.map((partner, idx) => (
               <motion.div
-                key={partner}
+                key={idx}
                 className="px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-sm font-medium text-slate-700"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -481,28 +460,27 @@ function ArchitectureSlide({ isActive }: { isActive: boolean }) {
         transition={{ delay: 1.2 }}
       >
         <div className="flex gap-4 justify-center">
-          {[
-            { icon: CheckCircle2, label: 'Consistency', desc: 'One truth across all systems', color: 'from-blue-500 to-blue-600' },
-            { icon: Zap, label: 'Speed', desc: 'Faster delivery with shared services', color: 'from-amber-500 to-orange-500' },
-            { icon: Shield, label: 'Control', desc: 'Central security, auditing, compliance', color: 'from-emerald-500 to-teal-500' },
-          ].map((item, idx) => (
-            <motion.div
-              key={item.label}
-              className="flex items-center gap-3 px-5 py-2 rounded-xl bg-white shadow-md border border-slate-200"
-              whileHover={{ scale: 1.05, y: -2 }}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.3 + idx * 0.1 }}
-            >
-              <div className={`p-2 rounded-lg bg-gradient-to-br ${item.color}`}>
-                <item.icon className="w-4 h-4 text-white" />
-              </div>
-              <div>
-                <p className="font-bold text-slate-800 text-sm">{item.label}</p>
-                <p className="text-xs text-slate-500">{item.desc}</p>
-              </div>
-            </motion.div>
-          ))}
+          {config.takeaways.map((item, idx) => {
+            const Icon = getIcon(item.icon);
+            return (
+              <motion.div
+                key={item.id}
+                className="flex items-center gap-3 px-5 py-2 rounded-xl bg-white shadow-md border border-slate-200"
+                whileHover={{ scale: 1.05, y: -2 }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.3 + idx * 0.1 }}
+              >
+                <div className={`p-2 rounded-lg bg-gradient-to-br ${item.color}`}>
+                  <Icon className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <p className="font-bold text-slate-800 text-sm">{item.label}</p>
+                  <p className="text-xs text-slate-500">{item.desc}</p>
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
       </motion.div>
     </motion.div>
@@ -510,37 +488,20 @@ function ArchitectureSlide({ isActive }: { isActive: boolean }) {
 }
 
 // Slide 2: Data Hub Visualization
-function DataHubSlide({ isActive }: { isActive: boolean }) {
-  const platforms = [
-    { icon: Globe, label: 'MPB Website', sublabel: 'Member Portal', angle: 0, color: 'from-blue-500 to-cyan-500' },
-    { icon: Smartphone, label: 'Mobile App', sublabel: 'iOS & Android', angle: 45, color: 'from-purple-500 to-pink-500' },
-    { icon: LayoutDashboard, label: 'CRM', sublabel: 'Sales & Support', angle: 90, color: 'from-emerald-500 to-teal-500' },
-    { icon: Stethoscope, label: 'Concierge', sublabel: 'Member Care', angle: 135, color: 'from-amber-500 to-orange-500' },
-    { icon: Monitor, label: 'CTO Dashboard', sublabel: 'Operations', angle: 180, color: 'from-indigo-500 to-purple-500' },
-    { icon: FileText, label: 'Enrollment', sublabel: 'E123 Killer', angle: 225, color: 'from-rose-500 to-pink-500' },
-    { icon: CreditCard, label: 'Billing', sublabel: 'Payments', angle: 270, color: 'from-green-500 to-emerald-500' },
-    { icon: Ticket, label: 'IT Support', sublabel: 'Ticketing', angle: 315, color: 'from-sky-500 to-blue-500' },
-  ];
-
-  const vendors = [
-    { name: 'Zion Health', type: 'HealthShare', fileType: 'SFTP' },
-    { name: 'Sharewell', type: 'HealthShare', fileType: 'API' },
-    { name: 'Sedera', type: 'HealthShare', fileType: 'CSV' },
-    { name: 'ARM MEC', type: 'MEC', fileType: 'EDI 834' },
-    { name: 'Planstin', type: 'HealthShare', fileType: 'SFTP' },
-    { name: 'GreyStone Risk', type: 'Risk', fileType: 'API' },
-  ];
-
-  const dataFlows = [
-    { label: 'Member Profiles', direction: 'bidirectional', color: 'text-blue-400' },
-    { label: 'Eligibility', direction: 'outbound', color: 'text-emerald-400' },
-    { label: 'Claims', direction: 'inbound', color: 'text-purple-400' },
-    { label: 'Payments', direction: 'bidirectional', color: 'text-amber-400' },
-  ];
-
+function DataHubSlide({
+  isActive,
+  config,
+  isEditMode,
+}: {
+  isActive: boolean;
+  config: PresentationConfig['dataHub'];
+  isEditMode: boolean;
+}) {
   return (
     <motion.div
-      className="relative w-full h-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-8 overflow-hidden"
+      className={`relative w-full h-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-8 overflow-hidden ${
+        isEditMode ? 'ring-4 ring-blue-400 ring-inset' : ''
+      }`}
       initial={{ opacity: 0 }}
       animate={{ opacity: isActive ? 1 : 0 }}
       transition={{ duration: 0.5 }}
@@ -618,9 +579,9 @@ function DataHubSlide({ isActive }: { isActive: boolean }) {
           </div>
 
           <div className="space-y-3 overflow-y-auto flex-1 pr-1">
-            {dataFlows.map((flow, idx) => (
+            {config.dataFlows.map((flow, idx) => (
               <motion.div
-                key={flow.label}
+                key={flow.id}
                 className="p-3 rounded-xl bg-white/5 border border-white/10"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -670,16 +631,16 @@ function DataHubSlide({ isActive }: { isActive: boolean }) {
             transition={{ delay: 1 }}
           >
             <div className="text-center">
-              <p className="text-2xl font-bold text-white">99.9%</p>
+              <p className="text-2xl font-bold text-white">{config.stats.dataConsistency}</p>
               <p className="text-xs text-emerald-400">Data Consistency</p>
             </div>
             <div className="grid grid-cols-2 gap-2 mt-3">
               <div className="text-center p-2 bg-white/5 rounded-lg">
-                <p className="text-lg font-bold text-cyan-400">150+</p>
+                <p className="text-lg font-bold text-cyan-400">{config.stats.tables}</p>
                 <p className="text-[10px] text-slate-400">Tables</p>
               </div>
               <div className="text-center p-2 bg-white/5 rounded-lg">
-                <p className="text-lg font-bold text-purple-400">1M+</p>
+                <p className="text-lg font-bold text-purple-400">{config.stats.records}</p>
                 <p className="text-[10px] text-slate-400">Records</p>
               </div>
             </div>
@@ -703,13 +664,13 @@ function DataHubSlide({ isActive }: { isActive: boolean }) {
                 </feMerge>
               </filter>
             </defs>
-            {platforms.map((platform, idx) => {
+            {config.platforms.map((platform, idx) => {
               const centerX = '50%';
               const centerY = '50%';
-              const radius = 280;
+              const radius = 340;
               const angleRad = (platform.angle * Math.PI) / 180;
-              const endX = 50 + (radius / 3.5) * Math.cos(angleRad);
-              const endY = 50 + (radius / 3.5) * Math.sin(angleRad);
+              const endX = 50 + (radius / 4.2) * Math.cos(angleRad);
+              const endY = 50 + (radius / 4.2) * Math.sin(angleRad);
 
               return (
                 <motion.line
@@ -731,19 +692,19 @@ function DataHubSlide({ isActive }: { isActive: boolean }) {
 
           {/* Orbital Rings */}
           <motion.div
-            className="absolute w-[200px] h-[200px] border border-blue-500/30 rounded-full"
+            className="absolute w-[240px] h-[240px] border border-blue-500/30 rounded-full"
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           />
           <motion.div
-            className="absolute w-[400px] h-[400px] border border-cyan-500/20 rounded-full"
+            className="absolute w-[480px] h-[480px] border border-cyan-500/20 rounded-full"
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1, rotate: 360 }}
             transition={{ duration: 0.8, delay: 0.3, rotate: { duration: 60, repeat: Infinity, ease: 'linear' } }}
           />
           <motion.div
-            className="absolute w-[560px] h-[560px] border border-purple-500/15 rounded-full"
+            className="absolute w-[680px] h-[680px] border border-purple-500/15 rounded-full"
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1, rotate: -360 }}
             transition={{ duration: 0.8, delay: 0.4, rotate: { duration: 90, repeat: Infinity, ease: 'linear' } }}
@@ -807,15 +768,16 @@ function DataHubSlide({ isActive }: { isActive: boolean }) {
           </motion.div>
 
           {/* Platform Nodes */}
-          {platforms.map((platform, idx) => {
-            const radius = 260;
+          {config.platforms.map((platform, idx) => {
+            const radius = 320;
             const angleRad = (platform.angle * Math.PI) / 180;
             const x = radius * Math.cos(angleRad);
             const y = radius * Math.sin(angleRad);
+            const Icon = getIcon(platform.icon);
 
             return (
               <motion.div
-                key={platform.label}
+                key={platform.id}
                 className="absolute"
                 style={{
                   left: '50%',
@@ -842,7 +804,7 @@ function DataHubSlide({ isActive }: { isActive: boolean }) {
 
                 <div className={`relative px-4 py-3 rounded-xl bg-gradient-to-br ${platform.color} shadow-lg border border-white/20`}>
                   <div className="flex items-center gap-2">
-                    <platform.icon className="w-5 h-5 text-white" />
+                    <Icon className="w-5 h-5 text-white" />
                     <div>
                       <p className="text-white font-semibold text-xs">{platform.label}</p>
                       <p className="text-white/70 text-[10px]">{platform.sublabel}</p>
@@ -856,8 +818,8 @@ function DataHubSlide({ isActive }: { isActive: boolean }) {
           {/* Animated data packets flowing to center */}
           {[...Array(8)].map((_, i) => {
             const angle = (i * 45 * Math.PI) / 180;
-            const startRadius = 280;
-            const endRadius = 80;
+            const startRadius = 340;
+            const endRadius = 100;
 
             return (
               <motion.div
@@ -908,9 +870,9 @@ function DataHubSlide({ isActive }: { isActive: boolean }) {
           </div>
 
           <div className="space-y-2 overflow-y-auto flex-1 pr-1">
-            {vendors.map((vendor, idx) => (
+            {config.vendors.map((vendor, idx) => (
               <motion.div
-                key={vendor.name}
+                key={vendor.id}
                 className="p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all group"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -971,15 +933,15 @@ function DataHubSlide({ isActive }: { isActive: boolean }) {
             </div>
             <div className="grid grid-cols-3 gap-2 text-center">
               <div className="p-2 bg-white/5 rounded-lg">
-                <p className="text-lg font-bold text-white">24</p>
+                <p className="text-lg font-bold text-white">{config.stats.dailyFiles}</p>
                 <p className="text-[9px] text-slate-400">Daily Files</p>
               </div>
               <div className="p-2 bg-white/5 rounded-lg">
-                <p className="text-lg font-bold text-emerald-400">100%</p>
+                <p className="text-lg font-bold text-emerald-400">{config.stats.successRate}</p>
                 <p className="text-[9px] text-slate-400">Success Rate</p>
               </div>
               <div className="p-2 bg-white/5 rounded-lg">
-                <p className="text-lg font-bold text-cyan-400">&lt;5m</p>
+                <p className="text-lg font-bold text-cyan-400">{config.stats.avgTime}</p>
                 <p className="text-[9px] text-slate-400">Avg Time</p>
               </div>
             </div>
@@ -995,29 +957,27 @@ function DataHubSlide({ isActive }: { isActive: boolean }) {
         transition={{ delay: 1.5 }}
       >
         <div className="flex gap-4 justify-center">
-          {[
-            { icon: Database, label: 'Single Source', desc: 'One database, all platforms', color: 'from-blue-500 to-cyan-500' },
-            { icon: RefreshCw, label: 'Real-Time Sync', desc: 'Instant data propagation', color: 'from-emerald-500 to-teal-500' },
-            { icon: Shield, label: 'Secure Transfers', desc: 'Encrypted, logged, validated', color: 'from-purple-500 to-pink-500' },
-            { icon: Zap, label: 'Automated', desc: 'Zero manual intervention', color: 'from-amber-500 to-orange-500' },
-          ].map((item, idx) => (
-            <motion.div
-              key={item.label}
-              className="flex items-center gap-3 px-5 py-2 rounded-xl bg-white/10 backdrop-blur border border-white/10"
-              whileHover={{ scale: 1.05, y: -2 }}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.6 + idx * 0.1 }}
-            >
-              <div className={`p-2 rounded-lg bg-gradient-to-br ${item.color}`}>
-                <item.icon className="w-4 h-4 text-white" />
-              </div>
-              <div>
-                <p className="font-bold text-white text-sm">{item.label}</p>
-                <p className="text-xs text-slate-400">{item.desc}</p>
-              </div>
-            </motion.div>
-          ))}
+          {config.callouts.map((item, idx) => {
+            const Icon = getIcon(item.icon);
+            return (
+              <motion.div
+                key={item.id}
+                className="flex items-center gap-3 px-5 py-2 rounded-xl bg-white/10 backdrop-blur border border-white/10"
+                whileHover={{ scale: 1.05, y: -2 }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.6 + idx * 0.1 }}
+              >
+                <div className={`p-2 rounded-lg bg-gradient-to-br ${item.color}`}>
+                  <Icon className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <p className="font-bold text-white text-sm">{item.label}</p>
+                  <p className="text-xs text-slate-400">{item.desc}</p>
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
       </motion.div>
     </motion.div>
@@ -1025,86 +985,20 @@ function DataHubSlide({ isActive }: { isActive: boolean }) {
 }
 
 // Slide 3: Evolution Roadmap
-function EvolutionSlide({ isActive }: { isActive: boolean }) {
-  const columns = [
-    {
-      title: 'TODAY',
-      subtitle: 'Legacy + Disconnected',
-      color: 'from-slate-500 to-slate-600',
-      bgColor: 'from-slate-50 to-slate-100',
-      borderColor: 'border-slate-300',
-      icon: AlertTriangle,
-      iconColor: 'text-amber-500',
-      items: [
-        { text: 'Multiple systems with duplicated data', status: 'warning' },
-        { text: 'E123 handling enrollment externally', status: 'warning' },
-        { text: 'Fragile / manual eligibility transfers', status: 'error' },
-        { text: 'Website, portal, CRM in silos', status: 'warning' },
-        { text: 'Limited unified reporting', status: 'warning' },
-        { text: 'Separate onboarding workflows', status: 'warning' },
-      ],
-      callout: { type: 'error', text: 'Risk: Data inconsistencies + operational friction' },
-    },
-    {
-      title: 'TRANSITION',
-      subtitle: 'Parallel Run + Controlled Migration',
-      color: 'from-blue-500 to-indigo-600',
-      bgColor: 'from-blue-50 to-indigo-50',
-      borderColor: 'border-blue-300',
-      icon: RefreshCw,
-      iconColor: 'text-blue-500',
-      sections: [
-        {
-          label: 'A) Foundation',
-          items: ['Unified login + roles (RBAC)', 'Unified API + business rules', 'Audit logs baseline'],
-        },
-        {
-          label: 'B) Data Consolidation',
-          items: ['MPB Database = system of record', 'Sync jobs to validate legacy data', 'Master member profile'],
-        },
-        {
-          label: 'C) Eligibility Upgrade',
-          items: ['New transfer service (EDI/SFTP/API)', 'Validation, logging, retries'],
-        },
-        {
-          label: 'D) E123 Coexistence',
-          items: ['E123 continues short-term', 'MPB mirrors enrollment states', 'Side-by-side reconciliation'],
-        },
-      ],
-      callout: { type: 'info', text: 'Outcome: No downtime, controlled cutover' },
-    },
-    {
-      title: 'TARGET STATE',
-      subtitle: 'Unified Platform + E123 Replaced',
-      color: 'from-emerald-500 to-teal-600',
-      bgColor: 'from-emerald-50 to-teal-50',
-      borderColor: 'border-emerald-300',
-      icon: Target,
-      iconColor: 'text-emerald-500',
-      items: [
-        { text: 'E123 replaced by MPB Enrollment System', status: 'success', highlight: true },
-        { text: 'Member Management fully inside MPB', status: 'success' },
-        { text: 'All apps share same data/services', status: 'success' },
-        { text: 'CRM, Ticketing, Concierge unified', status: 'success' },
-        { text: 'Billing integrated end-to-end', status: 'success' },
-        { text: 'Onboarding unified (all types)', status: 'success' },
-        { text: 'Eligibility transfers automated', status: 'success' },
-        { text: 'Real-time reporting for all', status: 'success' },
-      ],
-      callout: { type: 'success', text: 'Result: One source of truth, faster execution, stronger governance' },
-    },
-  ];
-
-  const timelineSteps = [
-    { label: 'Foundation', status: 'complete' },
-    { label: 'Data Sync', status: 'current' },
-    { label: 'Parallel Run', status: 'upcoming' },
-    { label: 'Cutover & Decommission', status: 'upcoming' },
-  ];
-
+function EvolutionSlide({
+  isActive,
+  config,
+  isEditMode,
+}: {
+  isActive: boolean;
+  config: PresentationConfig['evolution'];
+  isEditMode: boolean;
+}) {
   return (
     <motion.div
-      className="relative w-full h-full bg-gradient-to-br from-slate-50 via-white to-blue-50 p-8 overflow-hidden"
+      className={`relative w-full h-full bg-gradient-to-br from-slate-50 via-white to-blue-50 p-8 overflow-hidden ${
+        isEditMode ? 'ring-4 ring-blue-400 ring-inset' : ''
+      }`}
       initial={{ opacity: 0 }}
       animate={{ opacity: isActive ? 1 : 0 }}
       transition={{ duration: 0.5 }}
@@ -1134,103 +1028,106 @@ function EvolutionSlide({ isActive }: { isActive: boolean }) {
 
       {/* Three Columns */}
       <div className="flex gap-4 h-[calc(100%-180px)]">
-        {columns.map((column, colIdx) => (
-          <motion.div
-            key={column.title}
-            className={`flex-1 bg-gradient-to-br ${column.bgColor} rounded-2xl p-5 shadow-lg border ${column.borderColor} flex flex-col relative overflow-hidden`}
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: colIdx * 0.2 }}
-          >
-            {/* Header gradient bar */}
-            <div className={`absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r ${column.color}`} />
+        {config.columns.map((column, colIdx) => {
+          const Icon = getIcon(column.icon);
+          return (
+            <motion.div
+              key={column.id}
+              className={`flex-1 bg-gradient-to-br ${column.bgColor} rounded-2xl p-5 shadow-lg border ${column.borderColor} flex flex-col relative overflow-hidden`}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: colIdx * 0.2 }}
+            >
+              {/* Header gradient bar */}
+              <div className={`absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r ${column.color}`} />
 
-            {/* Header */}
-            <div className="flex items-center gap-3 mb-4">
-              <div className={`p-2 rounded-lg bg-gradient-to-br ${column.color}`}>
-                <column.icon className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <h3 className="font-bold text-slate-800">{column.title}</h3>
-                <p className="text-xs text-slate-500">{column.subtitle}</p>
-              </div>
-            </div>
-
-            {/* Content */}
-            <div className="flex-1 overflow-auto">
-              {column.items && (
-                <div className="space-y-2">
-                  {column.items.map((item, idx) => (
-                    <motion.div
-                      key={idx}
-                      className={`flex items-start gap-2 px-3 py-2 rounded-lg ${
-                        item.highlight
-                          ? 'bg-gradient-to-r from-emerald-100 to-teal-100 border border-emerald-300'
-                          : 'bg-white/60 border border-slate-200'
-                      }`}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.3 + colIdx * 0.2 + idx * 0.05 }}
-                    >
-                      {item.status === 'success' && <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />}
-                      {item.status === 'warning' && <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" />}
-                      {item.status === 'error' && <AlertTriangle className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" />}
-                      <span className={`text-xs ${item.highlight ? 'font-semibold text-emerald-800' : 'text-slate-700'}`}>
-                        {item.text}
-                      </span>
-                    </motion.div>
-                  ))}
+              {/* Header */}
+              <div className="flex items-center gap-3 mb-4">
+                <div className={`p-2 rounded-lg bg-gradient-to-br ${column.color}`}>
+                  <Icon className="w-5 h-5 text-white" />
                 </div>
-              )}
-
-              {column.sections && (
-                <div className="space-y-3">
-                  {column.sections.map((section, sIdx) => (
-                    <motion.div
-                      key={section.label}
-                      className="bg-white/60 rounded-lg p-3 border border-blue-200"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.3 + colIdx * 0.2 + sIdx * 0.1 }}
-                    >
-                      <p className="text-xs font-bold text-blue-700 mb-2">{section.label}</p>
-                      <div className="space-y-1">
-                        {section.items.map((item, iIdx) => (
-                          <div key={iIdx} className="flex items-center gap-2">
-                            <Clock className="w-3 h-3 text-blue-400" />
-                            <span className="text-[11px] text-slate-600">{item}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </motion.div>
-                  ))}
+                <div>
+                  <h3 className="font-bold text-slate-800">{column.title}</h3>
+                  <p className="text-xs text-slate-500">{column.subtitle}</p>
                 </div>
-              )}
-            </div>
+              </div>
 
-            {/* Callout */}
-            {column.callout && (
-              <motion.div
-                className={`mt-3 p-3 rounded-lg ${
-                  column.callout.type === 'error' ? 'bg-red-100 border border-red-300' :
-                  column.callout.type === 'info' ? 'bg-blue-100 border border-blue-300' :
-                  'bg-emerald-100 border border-emerald-300'
-                }`}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.8 + colIdx * 0.2 }}
-              >
-                <p className={`text-xs font-semibold ${
-                  column.callout.type === 'error' ? 'text-red-800' :
-                  column.callout.type === 'info' ? 'text-blue-800' :
-                  'text-emerald-800'
-                }`}>
-                  {column.callout.text}
-                </p>
-              </motion.div>
-            )}
-          </motion.div>
-        ))}
+              {/* Content */}
+              <div className="flex-1 overflow-auto">
+                {column.items && (
+                  <div className="space-y-2">
+                    {column.items.map((item, idx) => (
+                      <motion.div
+                        key={item.id}
+                        className={`flex items-start gap-2 px-3 py-2 rounded-lg ${
+                          item.highlight
+                            ? 'bg-gradient-to-r from-emerald-100 to-teal-100 border border-emerald-300'
+                            : 'bg-white/60 border border-slate-200'
+                        }`}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.3 + colIdx * 0.2 + idx * 0.05 }}
+                      >
+                        {item.status === 'success' && <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />}
+                        {item.status === 'warning' && <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" />}
+                        {item.status === 'error' && <AlertTriangle className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" />}
+                        <span className={`text-xs ${item.highlight ? 'font-semibold text-emerald-800' : 'text-slate-700'}`}>
+                          {item.text}
+                        </span>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
+
+                {column.sections && (
+                  <div className="space-y-3">
+                    {column.sections.map((section, sIdx) => (
+                      <motion.div
+                        key={section.id}
+                        className="bg-white/60 rounded-lg p-3 border border-blue-200"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.3 + colIdx * 0.2 + sIdx * 0.1 }}
+                      >
+                        <p className="text-xs font-bold text-blue-700 mb-2">{section.label}</p>
+                        <div className="space-y-1">
+                          {section.items.map((item, iIdx) => (
+                            <div key={iIdx} className="flex items-center gap-2">
+                              <Clock className="w-3 h-3 text-blue-400" />
+                              <span className="text-[11px] text-slate-600">{item}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Callout */}
+              {column.callout && (
+                <motion.div
+                  className={`mt-3 p-3 rounded-lg ${
+                    column.callout.type === 'error' ? 'bg-red-100 border border-red-300' :
+                    column.callout.type === 'info' ? 'bg-blue-100 border border-blue-300' :
+                    'bg-emerald-100 border border-emerald-300'
+                  }`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.8 + colIdx * 0.2 }}
+                >
+                  <p className={`text-xs font-semibold ${
+                    column.callout.type === 'error' ? 'text-red-800' :
+                    column.callout.type === 'info' ? 'text-blue-800' :
+                    'text-emerald-800'
+                  }`}>
+                    {column.callout.text}
+                  </p>
+                </motion.div>
+              )}
+            </motion.div>
+          );
+        })}
       </div>
 
       {/* Migration Path Arrow */}
@@ -1253,9 +1150,9 @@ function EvolutionSlide({ isActive }: { isActive: boolean }) {
 
         {/* Timeline steps */}
         <div className="flex justify-between items-center relative px-8">
-          {timelineSteps.map((step, idx) => (
+          {config.timeline.map((step, idx) => (
             <motion.div
-              key={step.label}
+              key={step.id}
               className="flex flex-col items-center"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -1292,7 +1189,7 @@ function EvolutionSlide({ isActive }: { isActive: boolean }) {
           animate={{ opacity: 1 }}
           transition={{ delay: 1.8 }}
         >
-          Migration Path: Parallel Run → Reconciliation → Cutover → Decommission Legacy
+          {config.migrationLabel}
         </motion.p>
 
         {/* Cutover marker */}
@@ -1317,39 +1214,71 @@ export function PlatformPresentation() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
+  // Use the presentation editor hook
+  const {
+    config,
+    isEditMode,
+    hasChanges,
+    toggleEditMode,
+    setEditMode,
+    updateArchitectureSection,
+    updateDataHubSection,
+    updateEvolutionSection,
+    updatePartners,
+    saveConfig,
+    resetToDefault,
+  } = usePresentationEditor();
+
   const slides = [
-    { id: 'architecture', title: 'Architecture Overview', component: ArchitectureSlide },
-    { id: 'datahub', title: 'Data Hub', component: DataHubSlide },
-    { id: 'evolution', title: 'Platform Evolution', component: EvolutionSlide },
+    { id: 'architecture', title: 'Architecture Overview' },
+    { id: 'datahub', title: 'Data Hub' },
+    { id: 'evolution', title: 'Platform Evolution' },
   ];
 
   // Auto-advance slides
   useEffect(() => {
-    if (isPlaying) {
+    if (isPlaying && !isEditMode) {
       const timer = setInterval(() => {
         setCurrentSlide((prev) => (prev + 1) % slides.length);
       }, 15000); // 15 seconds per slide
       return () => clearInterval(timer);
     }
-  }, [isPlaying, slides.length]);
+  }, [isPlaying, slides.length, isEditMode]);
 
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't handle keyboard shortcuts when editing in modal
+      if ((e.target as HTMLElement).tagName === 'INPUT' || (e.target as HTMLElement).tagName === 'TEXTAREA') {
+        return;
+      }
+
       if (e.key === 'ArrowRight' || e.key === ' ') {
-        setCurrentSlide((prev) => Math.min(prev + 1, slides.length - 1));
+        if (!isEditMode) {
+          setCurrentSlide((prev) => Math.min(prev + 1, slides.length - 1));
+        }
       } else if (e.key === 'ArrowLeft') {
-        setCurrentSlide((prev) => Math.max(prev - 1, 0));
+        if (!isEditMode) {
+          setCurrentSlide((prev) => Math.max(prev - 1, 0));
+        }
       } else if (e.key === 'f' || e.key === 'F') {
-        toggleFullscreen();
+        if (!isEditMode) {
+          toggleFullscreen();
+        }
       } else if (e.key === 'Escape') {
-        setIsFullscreen(false);
+        if (isEditMode) {
+          setEditMode(false);
+        } else {
+          setIsFullscreen(false);
+        }
+      } else if (e.key === 'e' || e.key === 'E') {
+        toggleEditMode();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [slides.length]);
+  }, [slides.length, isEditMode, toggleEditMode, setEditMode]);
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -1361,7 +1290,18 @@ export function PlatformPresentation() {
     }
   };
 
-  const CurrentSlideComponent = slides[currentSlide].component;
+  const renderCurrentSlide = () => {
+    switch (currentSlide) {
+      case 0:
+        return <ArchitectureSlide isActive={true} config={config.architecture} isEditMode={isEditMode} />;
+      case 1:
+        return <DataHubSlide isActive={true} config={config.dataHub} isEditMode={isEditMode} />;
+      case 2:
+        return <EvolutionSlide isActive={true} config={config.evolution} isEditMode={isEditMode} />;
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className={`${isFullscreen ? 'fixed inset-0 z-50' : 'h-full'} flex flex-col bg-slate-900`}>
@@ -1429,6 +1369,22 @@ export function PlatformPresentation() {
 
           <div className="w-px h-6 bg-slate-600 mx-2" />
 
+          {/* Edit Mode Toggle */}
+          <button
+            onClick={toggleEditMode}
+            className={`p-2 rounded-lg transition-all flex items-center gap-2 ${
+              isEditMode
+                ? 'bg-blue-500 text-white'
+                : 'bg-slate-700 text-white hover:bg-slate-600'
+            }`}
+            title="Toggle Edit Mode (E)"
+          >
+            <Pencil className="w-5 h-5" />
+            <span className="text-xs font-medium">{isEditMode ? 'Done' : 'Edit'}</span>
+          </button>
+
+          <div className="w-px h-6 bg-slate-600 mx-2" />
+
           <button
             onClick={toggleFullscreen}
             className="p-2 rounded-lg bg-slate-700 text-white hover:bg-slate-600 transition-all"
@@ -1443,21 +1399,39 @@ export function PlatformPresentation() {
       </motion.div>
 
       {/* Slide Content */}
-      <div className="flex-1 relative overflow-hidden">
+      <div className={`flex-1 relative overflow-hidden ${isEditMode ? 'mr-80' : ''}`}>
         <AnimatePresence mode="wait">
-          <CurrentSlideComponent key={currentSlide} isActive={true} />
+          {renderCurrentSlide()}
         </AnimatePresence>
       </div>
 
       {/* Footer */}
       <div className="px-6 py-2 bg-slate-800 border-t border-slate-700 flex items-center justify-between">
         <p className="text-slate-500 text-xs">
-          Press <kbd className="px-1.5 py-0.5 bg-slate-700 rounded text-slate-300">←</kbd> <kbd className="px-1.5 py-0.5 bg-slate-700 rounded text-slate-300">→</kbd> to navigate • <kbd className="px-1.5 py-0.5 bg-slate-700 rounded text-slate-300">F</kbd> for fullscreen
+          Press <kbd className="px-1.5 py-0.5 bg-slate-700 rounded text-slate-300">←</kbd> <kbd className="px-1.5 py-0.5 bg-slate-700 rounded text-slate-300">→</kbd> to navigate • <kbd className="px-1.5 py-0.5 bg-slate-700 rounded text-slate-300">F</kbd> for fullscreen • <kbd className="px-1.5 py-0.5 bg-slate-700 rounded text-slate-300">E</kbd> for edit mode
         </p>
         <p className="text-slate-500 text-xs">
           MPB Health Technology Team • {new Date().getFullYear()}
+          {hasChanges && <span className="ml-2 text-amber-400">(Unsaved changes)</span>}
         </p>
       </div>
+
+      {/* Edit Sidebar */}
+      <AnimatePresence>
+        {isEditMode && (
+          <PresentationEditor
+            config={config}
+            onUpdateArchitecture={updateArchitectureSection}
+            onUpdateDataHub={updateDataHubSection}
+            onUpdateEvolution={updateEvolutionSection}
+            onUpdatePartners={updatePartners}
+            onSave={saveConfig}
+            onReset={resetToDefault}
+            onClose={() => setEditMode(false)}
+            hasChanges={hasChanges}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

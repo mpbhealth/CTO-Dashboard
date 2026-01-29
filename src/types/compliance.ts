@@ -99,3 +99,32 @@ export interface DocFormData {
   tags: string[];
 }
 
+/** Form data for creating/editing Business Associate Agreements */
+export interface BAAFormData {
+  vendor: string;
+  services_provided: string;
+  effective_date: string;
+  renewal_date: string;
+  auto_renews: boolean;
+  contact_email: string;
+  contact_phone: string;
+  vendor_contact_name: string;
+  notes: string;
+  document_url?: string;
+}
+
+/** HIPAA Evidence record */
+export interface HIPAAEvidence {
+  id: string;
+  path: string;
+  title: string;
+  category: string;
+  file_type: string;
+  file_size: number;
+  owner: string;
+  tags: string[];
+  metadata: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+}
+

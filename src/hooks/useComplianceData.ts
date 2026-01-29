@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
 
 export function useAudits() {
@@ -336,37 +337,49 @@ export function useTrainingAttendance() {
 }
 
 export function useBAAs() {
-  const [data, setData] = useState<Record<string, unknown>[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const fetchData = async () => {
-    try {
+  return useQuery({
+    queryKey: ['baas'],
+    queryFn: async () => {
       const { data: baas, error } = await supabase
         .from('business_associate_agreements')
         .select('*')
-        .order('signed_date', { ascending: false });
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setData(baas || []);
-    } catch {
-      // Error silently handled - loading state will complete
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  return { data, loading, refetch: fetchData };
+      return baas || [];
+    },
+  });
 }
 
 export function useCreateBAA() {
-  return async (baa: Record<string, unknown>) => {
-    const { error } = await supabase.from('business_associate_agreements').insert([baa]);
-    if (error) throw error;
-  };
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async (baa: Record<string, unknown>) => {
+      // Map form fields to database column names
+      const dbRecord = {
+        vendor_name: baa.vendor,
+        contact_name: baa.vendor_contact_name,
+        contact_email: baa.contact_email,
+        status: 'active',
+        effective_date: baa.effective_date,
+        expiration_date: baa.renewal_date,
+        document_url: baa.document_url || null,
+        notes: baa.notes ? 
+          `Services: ${baa.services_provided || 'N/A'}\nAuto-renews: ${baa.auto_renews ? 'Yes' : 'No'}\nPhone: ${baa.contact_phone || 'N/A'}\n${baa.notes || ''}` 
+          : `Services: ${baa.services_provided || 'N/A'}\nAuto-renews: ${baa.auto_renews ? 'Yes' : 'No'}\nPhone: ${baa.contact_phone || 'N/A'}`,
+      };
+      
+      const { error } = await supabase
+        .from('business_associate_agreements')
+        .insert([dbRecord]);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['baas'] });
+    },
+  });
 }
 
 export function useEmployeeDocuments() {

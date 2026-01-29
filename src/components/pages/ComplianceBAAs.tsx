@@ -1,8 +1,19 @@
-import React, { useState } from 'react';
-import { Plus, FileCheck, Calendar, AlertCircle } from 'lucide-react';
+import React, { useState, useCallback } from 'react';
+import { Plus, FileCheck, Calendar, AlertCircle, Upload, X, FileText, CheckCircle } from 'lucide-react';
 import { useBAAs, useCreateBAA } from '../../hooks/useComplianceData';
 import { BAAStatusChip } from '../compliance/ComplianceChips';
+import { supabase } from '../../lib/supabase';
 import type { BAAFormData } from '../../types/compliance';
+
+const ALLOWED_FILE_TYPES = [
+  'application/pdf',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'image/jpeg',
+  'image/png',
+];
+
+const MAX_FILE_SIZE_MB = 25;
 
 const ComplianceBAAs: React.FC = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -19,43 +30,166 @@ const ComplianceBAAs: React.FC = () => {
     contact_phone: '',
     vendor_contact_name: '',
     notes: '',
+    document_url: '',
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // File upload state
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<string>('');
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const validateFile = useCallback((file: File): string | null => {
+    if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+      return `File size exceeds ${MAX_FILE_SIZE_MB}MB limit`;
+    }
+    if (!ALLOWED_FILE_TYPES.includes(file.type)) {
+      return 'File type not allowed. Please upload PDF, Word document, or image files.';
+    }
+    return null;
+  }, []);
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
-    try {
-      await createBAA.mutateAsync(newBAA);
-      setShowCreateModal(false);
-      setNewBAA({
-        vendor: '',
-        services_provided: '',
-        effective_date: '',
-        renewal_date: '',
-        auto_renews: false,
-        contact_email: '',
-        contact_phone: '',
-        vendor_contact_name: '',
-        notes: '',
-      });
-    } catch (error) {
-      console.error('Failed to create BAA:', error);
+    setIsDragging(true);
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      const validationError = validateFile(file);
+      if (validationError) {
+        setUploadError(validationError);
+      } else {
+        setSelectedFile(file);
+        setUploadError(null);
+      }
+    }
+  }, [validateFile]);
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const validationError = validateFile(file);
+      if (validationError) {
+        setUploadError(validationError);
+      } else {
+        setSelectedFile(file);
+        setUploadError(null);
+      }
     }
   };
 
-  const getDaysUntilRenewal = (renewalDate: string) => {
+  const formatFileSize = (bytes: number): string => {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  };
+
+  const uploadFile = async (file: File): Promise<string | null> => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+
+      const timestamp = Date.now();
+      const sanitizedVendor = newBAA.vendor.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+      const fileExt = file.name.split('.').pop();
+      const filePath = `baas/${user.id}/${timestamp}_${sanitizedVendor}.${fileExt}`;
+
+      setUploadProgress('Uploading file...');
+
+      const { error: uploadError } = await supabase.storage
+        .from('hipaa-evidence')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      // Get the public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('hipaa-evidence')
+        .getPublicUrl(filePath);
+
+      return publicUrl || filePath;
+    } catch (err) {
+      console.error('File upload error:', err);
+      throw err;
+    }
+  };
+
+  const resetForm = () => {
+    setNewBAA({
+      vendor: '',
+      services_provided: '',
+      effective_date: '',
+      renewal_date: '',
+      auto_renews: false,
+      contact_email: '',
+      contact_phone: '',
+      vendor_contact_name: '',
+      notes: '',
+      document_url: '',
+    });
+    setSelectedFile(null);
+    setUploadProgress('');
+    setUploadError(null);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsUploading(true);
+    setUploadError(null);
+
+    try {
+      let documentUrl = newBAA.document_url;
+
+      // Upload file if selected
+      if (selectedFile) {
+        setUploadProgress('Uploading document...');
+        documentUrl = await uploadFile(selectedFile) || '';
+      }
+
+      setUploadProgress('Saving BAA...');
+
+      await createBAA.mutateAsync({
+        ...newBAA,
+        document_url: documentUrl,
+      });
+
+      setShowCreateModal(false);
+      resetForm();
+    } catch (error) {
+      console.error('Failed to create BAA:', error);
+      setUploadError(error instanceof Error ? error.message : 'Failed to create BAA');
+    } finally {
+      setIsUploading(false);
+      setUploadProgress('');
+    }
+  };
+
+  const getDaysUntilRenewal = (expirationDate: string) => {
+    if (!expirationDate) return 999; // No date means not expiring
     const now = new Date();
-    const renewal = new Date(renewalDate);
-    const diffTime = renewal.getTime() - now.getTime();
+    const expiration = new Date(expirationDate);
+    const diffTime = expiration.getTime() - now.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;
   };
 
-  const expiringSoon = baas.filter(baa => {
-    const daysUntil = getDaysUntilRenewal(baa.renewal_date);
+  const expiringSoon = baas.filter((baa: Record<string, unknown>) => {
+    const daysUntil = getDaysUntilRenewal(baa.expiration_date as string);
     return daysUntil >= 0 && daysUntil <= 60;
   });
 
-  const expired = baas.filter(baa => getDaysUntilRenewal(baa.renewal_date) < 0);
+  const expired = baas.filter((baa: Record<string, unknown>) => getDaysUntilRenewal(baa.expiration_date as string) < 0);
 
   if (isLoading) {
     return (
@@ -96,9 +230,9 @@ const ComplianceBAAs: React.FC = () => {
               {expiringSoon.length} BAA{expiringSoon.length > 1 ? 's' : ''} expiring within 60 days
             </h3>
             <ul className="mt-2 space-y-1">
-              {expiringSoon.slice(0, 3).map(baa => (
-                <li key={baa.id} className="text-sm text-yellow-800">
-                  • {baa.vendor} - {new Date(baa.renewal_date).toLocaleDateString()}
+              {expiringSoon.slice(0, 3).map((baa: Record<string, unknown>) => (
+                <li key={baa.id as string} className="text-sm text-yellow-800">
+                  • {baa.vendor_name as string} - {new Date(baa.expiration_date as string).toLocaleDateString()}
                 </li>
               ))}
             </ul>
@@ -114,9 +248,9 @@ const ComplianceBAAs: React.FC = () => {
               {expired.length} expired BAA{expired.length > 1 ? 's' : ''} require attention
             </h3>
             <ul className="mt-2 space-y-1">
-              {expired.map(baa => (
-                <li key={baa.id} className="text-sm text-red-800">
-                  • {baa.vendor} - expired {new Date(baa.renewal_date).toLocaleDateString()}
+              {expired.map((baa: Record<string, unknown>) => (
+                <li key={baa.id as string} className="text-sm text-red-800">
+                  • {baa.vendor_name as string} - expired {new Date(baa.expiration_date as string).toLocaleDateString()}
                 </li>
               ))}
             </ul>
@@ -154,16 +288,18 @@ const ComplianceBAAs: React.FC = () => {
         </h2>
         <div className="space-y-3">
           {[...baas]
-            .sort((a, b) => new Date(a.renewal_date).getTime() - new Date(b.renewal_date).getTime())
+            .sort((a: Record<string, unknown>, b: Record<string, unknown>) => 
+              new Date(a.expiration_date as string || '9999-12-31').getTime() - new Date(b.expiration_date as string || '9999-12-31').getTime()
+            )
             .slice(0, 10)
-            .map(baa => {
-              const daysUntil = getDaysUntilRenewal(baa.renewal_date);
+            .map((baa: Record<string, unknown>) => {
+              const daysUntil = getDaysUntilRenewal(baa.expiration_date as string);
               const isExpired = daysUntil < 0;
               const isExpiringSoon = daysUntil >= 0 && daysUntil <= 60;
 
               return (
                 <div
-                  key={baa.id}
+                  key={baa.id as string}
                   className={`flex items-center justify-between p-3 rounded-lg ${
                     isExpired
                       ? 'bg-red-50 border border-red-200'
@@ -173,12 +309,12 @@ const ComplianceBAAs: React.FC = () => {
                   }`}
                 >
                   <div>
-                    <h4 className="font-medium text-gray-900">{baa.vendor}</h4>
-                    <p className="text-sm text-gray-600">{baa.services_provided}</p>
+                    <h4 className="font-medium text-gray-900">{baa.vendor_name as string}</h4>
+                    <p className="text-sm text-gray-600">{(baa.notes as string)?.split('\n')[0] || 'N/A'}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-medium text-gray-900">
-                      {new Date(baa.renewal_date).toLocaleDateString()}
+                      {baa.expiration_date ? new Date(baa.expiration_date as string).toLocaleDateString() : 'No date'}
                     </p>
                     <p className={`text-xs ${
                       isExpired ? 'text-red-600' : isExpiringSoon ? 'text-yellow-600' : 'text-gray-600'
@@ -202,9 +338,6 @@ const ComplianceBAAs: React.FC = () => {
                   Vendor
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  Services
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   Contact
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
@@ -214,7 +347,10 @@ const ComplianceBAAs: React.FC = () => {
                   Effective Date
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  Renewal Date
+                  Expiration Date
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Document
                 </th>
               </tr>
             </thead>
@@ -226,29 +362,42 @@ const ComplianceBAAs: React.FC = () => {
                   </td>
                 </tr>
               ) : (
-                baas.map((baa) => (
-                  <tr key={baa.id} className="hover:bg-gray-50">
+                baas.map((baa: Record<string, unknown>) => (
+                  <tr key={baa.id as string} className="hover:bg-gray-50">
                     <td className="px-6 py-4">
                       <div>
-                        <p className="font-medium text-gray-900">{baa.vendor}</p>
-                        {baa.vendor_contact_name && (
-                          <p className="text-sm text-gray-500">{baa.vendor_contact_name}</p>
+                        <p className="font-medium text-gray-900">{baa.vendor_name as string}</p>
+                        {baa.contact_name && (
+                          <p className="text-sm text-gray-500">{baa.contact_name as string}</p>
                         )}
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">{baa.services_provided}</td>
                     <td className="px-6 py-4 text-sm text-gray-600">
-                      {baa.contact_email && <div>{baa.contact_email}</div>}
-                      {baa.contact_phone && <div>{baa.contact_phone}</div>}
+                      {baa.contact_email && <div>{baa.contact_email as string}</div>}
                     </td>
                     <td className="px-6 py-4">
-                      <BAAStatusChip status={baa.status} />
+                      <BAAStatusChip status={baa.status as string} />
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-900">
-                      {new Date(baa.effective_date).toLocaleDateString()}
+                      {baa.effective_date ? new Date(baa.effective_date as string).toLocaleDateString() : 'N/A'}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-900">
-                      {new Date(baa.renewal_date).toLocaleDateString()}
+                      {baa.expiration_date ? new Date(baa.expiration_date as string).toLocaleDateString() : 'N/A'}
+                    </td>
+                    <td className="px-6 py-4 text-sm">
+                      {baa.document_url ? (
+                        <a
+                          href={baa.document_url as string}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center space-x-1 text-indigo-600 hover:text-indigo-800"
+                        >
+                          <FileText className="w-4 h-4" />
+                          <span>View</span>
+                        </a>
+                      ) : (
+                        <span className="text-gray-400">No document</span>
+                      )}
                     </td>
                   </tr>
                 ))
@@ -372,20 +521,108 @@ const ComplianceBAAs: React.FC = () => {
                 />
               </div>
 
+              {/* File Upload Section */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  BAA Document
+                </label>
+                <div
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                  className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+                    isDragging
+                      ? 'border-indigo-500 bg-indigo-50'
+                      : 'border-gray-300 hover:border-gray-400'
+                  }`}
+                >
+                  <input
+                    type="file"
+                    id="baa-file-upload"
+                    className="hidden"
+                    onChange={handleFileSelect}
+                    accept={ALLOWED_FILE_TYPES.join(',')}
+                  />
+                  
+                  {selectedFile ? (
+                    <div className="flex items-center justify-center space-x-3">
+                      <FileText className="w-8 h-8 text-indigo-600" />
+                      <div className="text-left">
+                        <p className="font-medium text-gray-900">{selectedFile.name}</p>
+                        <p className="text-sm text-gray-500">
+                          {formatFileSize(selectedFile.size)}
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedFile(null)}
+                        className="text-red-600 hover:text-red-700 ml-2"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <Upload className="w-10 h-10 mx-auto text-gray-400 mb-3" />
+                      <p className="text-gray-600 mb-2">Drag and drop your BAA document here, or</p>
+                      <label
+                        htmlFor="baa-file-upload"
+                        className="inline-block px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 cursor-pointer text-sm"
+                      >
+                        Browse Files
+                      </label>
+                      <p className="text-xs text-gray-500 mt-2">
+                        PDF, Word documents, or images up to {MAX_FILE_SIZE_MB}MB
+                      </p>
+                    </>
+                  )}
+                </div>
+
+                {/* Upload Error */}
+                {uploadError && (
+                  <div className="mt-2 flex items-center space-x-2 p-2 bg-red-50 border border-red-200 rounded-lg text-red-800">
+                    <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                    <span className="text-sm">{uploadError}</span>
+                  </div>
+                )}
+
+                {/* Upload Progress */}
+                {uploadProgress && (
+                  <div className="mt-2 flex items-center space-x-2 p-2 bg-blue-50 border border-blue-200 rounded-lg text-blue-800">
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-blue-600 border-t-transparent" />
+                    <span className="text-sm">{uploadProgress}</span>
+                  </div>
+                )}
+              </div>
+
               <div className="flex justify-end space-x-3 pt-4 border-t">
                 <button
                   type="button"
-                  onClick={() => setShowCreateModal(false)}
+                  onClick={() => {
+                    setShowCreateModal(false);
+                    resetForm();
+                  }}
                   className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                  disabled={isUploading}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  disabled={createBAA.isPending}
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-gray-300"
+                  disabled={createBAA.isPending || isUploading}
+                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-gray-300 flex items-center space-x-2"
                 >
-                  {createBAA.isPending ? 'Adding...' : 'Add BAA'}
+                  {(createBAA.isPending || isUploading) ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+                      <span>{uploadProgress || 'Adding...'}</span>
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="w-4 h-4" />
+                      <span>Add BAA</span>
+                    </>
+                  )}
                 </button>
               </div>
             </form>

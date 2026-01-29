@@ -1,7 +1,10 @@
 -- Auto-generated staging tables for CEO dashboard ingestion
+-- Note: Column names starting with numbers are quoted as they're not valid SQL identifiers
+-- Reserved words like "group" are also quoted
+
 create table if not exists stg_concierge_report_weekly_report (
   id bigserial primary key,
-  10_17_25_10_23_25 varchar(26),
+  "10_17_25_10_23_25" varchar(26),
   ace timestamptz,
   adam timestamptz,
   tupac timestamptz,
@@ -11,7 +14,7 @@ create table if not exists stg_concierge_report_weekly_report (
 
 create table if not exists stg_concierge_report_night_time_calls (
   id bigserial primary key,
-  09_18_25 timestamptz,
+  "09_18_25" timestamptz,
   unnamed_1 varchar(30),
   unnamed_2 varchar(39)
 );
@@ -171,5 +174,5 @@ create table if not exists stg_sales_report_october (
   plan varchar(14),
   size varchar(3),
   agent varchar(18),
-  group varchar(5)
+  "group" varchar(5)
 );

@@ -7,12 +7,12 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
-interface ChatMessage {
+interface _ChatMessage {
   role: "system" | "user" | "assistant";
   content: string;
 }
 
-interface ToolCall {
+interface _ToolCall {
   id: string;
   type: "function";
   function: {

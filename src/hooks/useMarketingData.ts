@@ -126,6 +126,7 @@ export function useMarketingMetrics(
       }
     }
     fetchMetrics();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [propertyId, dateRange?.start, dateRange?.end]);
 
   return { data, loading, error };

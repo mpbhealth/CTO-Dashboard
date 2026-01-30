@@ -7,7 +7,6 @@ import {
   FileText,
   BarChart3,
   ExternalLink,
-  ArrowUpRight,
 } from 'lucide-react';
 
 interface KeywordData {

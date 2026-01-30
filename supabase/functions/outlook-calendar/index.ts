@@ -367,7 +367,7 @@ Deno.serve(async (req: Request) => {
     let body;
     try {
       body = await req.json();
-    } catch (parseError) {
+    } catch {
       return new Response(
         JSON.stringify({ error: 'Invalid JSON in request body' }),
         { 

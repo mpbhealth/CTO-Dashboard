@@ -117,7 +117,7 @@ export function useNotes(options: UseNotesOptions) {
     if (isInDemoMode) return loadDemoNotes(dashboardRole);
 
     // Try fetching with the enhanced schema first
-    let { data, error: fetchError } = await supabase
+    const { data, error: fetchError } = await supabase
       .from('notes')
       .select('*')
       .eq('created_by', user.id)
@@ -240,6 +240,7 @@ export function useNotes(options: UseNotesOptions) {
     } finally {
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isInDemoMode, fetchDemoNotes]);
 
   useEffect(() => {

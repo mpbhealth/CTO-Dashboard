@@ -26,7 +26,7 @@ interface EmailTemplate {
   html: string;
 }
 
-function generateEmailTemplate(payload: NotificationPayload, recipientEmail: string): EmailTemplate {
+function generateEmailTemplate(payload: NotificationPayload, _recipientEmail: string): EmailTemplate {
   const {
     notification_type,
     metadata = {},

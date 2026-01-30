@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import {
   Activity,
-  Users,
   Eye,
   Clock,
   Globe,
@@ -30,7 +29,7 @@ const mockVisitors: LiveVisitor[] = [
 ];
 
 export function AdminLiveView() {
-  const [visitors, setVisitors] = useState<LiveVisitor[]>(mockVisitors);
+  const [visitors, _setVisitors] = useState<LiveVisitor[]>(mockVisitors);
   const [activeVisitors, setActiveVisitors] = useState(47);
   const [isRefreshing, setIsRefreshing] = useState(false);
 

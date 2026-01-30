@@ -102,6 +102,7 @@ export function usePresentationEditor(): UsePresentationEditorReturn {
   // Load config from localStorage on mount
   useEffect(() => {
     loadConfig();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadConfig = useCallback(() => {

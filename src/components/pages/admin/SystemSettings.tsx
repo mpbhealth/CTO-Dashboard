@@ -14,7 +14,7 @@ import {
   Check,
   AlertCircle,
 } from 'lucide-react';
-import { mpbHealthSupabase, isMpbHealthConfigured } from '../../../lib/mpbHealthSupabase';
+import { isMpbHealthConfigured } from '../../../lib/mpbHealthSupabase';
 
 interface Setting {
   id: string;

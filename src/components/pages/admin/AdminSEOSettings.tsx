@@ -1,11 +1,9 @@
 import { useState } from 'react';
 import {
-  Search,
   Settings,
   Globe,
   FileText,
   Image,
-  Link,
   Code,
   Save,
   RefreshCw,

@@ -8,9 +8,6 @@ import type {
   CSVParseResult,
   MemberValidationResult,
   ImportResult,
-  REQUIRED_CSV_FIELDS,
-  OPTIONAL_CSV_FIELDS,
-  CSV_FIELD_LABELS,
 } from '../types/commandCenter';
 
 // ============================================
@@ -590,7 +587,7 @@ function parseDate(dateStr: string): string | null {
 
 function simulateImport(
   validatedData: Partial<Member>[],
-  fileName: string
+  _fileName: string
 ): ImportResult {
   // Simulate some random failures for demo purposes
   const failureRate = 0.05;

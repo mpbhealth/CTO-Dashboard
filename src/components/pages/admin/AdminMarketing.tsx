@@ -2,11 +2,9 @@ import {
   TrendingUp,
   Target,
   DollarSign,
-  Users,
   MousePointer,
   BarChart3,
   PieChart,
-  ArrowUpRight,
   Calendar,
 } from 'lucide-react';
 

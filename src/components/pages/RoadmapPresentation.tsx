@@ -137,6 +137,7 @@ export default function RoadmapPresentation() {
     if (roadmapItems && roadmapItems.length > 0) {
       generatePresentation();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roadmapItems, selectedTheme]);
 
   const generatePresentation = () => {

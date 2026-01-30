@@ -692,19 +692,19 @@ function DataHubSlide({
 
           {/* Orbital Rings */}
           <motion.div
-            className="absolute w-[240px] h-[240px] border border-blue-500/30 rounded-full"
+            className="absolute w-[240px] h-[240px] border border-blue-500/30 rounded-full z-0"
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           />
           <motion.div
-            className="absolute w-[480px] h-[480px] border border-cyan-500/20 rounded-full"
+            className="absolute w-[480px] h-[480px] border border-cyan-500/20 rounded-full z-0"
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1, rotate: 360 }}
             transition={{ duration: 0.8, delay: 0.3, rotate: { duration: 60, repeat: Infinity, ease: 'linear' } }}
           />
           <motion.div
-            className="absolute w-[680px] h-[680px] border border-purple-500/15 rounded-full"
+            className="absolute w-[680px] h-[680px] border border-purple-500/15 rounded-full z-0"
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1, rotate: -360 }}
             transition={{ duration: 0.8, delay: 0.4, rotate: { duration: 90, repeat: Infinity, ease: 'linear' } }}
@@ -778,7 +778,7 @@ function DataHubSlide({
             return (
               <motion.div
                 key={platform.id}
-                className="absolute"
+                className="absolute z-20"
                 style={{
                   left: '50%',
                   top: '50%',
@@ -787,7 +787,7 @@ function DataHubSlide({
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.8 + idx * 0.1, type: 'spring' }}
-                whileHover={{ scale: 1.15, zIndex: 20 }}
+                whileHover={{ scale: 1.15, zIndex: 30 }}
               >
                 {/* Data flow indicator */}
                 <motion.div

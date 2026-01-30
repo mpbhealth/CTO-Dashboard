@@ -388,6 +388,7 @@ export function useOutlookCalendar(options: UseOutlookCalendarOptions = {}) {
   // Initial fetch
   useEffect(() => {
     fetchEvents(options.startDate, options.endDate);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Auto-refresh

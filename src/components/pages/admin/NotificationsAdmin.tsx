@@ -18,7 +18,7 @@ import {
   X,
   Save,
 } from 'lucide-react';
-import { mpbHealthSupabase, isMpbHealthConfigured } from '../../../lib/mpbHealthSupabase';
+import { isMpbHealthConfigured } from '../../../lib/mpbHealthSupabase';
 
 interface Notification {
   id: string;

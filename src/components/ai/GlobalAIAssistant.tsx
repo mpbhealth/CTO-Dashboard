@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback, FormEvent, KeyboardEvent } from 'react';
+import { useState, useRef, useEffect, FormEvent, KeyboardEvent } from 'react';
 import {
   Sparkles,
   X,
@@ -7,7 +7,6 @@ import {
   Trash2,
   Loader2,
   Bot,
-  User,
   AlertCircle,
 } from 'lucide-react';
 import { useAIAssistant } from '../../providers/AIAssistantProvider';
@@ -28,7 +27,7 @@ export function GlobalAIAssistant() {
   const {
     isOpen,
     isMinimized,
-    messages: persistedMessages,
+    messages: _persistedMessages,
     unreadCount,
     toggleAssistant,
     closeAssistant,

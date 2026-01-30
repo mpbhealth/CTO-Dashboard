@@ -48,7 +48,7 @@ export function exportToPowerPoint(data: Record<string, unknown>) {
 export const GraphicsUtils = {
   createChart: (data: Record<string, unknown>) => data,
   formatImage: (url: string) => url,
-  generateDefaultGraphics: (layout: string, theme: string) => {
+  generateDefaultGraphics: (_layout: string, _theme: string) => {
     return [];
   }
 };

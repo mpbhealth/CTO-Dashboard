@@ -75,6 +75,7 @@ export function useSupabaseTable<T = Record<string, unknown>>({
     } finally {
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [table, select, orderBy, orderAscending, JSON.stringify(filters), enabled]);
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   DndContext,
@@ -29,7 +29,6 @@ import {
   Building2,
   Database,
   Activity,
-  Upload,
   Target,
   Clock,
   GripVertical,
@@ -38,20 +37,7 @@ import {
 } from 'lucide-react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import type {
-  PresentationConfig,
-  UserItem,
-  AppItem,
-  ServiceItem,
-  TakeawayItem,
-  PlatformNode,
-  VendorItem,
-  DataFlowItem,
-  DataHubCallout,
-  EvolutionItem,
-  TimelineStep,
-  generateId,
-} from '@/config/presentationData';
+import type { PresentationConfig } from '@/config/presentationData';
 import { EditItemModal, EditItemType } from './EditItemModal';
 
 type SlideTab = 'architecture' | 'dataHub' | 'evolution';
@@ -203,7 +189,7 @@ export function PresentationEditor({
 
   // Handle save from modal
   const handleModalSave = (data: Record<string, unknown>) => {
-    const { itemType, section, isNew } = editModal;
+    const { itemType: _itemType, section, isNew } = editModal;
 
     // Generate ID for new items
     if (isNew && !data.id) {

@@ -134,7 +134,7 @@ export async function getMemberGrowthTrends(
     }
 
     // Count members per month
-    let runningTotal = 0;
+    let _runningTotal = 0;
     for (const member of members || []) {
       const enrollDate = member.enrollment_date || member.created_at;
       if (!enrollDate) continue;
@@ -145,7 +145,7 @@ export async function getMemberGrowthTrends(
       if (monthlyData.has(key)) {
         const data = monthlyData.get(key)!;
         data.new++;
-        runningTotal++;
+        _runningTotal++;
       }
 
       if (member.status === 'cancelled') {
@@ -333,7 +333,7 @@ export async function getAdvisorPerformanceMetrics(
     }
 
     // Calculate metrics per advisor
-    const advisorMap = new Map(advisors?.map((a) => [a.agent_id, a.full_name]) || []);
+    const _advisorMap = new Map(advisors?.map((a) => [a.agent_id, a.full_name]) || []);
     const metrics = new Map<string, AdvisorPerformanceMetric>();
 
     for (const advisor of advisors || []) {

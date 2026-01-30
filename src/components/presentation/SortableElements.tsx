@@ -96,7 +96,7 @@ export function SortableCard({
   icon,
   label,
   sublabel,
-  color = 'from-blue-500 to-blue-600',
+  color: _color = 'from-blue-500 to-blue-600',
   onEdit,
   onDelete,
   isEditMode = false,
@@ -281,7 +281,7 @@ export function SortableListItem({
   id,
   icon,
   text,
-  status = 'warning',
+  status: _status = 'warning',
   highlight = false,
   onEdit,
   onDelete,
@@ -584,7 +584,7 @@ interface SortablePartnerProps {
  * Sortable partner badge for external partners list
  */
 export function SortablePartner({
-  id,
+  id: _id,
   index,
   name,
   onEdit,

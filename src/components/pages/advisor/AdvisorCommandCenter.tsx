@@ -60,7 +60,7 @@ const tabs: { id: CommandCenterTab; label: string; icon: typeof Users }[] = [
 
 export default function AdvisorCommandCenter({
   advisorId = 'adv-001',
-  advisorName = 'John Smith',
+  advisorName: _advisorName = 'John Smith',
 }: AdvisorCommandCenterProps) {
   const [activeTab, setActiveTab] = useState<CommandCenterTab>('members');
   const [loading, setLoading] = useState(true);
@@ -140,6 +140,7 @@ export default function AdvisorCommandCenter({
     Promise.all([fetchMembers(), fetchHierarchy(), fetchAnalytics()]).finally(() =>
       setLoading(false)
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Refetch members when filters change
@@ -166,7 +167,7 @@ export default function AdvisorCommandCenter({
   };
 
   // Handle hierarchy advisor selection
-  const handleHierarchyAdvisorSelect = (advisorId: string, advisorName: string) => {
+  const handleHierarchyAdvisorSelect = (advisorId: string, _advisorName: string) => {
     setSelectedHierarchyAdvisor(
       selectedHierarchyAdvisor === advisorId ? undefined : advisorId
     );

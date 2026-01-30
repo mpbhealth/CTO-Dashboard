@@ -4,7 +4,6 @@ import {
   Share2,
   Mail,
   MousePointer,
-  TrendingUp,
   ArrowUpRight,
   Filter,
 } from 'lucide-react';

@@ -124,7 +124,7 @@ Deno.serve(async (req: Request) => {
     };
 
     const rawTableName = rawTableMap[targetTable];
-    const normalizedTableName = normalizedTableMap[targetTable];
+    const _normalizedTableName = normalizedTableMap[targetTable];
 
     await supabase.from("data_import_history").insert({
       org_id: orgId,

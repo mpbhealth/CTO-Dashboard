@@ -5,7 +5,6 @@ import type {
   HierarchyStats,
   Member,
   MemberWithAdvisor,
-  MemberFilters,
   MemberQueryOptions,
   MemberListResponse,
   AdvisorHierarchyResponse,

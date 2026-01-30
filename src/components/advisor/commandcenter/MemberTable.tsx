@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronUp,
@@ -7,7 +7,6 @@ import {
   ChevronRight,
   MoreHorizontal,
   Mail,
-  Phone,
   UserCircle,
   Download,
   Users,

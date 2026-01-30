@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Save, Palette } from 'lucide-react';
+import { X, Save } from 'lucide-react';
 import type { IconName } from '@/config/presentationData';
 
 // Icon options for the picker

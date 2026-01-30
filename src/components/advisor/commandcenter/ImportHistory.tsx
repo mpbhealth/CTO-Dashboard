@@ -68,6 +68,7 @@ export default function ImportHistory({ advisorId, refreshTrigger }: ImportHisto
 
   useEffect(() => {
     fetchHistory();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [advisorId, refreshTrigger]);
 
   const formatDate = (dateStr: string) => {

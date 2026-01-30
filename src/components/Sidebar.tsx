@@ -16,7 +16,6 @@ import {
   categories, 
   type NavItem 
 } from '../config/navigation';
-import { DashboardSwitcher } from './ui/DashboardSwitcher';
 import { NotificationBell } from './notifications';
 import { cn } from '../lib/utils';
 import {
@@ -312,13 +311,6 @@ function SidebarComponent({
               <div className="flex items-center justify-between mt-2">
                 <div className="flex-1" />
                 <NotificationBell className="text-white [&_svg]:text-white [&_svg:hover]:text-slate-200 [&_button]:hover:bg-white/10" />
-              </div>
-            )}
-
-            {/* Dashboard Switcher */}
-            {isExpanded && (
-              <div className="mt-4">
-                <DashboardSwitcher variant="dropdown" />
               </div>
             )}
 

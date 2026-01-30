@@ -288,7 +288,7 @@ const AdminNavItem = memo(function AdminNavItem({
 function AdminSidebarComponent({ isExpanded, onToggle }: AdminSidebarProps) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { signOut, profile, isDemoMode } = useAuth();
+  const { signOut, profile } = useAuth();
   const { stats } = useAdminStats();
 
   // Use our custom hooks
@@ -342,14 +342,13 @@ function AdminSidebarComponent({ isExpanded, onToggle }: AdminSidebarProps) {
     try {
       sessionStorage.removeItem('mpb_access_verified');
       await signOut();
-      if (!isDemoMode) {
-        window.location.href = '/login';
-      }
+      // signOut now handles the redirect internally
     } catch (error) {
       console.error('Error logging out:', error);
-      navigate('/login');
+      // Fallback navigation if signOut fails
+      window.location.href = '/login';
     }
-  }, [signOut, isDemoMode, navigate]);
+  }, [signOut]);
 
   const handleNavigation = useCallback((path: string) => {
     navigate(path);

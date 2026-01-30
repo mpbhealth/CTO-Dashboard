@@ -460,10 +460,11 @@ export default function Settings() {
                 // Clear access PIN session storage
                 sessionStorage.removeItem('mpb_access_verified');
                 await signOut();
-                navigate('/login');
+                // signOut now handles the redirect internally
               } catch (error) {
                 console.error('Error signing out:', error);
-                navigate('/login');
+                // Fallback navigation if signOut fails
+                window.location.href = '/login';
               }
             }}
             className="

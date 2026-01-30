@@ -582,23 +582,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [fetchProfile]);
 
   const signOut = useCallback(async () => {
-    if (isDemoMode) {
-      localStorage.removeItem(DEMO_MODE_KEY);
-      localStorage.removeItem(DEMO_ROLE_KEY);
-      setProfile(null);
-      setUser(null);
-      setProfileReady(false);
-      setIsDemoMode(false);
-      window.location.href = '/';
-      return;
-    }
-
-    // Log logout for security auditing before signing out
-    if (user) {
-      await logLogout(user.id, user.email || '', 'user_initiated');
-    }
-
-    // Clear session timeout timers
+    // Clear session timeout timers first (always do this)
     if (activityTimerRef.current) {
       clearTimeout(activityTimerRef.current);
       activityTimerRef.current = null;
@@ -610,11 +594,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setTimeoutWarning(null);
     setLastActivity(null);
 
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
+    if (isDemoMode) {
+      localStorage.removeItem(DEMO_MODE_KEY);
+      localStorage.removeItem(DEMO_ROLE_KEY);
+      setProfile(null);
+      setUser(null);
+      setProfileReady(false);
+      setIsDemoMode(false);
+      window.location.href = '/login';
+      return;
+    }
+
+    // Log logout for security auditing - non-blocking to prevent logout failures
+    if (user) {
+      logLogout(user.id, user.email || '', 'user_initiated').catch((err) => {
+        logger.warn('Failed to log logout event:', err);
+      });
+    }
+
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        logger.error('Supabase signOut error:', error);
+        // Continue with cleanup even if Supabase signOut fails
+      }
+    } catch (err) {
+      logger.error('Error during Supabase signOut:', err);
+      // Continue with cleanup
+    }
+
+    // Always clear local state
     setProfile(null);
+    setUser(null);
     setProfileReady(false);
     profileCache.current.clear();
+    
     try {
       Object.keys(localStorage)
         .filter(key => key.startsWith(PROFILE_CACHE_KEY))
@@ -622,6 +636,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       logger.error('Error clearing profile cache', error);
     }
+
+    // Navigate to login page
+    window.location.href = '/login';
   }, [isDemoMode, user]);
 
   const updatePassword = useCallback(async (currentPassword: string, newPassword: string) => {

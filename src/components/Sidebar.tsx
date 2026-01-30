@@ -51,7 +51,7 @@ function SidebarComponent({
 }: SidebarProps) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { signOut, isDemoMode } = useAuth();
+  const { signOut } = useAuth();
   const { data: profile } = useCurrentProfile();
 
   // Admin role-switcher state
@@ -163,14 +163,13 @@ function SidebarComponent({
     try {
       sessionStorage.removeItem('mpb_access_verified');
       await signOut();
-      if (!isDemoMode) {
-        window.location.href = '/login';
-      }
+      // signOut now handles the redirect internally
     } catch (error) {
       console.error('Error logging out:', error);
-      navigate('/login');
+      // Fallback navigation if signOut fails
+      window.location.href = '/login';
     }
-  }, [signOut, isDemoMode, navigate]);
+  }, [signOut]);
 
   const handleNavigation = useCallback((path: string, tabId: string) => {
     navigate(path);

@@ -74,6 +74,26 @@ function useClock() {
   return time;
 }
 
+/**
+ * Custom hook to detect mobile screen size
+ */
+function useIsMobile(breakpoint = 768) {
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth < breakpoint : false
+  );
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < breakpoint);
+
+    window.addEventListener('resize', checkMobile);
+    checkMobile(); // Check on mount
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, [breakpoint]);
+
+  return isMobile;
+}
+
 interface DockItem {
   key: string;
   name: string;
@@ -209,10 +229,18 @@ export function GalaxyDock({ onOpenMap }: GalaxyDockProps) {
   const { externalLinks } = useExternalLinks();
   const { quickActions } = useQuickActions();
   const [isConfigOpen, setIsConfigOpen] = useState(false);
-  const [isMinimized, setIsMinimized] = useState(false);
+  const isMobile = useIsMobile();
+  const [isMinimized, setIsMinimized] = useState(isMobile); // Start minimized on mobile
   const [showClock, setShowClock] = useState(true);
   const clock = useClock();
   const dockRef = useRef<HTMLDivElement>(null);
+
+  // Auto-minimize on mobile when screen size changes
+  useEffect(() => {
+    if (isMobile && !isMinimized) {
+      setIsMinimized(true);
+    }
+  }, [isMobile]);
   
   // Mouse position for magnification effect
   const mouseX = useMotionValue(Infinity);
@@ -295,18 +323,24 @@ export function GalaxyDock({ onOpenMap }: GalaxyDockProps) {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  // Minimized dock - just a pill to restore
+  // Minimized dock - compact pill to restore
+  // On mobile, position on the right to avoid blocking sidebar signout
   if (isMinimized) {
     return (
       <motion.button
-        className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50
-          px-4 py-2 rounded-full
+        className={`
+          fixed z-50 rounded-full
           bg-white/90 dark:bg-slate-800/90
           backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50
           shadow-lg hover:shadow-xl
-          flex items-center gap-2 text-sm font-medium
+          flex items-center gap-2 font-medium
           text-slate-600 dark:text-slate-300
-          transition-all duration-200 hover:scale-105"
+          transition-all duration-200 hover:scale-105
+          ${isMobile
+            ? 'bottom-4 right-4 p-3'  // Mobile: bottom-right, icon only
+            : 'bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 text-sm'  // Desktop: center
+          }
+        `}
         onClick={() => setIsMinimized(false)}
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -314,8 +348,8 @@ export function GalaxyDock({ onOpenMap }: GalaxyDockProps) {
         title="Expand Dock"
       >
         <ChevronUp className="w-4 h-4" />
-        <span>Show Dock</span>
-        <Sparkles className="w-4 h-4 text-primary" />
+        {!isMobile && <span>Show Dock</span>}
+        <Sparkles className={`text-primary ${isMobile ? 'w-5 h-5' : 'w-4 h-4'}`} />
       </motion.button>
     );
   }

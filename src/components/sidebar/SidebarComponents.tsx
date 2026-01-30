@@ -131,16 +131,24 @@ export const SidebarToggleButton = memo(function SidebarToggleButton({
     return (
       <button
         className={cn(
-          'absolute top-4 -right-14 p-3 rounded-full',
+          // Position outside sidebar on the right
+          'absolute top-4 -right-12 sm:-right-14',
+          // Size and shape - ensure good touch target
+          'p-2.5 sm:p-3 rounded-full min-w-[44px] min-h-[44px]',
+          'flex items-center justify-center',
           config.mobileToggleBg,
           'text-white md:hidden z-50',
           'shadow-lg active:scale-95 transition-transform',
-          'touch-manipulation',
-          `min-h-[${SIDEBAR_CONSTANTS.MIN_TOUCH_TARGET}px]`,
-          `min-w-[${SIDEBAR_CONSTANTS.MIN_TOUCH_TARGET}px]`
+          'touch-manipulation select-none',
+          // Safe area support
+          'safe-top'
         )}
         onClick={onToggle}
         aria-label={isExpanded ? 'Close navigation menu' : 'Open navigation menu'}
+        style={{
+          // Ensure button respects safe areas
+          marginTop: 'env(safe-area-inset-top, 0px)',
+        }}
       >
         {isExpanded ? (
           <X className="w-6 h-6" aria-hidden="true" />
@@ -187,7 +195,7 @@ export const SidebarHeader = memo(function SidebarHeader({
   children,
 }: SidebarHeaderProps) {
   return (
-    <div className="mb-6 md:mb-8">
+    <div className="mb-4 sm:mb-6 md:mb-8 flex-shrink-0">
       <div
         className={cn(
           'flex items-center',
@@ -197,10 +205,12 @@ export const SidebarHeader = memo(function SidebarHeader({
         {/* Logo */}
         <div
           className={cn(
-            isExpanded ? 'w-12 h-12' : 'w-10 h-10',
+            // Responsive logo size
+            isExpanded ? 'w-10 h-10 sm:w-12 sm:h-12' : 'w-10 h-10',
             'rounded-xl flex items-center justify-center shadow-lg',
-            'cursor-pointer bg-white p-1.5',
-            'active:scale-95 transition-transform touch-manipulation'
+            'cursor-pointer bg-white p-1 sm:p-1.5',
+            'active:scale-95 transition-transform touch-manipulation',
+            'flex-shrink-0'
           )}
         >
           {logoSrc ? (
@@ -217,9 +227,9 @@ export const SidebarHeader = memo(function SidebarHeader({
 
         {/* Title */}
         {isExpanded && (
-          <div className="flex-1 min-w-0">
-            <h1 className="text-xl font-bold text-white truncate">{title}</h1>
-            <p className="text-slate-300 text-sm font-medium truncate">
+          <div className="flex-1 min-w-0 overflow-hidden">
+            <h1 className="text-lg sm:text-xl font-bold text-white truncate">{title}</h1>
+            <p className="text-slate-300 text-xs sm:text-sm font-medium truncate">
               {subtitle}
             </p>
           </div>

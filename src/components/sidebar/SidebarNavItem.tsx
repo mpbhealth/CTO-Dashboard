@@ -205,7 +205,7 @@ export const SidebarNavItem = memo(function SidebarNavItem({
       <button
         onClick={handleClick}
         aria-current={showAsActive ? 'page' : undefined}
-        aria-expanded={hasSubmenu ? isExpanded : undefined}
+        {...(hasSubmenu ? { 'aria-expanded': isExpanded } : {})}
         title={item.label}
         className={buttonStyles}
       >
@@ -304,7 +304,9 @@ export const SidebarCategoryHeader = memo(function SidebarCategoryHeader({
   return (
     <h3
       className={cn(
-        'text-xs font-semibold uppercase tracking-wider mb-2 md:mb-3 px-2',
+        // Responsive text and spacing
+        'text-[10px] sm:text-xs font-semibold uppercase tracking-wider',
+        'mb-1.5 sm:mb-2 md:mb-3 px-1 sm:px-2',
         colorClass
       )}
     >

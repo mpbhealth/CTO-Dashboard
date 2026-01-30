@@ -248,7 +248,7 @@ function SidebarComponent({
         className={cn(
           // Base styles
           'text-white h-screen flex flex-col overflow-hidden',
-          'fixed top-0 left-0 z-40 shadow-2xl',
+          'fixed inset-y-0 left-0 z-40 shadow-2xl',
           'transition-transform duration-300 ease-out',
           'will-change-transform',
           
@@ -257,18 +257,24 @@ function SidebarComponent({
             ? 'bg-gradient-to-b from-indigo-600 to-indigo-700' 
             : 'bg-slate-900',
           
-          // Width
-          isExpanded ? 'w-80' : 'w-20',
+          // Width - responsive for all screen sizes
+          // Mobile: full width minus some margin, max 320px
+          // Desktop: fixed widths
+          isExpanded 
+            ? 'w-[calc(100vw-3rem)] sm:w-80 max-w-[320px]' 
+            : 'w-20',
           
           // Mobile visibility
           isMobile && !isExpanded ? '-translate-x-full' : 'translate-x-0',
           
           // Touch behavior
-          isMobile && 'touch-pan-y'
+          isMobile && 'touch-pan-y overscroll-contain'
         )}
         style={{
-          transform: sidebarTransform,
+          // Only apply transform during drag, otherwise let classes handle it
+          ...(sidebarTransform ? { transform: sidebarTransform } : {}),
           paddingBottom: 'env(safe-area-inset-bottom)',
+          paddingLeft: 'env(safe-area-inset-left)',
         }}
       >
         {/* Mobile toggle button */}
@@ -291,10 +297,12 @@ function SidebarComponent({
         <div
           className={cn(
             'flex-1 flex flex-col overflow-hidden relative z-50',
-            isExpanded ? 'p-4 md:p-6' : 'p-3 md:p-4'
+            // Responsive padding - tighter on small screens
+            isExpanded ? 'p-3 sm:p-4 md:p-6' : 'p-2 sm:p-3 md:p-4'
           )}
           style={{
-            paddingTop: 'max(1rem, env(safe-area-inset-top))',
+            // Respect safe areas on devices with notches
+            paddingTop: 'max(0.75rem, env(safe-area-inset-top))',
           }}
         >
           {/* Header */}
@@ -326,7 +334,7 @@ function SidebarComponent({
 
           {/* Navigation */}
           <nav
-            className="flex-1 space-y-4 md:space-y-6 overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent"
+            className="flex-1 space-y-3 sm:space-y-4 md:space-y-6 overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent -webkit-overflow-scrolling-touch"
             aria-label="Sidebar navigation"
           >
             {Object.entries(groupedItems).map(([category, items]) => (

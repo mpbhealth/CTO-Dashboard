@@ -20,7 +20,7 @@ export default defineConfig({
   },
   optimizeDeps: {
     exclude: ['lucide-react'],
-    include: ['@supabase/supabase-js'],
+    include: ['@supabase/supabase-js', 'react-smooth', 'recharts'],
   },
   build: {
     outDir: 'dist',
@@ -74,7 +74,11 @@ export default defineConfig({
             if (normalizedId.includes('exceljs') || normalizedId.includes('jspdf') || normalizedId.includes('pptxgenjs')) {
               return 'office';
             }
-            // Charts library - separate chunk
+            // react-smooth must be in react-vendor to prevent PureComponent errors
+            if (normalizedId.includes('react-smooth') || normalizedId.includes('react-transition-group')) {
+              return 'react-vendor';
+            }
+            // Charts library - separate chunk (but react-smooth stays with react)
             if (normalizedId.includes('recharts') || normalizedId.includes('d3-')) {
               return 'charts';
             }

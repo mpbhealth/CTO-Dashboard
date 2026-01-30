@@ -8,4 +8,7 @@ export { FAQAdmin } from './FAQAdmin';
 export { NotificationsAdmin } from './NotificationsAdmin';
 export { SystemSettings } from './SystemSettings';
 export { ProviderDirectory } from './ProviderDirectory';
+export { SecurityDashboard } from './SecurityDashboard';
+export { AccessReviews } from './AccessReviews';
+export { ChangeManagement } from './ChangeManagement';
 

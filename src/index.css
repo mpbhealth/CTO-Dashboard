@@ -605,3 +605,488 @@
     100% { background-position: -200% 0; }
   }
 }
+
+/* ================================
+   Galaxy Dock - Premium Floating Command Center
+   ================================ */
+@layer components {
+  /* Main Dock Container */
+  .galaxy-dock {
+    @apply fixed bottom-6 left-1/2 -translate-x-1/2 z-50;
+    @apply flex items-end gap-1 px-3 py-2;
+    @apply rounded-2xl;
+    /* Premium glassmorphism */
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(248, 250, 252, 0.92) 50%,
+      rgba(241, 245, 249, 0.9) 100%
+    );
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    /* Refined shadow with glow */
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.12),
+      0 4px 16px rgba(0, 0, 0, 0.08),
+      0 0 0 1px rgba(255, 255, 255, 0.8) inset,
+      0 -1px 0 rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    /* Smooth performance */
+    will-change: transform, opacity;
+    transform-style: preserve-3d;
+  }
+
+  /* Dark mode dock */
+  .dark .galaxy-dock {
+    background: linear-gradient(
+      135deg,
+      rgba(30, 41, 59, 0.95) 0%,
+      rgba(15, 23, 42, 0.92) 50%,
+      rgba(2, 6, 23, 0.9) 100%
+    );
+    border: 1px solid rgba(100, 116, 139, 0.3);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.4),
+      0 4px 16px rgba(0, 0, 0, 0.3),
+      0 0 0 1px rgba(71, 85, 105, 0.4) inset,
+      0 0 60px rgba(59, 130, 246, 0.05);
+  }
+
+  /* Dock Item Base */
+  .galaxy-dock-item {
+    @apply flex items-center justify-center;
+    @apply rounded-xl cursor-pointer;
+    @apply transition-all duration-200 ease-out;
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    min-height: 48px;
+    background: transparent;
+    position: relative;
+    /* Subtle hover preparation */
+    transform: translateY(0);
+  }
+
+  .galaxy-dock-item:hover {
+    background: rgba(59, 130, 246, 0.1);
+  }
+
+  .galaxy-dock-item:active {
+    transform: scale(0.95);
+  }
+
+  .galaxy-dock-item.active {
+    background: linear-gradient(
+      135deg,
+      rgba(59, 130, 246, 0.15) 0%,
+      rgba(99, 102, 241, 0.1) 100%
+    );
+  }
+
+  .dark .galaxy-dock-item:hover {
+    background: rgba(59, 130, 246, 0.2);
+  }
+
+  .dark .galaxy-dock-item.active {
+    background: linear-gradient(
+      135deg,
+      rgba(59, 130, 246, 0.25) 0%,
+      rgba(99, 102, 241, 0.2) 100%
+    );
+  }
+
+  /* Magnification class - enables smooth scaling */
+  .dock-magnify {
+    transform-origin: bottom center;
+    transition: 
+      background-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  /* Dock Divider */
+  .dock-divider {
+    @apply mx-1 self-stretch;
+    width: 1px;
+    background: linear-gradient(
+      180deg,
+      transparent 10%,
+      rgba(148, 163, 184, 0.4) 50%,
+      transparent 90%
+    );
+  }
+
+  .dark .dock-divider {
+    background: linear-gradient(
+      180deg,
+      transparent 10%,
+      rgba(71, 85, 105, 0.6) 50%,
+      transparent 90%
+    );
+  }
+
+  /* Dock Badge */
+  .dock-badge {
+    @apply absolute -top-1 -right-1;
+    @apply text-[10px] font-bold text-white;
+    @apply flex items-center justify-center;
+    @apply rounded-full;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    box-shadow: 
+      0 2px 6px rgba(239, 68, 68, 0.4),
+      0 0 0 2px rgba(255, 255, 255, 0.9);
+    animation: badge-pulse 2s ease-in-out infinite;
+  }
+
+  .dark .dock-badge {
+    box-shadow: 
+      0 2px 6px rgba(239, 68, 68, 0.5),
+      0 0 0 2px rgba(30, 41, 59, 0.9);
+  }
+
+  @keyframes badge-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+
+  /* Dock Item Tooltip */
+  .dock-item-tooltip {
+    @apply absolute -top-12 left-1/2 -translate-x-1/2;
+    @apply px-3 py-1.5 rounded-lg;
+    @apply text-xs font-medium whitespace-nowrap;
+    @apply opacity-0 pointer-events-none;
+    @apply transition-all duration-200;
+    background: rgba(15, 23, 42, 0.95);
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    z-index: 100;
+  }
+
+  .dock-item-tooltip::after {
+    content: '';
+    @apply absolute left-1/2 -translate-x-1/2;
+    bottom: -4px;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid rgba(15, 23, 42, 0.95);
+  }
+
+  .galaxy-dock-item:hover .dock-item-tooltip,
+  .dock-quick-action:hover .dock-item-tooltip,
+  .dock-external-link:hover .dock-item-tooltip {
+    @apply opacity-100;
+    transform: translateX(-50%) translateY(-4px);
+  }
+
+  /* Search Trigger Button */
+  .dock-search-trigger {
+    @apply flex items-center justify-center;
+    @apply rounded-xl cursor-pointer;
+    @apply transition-all duration-200;
+    width: 48px;
+    height: 48px;
+    background: transparent;
+  }
+
+  .dock-search-trigger:hover {
+    background: rgba(99, 102, 241, 0.1);
+  }
+
+  .dark .dock-search-trigger:hover {
+    background: rgba(99, 102, 241, 0.2);
+  }
+
+  /* Search Expanded Container */
+  .dock-search-expanded {
+    @apply absolute bottom-full left-0 mb-2;
+    @apply rounded-xl overflow-hidden;
+    background: rgba(255, 255, 255, 0.98);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.15),
+      0 0 0 1px rgba(0, 0, 0, 0.05);
+    min-width: 320px;
+  }
+
+  .dark .dock-search-expanded {
+    background: rgba(30, 41, 59, 0.98);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.4),
+      0 0 0 1px rgba(71, 85, 105, 0.3);
+  }
+
+  /* Search Input Wrapper */
+  .dock-search-input-wrapper {
+    @apply flex items-center gap-2 px-3 py-2;
+    @apply border-b;
+    border-color: rgba(226, 232, 240, 0.8);
+  }
+
+  .dark .dock-search-input-wrapper {
+    border-color: rgba(71, 85, 105, 0.4);
+  }
+
+  /* Search Input */
+  .dock-search-input {
+    @apply flex-1 bg-transparent outline-none;
+    @apply text-sm text-slate-800;
+    @apply placeholder:text-slate-400;
+  }
+
+  .dark .dock-search-input {
+    @apply text-slate-100 placeholder:text-slate-500;
+  }
+
+  /* Search Close Button */
+  .dock-search-close {
+    @apply p-1 rounded-md;
+    @apply text-slate-400 hover:text-slate-600;
+    @apply hover:bg-slate-100;
+    @apply transition-colors duration-150;
+  }
+
+  .dark .dock-search-close {
+    @apply text-slate-500 hover:text-slate-300;
+    @apply hover:bg-slate-700;
+  }
+
+  /* Search Results Container */
+  .dock-search-results {
+    @apply max-h-64 overflow-y-auto;
+    @apply py-1;
+  }
+
+  /* Search Result Item */
+  .dock-search-result {
+    @apply w-full flex items-center gap-3 px-3 py-2;
+    @apply text-left cursor-pointer;
+    @apply transition-colors duration-150;
+  }
+
+  .dock-search-result:hover,
+  .dock-search-result.selected {
+    @apply bg-slate-100;
+  }
+
+  .dark .dock-search-result:hover,
+  .dark .dock-search-result.selected {
+    @apply bg-slate-700;
+  }
+
+  .dock-search-result-icon {
+    @apply w-8 h-8 rounded-lg;
+    @apply flex items-center justify-center;
+    @apply bg-slate-100 text-slate-600;
+  }
+
+  .dark .dock-search-result-icon {
+    @apply bg-slate-700 text-slate-300;
+  }
+
+  .dock-search-result-content {
+    @apply flex-1 flex flex-col;
+  }
+
+  .dock-search-result-title {
+    @apply text-sm font-medium text-slate-800;
+  }
+
+  .dark .dock-search-result-title {
+    @apply text-slate-100;
+  }
+
+  .dock-search-result-desc {
+    @apply text-xs text-slate-500 truncate;
+  }
+
+  .dark .dock-search-result-desc {
+    @apply text-slate-400;
+  }
+
+  .dock-search-no-results {
+    @apply px-4 py-6 text-center;
+    @apply text-sm text-slate-500;
+  }
+
+  .dark .dock-search-no-results {
+    @apply text-slate-400;
+  }
+
+  /* External Link Item */
+  .dock-external-link {
+    @apply flex items-center justify-center;
+    @apply rounded-xl cursor-pointer;
+    @apply transition-all duration-200;
+    background: linear-gradient(
+      135deg,
+      rgba(16, 185, 129, 0.1) 0%,
+      rgba(5, 150, 105, 0.05) 100%
+    );
+    border: 1px solid rgba(16, 185, 129, 0.2);
+  }
+
+  .dock-external-link:hover {
+    background: linear-gradient(
+      135deg,
+      rgba(16, 185, 129, 0.2) 0%,
+      rgba(5, 150, 105, 0.1) 100%
+    );
+    border-color: rgba(16, 185, 129, 0.4);
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.15);
+  }
+
+  .dark .dock-external-link {
+    background: linear-gradient(
+      135deg,
+      rgba(16, 185, 129, 0.15) 0%,
+      rgba(5, 150, 105, 0.1) 100%
+    );
+    border-color: rgba(16, 185, 129, 0.3);
+  }
+
+  .dock-external-badge {
+    @apply absolute -top-0.5 -right-0.5;
+    @apply w-4 h-4 rounded-full;
+    @apply flex items-center justify-center;
+    @apply text-white;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    box-shadow: 0 1px 4px rgba(16, 185, 129, 0.4);
+  }
+
+  /* Quick Action Item */
+  .dock-quick-action {
+    @apply flex items-center justify-center;
+    @apply rounded-xl cursor-pointer;
+    @apply transition-all duration-200;
+    border: 1px solid transparent;
+  }
+
+  .dock-quick-action:hover {
+    box-shadow: 0 0 20px currentColor;
+    filter: brightness(1.1);
+  }
+
+  .dock-quick-action:disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
+
+  .dock-action-indicator {
+    @apply absolute -top-0.5 -right-0.5;
+    @apply w-2.5 h-2.5 rounded-full;
+    @apply bg-primary animate-pulse;
+    box-shadow: 0 0 8px theme('colors.primary.500');
+  }
+
+  /* Config Button */
+  .dock-config-btn {
+    @apply opacity-60;
+    @apply transition-opacity duration-200;
+  }
+
+  .galaxy-dock:hover .dock-config-btn {
+    @apply opacity-100;
+  }
+
+  /* Dock Config Modal */
+  .dock-config-overlay {
+    @apply fixed inset-0 z-50;
+    @apply flex items-center justify-center;
+    @apply p-4;
+    background: rgba(0, 0, 0, 0.5);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+  }
+
+  .dock-config-modal {
+    @apply w-full max-w-2xl max-h-[85vh];
+    @apply rounded-2xl overflow-hidden;
+    @apply flex flex-col;
+    background: white;
+    box-shadow: 
+      0 25px 50px rgba(0, 0, 0, 0.25),
+      0 0 0 1px rgba(0, 0, 0, 0.05);
+  }
+
+  .dark .dock-config-modal {
+    background: theme('colors.slate.800');
+    box-shadow: 
+      0 25px 50px rgba(0, 0, 0, 0.5),
+      0 0 0 1px rgba(71, 85, 105, 0.3);
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 767px) {
+    .galaxy-dock {
+      @apply bottom-4 left-4 right-4;
+      @apply translate-x-0;
+      @apply gap-0.5 px-2;
+      @apply rounded-xl;
+      @apply overflow-x-auto;
+      max-width: calc(100% - 2rem);
+      /* Hide scrollbar on mobile */
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .galaxy-dock::-webkit-scrollbar {
+      display: none;
+    }
+
+    .galaxy-dock-item {
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
+      min-height: 44px;
+    }
+
+    .dock-divider {
+      @apply mx-0.5;
+    }
+
+    .dock-item-tooltip {
+      display: none;
+    }
+
+    .dock-search-expanded {
+      @apply fixed bottom-20 left-4 right-4;
+      @apply mb-0;
+      min-width: auto;
+      width: calc(100% - 2rem);
+    }
+  }
+
+  /* Hover glow effect for dock container */
+  .galaxy-dock::before {
+    content: '';
+    @apply absolute -inset-1 rounded-3xl opacity-0;
+    @apply transition-opacity duration-300;
+    background: linear-gradient(
+      135deg,
+      rgba(59, 130, 246, 0.1) 0%,
+      rgba(99, 102, 241, 0.1) 50%,
+      rgba(139, 92, 246, 0.1) 100%
+    );
+    filter: blur(20px);
+    z-index: -1;
+  }
+
+  .galaxy-dock:hover::before {
+    @apply opacity-100;
+  }
+
+  /* Reduce motion for accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    .galaxy-dock,
+    .galaxy-dock-item,
+    .dock-magnify,
+    .dock-badge {
+      animation: none;
+      transition: none;
+    }
+  }
+}

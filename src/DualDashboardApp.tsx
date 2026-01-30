@@ -13,7 +13,7 @@ import { AIAssistantProvider } from './providers/AIAssistantProvider';
 import { GlobalAIAssistant } from './components/ai/GlobalAIAssistant';
 import { UniversalDashboardSwitcher } from './components/ui/UniversalDashboardSwitcher';
 
-const CTOHome = lazy(() => import('./components/pages/ctod/CTOHome').then(m => ({ default: m.CTOHome })));
+const CTOHome = lazy(() => import('./components/pages/ctod/CTOCommandCenter').then(m => ({ default: m.CTOCommandCenter })));
 const CTOOperations = lazy(() => import('./components/pages/ctod/CTOOperations').then(m => ({ default: m.CTOOperations })));
 
 // CTO Development & Planning
@@ -124,12 +124,18 @@ const SharedOverview = lazy(() => import('./components/pages/shared/SharedOvervi
 const AuditLogViewer = lazy(() => import('./components/pages/shared/AuditLogViewer').then(m => ({ default: m.AuditLogViewer })));
 const CommandCenter = lazy(() => import('./components/pages/shared/CommandCenter').then(m => ({ default: m.CommandCenter })));
 const PlatformPresentation = lazy(() => import('./components/pages/PlatformPresentation').then(m => ({ default: m.PlatformPresentation })));
+const OAuthCallback = lazy(() => import('./components/pages/OAuthCallback').then(m => ({ default: m.OAuthCallback })));
 const AuthDiagnostics = lazy(() => import('./components/pages/AuthDiagnostics'));
 const DiagnosticsDashboard = lazy(() => import('./components/pages/DiagnosticsDashboard'));
 const Settings = lazy(() => import('./components/pages/Settings'));
 
 // Advisor Command Center
 const AdvisorCommandCenter = lazy(() => import('./components/pages/advisor/AdvisorCommandCenter'));
+const AdvisorEmail = lazy(() => import('./components/pages/advisor/AdvisorEmail').then(m => ({ default: m.AdvisorEmail })));
+
+// Email pages
+const CEOEmail = lazy(() => import('./components/pages/ceod/CEOEmail').then(m => ({ default: m.CEOEmail })));
+const CTOEmail = lazy(() => import('./components/pages/ctod/CTOEmail').then(m => ({ default: m.CTOEmail })));
 
 // Shared components (legacy)
 const SaaSSpend = lazy(() => import('./components/pages/SaaSSpend'));
@@ -176,6 +182,7 @@ const AdminDocuments = lazy(() => import('./components/pages/admin/AdminDocument
 const AdminSEOAnalytics = lazy(() => import('./components/pages/admin/AdminSEOAnalytics').then(m => ({ default: m.AdminSEOAnalytics })));
 const AdminSEOSettings = lazy(() => import('./components/pages/admin/AdminSEOSettings').then(m => ({ default: m.AdminSEOSettings })));
 const AdminHealthMonitor = lazy(() => import('./components/pages/admin/AdminHealthMonitor').then(m => ({ default: m.AdminHealthMonitor })));
+const AdminEmail = lazy(() => import('./components/pages/admin/AdminEmail').then(m => ({ default: m.AdminEmail })));
 
 const LoadingFallback = () => (
   <div 
@@ -468,6 +475,9 @@ function DualDashboardContent() {
             {/* CTO Settings */}
             <Route path="/ctod/settings" element={<CTOOnly><Settings /></CTOOnly>} />
 
+            {/* CTO Email */}
+            <Route path="/ctod/email" element={<CTOOnly><CTOEmail /></CTOOnly>} />
+
             {/* CTO Command Center */}
             <Route path="/ctod/command-center" element={<CTOOnly><CommandCenter /></CTOOnly>} />
 
@@ -544,6 +554,9 @@ function DualDashboardContent() {
             {/* CEO Settings */}
             <Route path="/ceod/settings" element={<CEOOnly><CEODashboardLayout><Settings /></CEODashboardLayout></CEOOnly>} />
 
+            {/* CEO Email */}
+            <Route path="/ceod/email" element={<CEOOnly><CEODashboardLayout><CEOEmail /></CEODashboardLayout></CEOOnly>} />
+
             {/* CEO Command Center */}
             <Route path="/ceod/command-center" element={<CEOOnly><CEODashboardLayout><CommandCenter /></CEODashboardLayout></CEOOnly>} />
 
@@ -551,6 +564,7 @@ function DualDashboardContent() {
             <Route path="/shared/audit" element={<AuditLogViewer />} />
             <Route path="/shared/platform-presentation" element={<PlatformPresentation />} />
             <Route path="/presentation" element={<PlatformPresentation />} />
+            <Route path="/oauth/callback" element={<OAuthCallback />} />
             <Route path="/diagnostics" element={<AuthDiagnostics />} />
             <Route path="/diagnostics/system" element={<DiagnosticsDashboard />} />
 
@@ -598,9 +612,11 @@ function DualDashboardContent() {
             <Route path="/admin/seo-analytics" element={<AdminLayout><AdminSEOAnalytics /></AdminLayout>} />
             <Route path="/admin/seo-settings" element={<AdminLayout><AdminSEOSettings /></AdminLayout>} />
             <Route path="/admin/health" element={<AdminLayout><AdminHealthMonitor /></AdminLayout>} />
+            <Route path="/admin/email" element={<AdminLayout><AdminEmail /></AdminLayout>} />
 
             {/* Advisor Command Center */}
             <Route path="/advisor/command-center" element={<AdvisorCommandCenter />} />
+            <Route path="/advisor/email" element={<AdvisorEmail />} />
 
             <Route path="*" element={<RoleBasedRedirect />} />
           </Routes>

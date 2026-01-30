@@ -24,6 +24,7 @@ import { useApps } from '@/hooks/useApps';
 import { usePinnedApps } from '@/hooks/usePinnedApps';
 
 interface GalaxyMapModalProps {
+  isOpen: boolean;
   onClose: () => void;
 }
 
@@ -86,12 +87,15 @@ const categoryColors: Record<string, { bg: string; border: string; text: string 
  * - Visual distinction for app categories
  * - Animated planet/orbit styling
  */
-export function GalaxyMapModal({ onClose }: GalaxyMapModalProps) {
+export function GalaxyMapModal({ isOpen, onClose }: GalaxyMapModalProps) {
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const { apps, isLoading } = useApps();
   const { pinnedApps, pinApp, unpinApp } = usePinnedApps();
+
+  // Don't render if not open
+  if (!isOpen) return null;
 
   // Get unique categories
   const categories = useMemo(() => {
@@ -170,6 +174,8 @@ export function GalaxyMapModal({ onClose }: GalaxyMapModalProps) {
             <button
               onClick={onClose}
               className="p-2 rounded-lg hover:bg-white/10 transition-colors"
+              title="Close Galaxy Map"
+              aria-label="Close Galaxy Map"
             >
               <X className="w-6 h-6 text-white" />
             </button>

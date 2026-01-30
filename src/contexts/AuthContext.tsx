@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState, useMemo, useCall
 import { User, Session } from '@supabase/supabase-js';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { logger } from '../lib/logger';
+import { logLogin, logLoginFailed, logLogout, logSecurityEvent } from '../lib/auditService';
 
 interface Profile {
   id: string;
@@ -14,6 +15,18 @@ interface Profile {
   updated_at?: string;
 }
 
+/**
+ * Session timeout configuration for HIPAA compliance
+ */
+interface SessionTimeoutConfig {
+  /** Inactivity timeout in minutes (default: 15 for PHI access) */
+  timeoutMinutes: number;
+  /** Warning before logout in seconds (default: 60) */
+  warningSeconds: number;
+  /** Enable session timeout (default: true) */
+  enabled: boolean;
+}
+
 interface AuthContextType {
   user: User | null;
   session: Session | null;
@@ -21,11 +34,23 @@ interface AuthContextType {
   loading: boolean;
   profileReady: boolean;
   isDemoMode: boolean;
+  /** Session timeout configuration */
+  sessionTimeout: SessionTimeoutConfig;
+  /** Time remaining before session timeout (in seconds, null if not close to timeout) */
+  timeoutWarning: number | null;
+  /** Last activity timestamp */
+  lastActivity: Date | null;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
   updatePassword: (currentPassword: string, newPassword: string) => Promise<void>;
+  /** Reset activity timer (call on user interaction) */
+  resetActivityTimer: () => void;
+  /** Dismiss timeout warning and extend session */
+  extendSession: () => void;
+  /** Update session timeout configuration */
+  updateSessionTimeoutConfig: (config: Partial<SessionTimeoutConfig>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -34,6 +59,29 @@ const PROFILE_CACHE_KEY = 'mpb_profile_cache';
 const PROFILE_CACHE_TTL = 5 * 60 * 1000;
 const DEMO_MODE_KEY = 'mpb_demo_mode';
 const DEMO_ROLE_KEY = 'mpb_demo_role';
+const SESSION_TIMEOUT_CONFIG_KEY = 'mpb_session_timeout_config';
+
+/**
+ * Default session timeout configuration for HIPAA compliance
+ * 15 minute inactivity timeout is standard for PHI access
+ */
+const DEFAULT_SESSION_TIMEOUT_CONFIG: SessionTimeoutConfig = {
+  timeoutMinutes: 15,
+  warningSeconds: 60,
+  enabled: true,
+};
+
+/**
+ * Activity events to track for session timeout
+ */
+const ACTIVITY_EVENTS = [
+  'mousedown',
+  'mousemove',
+  'keydown',
+  'scroll',
+  'touchstart',
+  'click',
+] as const;
 
 function getDemoRoleFromQuery(): 'ceo' | 'cto' | null {
   const params = new URLSearchParams(window.location.search);
@@ -77,11 +125,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [profileReady, setProfileReady] = useState(false);
   const [isDemoMode, setIsDemoMode] = useState(false);
+  
+  // Session timeout state
+  const [sessionTimeout, setSessionTimeout] = useState<SessionTimeoutConfig>(() => {
+    try {
+      const saved = localStorage.getItem(SESSION_TIMEOUT_CONFIG_KEY);
+      if (saved) {
+        return { ...DEFAULT_SESSION_TIMEOUT_CONFIG, ...JSON.parse(saved) };
+      }
+    } catch {
+      // Ignore parse errors
+    }
+    return DEFAULT_SESSION_TIMEOUT_CONFIG;
+  });
+  const [timeoutWarning, setTimeoutWarning] = useState<number | null>(null);
+  const [lastActivity, setLastActivity] = useState<Date | null>(null);
 
   const profileCache = useRef<Map<string, Profile>>(new Map());
   const fetchingRef = useRef<string | null>(null);
   const initializingRef = useRef(false);
   const authCompletedRef = useRef(false);
+  const activityTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const warningTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const lastActivityRef = useRef<number>(Date.now());
 
   const loadCachedProfile = useCallback((userId: string): Profile | null => {
     try {
@@ -214,6 +280,160 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [user?.id, fetchProfile]);
 
+  // ============================================
+  // Session Timeout Functions (HIPAA Compliance)
+  // ============================================
+
+  /**
+   * Handle session timeout - log out user due to inactivity
+   */
+  const handleSessionTimeout = useCallback(async () => {
+    if (!user || isDemoMode) return;
+    
+    logger.warn('Session timeout due to inactivity');
+    
+    // Log the session timeout event
+    await logLogout(user.id, user.email || '', 'session_timeout');
+    await logSecurityEvent('SESSION_EXPIRED', 'Session expired due to inactivity', {
+      resourceType: 'session',
+      details: {
+        inactivityMinutes: sessionTimeout.timeoutMinutes,
+        userId: user.id,
+      },
+    });
+    
+    // Clear timeout warning
+    setTimeoutWarning(null);
+    
+    // Sign out the user
+    await supabase.auth.signOut();
+    setProfile(null);
+    setProfileReady(false);
+    profileCache.current.clear();
+  }, [user, isDemoMode, sessionTimeout.timeoutMinutes]);
+
+  /**
+   * Start the warning countdown before timeout
+   */
+  const startWarningCountdown = useCallback(() => {
+    if (!sessionTimeout.enabled || !user || isDemoMode) return;
+    
+    let secondsRemaining = sessionTimeout.warningSeconds;
+    setTimeoutWarning(secondsRemaining);
+    
+    warningTimerRef.current = setInterval(() => {
+      secondsRemaining -= 1;
+      setTimeoutWarning(secondsRemaining);
+      
+      if (secondsRemaining <= 0) {
+        if (warningTimerRef.current) {
+          clearInterval(warningTimerRef.current);
+          warningTimerRef.current = null;
+        }
+        handleSessionTimeout();
+      }
+    }, 1000);
+  }, [sessionTimeout.enabled, sessionTimeout.warningSeconds, user, isDemoMode, handleSessionTimeout]);
+
+  /**
+   * Reset the activity timer
+   */
+  const resetActivityTimer = useCallback(() => {
+    if (!sessionTimeout.enabled || !user || isDemoMode) return;
+    
+    const now = Date.now();
+    lastActivityRef.current = now;
+    setLastActivity(new Date(now));
+    
+    // Clear any existing timers
+    if (activityTimerRef.current) {
+      clearTimeout(activityTimerRef.current);
+      activityTimerRef.current = null;
+    }
+    if (warningTimerRef.current) {
+      clearInterval(warningTimerRef.current);
+      warningTimerRef.current = null;
+    }
+    
+    // Clear warning if user is active
+    setTimeoutWarning(null);
+    
+    // Calculate time until warning should start
+    const timeUntilWarning = (sessionTimeout.timeoutMinutes * 60 - sessionTimeout.warningSeconds) * 1000;
+    
+    // Set timer for warning
+    activityTimerRef.current = setTimeout(() => {
+      startWarningCountdown();
+    }, timeUntilWarning);
+  }, [sessionTimeout.enabled, sessionTimeout.timeoutMinutes, sessionTimeout.warningSeconds, user, isDemoMode, startWarningCountdown]);
+
+  /**
+   * Extend the session (dismiss warning and reset timer)
+   */
+  const extendSession = useCallback(() => {
+    logger.log('Session extended by user');
+    resetActivityTimer();
+  }, [resetActivityTimer]);
+
+  /**
+   * Update session timeout configuration
+   */
+  const updateSessionTimeoutConfig = useCallback((config: Partial<SessionTimeoutConfig>) => {
+    setSessionTimeout(prev => {
+      const newConfig = { ...prev, ...config };
+      try {
+        localStorage.setItem(SESSION_TIMEOUT_CONFIG_KEY, JSON.stringify(newConfig));
+      } catch {
+        // Ignore storage errors
+      }
+      return newConfig;
+    });
+  }, []);
+
+  // Set up activity event listeners for session timeout
+  useEffect(() => {
+    if (!sessionTimeout.enabled || !user || isDemoMode) {
+      return;
+    }
+
+    // Throttled activity handler
+    let lastEventTime = 0;
+    const throttleMs = 5000; // Only register activity every 5 seconds
+    
+    const handleActivity = () => {
+      const now = Date.now();
+      if (now - lastEventTime > throttleMs) {
+        lastEventTime = now;
+        resetActivityTimer();
+      }
+    };
+
+    // Add event listeners
+    ACTIVITY_EVENTS.forEach(event => {
+      window.addEventListener(event, handleActivity, { passive: true });
+    });
+
+    // Initialize the timer
+    resetActivityTimer();
+
+    return () => {
+      // Remove event listeners
+      ACTIVITY_EVENTS.forEach(event => {
+        window.removeEventListener(event, handleActivity);
+      });
+      
+      // Clear timers
+      if (activityTimerRef.current) {
+        clearTimeout(activityTimerRef.current);
+        activityTimerRef.current = null;
+      }
+      if (warningTimerRef.current) {
+        clearInterval(warningTimerRef.current);
+        warningTimerRef.current = null;
+      }
+    };
+  }, [sessionTimeout.enabled, user, isDemoMode, resetActivityTimer]);
+
   useEffect(() => {
     if (initializingRef.current) return;
     initializingRef.current = true;
@@ -326,16 +546,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         code: error.code,
         name: error.name,
       });
+      
+      // Log failed login attempt for security auditing
+      await logLoginFailed(email, error.message || 'Unknown error');
+      
       throw error;
     }
 
     logger.log('Sign in successful, updating state and fetching profile...');
     if (data.user && data.session) {
+      // Log successful login for security auditing
+      await logLogin(data.user.id, email, 'password');
+      
       // Immediately update user and session state - don't wait for onAuthStateChange
       setUser(data.user);
       setSession(data.session);
       // Fetch profile and wait for it to complete
       await fetchProfile(data.user.id, true); // skipCache to ensure fresh data
+      
+      // Initialize activity timer for session timeout
+      setLastActivity(new Date());
     }
   }, [fetchProfile]);
 
@@ -363,6 +593,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
+    // Log logout for security auditing before signing out
+    if (user) {
+      await logLogout(user.id, user.email || '', 'user_initiated');
+    }
+
+    // Clear session timeout timers
+    if (activityTimerRef.current) {
+      clearTimeout(activityTimerRef.current);
+      activityTimerRef.current = null;
+    }
+    if (warningTimerRef.current) {
+      clearInterval(warningTimerRef.current);
+      warningTimerRef.current = null;
+    }
+    setTimeoutWarning(null);
+    setLastActivity(null);
+
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
     setProfile(null);
@@ -375,7 +622,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       logger.error('Error clearing profile cache', error);
     }
-  }, [isDemoMode]);
+  }, [isDemoMode, user]);
 
   const updatePassword = useCallback(async (currentPassword: string, newPassword: string) => {
     if (isDemoMode) {
@@ -405,8 +652,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       throw updateError;
     }
 
+    // Log password change for security auditing
+    await logSecurityEvent('PASSWORD_CHANGE', 'User changed their password', {
+      resourceType: 'user',
+      resourceId: user.id,
+    });
+
     logger.log('Password updated successfully');
-  }, [isDemoMode, user?.email]);
+  }, [isDemoMode, user?.email, user?.id]);
 
   const value = useMemo(() => ({
     user,
@@ -415,12 +668,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     loading,
     profileReady,
     isDemoMode,
+    sessionTimeout,
+    timeoutWarning,
+    lastActivity,
     signIn,
     signUp,
     signOut,
     refreshProfile,
     updatePassword,
-  }), [user, session, profile, loading, profileReady, isDemoMode, signIn, signUp, signOut, refreshProfile, updatePassword]);
+    resetActivityTimer,
+    extendSession,
+    updateSessionTimeoutConfig,
+  }), [
+    user,
+    session,
+    profile,
+    loading,
+    profileReady,
+    isDemoMode,
+    sessionTimeout,
+    timeoutWarning,
+    lastActivity,
+    signIn,
+    signUp,
+    signOut,
+    refreshProfile,
+    updatePassword,
+    resetActivityTimer,
+    extendSession,
+    updateSessionTimeoutConfig,
+  ]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

@@ -1,6 +1,6 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from 'framer-motion';
 import {
   DndContext,
   closestCenter,
@@ -29,6 +29,10 @@ import {
   Map,
   Command,
   Cog,
+  Sparkles,
+  Clock,
+  ChevronUp,
+  ChevronDown,
 } from 'lucide-react';
 import { useShell } from './AppShell';
 import { usePinnedApps } from '@/hooks/usePinnedApps';
@@ -52,7 +56,22 @@ const iconMap: Record<string, React.ElementType> = {
   Settings,
   Map,
   Command,
+  Sparkles,
 };
+
+/**
+ * Custom hook for real-time clock display
+ */
+function useClock() {
+  const [time, setTime] = useState(new Date());
+
+  useEffect(() => {
+    const interval = setInterval(() => setTime(new Date()), 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return time;
+}
 
 interface DockItem {
   key: string;
@@ -164,18 +183,22 @@ function SortableDockItem({
 }
 
 /**
- * GalaxyDock - Mac-style floating dock with magnification effect
+ * GalaxyDock - Premium Mac-style floating command center
  * 
  * Features:
- * - Bottom-center positioning with glassmorphism
- * - Hover magnification effect
- * - Active route indicator
+ * - Bottom-center positioning with premium glassmorphism
+ * - Hover magnification effect with smooth physics
+ * - Active route indicator with glow effect
  * - Badge counts for notifications
  * - Drag-and-drop reordering
- * - Inline search bar
+ * - Inline spotlight search
  * - External project links
  * - Quick action buttons
+ * - Real-time clock display
+ * - Auto-hide functionality
+ * - Keyboard shortcuts (⌘K for command palette)
  * - Configuration modal
+ * - Accessibility support
  */
 export function GalaxyDock({ onOpenMap }: GalaxyDockProps) {
   const location = useLocation();
@@ -185,6 +208,10 @@ export function GalaxyDock({ onOpenMap }: GalaxyDockProps) {
   const { externalLinks } = useExternalLinks();
   const { quickActions } = useQuickActions();
   const [isConfigOpen, setIsConfigOpen] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
+  const [showClock, setShowClock] = useState(true);
+  const clock = useClock();
+  const dockRef = useRef<HTMLDivElement>(null);
   
   // Mouse position for magnification effect
   const mouseX = useMotionValue(Infinity);
@@ -200,6 +227,29 @@ export function GalaxyDock({ onOpenMap }: GalaxyDockProps) {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Cmd/Ctrl + K for command palette
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        openPalette();
+      }
+      // Cmd/Ctrl + / for search
+      if ((e.metaKey || e.ctrlKey) && e.key === '/') {
+        e.preventDefault();
+        // Focus search - handled by DockSearchBar
+      }
+      // Escape to minimize dock
+      if (e.key === 'Escape' && !isConfigOpen) {
+        setIsMinimized(true);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [openPalette, isConfigOpen]);
 
   // Default apps if no pinned apps loaded yet
   const defaultApps: DockItem[] = [
@@ -240,16 +290,64 @@ export function GalaxyDock({ onOpenMap }: GalaxyDockProps) {
     console.log('Action executed:', result.message);
   };
 
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
+  // Minimized dock - just a pill to restore
+  if (isMinimized) {
+    return (
+      <motion.button
+        className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50
+          px-4 py-2 rounded-full
+          bg-white/90 dark:bg-slate-800/90
+          backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50
+          shadow-lg hover:shadow-xl
+          flex items-center gap-2 text-sm font-medium
+          text-slate-600 dark:text-slate-300
+          transition-all duration-200 hover:scale-105"
+        onClick={() => setIsMinimized(false)}
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        whileHover={{ y: -2 }}
+        title="Expand Dock"
+      >
+        <ChevronUp className="w-4 h-4" />
+        <span>Show Dock</span>
+        <Sparkles className="w-4 h-4 text-primary" />
+      </motion.button>
+    );
+  }
+
   return (
     <>
       <motion.div
+        ref={dockRef}
         className="galaxy-dock"
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
+        exit={{ y: 100, opacity: 0 }}
         transition={{ delay: 0.2, type: 'spring', stiffness: 200, damping: 20 }}
+        role="toolbar"
+        aria-label="Command Dock"
       >
+        {/* Clock Display */}
+        <AnimatePresence>
+          {showClock && (
+            <motion.div
+              className="flex items-center gap-1.5 px-2 text-xs font-medium text-slate-500 dark:text-slate-400"
+              initial={{ opacity: 0, width: 0 }}
+              animate={{ opacity: 1, width: 'auto' }}
+              exit={{ opacity: 0, width: 0 }}
+            >
+              <Clock className="w-3.5 h-3.5" />
+              <span className="tabular-nums">{formatTime(clock)}</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Search Bar */}
         <DockSearchBar />
 
@@ -309,7 +407,8 @@ export function GalaxyDock({ onOpenMap }: GalaxyDockProps) {
           className="galaxy-dock-item"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
-          title="Galaxy Map"
+          title="Galaxy Map (Navigate)"
+          aria-label="Open Galaxy Map"
         >
           <Map className="w-6 h-6 text-primary" />
         </motion.button>
@@ -321,8 +420,21 @@ export function GalaxyDock({ onOpenMap }: GalaxyDockProps) {
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
           title="Command Palette (⌘K)"
+          aria-label="Open Command Palette"
         >
           <Command className="w-6 h-6 text-slate-500 dark:text-slate-400" />
+        </motion.button>
+
+        {/* Minimize Button */}
+        <motion.button
+          onClick={() => setIsMinimized(true)}
+          className="galaxy-dock-item dock-config-btn"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+          title="Minimize Dock (Esc)"
+          aria-label="Minimize Dock"
+        >
+          <ChevronDown className="w-5 h-5 text-slate-400 dark:text-slate-500" />
         </motion.button>
 
         {/* Config Button */}
@@ -332,6 +444,7 @@ export function GalaxyDock({ onOpenMap }: GalaxyDockProps) {
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
           title="Configure Dock"
+          aria-label="Configure Dock Settings"
         >
           <Cog className="w-5 h-5 text-slate-400 dark:text-slate-500" />
         </motion.button>

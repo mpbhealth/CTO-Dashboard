@@ -117,7 +117,7 @@ export function useNotes(options: UseNotesOptions) {
     if (isInDemoMode) return loadDemoNotes(dashboardRole);
 
     // Try fetching with the enhanced schema first
-    const { data, error: fetchError } = await supabase
+    let { data, error: fetchError } = await supabase
       .from('notes')
       .select('*')
       .eq('created_by', user.id)
@@ -132,9 +132,9 @@ export function useNotes(options: UseNotesOptions) {
         .select('*')
         .or(`created_by.eq.${user.id},user_id.eq.${user.id}`)
         .order('created_at', { ascending: false });
-      
+
       if (fallbackResult.error) throw fallbackResult.error;
-      
+
       // Map basic notes to enhanced format
       data = (fallbackResult.data || []).map(note => ({
         ...note,

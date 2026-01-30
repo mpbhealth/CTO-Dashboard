@@ -17,6 +17,7 @@ import {
 import { useApps } from '@/hooks/useApps';
 
 interface CommandPaletteProps {
+  isOpen: boolean;
   onClose: () => void;
 }
 
@@ -55,11 +56,14 @@ const iconMap: Record<string, React.ElementType> = {
  * - Grouped results by type
  * - Deep linking to any page
  */
-export function CommandPalette({ onClose }: CommandPaletteProps) {
+export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const { apps, isLoading } = useApps();
+
+  // Don't render if not open
+  if (!isOpen) return null;
 
   // Build command list from apps + static actions
   const commands = useMemo<CommandItem[]>(() => {

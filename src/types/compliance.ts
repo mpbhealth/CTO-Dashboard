@@ -111,9 +111,7 @@ export interface BAAFormData {
   vendor_contact_name: string;
   notes: string;
   document_url?: string;
-}
-
-/** HIPAA Evidence record */
+}/** HIPAA Evidence record */
 export interface HIPAAEvidence {
   id: string;
   path: string;

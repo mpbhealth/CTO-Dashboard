@@ -13,7 +13,7 @@ DO $$ BEGIN CREATE TYPE notification_type AS ENUM ('info', 'warning', 'alert', '
 
 -- MEMBER PROFILES TABLE
 CREATE TABLE IF NOT EXISTS member_profiles (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
@@ -52,7 +52,7 @@ CREATE INDEX IF NOT EXISTS idx_member_profiles_status ON member_profiles(members
 
 -- MEMBER DEPENDENTS
 CREATE TABLE IF NOT EXISTS member_dependents (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     member_id UUID REFERENCES member_profiles(id) ON DELETE CASCADE,
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS member_dependents (
 
 -- EMERGENCY CONTACTS
 CREATE TABLE IF NOT EXISTS emergency_contacts (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     member_id UUID REFERENCES member_profiles(id) ON DELETE CASCADE,
     name VARCHAR(200) NOT NULL,
     relationship VARCHAR(50),
@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS emergency_contacts (
 
 -- CLAIMS
 CREATE TABLE IF NOT EXISTS claims (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     member_id UUID REFERENCES member_profiles(id) ON DELETE SET NULL,
     claim_number VARCHAR(50) UNIQUE NOT NULL,
     claim_type VARCHAR(50) NOT NULL,
@@ -118,7 +118,7 @@ CREATE INDEX IF NOT EXISTS idx_claims_claim_number ON claims(claim_number);
 
 -- CLAIM DOCUMENTS
 CREATE TABLE IF NOT EXISTS claim_documents (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     claim_id UUID REFERENCES claims(id) ON DELETE CASCADE,
     document_type VARCHAR(50) NOT NULL,
     file_name VARCHAR(255) NOT NULL,
@@ -131,7 +131,7 @@ CREATE TABLE IF NOT EXISTS claim_documents (
 
 -- CLAIM NOTES
 CREATE TABLE IF NOT EXISTS claim_notes (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     claim_id UUID REFERENCES claims(id) ON DELETE CASCADE,
     note TEXT NOT NULL,
     is_internal BOOLEAN DEFAULT true,
@@ -141,7 +141,7 @@ CREATE TABLE IF NOT EXISTS claim_notes (
 
 -- SUPPORT TICKETS
 CREATE TABLE IF NOT EXISTS support_tickets (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     member_id UUID REFERENCES member_profiles(id) ON DELETE SET NULL,
     ticket_number VARCHAR(50) UNIQUE NOT NULL,
     subject VARCHAR(255) NOT NULL,
@@ -165,7 +165,7 @@ CREATE INDEX IF NOT EXISTS idx_support_tickets_priority ON support_tickets(prior
 
 -- TICKET REPLIES
 CREATE TABLE IF NOT EXISTS ticket_replies (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     ticket_id UUID REFERENCES support_tickets(id) ON DELETE CASCADE,
     message TEXT NOT NULL,
     is_internal BOOLEAN DEFAULT false,
@@ -177,7 +177,7 @@ CREATE TABLE IF NOT EXISTS ticket_replies (
 
 -- TRANSACTIONS
 CREATE TABLE IF NOT EXISTS transactions (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     member_id UUID REFERENCES member_profiles(id) ON DELETE SET NULL,
     reference_number VARCHAR(50) UNIQUE NOT NULL,
     transaction_type VARCHAR(50) NOT NULL,
@@ -201,7 +201,7 @@ CREATE INDEX IF NOT EXISTS idx_transactions_status ON transactions(status);
 
 -- BLOG ARTICLES
 CREATE TABLE IF NOT EXISTS blog_articles (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     title VARCHAR(255) NOT NULL,
     slug VARCHAR(255) UNIQUE NOT NULL,
     excerpt TEXT,
@@ -227,7 +227,7 @@ CREATE INDEX IF NOT EXISTS idx_blog_articles_slug ON blog_articles(slug);
 
 -- FAQ ITEMS
 CREATE TABLE IF NOT EXISTS faq_items (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     title VARCHAR(255) NOT NULL,
     content_html TEXT NOT NULL,
     category VARCHAR(100) NOT NULL,
@@ -242,7 +242,7 @@ CREATE INDEX IF NOT EXISTS idx_faq_items_category ON faq_items(category);
 
 -- SYSTEM NOTIFICATIONS
 CREATE TABLE IF NOT EXISTS system_notifications (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     title VARCHAR(255) NOT NULL,
     message TEXT NOT NULL,
     notification_type notification_type DEFAULT 'info',
@@ -261,7 +261,7 @@ CREATE TABLE IF NOT EXISTS system_notifications (
 
 -- SYSTEM SETTINGS
 CREATE TABLE IF NOT EXISTS system_settings (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     setting_key VARCHAR(100) UNIQUE NOT NULL,
     setting_value TEXT,
     setting_type VARCHAR(50) DEFAULT 'string',
@@ -275,7 +275,7 @@ CREATE TABLE IF NOT EXISTS system_settings (
 
 -- ADMIN ACTIONS LOG
 CREATE TABLE IF NOT EXISTS admin_actions_log (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
     action VARCHAR(100) NOT NULL,
     entity_type VARCHAR(50),

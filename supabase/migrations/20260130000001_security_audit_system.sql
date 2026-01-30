@@ -3,16 +3,13 @@
 -- SOC 2 Type II and HIPAA Compliance
 -- ============================================
 
--- Enable UUID extension if not exists
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
 -- ============================================
 -- 1. Security Audit Log Table
 -- Tamper-evident logging with checksums
 -- ============================================
 
 CREATE TABLE IF NOT EXISTS security_audit_log (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   event_type TEXT NOT NULL,
   severity TEXT NOT NULL CHECK (severity IN ('INFO', 'WARNING', 'CRITICAL')),
   actor_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
@@ -120,7 +117,7 @@ COMMENT ON TABLE security_alert_rules IS 'Configurable security alerting rules f
 -- ============================================
 
 CREATE TABLE IF NOT EXISTS access_reviews (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   review_period TEXT NOT NULL,
   status TEXT NOT NULL CHECK (status IN ('pending', 'in_progress', 'completed', 'overdue')) DEFAULT 'pending',
   created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -159,7 +156,7 @@ CREATE POLICY "access_reviews_all" ON access_reviews
 
 -- User access review details
 CREATE TABLE IF NOT EXISTS access_review_items (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   review_id UUID NOT NULL REFERENCES access_reviews(id) ON DELETE CASCADE,
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   email TEXT,
@@ -207,7 +204,7 @@ COMMENT ON TABLE access_review_items IS 'Individual user review items within an 
 -- ============================================
 
 CREATE TABLE IF NOT EXISTS change_requests (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   title TEXT NOT NULL,
   description TEXT,
   requester_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
@@ -358,25 +355,16 @@ COMMENT ON FUNCTION log_phi_table_access IS 'Automatically log access to PHI tab
 -- ============================================
 
 -- Ensure compliance_settings table exists
-CREATE TABLE IF NOT EXISTS compliance_settings (
-  key TEXT PRIMARY KEY,
-  value TEXT,
-  description TEXT,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Insert security-related settings
+-- Insert security-related settings (compliance_settings table already exists from HIPAA migration)
 INSERT INTO compliance_settings (key, value, description)
 VALUES
-  ('slack_webhook_url', NULL, 'Slack webhook URL for security alerts'),
-  ('pagerduty_routing_key', NULL, 'PagerDuty routing key for critical alerts'),
-  ('security_officer_email', NULL, 'Email address for security officer notifications'),
-  ('security_alert_webhook', NULL, 'Custom webhook URL for security alerts'),
-  ('session_timeout_minutes', '15', 'Default session timeout in minutes (HIPAA compliance)'),
-  ('session_warning_seconds', '60', 'Warning before session timeout in seconds'),
-  ('phi_encryption_enabled', 'true', 'Enable PHI field-level encryption'),
-  ('audit_log_retention_days', '2555', 'Audit log retention period in days (7 years for HIPAA)')
+  ('slack_webhook_url', '{"enabled": false, "url": ""}'::jsonb, 'Slack webhook URL for security alerts'),
+  ('pagerduty_routing_key', '{"enabled": false, "key": ""}'::jsonb, 'PagerDuty routing key for critical alerts'),
+  ('security_officer_email', '{"email": ""}'::jsonb, 'Email address for security officer notifications'),
+  ('security_alert_webhook', '{"enabled": false, "url": ""}'::jsonb, 'Custom webhook URL for security alerts'),
+  ('session_timeout_minutes', '{"value": 15}'::jsonb, 'Default session timeout in minutes (HIPAA compliance)'),
+  ('session_warning_seconds', '{"value": 60}'::jsonb, 'Warning before session timeout in seconds'),
+  ('phi_encryption_enabled', '{"value": true}'::jsonb, 'Enable PHI field-level encryption')
 ON CONFLICT (key) DO NOTHING;
 
 -- RLS for compliance_settings

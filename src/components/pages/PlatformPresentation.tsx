@@ -1305,35 +1305,39 @@ export function PlatformPresentation() {
   };
 
   return (
-    <div className={`${isFullscreen ? 'fixed inset-0 z-50' : 'h-full'} flex flex-col bg-slate-900`}>
+    <div className={`${isFullscreen ? 'fixed inset-0 z-50' : 'h-full'} flex flex-col bg-slate-900 rounded-2xl md:rounded-3xl overflow-hidden`}>
       {/* Header Controls */}
       <motion.div
-        className="flex items-center justify-between px-6 py-3 bg-slate-800 border-b border-slate-700"
+        className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-3 sm:px-4 md:px-6 py-2 sm:py-3 bg-slate-800/90 backdrop-blur-sm border-b border-slate-700/50 gap-2 sm:gap-0 rounded-t-2xl md:rounded-t-3xl"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4 w-full sm:w-auto justify-between sm:justify-start">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-              <Layers className="w-5 h-5 text-white" />
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
+              <Layers className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-white font-bold text-lg">MPB Platform Presentation</h1>
-              <p className="text-slate-400 text-xs">Board Executive Overview</p>
+              <h1 className="text-white font-bold text-sm sm:text-base md:text-lg">MPB Platform Presentation</h1>
+              <p className="text-slate-400 text-[10px] sm:text-xs hidden xs:block">Board Executive Overview</p>
             </div>
+          </div>
+          {/* Mobile slide counter */}
+          <div className="sm:hidden text-slate-400 text-xs font-medium bg-slate-700/50 px-2 py-1 rounded-lg">
+            {currentSlide + 1} / {slides.length}
           </div>
         </div>
 
-        {/* Slide indicators */}
-        <div className="flex items-center gap-2">
+        {/* Slide indicators - scrollable on mobile */}
+        <div className="flex items-center gap-1.5 sm:gap-2 w-full sm:w-auto overflow-x-auto scrollbar-hide pb-1 sm:pb-0">
           {slides.map((slide, idx) => (
             <button
               key={slide.id}
               onClick={() => setCurrentSlide(idx)}
-              className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
+              className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl text-[10px] sm:text-xs font-medium transition-all whitespace-nowrap flex-shrink-0 ${
                 currentSlide === idx
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                  ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/25'
+                  : 'bg-slate-700/70 text-slate-300 hover:bg-slate-600/80'
               }`}
             >
               {slide.title}
@@ -1342,78 +1346,82 @@ export function PlatformPresentation() {
         </div>
 
         {/* Controls */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 sm:gap-2 w-full sm:w-auto justify-center sm:justify-end">
           <button
             onClick={() => setCurrentSlide((prev) => Math.max(prev - 1, 0))}
             disabled={currentSlide === 0}
-            className="p-2 rounded-lg bg-slate-700 text-white hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="p-1.5 sm:p-2 rounded-xl bg-slate-700/70 text-white hover:bg-slate-600/80 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            title="Previous Slide"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
 
           <button
             onClick={() => setIsPlaying(!isPlaying)}
-            className={`p-2 rounded-lg transition-all ${
-              isPlaying ? 'bg-amber-500 text-white' : 'bg-slate-700 text-white hover:bg-slate-600'
+            className={`p-1.5 sm:p-2 rounded-xl transition-all ${
+              isPlaying ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg shadow-amber-500/25' : 'bg-slate-700/70 text-white hover:bg-slate-600/80'
             }`}
+            title={isPlaying ? 'Pause Slideshow' : 'Play Slideshow'}
           >
-            {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+            {isPlaying ? <Pause className="w-4 h-4 sm:w-5 sm:h-5" /> : <Play className="w-4 h-4 sm:w-5 sm:h-5" />}
           </button>
 
           <button
             onClick={() => setCurrentSlide((prev) => Math.min(prev + 1, slides.length - 1))}
             disabled={currentSlide === slides.length - 1}
-            className="p-2 rounded-lg bg-slate-700 text-white hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="p-1.5 sm:p-2 rounded-xl bg-slate-700/70 text-white hover:bg-slate-600/80 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            title="Next Slide"
           >
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
 
-          <div className="w-px h-6 bg-slate-600 mx-2" />
+          <div className="hidden sm:block w-px h-6 bg-slate-600/50 mx-1 sm:mx-2" />
 
           {/* Edit Mode Toggle */}
           <button
             onClick={toggleEditMode}
-            className={`p-2 rounded-lg transition-all flex items-center gap-2 ${
+            className={`p-1.5 sm:p-2 rounded-xl transition-all flex items-center gap-1 sm:gap-2 ${
               isEditMode
-                ? 'bg-blue-500 text-white'
-                : 'bg-slate-700 text-white hover:bg-slate-600'
+                ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/25'
+                : 'bg-slate-700/70 text-white hover:bg-slate-600/80'
             }`}
             title="Toggle Edit Mode (E)"
           >
-            <Pencil className="w-5 h-5" />
-            <span className="text-xs font-medium">{isEditMode ? 'Done' : 'Edit'}</span>
+            <Pencil className="w-4 h-4 sm:w-5 sm:h-5" />
+            <span className="text-[10px] sm:text-xs font-medium hidden xs:inline">{isEditMode ? 'Done' : 'Edit'}</span>
           </button>
 
-          <div className="w-px h-6 bg-slate-600 mx-2" />
+          <div className="hidden sm:block w-px h-6 bg-slate-600/50 mx-1 sm:mx-2" />
 
           <button
             onClick={toggleFullscreen}
-            className="p-2 rounded-lg bg-slate-700 text-white hover:bg-slate-600 transition-all"
+            className="p-1.5 sm:p-2 rounded-xl bg-slate-700/70 text-white hover:bg-slate-600/80 transition-all hidden sm:flex"
+            title="Toggle Fullscreen (F)"
           >
-            <Maximize2 className="w-5 h-5" />
+            <Maximize2 className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
 
-          <div className="ml-4 text-slate-400 text-sm">
+          <div className="hidden sm:block ml-2 sm:ml-4 text-slate-400 text-xs sm:text-sm font-medium">
             {currentSlide + 1} / {slides.length}
           </div>
         </div>
       </motion.div>
 
       {/* Slide Content */}
-      <div className={`flex-1 relative overflow-hidden ${isEditMode ? 'mr-80' : ''}`}>
+      <div className={`flex-1 relative overflow-hidden ${isEditMode ? 'md:mr-80' : ''}`}>
         <AnimatePresence mode="wait">
           {renderCurrentSlide()}
         </AnimatePresence>
       </div>
 
       {/* Footer */}
-      <div className="px-6 py-2 bg-slate-800 border-t border-slate-700 flex items-center justify-between">
-        <p className="text-slate-500 text-xs">
-          Press <kbd className="px-1.5 py-0.5 bg-slate-700 rounded text-slate-300">←</kbd> <kbd className="px-1.5 py-0.5 bg-slate-700 rounded text-slate-300">→</kbd> to navigate • <kbd className="px-1.5 py-0.5 bg-slate-700 rounded text-slate-300">F</kbd> for fullscreen • <kbd className="px-1.5 py-0.5 bg-slate-700 rounded text-slate-300">E</kbd> for edit mode
+      <div className="px-3 sm:px-4 md:px-6 py-2 bg-slate-800/90 backdrop-blur-sm border-t border-slate-700/50 flex flex-col sm:flex-row items-center justify-between gap-1 sm:gap-0 rounded-b-2xl md:rounded-b-3xl">
+        <p className="text-slate-500 text-[10px] sm:text-xs text-center sm:text-left hidden md:block">
+          Press <kbd className="px-1 sm:px-1.5 py-0.5 bg-slate-700/70 rounded-lg text-slate-300">←</kbd> <kbd className="px-1 sm:px-1.5 py-0.5 bg-slate-700/70 rounded-lg text-slate-300">→</kbd> to navigate • <kbd className="px-1 sm:px-1.5 py-0.5 bg-slate-700/70 rounded-lg text-slate-300">F</kbd> for fullscreen • <kbd className="px-1 sm:px-1.5 py-0.5 bg-slate-700/70 rounded-lg text-slate-300">E</kbd> for edit mode
         </p>
-        <p className="text-slate-500 text-xs">
+        <p className="text-slate-500 text-[10px] sm:text-xs text-center sm:text-right">
           MPB Health Technology Team • {new Date().getFullYear()}
-          {hasChanges && <span className="ml-2 text-amber-400">(Unsaved changes)</span>}
+          {hasChanges && <span className="ml-2 text-amber-400 font-medium">(Unsaved changes)</span>}
         </p>
       </div>
 

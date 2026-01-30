@@ -42,6 +42,7 @@ import { DockSearchBar } from './DockSearchBar';
 import { ExternalLinkGroup } from './ExternalLinkItem';
 import { QuickActionGroup } from './QuickActionItem';
 import { DockConfigModal } from './DockConfigModal';
+import { DockDashboardSwitcher } from './DockDashboardSwitcher';
 
 /**
  * Icon mapping for dock items
@@ -350,6 +351,9 @@ export function GalaxyDock({ onOpenMap }: GalaxyDockProps) {
 
         {/* Search Bar */}
         <DockSearchBar />
+
+        {/* Dashboard Switcher */}
+        <DockDashboardSwitcher mouseX={mouseX} />
 
         {/* Divider */}
         <div className="dock-divider" />

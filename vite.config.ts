@@ -20,7 +20,15 @@ export default defineConfig({
   },
   optimizeDeps: {
     exclude: ['lucide-react'],
-    include: ['@supabase/supabase-js', 'react-smooth', 'recharts'],
+    include: [
+      'react',
+      'react-dom',
+      'react-smooth',
+      'recharts',
+      '@supabase/supabase-js',
+    ],
+    // Force re-bundle dependencies to fix React resolution
+    force: true,
   },
   build: {
     outDir: 'dist',

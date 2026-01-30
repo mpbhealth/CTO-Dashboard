@@ -667,10 +667,11 @@ function DataHubSlide({
             {config.platforms.map((platform, idx) => {
               const centerX = '50%';
               const centerY = '50%';
-              const radius = 340;
+              const radius = 220;
               const angleRad = (platform.angle * Math.PI) / 180;
-              const endX = 50 + (radius / 4.2) * Math.cos(angleRad);
-              const endY = 50 + (radius / 4.2) * Math.sin(angleRad);
+              // Scale to percentage - aim for endpoints at about 35% from center (within SVG bounds)
+              const endX = 50 + 35 * Math.cos(angleRad);
+              const endY = 50 + 35 * Math.sin(angleRad);
 
               return (
                 <motion.line
@@ -692,19 +693,19 @@ function DataHubSlide({
 
           {/* Orbital Rings */}
           <motion.div
-            className="absolute w-[240px] h-[240px] border border-blue-500/30 rounded-full z-0"
+            className="absolute w-[200px] h-[200px] border border-blue-500/30 rounded-full z-0"
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           />
           <motion.div
-            className="absolute w-[480px] h-[480px] border border-cyan-500/20 rounded-full z-0"
+            className="absolute w-[380px] h-[380px] border border-cyan-500/20 rounded-full z-0"
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1, rotate: 360 }}
             transition={{ duration: 0.8, delay: 0.3, rotate: { duration: 60, repeat: Infinity, ease: 'linear' } }}
           />
           <motion.div
-            className="absolute w-[680px] h-[680px] border border-purple-500/15 rounded-full z-0"
+            className="absolute w-[520px] h-[520px] border border-purple-500/15 rounded-full z-0"
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1, rotate: -360 }}
             transition={{ duration: 0.8, delay: 0.4, rotate: { duration: 90, repeat: Infinity, ease: 'linear' } }}
@@ -769,7 +770,7 @@ function DataHubSlide({
 
           {/* Platform Nodes */}
           {config.platforms.map((platform, idx) => {
-            const radius = 320;
+            const radius = 220;
             const angleRad = (platform.angle * Math.PI) / 180;
             const x = radius * Math.cos(angleRad);
             const y = radius * Math.sin(angleRad);
@@ -818,8 +819,8 @@ function DataHubSlide({
           {/* Animated data packets flowing to center */}
           {[...Array(8)].map((_, i) => {
             const angle = (i * 45 * Math.PI) / 180;
-            const startRadius = 340;
-            const endRadius = 100;
+            const startRadius = 260;
+            const endRadius = 80;
 
             return (
               <motion.div

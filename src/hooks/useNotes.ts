@@ -117,12 +117,15 @@ export function useNotes(options: UseNotesOptions) {
     if (isInDemoMode) return loadDemoNotes(dashboardRole);
 
     // Try fetching with the enhanced schema first
-    let { data, error: fetchError } = await supabase
+    const initialResult = await supabase
       .from('notes')
       .select('*')
       .eq('created_by', user.id)
       .eq('owner_role', dashboardRole)
       .order('created_at', { ascending: false });
+
+    let data = initialResult.data;
+    const fetchError = initialResult.error;
 
     // If owner_role column doesn't exist, fall back to basic query
     if (fetchError && (fetchError.message.includes('owner_role') || fetchError.code === '42703')) {

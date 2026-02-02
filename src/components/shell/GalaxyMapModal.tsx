@@ -94,9 +94,6 @@ export function GalaxyMapModal({ isOpen, onClose }: GalaxyMapModalProps) {
   const { apps, isLoading } = useApps();
   const { pinnedApps, pinApp, unpinApp } = usePinnedApps();
 
-  // Don't render if not open
-  if (!isOpen) return null;
-
   // Get unique categories
   const categories = useMemo(() => {
     const cats = new Set(apps.map((app) => app.category));
@@ -131,6 +128,9 @@ export function GalaxyMapModal({ isOpen, onClose }: GalaxyMapModalProps) {
   const isPinned = (appKey: string) => {
     return pinnedApps.some((p) => p.key === appKey);
   };
+
+  // Don't render if not open (must be after all hooks)
+  if (!isOpen) return null;
 
   // Handle app navigation
   const handleAppClick = (app: typeof apps[0]) => {

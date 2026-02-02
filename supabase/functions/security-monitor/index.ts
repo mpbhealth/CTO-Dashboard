@@ -286,14 +286,12 @@ async function checkAlertRules(
     const since = new Date(Date.now() - timeWindow * 60 * 1000).toISOString();
 
     // Query events matching this rule
-    let query = supabase
+    const { data: events, error } = await supabase
       .from('security_audit_log')
       .select('*')
       .in('event_type', rule.event_types)
       .gte('created_at', since)
       .order('created_at', { ascending: false });
-
-    const { data: events, error } = await query;
 
     if (error) {
       console.error(`[Security Monitor] Error checking rule ${rule.id}:`, error);

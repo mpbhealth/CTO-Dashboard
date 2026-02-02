@@ -62,9 +62,6 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const { apps, isLoading } = useApps();
 
-  // Don't render if not open
-  if (!isOpen) return null;
-
   // Build command list from apps + static actions
   const commands = useMemo<CommandItem[]>(() => {
     const appCommands: CommandItem[] = apps.map((app) => ({
@@ -171,6 +168,9 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
     },
     [filteredCommands, selectedIndex, executeCommand, onClose]
   );
+
+  // Don't render if not open (must be after all hooks)
+  if (!isOpen) return null;
 
   return (
     <AnimatePresence>

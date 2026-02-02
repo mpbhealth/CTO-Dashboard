@@ -79,7 +79,7 @@ async function shouldTriggerAlert(
   supabase: ReturnType<typeof createClient>,
   eventType: SecurityEventType,
   severity: SecuritySeverity,
-  actorId: string | undefined
+  _actorId: string | undefined
 ): Promise<{ trigger: boolean; reason?: string }> {
   // Always alert on critical events
   if (severity === 'CRITICAL') {

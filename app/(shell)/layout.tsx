@@ -4,6 +4,8 @@ import { Suspense } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { AppShell } from '@/components/shell/AppShell';
+import { SessionTimeoutWarning } from '@/components/security/SessionTimeoutWarning';
+import { MFARequiredGuard } from '@/components/security/MFARequiredGuard';
 
 /**
  * QueryClient instance with optimized settings for CommandOS
@@ -66,7 +68,10 @@ export default function ShellLayout({
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <Suspense fallback={<ShellLoading />}>
-          <AppShell>{children}</AppShell>
+          <MFARequiredGuard>
+            <AppShell>{children}</AppShell>
+          </MFARequiredGuard>
+          <SessionTimeoutWarning />
         </Suspense>
       </AuthProvider>
     </QueryClientProvider>

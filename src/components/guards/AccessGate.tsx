@@ -1,57 +1,105 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, Lock, CheckCircle, XCircle, Fingerprint, ShieldCheck } from 'lucide-react';
-
-const ACCESS_PIN = '087708';
-const STORAGE_KEY = 'mpb_access_verified';
+import { Shield, Lock, CheckCircle, XCircle, Fingerprint, ShieldCheck, AlertTriangle } from 'lucide-react';
+import {
+  validateAccessPin,
+  isAccessVerified,
+  setAccessVerified,
+  isLockedOut
+} from '@/lib/security';
 
 interface AccessGateProps {
   children: React.ReactNode;
 }
 
 export function AccessGate({ children }: AccessGateProps) {
-  const [isVerified, setIsVerified] = useState<boolean | null>(null);
+  const [verified, setVerified] = useState<boolean | null>(null);
   const [pin, setPin] = useState<string[]>(['', '', '', '', '', '']);
   const [isShaking, setIsShaking] = useState(false);
   const [showError, setShowError] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-  const [attemptCount, setAttemptCount] = useState(0);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [lockedOut, setLockedOut] = useState(false);
+  const [lockoutRemaining, setLockoutRemaining] = useState(0);
+  const [isValidating, setIsValidating] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   // Check if already verified on mount
   useEffect(() => {
-    const verified = sessionStorage.getItem(STORAGE_KEY);
-    setIsVerified(verified === 'true');
+    setVerified(isAccessVerified());
+
+    // Check lockout status
+    const lockout = isLockedOut();
+    if (lockout.locked) {
+      setLockedOut(true);
+      setLockoutRemaining(lockout.remainingMs || 0);
+    }
   }, []);
+
+  // Countdown timer for lockout
+  useEffect(() => {
+    if (!lockedOut || lockoutRemaining <= 0) return;
+
+    const interval = setInterval(() => {
+      setLockoutRemaining(prev => {
+        if (prev <= 1000) {
+          setLockedOut(false);
+          return 0;
+        }
+        return prev - 1000;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [lockedOut, lockoutRemaining]);
 
   const handleSuccess = useCallback(() => {
     setShowSuccess(true);
     setTimeout(() => {
-      sessionStorage.setItem(STORAGE_KEY, 'true');
-      setIsVerified(true);
+      setAccessVerified(true);
+      setVerified(true);
     }, 1000);
   }, []);
 
-  const handleError = useCallback(() => {
+  const handleError = useCallback((message: string = 'Invalid access code. Please try again.') => {
     setIsShaking(true);
     setShowError(true);
-    setAttemptCount(prev => prev + 1);
-    
+    setErrorMessage(message);
+
     setTimeout(() => {
       setIsShaking(false);
       setShowError(false);
+      setErrorMessage('');
       setPin(['', '', '', '', '', '']);
       inputRefs.current[0]?.focus();
     }, 800);
   }, []);
 
-  const verifyPin = useCallback((enteredPin: string) => {
-    if (enteredPin === ACCESS_PIN) {
-      handleSuccess();
-    } else {
-      handleError();
+  const verifyPin = useCallback(async (enteredPin: string) => {
+    if (isValidating || lockedOut) return;
+
+    setIsValidating(true);
+    try {
+      const result = await validateAccessPin(enteredPin);
+
+      if (result.valid) {
+        handleSuccess();
+      } else {
+        // Check if we're now locked out
+        if (result.locked) {
+          setLockedOut(true);
+          setLockoutRemaining(result.remainingMs || 0);
+          handleError(`Too many attempts. Locked for ${Math.ceil((result.remainingMs || 0) / 60000)} minutes.`);
+        } else {
+          handleError(result.error || 'Invalid access code. Please try again.');
+        }
+      }
+    } catch {
+      handleError('Verification failed. Please try again.');
+    } finally {
+      setIsValidating(false);
     }
-  }, [handleSuccess, handleError]);
+  }, [handleSuccess, handleError, isValidating, lockedOut]);
 
   const handleChange = (index: number, value: string) => {
     // Only allow digits
@@ -115,7 +163,7 @@ export function AccessGate({ children }: AccessGateProps) {
   };
 
   // Show loading state while checking session storage
-  if (isVerified === null) {
+  if (verified === null) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-black via-slate-900 to-slate-800 flex items-center justify-center">
         <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-cyan-500"></div>
@@ -124,9 +172,16 @@ export function AccessGate({ children }: AccessGateProps) {
   }
 
   // If verified, render children
-  if (isVerified) {
+  if (verified) {
     return <>{children}</>;
   }
+
+  // Format lockout time remaining
+  const formatLockoutTime = (ms: number) => {
+    const minutes = Math.floor(ms / 60000);
+    const seconds = Math.floor((ms % 60000) / 1000);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
 
   // Render PIN gate
   return (
@@ -211,18 +266,22 @@ export function AccessGate({ children }: AccessGateProps) {
                     value={digit}
                     onChange={(e) => handleChange(index, e.target.value)}
                     onKeyDown={(e) => handleKeyDown(index, e)}
+                    disabled={lockedOut || isValidating}
                     className={`
                       w-12 h-14 text-center text-2xl font-bold rounded-xl
                       bg-slate-800/50 border-2 transition-all duration-200
                       text-white placeholder-slate-500
                       focus:outline-none focus:ring-2 focus:ring-cyan-500/50
-                      ${showError 
-                        ? 'border-red-500 bg-red-500/10' 
-                        : showSuccess 
+                      disabled:opacity-50 disabled:cursor-not-allowed
+                      ${showError
+                        ? 'border-red-500 bg-red-500/10'
+                        : showSuccess
                           ? 'border-emerald-500 bg-emerald-500/10'
-                          : digit 
-                            ? 'border-cyan-500/50' 
-                            : 'border-slate-600/50 hover:border-slate-500'
+                          : lockedOut
+                            ? 'border-amber-500/50 bg-amber-500/5'
+                            : digit
+                              ? 'border-cyan-500/50'
+                              : 'border-slate-600/50 hover:border-slate-500'
                       }
                     `}
                     autoFocus={index === 0}
@@ -234,7 +293,24 @@ export function AccessGate({ children }: AccessGateProps) {
 
           {/* Status Messages */}
           <AnimatePresence mode="wait">
-            {showError && (
+            {lockedOut && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="mb-6 p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl flex items-center space-x-3"
+              >
+                <AlertTriangle className="w-5 h-5 text-amber-400 flex-shrink-0" />
+                <div>
+                  <p className="text-sm font-medium text-amber-400">Account Locked</p>
+                  <p className="text-xs text-amber-400/70">
+                    Too many attempts. Try again in {formatLockoutTime(lockoutRemaining)}
+                  </p>
+                </div>
+              </motion.div>
+            )}
+
+            {showError && !lockedOut && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -244,7 +320,7 @@ export function AccessGate({ children }: AccessGateProps) {
                 <XCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
                 <div>
                   <p className="text-sm font-medium text-red-400">Access Denied</p>
-                  <p className="text-xs text-red-400/70">Invalid access code. Please try again.</p>
+                  <p className="text-xs text-red-400/70">{errorMessage}</p>
                 </div>
               </motion.div>
             )}
@@ -263,18 +339,18 @@ export function AccessGate({ children }: AccessGateProps) {
                 </div>
               </motion.div>
             )}
-          </AnimatePresence>
 
-          {/* Attempt Counter (subtle warning) */}
-          {attemptCount >= 3 && !showSuccess && (
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-center text-xs text-amber-400/80 mb-4"
-            >
-              Multiple failed attempts detected
-            </motion.p>
-          )}
+            {isValidating && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="mb-6 flex justify-center"
+              >
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-cyan-500"></div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Security Info */}
           <motion.div

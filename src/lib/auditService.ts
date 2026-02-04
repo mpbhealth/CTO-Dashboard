@@ -125,8 +125,8 @@ async function generateChecksum(data: Record<string, unknown>): Promise<string> 
  */
 export async function verifyAuditEntryIntegrity(entry: SecurityAuditEntry): Promise<boolean> {
   if (!entry.checksum) return false;
-  
-  const { checksum, id, created_at, ...dataToVerify } = entry;
+
+  const { checksum, id: _id, created_at: _created_at, ...dataToVerify } = entry;
   const calculatedChecksum = await generateChecksum(dataToVerify);
   return calculatedChecksum === checksum;
 }

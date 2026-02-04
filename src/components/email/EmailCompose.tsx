@@ -1,12 +1,9 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { RichTextEditor } from './RichTextEditor';
 import {
   X,
   Send,
   Paperclip,
-  Image as ImageIcon,
-  Trash2,
-  ChevronDown,
   Minus,
   Maximize2,
   Minimize2,
@@ -48,7 +45,7 @@ export function EmailCompose({
   const [selectedSignatureId, setSelectedSignatureId] = useState<string | undefined>(
     defaultSignature?.id
   );
-  const [importance, setImportance] = useState<'low' | 'normal' | 'high'>(
+  const [importance] = useState<'low' | 'normal' | 'high'>(
     (initialData?.importance as 'low' | 'normal' | 'high') || 'normal'
   );
 

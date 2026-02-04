@@ -5,7 +5,7 @@
  * Displays real-time security events, threat level, alerts, and compliance score.
  */
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   Shield,
   AlertTriangle,

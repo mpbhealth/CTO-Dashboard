@@ -1,9 +1,7 @@
 import { useState } from 'react';
 import {
-  Star,
   Paperclip,
   Circle,
-  CheckCircle,
   Loader2,
   Mail,
   Filter,

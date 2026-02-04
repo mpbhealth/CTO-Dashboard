@@ -11,7 +11,7 @@
  * - Audit logging integration
  */
 
-import { encrypt, decrypt, encryptToString, decryptFromString, type EncryptedData } from '../utils/encryption';
+import { encryptToString, decryptFromString, type EncryptedData } from '../utils/encryption';
 
 // ============================================
 // Configuration

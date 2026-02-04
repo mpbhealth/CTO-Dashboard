@@ -12,8 +12,6 @@ import {
   Download,
   ExternalLink,
   Loader2,
-  Star,
-  Flag,
 } from 'lucide-react';
 import type { EmailMessage, EmailFolder } from '@/types/email';
 

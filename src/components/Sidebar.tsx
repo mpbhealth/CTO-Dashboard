@@ -110,9 +110,10 @@ function SidebarComponent({
       }
     };
 
-    sidebarRef.current?.addEventListener('sidebar-escape', handleEscape);
+    const currentRef = sidebarRef.current;
+    currentRef?.addEventListener('sidebar-escape', handleEscape);
     return () => {
-      sidebarRef.current?.removeEventListener('sidebar-escape', handleEscape);
+      currentRef?.removeEventListener('sidebar-escape', handleEscape);
     };
   }, [isMobile, isExpanded, toggle, sidebarRef]);
 

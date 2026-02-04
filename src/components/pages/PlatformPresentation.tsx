@@ -667,7 +667,6 @@ function DataHubSlide({
             {config.platforms.map((platform, idx) => {
               const centerX = '50%';
               const centerY = '50%';
-              const radius = 220;
               const angleRad = (platform.angle * Math.PI) / 180;
               // Scale to percentage - aim for endpoints at about 35% from center (within SVG bounds)
               const endX = 50 + 35 * Math.cos(angleRad);

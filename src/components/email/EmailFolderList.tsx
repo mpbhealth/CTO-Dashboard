@@ -6,7 +6,6 @@ import {
   AlertOctagon,
   Archive,
   Folder,
-  ChevronRight,
 } from 'lucide-react';
 import type { EmailFolder } from '@/types/email';
 

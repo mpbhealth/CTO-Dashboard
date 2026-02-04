@@ -1,6 +1,5 @@
 import { useCallback, useRef, useState } from 'react';
 import {
-  Paperclip,
   Upload,
   X,
   File,
@@ -78,7 +77,7 @@ export function AttachmentUploader({
       setUploadingFiles((prev) => [...prev, file.name]);
       try {
         await onUpload(file);
-      } catch (error) {
+      } catch (_error) {
         newErrors.push(`Failed to upload "${file.name}"`);
       } finally {
         setUploadingFiles((prev) => prev.filter((f) => f !== file.name));

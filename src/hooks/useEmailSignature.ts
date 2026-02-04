@@ -129,7 +129,7 @@ export function useEmailSignature(options: UseEmailSignatureOptions = {}) {
   });
 
   // Upload signature image (logo or inline)
-  const uploadImage = async (file: File, type: 'logo' | 'inline' = 'logo'): Promise<string> => {
+  const uploadImage = async (file: File, _type: 'logo' | 'inline' = 'logo'): Promise<string> => {
     if (!userId) throw new Error('User ID is required');
 
     const ext = file.name.split('.').pop()?.toLowerCase() || 'png';

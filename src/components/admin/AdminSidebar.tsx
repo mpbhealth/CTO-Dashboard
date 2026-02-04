@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo, memo } from 'react';
+import { useEffect, useCallback, useMemo, memo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -313,9 +313,10 @@ function AdminSidebarComponent({ isExpanded, onToggle }: AdminSidebarProps) {
       }
     };
 
-    sidebarRef.current?.addEventListener('sidebar-escape', handleEscape);
+    const currentRef = sidebarRef.current;
+    currentRef?.addEventListener('sidebar-escape', handleEscape);
     return () => {
-      sidebarRef.current?.removeEventListener('sidebar-escape', handleEscape);
+      currentRef?.removeEventListener('sidebar-escape', handleEscape);
     };
   }, [isMobile, isExpanded, onToggle, sidebarRef]);
 

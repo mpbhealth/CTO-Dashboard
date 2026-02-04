@@ -19,8 +19,6 @@ import {
   FileText,
   User,
   Calendar,
-  MessageSquare,
-  Shield,
   Rocket,
   Undo2,
 } from 'lucide-react';

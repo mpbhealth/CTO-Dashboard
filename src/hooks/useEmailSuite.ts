@@ -7,8 +7,6 @@ import type {
   EmailMessage,
   EmailFolder,
   ComposeEmail,
-  ListMessagesOptions,
-  EmailSearchOptions,
   EmailAttachment,
 } from '@/types/email';
 
@@ -220,7 +218,7 @@ export function useEmailSuite(options: UseEmailSuiteOptions = {}) {
   });
 
   // Reply mutation
-  const replyMutation = useMutation({
+  const _replyMutation = useMutation({
     mutationFn: async ({
       messageId,
       bodyHtml,

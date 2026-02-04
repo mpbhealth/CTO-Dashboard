@@ -5,7 +5,6 @@ import {
   Edit2,
   Trash2,
   Star,
-  StarOff,
   Copy,
   MoreVertical,
 } from 'lucide-react';

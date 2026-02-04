@@ -8,7 +8,6 @@ import {
   AlertCircle,
   Check,
   Loader2,
-  RefreshCw,
 } from 'lucide-react';
 import type { EmailAccount, EmailProvider } from '@/types/email';
 

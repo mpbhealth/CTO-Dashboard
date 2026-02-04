@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useEmailSuite } from '@/hooks/useEmailSuite';
 import { EmailAccountConnect } from './EmailAccountConnect';
 import { EmailFolderList } from './EmailFolderList';
@@ -11,7 +11,6 @@ import {
   Search,
   RefreshCw,
   PenSquare,
-  Settings,
   X,
   Loader2,
   Menu,
@@ -30,7 +29,7 @@ export function EmailSuite({ userId, className = '' }: EmailSuiteProps) {
   const {
     // Accounts
     accounts,
-    activeAccount,
+    // activeAccount is available but not currently used in UI
     selectedAccountId,
     setSelectedAccountId,
     isLoadingAccounts,

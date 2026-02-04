@@ -231,7 +231,7 @@ export function GalaxyDock({ onOpenMap }: GalaxyDockProps) {
   const [isConfigOpen, setIsConfigOpen] = useState(false);
   const isMobile = useIsMobile();
   const [isMinimized, setIsMinimized] = useState(isMobile); // Start minimized on mobile
-  const [showClock, setShowClock] = useState(true);
+  const [showClock] = useState(true);
   const clock = useClock();
   const dockRef = useRef<HTMLDivElement>(null);
 
@@ -240,7 +240,7 @@ export function GalaxyDock({ onOpenMap }: GalaxyDockProps) {
     if (isMobile && !isMinimized) {
       setIsMinimized(true);
     }
-  }, [isMobile]);
+  }, [isMobile, isMinimized]);
   
   // Mouse position for magnification effect
   const mouseX = useMotionValue(Infinity);

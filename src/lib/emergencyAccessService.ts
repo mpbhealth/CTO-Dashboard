@@ -69,7 +69,7 @@ export async function requestEmergencyAccess(
   resourceId?: string,
   durationMinutes: number = 30
 ): Promise<{ success: boolean; accessRequest?: EmergencyAccessRequest; error?: string }> {
-  if (!isSupabaseConfigured()) {
+  if (!isSupabaseConfigured) {
     return { success: false, error: 'Supabase not configured' };
   }
 
@@ -164,7 +164,7 @@ export async function checkEmergencyAccessActive(userId: string): Promise<{
   active: boolean;
   request?: EmergencyAccessRequest;
 }> {
-  if (!isSupabaseConfigured()) {
+  if (!isSupabaseConfigured) {
     return { active: false };
   }
 
@@ -196,7 +196,7 @@ export async function revokeEmergencyAccess(
   accessId: string,
   revokedBy: string
 ): Promise<{ success: boolean; error?: string }> {
-  if (!isSupabaseConfigured()) {
+  if (!isSupabaseConfigured) {
     return { success: false, error: 'Supabase not configured' };
   }
 
@@ -230,7 +230,7 @@ export async function revokeEmergencyAccess(
  * Get emergency access history for a user
  */
 export async function getEmergencyAccessHistory(userId: string): Promise<EmergencyAccessRequest[]> {
-  if (!isSupabaseConfigured()) {
+  if (!isSupabaseConfigured) {
     return [];
   }
 
@@ -253,7 +253,7 @@ export async function getEmergencyAccessHistory(userId: string): Promise<Emergen
  * Get all active emergency access requests (for security dashboard)
  */
 export async function getActiveEmergencyAccess(): Promise<EmergencyAccessRequest[]> {
-  if (!isSupabaseConfigured()) {
+  if (!isSupabaseConfigured) {
     return [];
   }
 
@@ -346,7 +346,7 @@ async function notifySecurityOfficer(accessRequest: EmergencyAccessRequest): Pro
  * This should be called periodically (e.g., by a cron job)
  */
 export async function expireStaleEmergencyAccess(): Promise<number> {
-  if (!isSupabaseConfigured()) {
+  if (!isSupabaseConfigured) {
     return 0;
   }
 

@@ -170,7 +170,7 @@ export async function logSecurityEvent(
     actorEmail?: string;
   } = {}
 ): Promise<{ success: boolean; error?: string }> {
-  if (!isSupabaseConfigured()) {
+  if (!isSupabaseConfigured) {
     console.warn('[Audit] Supabase not configured, audit log not persisted');
     return { success: false, error: 'Supabase not configured' };
   }
@@ -425,7 +425,7 @@ export async function queryAuditLogs(options: AuditLogQueryOptions = {}): Promis
   count: number;
   error?: string;
 }> {
-  if (!isSupabaseConfigured()) {
+  if (!isSupabaseConfigured) {
     return { data: [], count: 0, error: 'Supabase not configured' };
   }
 
@@ -529,7 +529,7 @@ export async function getAuditStatistics(days: number = 30): Promise<{
   phiAccesses: number;
   dataExports: number;
 }> {
-  if (!isSupabaseConfigured()) {
+  if (!isSupabaseConfigured) {
     return {
       totalEvents: 0,
       criticalEvents: 0,

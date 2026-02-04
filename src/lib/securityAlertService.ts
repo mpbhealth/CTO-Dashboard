@@ -146,7 +146,7 @@ export const DEFAULT_ALERT_RULES: AlertRule[] = [
  * Get the current security monitor status
  */
 export async function getSecurityStatus(): Promise<SecurityMonitorStatus | null> {
-  if (!isSupabaseConfigured()) {
+  if (!isSupabaseConfigured) {
     return null;
   }
 
@@ -167,7 +167,7 @@ export async function getSecurityStatus(): Promise<SecurityMonitorStatus | null>
  * Trigger a manual security check
  */
 export async function runSecurityCheck(rules?: AlertRule[]): Promise<SecurityCheckResult | null> {
-  if (!isSupabaseConfigured()) {
+  if (!isSupabaseConfigured) {
     return null;
   }
 
@@ -192,7 +192,7 @@ export async function runSecurityCheck(rules?: AlertRule[]): Promise<SecurityChe
  * Get all alert rules from database
  */
 export async function getAlertRules(): Promise<AlertRule[]> {
-  if (!isSupabaseConfigured()) {
+  if (!isSupabaseConfigured) {
     return DEFAULT_ALERT_RULES;
   }
 
@@ -214,7 +214,7 @@ export async function getAlertRules(): Promise<AlertRule[]> {
  * Create or update an alert rule
  */
 export async function saveAlertRule(rule: AlertRule): Promise<{ success: boolean; error?: string }> {
-  if (!isSupabaseConfigured()) {
+  if (!isSupabaseConfigured) {
     return { success: false, error: 'Supabase not configured' };
   }
 
@@ -235,7 +235,7 @@ export async function saveAlertRule(rule: AlertRule): Promise<{ success: boolean
  * Delete an alert rule
  */
 export async function deleteAlertRule(ruleId: string): Promise<{ success: boolean; error?: string }> {
-  if (!isSupabaseConfigured()) {
+  if (!isSupabaseConfigured) {
     return { success: false, error: 'Supabase not configured' };
   }
 
@@ -257,7 +257,7 @@ export async function deleteAlertRule(ruleId: string): Promise<{ success: boolea
  * Toggle alert rule enabled status
  */
 export async function toggleAlertRule(ruleId: string, enabled: boolean): Promise<{ success: boolean; error?: string }> {
-  if (!isSupabaseConfigured()) {
+  if (!isSupabaseConfigured) {
     return { success: false, error: 'Supabase not configured' };
   }
 
@@ -293,7 +293,7 @@ export interface AlertChannelConfig {
  * Get alert channel configuration
  */
 export async function getAlertChannelConfig(): Promise<AlertChannelConfig> {
-  if (!isSupabaseConfigured()) {
+  if (!isSupabaseConfigured) {
     return {};
   }
 
@@ -325,7 +325,7 @@ export async function getAlertChannelConfig(): Promise<AlertChannelConfig> {
  * Save alert channel configuration
  */
 export async function saveAlertChannelConfig(config: AlertChannelConfig): Promise<{ success: boolean; error?: string }> {
-  if (!isSupabaseConfigured()) {
+  if (!isSupabaseConfigured) {
     return { success: false, error: 'Supabase not configured' };
   }
 
@@ -368,7 +368,7 @@ export interface ThreatLevel {
  * Calculate current threat level based on recent security events
  */
 export async function calculateThreatLevel(): Promise<ThreatLevel> {
-  if (!isSupabaseConfigured()) {
+  if (!isSupabaseConfigured) {
     return {
       level: 'LOW',
       score: 0,

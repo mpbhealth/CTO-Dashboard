@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './contexts/AuthContext.tsx';
 import { NotificationProvider } from './providers/NotificationProvider.tsx';
 import { ProtectedRoute } from './components/guards/ProtectedRoute.tsx';
-import { AccessGate } from './components/guards/AccessGate.tsx';
+
 import { AuthCallback } from './components/pages/AuthCallback.tsx';
 import Login from './components/pages/Login.tsx';
 import DualDashboardApp from './DualDashboardApp.tsx';
@@ -367,7 +367,6 @@ try {
   createRoot(rootElement).render(
     <StrictMode>
       <ErrorBoundary>
-        <AccessGate>
           <ConfigurationCheck>
             <QueryClientProvider client={queryClient}>
             <BrowserRouter
@@ -404,7 +403,6 @@ try {
             </BrowserRouter>
           </QueryClientProvider>
           </ConfigurationCheck>
-        </AccessGate>
       </ErrorBoundary>
     </StrictMode>
   );

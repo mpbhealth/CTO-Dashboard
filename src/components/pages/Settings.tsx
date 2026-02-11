@@ -457,8 +457,6 @@ export default function Settings() {
           <button
             onClick={async () => {
               try {
-                // Clear access PIN session storage
-                sessionStorage.removeItem('mpb_access_verified');
                 await signOut();
                 // signOut now handles the redirect internally
               } catch (error) {

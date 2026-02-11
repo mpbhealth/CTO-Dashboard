@@ -163,7 +163,6 @@ function SidebarComponent({
   // Handlers
   const handleLogout = useCallback(async () => {
     try {
-      sessionStorage.removeItem('mpb_access_verified');
       await signOut();
       // signOut now handles the redirect internally
     } catch (error) {

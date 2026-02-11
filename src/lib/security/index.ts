@@ -4,16 +4,6 @@
  * Centralized exports for all security-related functionality.
  */
 
-// Access Gate
-export {
-  validateAccessPin,
-  hashPin,
-  isAccessVerified,
-  setAccessVerified,
-  clearAccessVerification,
-  isLockedOut,
-} from './accessGateService';
-
 // Password Policy
 export {
   validatePassword,

@@ -523,9 +523,9 @@ export function CommandCenter() {
         {/* Animated Star Field Background */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none rounded-2xl">
           {/* Nebula gradients */}
-          <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-violet-900/20 rounded-full blur-[120px] animate-pulse" />
-          <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-cyan-900/20 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '1s' }} />
-          <div className="absolute top-1/2 left-1/2 w-[400px] h-[400px] bg-pink-900/10 rounded-full blur-[80px] animate-pulse" style={{ animationDelay: '2s' }} />
+          <div className="absolute top-0 left-1/4 w-[50vw] max-w-[600px] h-[50vw] max-h-[600px] bg-violet-900/20 rounded-full blur-[120px] animate-pulse" />
+          <div className="absolute bottom-1/4 right-1/4 w-[45vw] max-w-[500px] h-[45vw] max-h-[500px] bg-cyan-900/20 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '1s' }} />
+          <div className="absolute top-1/2 left-1/2 w-[40vw] max-w-[400px] h-[40vw] max-h-[400px] bg-pink-900/10 rounded-full blur-[80px] animate-pulse" style={{ animationDelay: '2s' }} />
           
           {/* Star particles */}
           <div className="absolute inset-0" style={{

@@ -100,9 +100,9 @@ export default function TrafficSources({ dateRange }: Props) {
               <p>No traffic data available</p>
             </div>
           ) : (
-            <div className="flex items-center gap-8">
-              <div className="relative">
-                <ResponsiveContainer width={200} height={200}>
+            <div className="flex flex-col sm:flex-row items-center gap-8">
+              <div className="relative w-[200px] h-[200px]">
+                <ResponsiveContainer width="100%" height={200}>
                   <PieChart>
                     <Pie
                       data={data.distribution}

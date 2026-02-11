@@ -11,6 +11,8 @@ import { AppShell } from './components/shell/AppShell';
 import { buildRouteToTabMap, buildTabToRouteMap, getNavigationForRole } from './config/navigation';
 import { AIAssistantProvider } from './providers/AIAssistantProvider';
 import { GlobalAIAssistant } from './components/ai/GlobalAIAssistant';
+import { Breadcrumbs } from './components/ui/Breadcrumbs';
+import { KeyboardShortcutsModal } from './components/ui/KeyboardShortcutsModal';
 
 const CTOHome = lazy(() => import('./components/pages/ctod/CTOCommandCenter').then(m => ({ default: m.CTOCommandCenter })));
 const CTOOperations = lazy(() => import('./components/pages/ctod/CTOOperations').then(m => ({ default: m.CTOOperations })));
@@ -184,9 +186,11 @@ const AdminHealthMonitor = lazy(() => import('./components/pages/admin/AdminHeal
 const AdminEmail = lazy(() => import('./components/pages/admin/AdminEmail').then(m => ({ default: m.AdminEmail })));
 
 const LoadingFallback = () => (
-  <div 
+  <div
     className="flex items-center justify-center min-h-screen bg-slate-50"
     style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}
+    role="status"
+    aria-live="polite"
   >
     <div className="text-center px-4">
       <div className="animate-spin rounded-full h-10 w-10 md:h-12 md:w-12 border-b-2 border-indigo-600 mx-auto"></div>
@@ -342,6 +346,14 @@ function DualDashboardContent() {
 
   return (
     <div className="flex min-h-screen bg-slate-50 overflow-x-hidden">
+      {/* Skip to main content link for keyboard/screen reader users */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-indigo-600 focus:text-white focus:rounded-lg focus:shadow-lg focus:outline-none"
+      >
+        Skip to main content
+      </a>
+
       {shouldShowCTOSidebar && (
         <Sidebar
           activeTab={activeTab}
@@ -378,6 +390,7 @@ function DualDashboardContent() {
       )}
 
       <main
+        id="main-content"
         className={`
           flex-1 overflow-y-auto overflow-x-hidden
           ${isCEORoute || isAdminRoute
@@ -408,6 +421,7 @@ function DualDashboardContent() {
           paddingBottom: isMobile ? 'max(1rem, env(safe-area-inset-bottom))' : undefined,
         }}
       >
+        <Breadcrumbs />
         <CEOErrorBoundary>
           <Suspense fallback={<LoadingFallback />}>
             <Routes>
@@ -632,6 +646,7 @@ export default function DualDashboardApp() {
       <AppShell>
         <DualDashboardContent />
         <GlobalAIAssistant />
+        <KeyboardShortcutsModal />
       </AppShell>
     </AIAssistantProvider>
   );

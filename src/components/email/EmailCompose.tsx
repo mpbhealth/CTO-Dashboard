@@ -204,10 +204,10 @@ export function EmailCompose({
 
   // Window size class
   const windowClass = isMaximized
-    ? 'fixed inset-4 z-50'
+    ? 'fixed inset-2 sm:inset-4 z-50'
     : isMinimized
-    ? 'fixed bottom-4 right-4 w-80 z-50'
-    : 'fixed bottom-4 right-4 w-[600px] max-w-[calc(100vw-2rem)] z-50';
+    ? 'fixed bottom-4 right-4 w-[calc(100vw-2rem)] sm:w-80 z-50'
+    : 'fixed bottom-4 right-2 sm:right-4 w-[calc(100vw-1rem)] sm:w-[600px] sm:max-w-[calc(100vw-2rem)] z-50';
 
   if (isMinimized) {
     return (

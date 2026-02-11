@@ -107,6 +107,25 @@
       font-size: 16px !important;
     }
   }
+
+  /* Global focus-visible indicators for keyboard navigation */
+  :focus-visible {
+    outline: 2px solid #6366f1; /* indigo-500 */
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Remove default outline for mouse users */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  /* Ensure skip link and keyboard focus elements are visible */
+  .sr-only:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid #6366f1;
+    outline-offset: 2px;
+  }
 }
 
 @layer components {

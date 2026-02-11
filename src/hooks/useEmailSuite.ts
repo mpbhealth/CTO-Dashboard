@@ -12,6 +12,28 @@ import type {
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 
+/**
+ * Fetches a file from a URL and returns its content as a base64-encoded string.
+ * Used for converting Supabase Storage URLs to base64 for email attachments.
+ */
+async function fetchFileAsBase64(url: string): Promise<string> {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch attachment: ${response.status}`);
+  }
+  const blob = await response.blob();
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      // reader.result is "data:<mime>;base64,<data>" — strip the prefix
+      const base64 = (reader.result as string).split(',')[1];
+      resolve(base64);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
 interface UseEmailSuiteOptions {
   userId?: string;
 }
@@ -192,6 +214,18 @@ export function useEmailSuite(options: UseEmailSuiteOptions = {}) {
         }
       }
 
+      // Convert attachment URLs to base64 content for the email API
+      let processedAttachments: { name: string; contentType: string; contentBytes: string }[] | undefined;
+      if (email.attachments && email.attachments.length > 0) {
+        processedAttachments = await Promise.all(
+          email.attachments.map(async (att) => ({
+            name: att.name,
+            contentType: att.mimeType,
+            contentBytes: await fetchFileAsBase64(att.url),
+          }))
+        );
+      }
+
       await callEmailApi(activeAccountId, 'sendMessage', {
         message: {
           to: email.to,
@@ -200,11 +234,7 @@ export function useEmailSuite(options: UseEmailSuiteOptions = {}) {
           subject: email.subject,
           bodyHtml,
           importance: email.importance,
-          attachments: email.attachments?.map((att) => ({
-            name: att.name,
-            contentType: att.mimeType,
-            contentBytes: att.url, // This would need to be the base64 content
-          })),
+          attachments: processedAttachments,
         },
       });
     },

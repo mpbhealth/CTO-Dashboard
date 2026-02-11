@@ -164,7 +164,7 @@ export function GlobalAIAssistant() {
 
   // Expanded chat panel
   return (
-    <div className="fixed bottom-24 right-6 z-[60] w-[400px] h-[500px] bg-white dark:bg-slate-900 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col overflow-hidden animate-in slide-in-from-bottom-2 fade-in duration-200">
+    <div className="fixed bottom-24 right-3 sm:right-6 z-[60] w-[calc(100vw-1.5rem)] sm:w-[400px] h-[70vh] sm:h-[500px] max-h-[500px] bg-white dark:bg-slate-900 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col overflow-hidden animate-in slide-in-from-bottom-2 fade-in duration-200">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 bg-indigo-600 text-white">
         <div className="flex items-center gap-2">

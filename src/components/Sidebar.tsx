@@ -26,6 +26,7 @@ import {
   AdminRoleSwitcher,
   SidebarNavItem,
   SidebarCategoryHeader,
+  SidebarSearchHint,
 } from './sidebar/index';
 
 // ============================================================================
@@ -331,6 +332,12 @@ function SidebarComponent({
               />
             )}
           </SidebarHeader>
+
+          {/* Command Palette search hint */}
+          <SidebarSearchHint
+            isExpanded={isExpanded}
+            shortcut={navigator.platform?.includes('Mac') ? '⌘K' : 'Ctrl+K'}
+          />
 
           {/* Navigation */}
           <nav

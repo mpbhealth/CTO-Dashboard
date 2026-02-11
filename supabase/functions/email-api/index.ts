@@ -62,7 +62,7 @@ interface Attachment {
   isInline: boolean;
 }
 
-// Helper to get valid access token
+// Helper to get valid access token (with race condition protection)
 async function getValidAccessToken(supabaseClient: any, accountId: string): Promise<{ token: string; account: EmailAccount }> {
   const { data: account, error } = await supabaseClient
     .from('user_email_accounts')
@@ -79,26 +79,56 @@ async function getValidAccessToken(supabaseClient: any, accountId: string): Prom
   const needsRefresh = expiresAt.getTime() - Date.now() < 5 * 60 * 1000;
 
   if (needsRefresh && account.refresh_token) {
-    // Call the oauth function to refresh
-    const oauthUrl = `${Deno.env.get('SUPABASE_URL')}/functions/v1/email-oauth`;
-    const response = await fetch(oauthUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
-      },
-      body: JSON.stringify({
-        action: 'refresh',
-        accountId: accountId,
-      }),
-    });
+    // Check if another request is already refreshing this token
+    if (account.refreshing_token) {
+      // Another request is already refreshing — wait briefly and re-fetch
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      const { data: retryAccount } = await supabaseClient
+        .from('user_email_accounts')
+        .select('*')
+        .eq('id', accountId)
+        .single();
 
-    if (!response.ok) {
-      throw new Error('Failed to refresh token');
+      if (retryAccount && !retryAccount.refreshing_token) {
+        return { token: retryAccount.access_token, account: retryAccount };
+      }
+      // If still refreshing after wait, proceed anyway (stale lock protection)
     }
 
-    const result = await response.json();
-    
+    // Set the refreshing flag
+    await supabaseClient
+      .from('user_email_accounts')
+      .update({ refreshing_token: true })
+      .eq('id', accountId);
+
+    try {
+      // Call the oauth function to refresh
+      const oauthUrl = `${Deno.env.get('SUPABASE_URL')}/functions/v1/email-oauth`;
+      const response = await fetch(oauthUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
+        },
+        body: JSON.stringify({
+          action: 'refresh',
+          accountId: accountId,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to refresh token');
+      }
+
+      const result = await response.json();
+    } finally {
+      // Always clear the refreshing flag
+      await supabaseClient
+        .from('user_email_accounts')
+        .update({ refreshing_token: false })
+        .eq('id', accountId);
+    }
+
     // Fetch updated account
     const { data: updatedAccount } = await supabaseClient
       .from('user_email_accounts')

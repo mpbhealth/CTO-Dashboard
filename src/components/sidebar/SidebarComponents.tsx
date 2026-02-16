@@ -102,7 +102,7 @@ export const SidebarOverlay = memo(function SidebarOverlay({
   return (
     <div
       className={cn(
-        'fixed inset-0 z-30 md:hidden',
+        'fixed inset-0 z-[55] md:hidden',
         'bg-black/60 backdrop-blur-sm',
         'transition-opacity duration-300 ease-out',
         'touch-none'

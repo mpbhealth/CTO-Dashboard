@@ -278,9 +278,9 @@ export default function Deployments() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Deployment Management</h1>
+          <h1 className="text-xl sm:text-3xl font-bold text-slate-900">Deployment Management</h1>
           <p className="text-slate-600 mt-2">Track deployment history, manage releases, and monitor project deployments</p>
         </div>
         <div className="flex items-center space-x-3">
@@ -317,8 +317,8 @@ export default function Deployments() {
       </div>
 
       {/* Deployment Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
+        <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200">
           <div className="flex items-center space-x-3">
             <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center">
               <CheckCircle className="w-6 h-6 text-emerald-600" />
@@ -332,7 +332,7 @@ export default function Deployments() {
           </div>
         </div>
         
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+        <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200">
           <div className="flex items-center space-x-3">
             <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
               <XCircle className="w-6 h-6 text-red-600" />
@@ -346,7 +346,7 @@ export default function Deployments() {
           </div>
         </div>
         
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+        <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200">
           <div className="flex items-center space-x-3">
             <div className="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center">
               <Clock className="w-6 h-6 text-amber-600" />
@@ -360,7 +360,7 @@ export default function Deployments() {
           </div>
         </div>
         
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+        <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200">
           <div className="flex items-center space-x-3">
             <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
               <GitBranch className="w-6 h-6 text-indigo-600" />
@@ -375,7 +375,7 @@ export default function Deployments() {
 
       {/* Filters */}
       <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-        <div className="flex flex-col lg:flex-row gap-4">
+        <div className="flex flex-col lg:flex-row gap-2 sm:gap-4">
           <div className="flex items-center space-x-2">
             <Filter className="w-5 h-5 text-slate-600" />
             <span className="text-sm font-medium text-slate-700">Filters:</span>
@@ -431,7 +431,7 @@ export default function Deployments() {
         {filteredLogs.map((log) => (
           <motion.div 
             key={log.id} 
-            className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow"
+            className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}

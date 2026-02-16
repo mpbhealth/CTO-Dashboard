@@ -168,9 +168,9 @@ export function CEOOperations() {
 
   return (
     <div className="w-full space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+            <h1 className="text-xl sm:text-3xl font-bold text-gray-900 flex items-center gap-3">
               <Activity className="text-[#1a3d97]" size={32} />
               Operations Overview
             </h1>
@@ -185,8 +185,8 @@ export function CEOOperations() {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-6">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 sm:p-6">
             <div className="flex items-center justify-between mb-2">
               <TrendingDown className="text-red-600" size={20} />
               <span className="text-xs font-medium text-gray-500">TOTAL</span>
@@ -195,7 +195,7 @@ export function CEOOperations() {
             <div className="text-sm text-gray-500">Cancellations</div>
           </div>
 
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 sm:p-6">
             <div className="flex items-center justify-between mb-2">
               <DollarSign className="text-orange-600" size={20} />
               <span className="text-xs font-medium text-gray-500">MRR LOST</span>
@@ -204,7 +204,7 @@ export function CEOOperations() {
             <div className="text-sm text-gray-500">Revenue Impact</div>
           </div>
 
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 sm:p-6">
             <div className="flex items-center justify-between mb-2">
               <Users className="text-indigo-500" size={20} />
               <span className="text-xs font-medium text-gray-500">SAVES</span>
@@ -213,7 +213,7 @@ export function CEOOperations() {
             <div className="text-sm text-gray-500">Retained</div>
           </div>
 
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 sm:p-6">
             <div className="flex items-center justify-between mb-2">
               <AlertTriangle className="text-yellow-600" size={20} />
               <span className="text-xs font-medium text-gray-500">ATTEMPTS</span>
@@ -222,7 +222,7 @@ export function CEOOperations() {
             <div className="text-sm text-gray-500">Save Efforts</div>
           </div>
 
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 sm:p-6">
             <div className="flex items-center justify-between mb-2">
               <TrendingDown className="text-green-600" size={20} />
               <span className="text-xs font-medium text-gray-500">SAVE RATE</span>
@@ -232,11 +232,11 @@ export function CEOOperations() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 space-y-6">
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-6">
+          <div className="lg:col-span-2 space-y-3 sm:space-y-6">
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 sm:p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Filters</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">From Date</label>
                   <input
@@ -273,7 +273,7 @@ export function CEOOperations() {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 sm:p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Churn Trend (Last 6 Months)</h2>
               <ResponsiveContainer width="100%" height={250}>
                 <LineChart data={trendData}>
@@ -291,35 +291,35 @@ export function CEOOperations() {
                 <table className="w-full">
                   <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase">Date</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase">Member</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase">Reason</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase">Agent</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase">Save</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase">MRR Lost</th>
+                      <th className="px-2 py-2 sm:px-4 sm:py-3 text-left text-xs font-medium text-gray-700 uppercase">Date</th>
+                      <th className="px-2 py-2 sm:px-4 sm:py-3 text-left text-xs font-medium text-gray-700 uppercase">Member</th>
+                      <th className="px-2 py-2 sm:px-4 sm:py-3 text-left text-xs font-medium text-gray-700 uppercase">Reason</th>
+                      <th className="px-2 py-2 sm:px-4 sm:py-3 text-left text-xs font-medium text-gray-700 uppercase">Agent</th>
+                      <th className="px-2 py-2 sm:px-4 sm:py-3 text-left text-xs font-medium text-gray-700 uppercase">Save</th>
+                      <th className="px-2 py-2 sm:px-4 sm:py-3 text-left text-xs font-medium text-gray-700 uppercase">MRR Lost</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
                     {filteredCancellations.length === 0 ? (
                       <tr>
-                        <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
+                        <td colSpan={6} className="px-2 sm:px-4 py-8 text-center text-gray-500">
                           No cancellations found
                         </td>
                       </tr>
                     ) : (
                       filteredCancellations.slice(0, 50).map((cancellation) => (
                         <tr key={cancellation.staging_id} className="hover:bg-gray-50">
-                          <td className="px-4 py-3 text-sm text-gray-900">
+                          <td className="px-2 sm:px-4 py-3 text-sm text-gray-900">
                             {cancellation.cancel_date
                               ? new Date(cancellation.cancel_date).toLocaleDateString()
                               : 'N/A'}
                           </td>
-                          <td className="px-4 py-3 text-sm text-gray-900">
+                          <td className="px-2 sm:px-4 py-3 text-sm text-gray-900">
                             {cancellation.member_id || 'N/A'}
                           </td>
-                          <td className="px-4 py-3 text-sm text-gray-900">{cancellation.reason || 'N/A'}</td>
-                          <td className="px-4 py-3 text-sm text-gray-900">{cancellation.agent || 'N/A'}</td>
-                          <td className="px-4 py-3 text-sm">
+                          <td className="px-2 sm:px-4 py-3 text-sm text-gray-900">{cancellation.reason || 'N/A'}</td>
+                          <td className="px-2 sm:px-4 py-3 text-sm text-gray-900">{cancellation.agent || 'N/A'}</td>
+                          <td className="px-2 sm:px-4 py-3 text-sm">
                             {cancellation.save_successful ? (
                               <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs">
                                 Success
@@ -332,7 +332,7 @@ export function CEOOperations() {
                               <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">None</span>
                             )}
                           </td>
-                          <td className="px-4 py-3 text-sm font-bold text-red-600">
+                          <td className="px-2 sm:px-4 py-3 text-sm font-bold text-red-600">
                             ${(cancellation.mrr_lost || 0).toFixed(0)}
                           </td>
                         </tr>
@@ -360,7 +360,7 @@ export function CEOOperations() {
           </div>
 
       {uploadedFiles.length > 0 && (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 sm:p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
             <FileSpreadsheet size={20} className="text-[#1a3d97]" />
             Uploaded Files

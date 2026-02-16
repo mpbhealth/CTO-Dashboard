@@ -91,10 +91,10 @@ export default function Projects() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Active Projects</h1>
-          <p className="text-slate-600 mt-2">Track progress and manage development projects across MPB Health</p>
+          <h1 className="text-xl sm:text-3xl font-bold text-slate-900">Active Projects</h1>
+          <p className="text-slate-600 mt-1 sm:mt-2 text-sm sm:text-base">Track progress and manage development projects across MPB Health</p>
         </div>
         <div className="flex items-center space-x-3">
           <ExportDropdown data={{
@@ -126,8 +126,8 @@ export default function Projects() {
       </div>
 
       {/* Project Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6">
+        <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200">
           <div className="flex items-center space-x-3">
             <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
               <FolderOpen className="w-6 h-6 text-indigo-600" />
@@ -169,11 +169,11 @@ export default function Projects() {
       </div>
 
       {/* Projects Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-6">
         {projects.map((project) => (
-          <div 
-            key={project.id} 
-            className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-all duration-200 cursor-pointer group hover:border-indigo-200"
+          <div
+            key={project.id}
+            className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-all duration-200 cursor-pointer group hover:border-indigo-200"
             onClick={() => setSelectedProject(selectedProject === project.id ? null : project.id)}
           >
             <div className="flex items-start justify-between mb-4">
@@ -191,7 +191,7 @@ export default function Projects() {
                       e.stopPropagation();
                       handleEditProject(project);
                     }}
-                    className="p-1 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
+                    className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
                     title="Edit project"
                   >
                     <Edit className="w-4 h-4" />
@@ -202,7 +202,7 @@ export default function Projects() {
                       handleDeleteProject(project);
                     }}
                     disabled={deletingId === project.id}
-                    className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     title="Delete project"
                   >
                     {deletingId === project.id ? (
@@ -287,7 +287,7 @@ export default function Projects() {
             </div>
 
             {/* Links */}
-            <div className="flex items-center space-x-4 pt-4 border-t border-slate-200">
+            <div className="flex items-center space-x-2 sm:space-x-4 pt-4 border-t border-slate-200">
               {project.github_link && (
                 <a 
                   href={project.github_link}

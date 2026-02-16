@@ -268,10 +268,10 @@ export default function Roadmap() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Technology Roadmap</h1>
-          <p className="text-slate-600 mt-2">Strategic technology initiatives and their progress across quarters</p>
+          <h1 className="text-xl sm:text-3xl font-bold text-slate-900">Technology Roadmap</h1>
+          <p className="text-slate-600 mt-1 sm:mt-2 text-sm sm:text-base">Strategic technology initiatives and their progress across quarters</p>
         </div>
         <div className="flex items-center space-x-3">
           <button
@@ -396,7 +396,7 @@ export default function Roadmap() {
         {filteredItems.map((item) => (
           <motion.div 
             key={item.id} 
-            className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow"
+            className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
@@ -405,7 +405,7 @@ export default function Roadmap() {
               <div className="flex-1">
                 <div className="flex items-center space-x-3 mb-3">
                   {getStatusIcon(item.status)}
-                  <h3 className="text-xl font-semibold text-slate-900">{item.title}</h3>
+                  <h3 className="text-lg sm:text-xl font-semibold text-slate-900">{item.title}</h3>
                   <span className={`px-3 py-1 rounded-full text-xs font-medium ${getPriorityColor(item.priority)}`}>
                     {item.priority} Priority
                   </span>

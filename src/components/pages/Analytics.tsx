@@ -140,9 +140,9 @@ export default function Analytics() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">
+          <h1 className="text-xl sm:text-3xl font-bold text-slate-900">
             {selectedDepartment === 'mpb' ? 'MPB Health' : 'SaudeMAX'} Analytics Dashboard
           </h1>
           <p className="text-slate-600 mt-2">Comprehensive business intelligence and performance metrics</p>
@@ -206,7 +206,7 @@ export default function Analytics() {
 
       {/* KPI Cards */}
       <motion.div 
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
@@ -243,7 +243,7 @@ export default function Analytics() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Daily Active Users Chart */}
         <motion.div 
-          className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow"
+          className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow"
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
@@ -301,7 +301,7 @@ export default function Analytics() {
 
         {/* Revenue Trend Chart */}
         <motion.div 
-          className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow"
+          className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow"
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
@@ -349,7 +349,7 @@ export default function Analytics() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Satisfaction Score Trend */}
         <motion.div 
-          className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow"
+          className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
@@ -411,29 +411,29 @@ export default function Analytics() {
             <table className="w-full">
               <thead className="bg-slate-50">
                 <tr>
-                  <th className="text-left px-6 py-3 text-xs font-semibold text-slate-700">Region</th>
-                  <th className="text-right px-6 py-3 text-xs font-semibold text-slate-700">Users</th>
-                  <th className="text-right px-6 py-3 text-xs font-semibold text-slate-700">Revenue</th>
-                  <th className="text-right px-6 py-3 text-xs font-semibold text-slate-700">Growth</th>
+                  <th className="text-left px-3 py-2 sm:px-6 sm:py-3 text-xs font-semibold text-slate-700">Region</th>
+                  <th className="text-right px-3 py-2 sm:px-6 sm:py-3 text-xs font-semibold text-slate-700">Users</th>
+                  <th className="text-right px-3 py-2 sm:px-6 sm:py-3 text-xs font-semibold text-slate-700">Revenue</th>
+                  <th className="text-right px-3 py-2 sm:px-6 sm:py-3 text-xs font-semibold text-slate-700">Growth</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
                 {(currentDepartmentData.regionalPerformance || []).map((region) => (
                   <tr key={region.region} className="hover:bg-slate-50 transition-colors">
-                    <td className="px-6 py-4">
+                    <td className="px-3 sm:px-6 py-4">
                       <span className="font-medium text-slate-900">{region.region}</span>
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-3 sm:px-6 py-4 text-right">
                       <span className="text-slate-700">{region.users.toLocaleString()}</span>
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-3 sm:px-6 py-4 text-right">
                       <span className="text-slate-700">
                         {selectedDepartment === 'mpb' 
                           ? `$${region.revenue.toLocaleString()}` 
                           : `R$${region.revenue.toLocaleString()}`}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-3 sm:px-6 py-4 text-right">
                       <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
                         region.growth >= 15 ? 'bg-emerald-100 text-emerald-800' :
                         region.growth >= 10 ? 'bg-indigo-100 text-indigo-800' :
@@ -459,7 +459,7 @@ export default function Analytics() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Insights */}
         <motion.div 
-          className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow"
+          className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.6 }}
@@ -491,7 +491,7 @@ export default function Analytics() {
 
         {/* Recommendations */}
         <motion.div 
-          className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow"
+          className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.7 }}

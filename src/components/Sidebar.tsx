@@ -247,26 +247,32 @@ function SidebarComponent({
         aria-label="Main navigation"
         className={cn(
           // Base styles
-          'text-white h-screen flex flex-col overflow-hidden',
-          'fixed inset-y-0 left-0 z-40 shadow-2xl',
+          'text-white h-screen h-[100dvh] flex flex-col overflow-hidden',
+          'fixed inset-y-0 left-0 shadow-2xl',
           'transition-transform duration-300 ease-out',
           'will-change-transform',
-          
+
+          // Z-index: higher on mobile to ensure it's above all content
+          isMobile ? 'z-[60]' : 'z-40',
+
           // Theme
-          isCEO 
-            ? 'bg-gradient-to-b from-indigo-600 to-indigo-700' 
+          isCEO
+            ? 'bg-gradient-to-b from-indigo-600 to-indigo-700'
             : 'bg-slate-900',
-          
+
           // Width - responsive for all screen sizes
           // Mobile: full width minus some margin, max 320px
           // Desktop: fixed widths
-          isExpanded 
-            ? 'w-[calc(100vw-3rem)] sm:w-80 max-w-[320px]' 
+          isExpanded
+            ? 'w-[calc(100vw-3rem)] sm:w-80 max-w-[320px]'
             : 'w-20',
-          
+
           // Mobile visibility
           isMobile && !isExpanded ? '-translate-x-full' : 'translate-x-0',
-          
+
+          // Desktop collapsed: always visible
+          !isMobile && 'translate-x-0',
+
           // Touch behavior
           isMobile && 'touch-pan-y overscroll-contain'
         )}

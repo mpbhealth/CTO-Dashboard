@@ -58,7 +58,7 @@ export function CEODashboardLayout({ children }: CEODashboardLayoutProps) {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50 overflow-hidden pb-24">
+    <div className="flex min-h-screen min-h-[100dvh] bg-slate-50 overflow-hidden">
       <Sidebar
         activeTab={activeTab}
         onTabChange={setActiveTab}
@@ -70,15 +70,15 @@ export function CEODashboardLayout({ children }: CEODashboardLayoutProps) {
       {isMobile && !isSidebarExpanded && (
         <button
           className="
-            fixed top-4 left-4 z-50
+            fixed top-4 left-4 z-[70]
             p-3 rounded-xl
-            bg-indigo-600 text-white 
+            bg-indigo-600 text-white
             shadow-lg shadow-indigo-500/30
             md:hidden
             touch-manipulation
             active:scale-95 active:bg-indigo-700
             transition-all duration-200
-            min-h-touch min-w-touch
+            min-h-[44px] min-w-[44px]
             flex items-center justify-center
           "
           onClick={toggleSidebar}
@@ -91,26 +91,26 @@ export function CEODashboardLayout({ children }: CEODashboardLayoutProps) {
         </button>
       )}
 
-      <main 
+      <main
         className={`
-          flex-1 min-h-screen 
-          overflow-y-auto overflow-x-hidden 
+          flex-1 min-h-screen min-h-[100dvh]
+          overflow-y-auto overflow-x-hidden
           transition-all duration-300 ease-out
+          bg-slate-50
           ${getMainContentClass()}
         `}
       >
         {/* Responsive content container */}
-        <div 
+        <div
           className="
             w-full max-w-[1920px] mx-auto
             px-4 xs:px-5 sm:px-6 md:px-8 lg:px-12 xl:px-16
             py-4 xs:py-5 sm:py-6 md:py-8 lg:py-10
+            pb-20 sm:pb-24
           "
           style={{
             // Add top padding for mobile hamburger button
             paddingTop: isMobile ? 'max(4.5rem, calc(env(safe-area-inset-top) + 3.5rem))' : undefined,
-            // Add bottom safe area
-            paddingBottom: isMobile ? 'max(1rem, env(safe-area-inset-bottom))' : undefined,
           }}
         >
           {children}

@@ -370,14 +370,14 @@ export function CEOBoardPacket() {
 
   return (
     <div className="w-full space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Board Packet Builder</h1>
+            <h1 className="text-xl sm:text-3xl font-bold text-gray-900">Board Packet Builder</h1>
             <p className="text-gray-600 mt-1">Create comprehensive board meeting materials</p>
           </div>
           <button
             onClick={() => setShowNewPacketModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-400 to-indigo-500 text-white rounded-lg hover:opacity-90 transition-opacity font-medium shadow-md"
+            className="flex items-center gap-2 px-4 py-2 min-h-[44px] bg-gradient-to-r from-indigo-400 to-indigo-500 text-white rounded-lg hover:opacity-90 transition-opacity font-medium shadow-md"
           >
             <Plus size={18} />
             New Packet
@@ -412,7 +412,7 @@ export function CEOBoardPacket() {
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Board Packets</h2>
           <div className="w-full space-y-4">
             {packets.map((packet) => (
-              <div key={packet.id} className="bg-white rounded-xl shadow-sm border p-6 hover:shadow-md transition-shadow">
+              <div key={packet.id} className="bg-white rounded-xl shadow-sm border p-4 sm:p-6 hover:shadow-md transition-shadow">
                 <div className="flex items-start justify-between mb-4">
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900">{packet.title}</h3>
@@ -435,24 +435,24 @@ export function CEOBoardPacket() {
                     </span>
                   ))}
                 </div>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   <button
                     onClick={() => handleEditPacket(packet)}
-                    className="flex items-center gap-1 px-4 py-2 bg-gradient-to-r from-indigo-400 to-indigo-500 text-white rounded-lg hover:opacity-90 transition-opacity text-sm font-medium shadow-md"
+                    className="flex items-center gap-1 px-4 py-2 min-h-[44px] bg-gradient-to-r from-indigo-400 to-indigo-500 text-white rounded-lg hover:opacity-90 transition-opacity text-sm font-medium shadow-md"
                   >
                     <Edit size={16} />
                     Edit
                   </button>
                   <button
                     onClick={() => handleExportWord(packet)}
-                    className="flex items-center gap-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+                    className="flex items-center gap-1 px-4 py-2 min-h-[44px] border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
                   >
                     <FileText size={16} />
                     Export Word
                   </button>
                   <button
                     onClick={() => handleExportPDF(packet)}
-                    className="flex items-center gap-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+                    className="flex items-center gap-1 px-4 py-2 min-h-[44px] border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
                   >
                     <Download size={16} />
                     Export PDF
@@ -469,7 +469,7 @@ export function CEOBoardPacket() {
             {templates.map((template) => {
               const Icon = template.icon;
               return (
-                <div key={template.name} className="bg-white rounded-xl shadow-sm border p-6 hover:shadow-md transition-shadow cursor-pointer">
+                <div key={template.name} className="bg-white rounded-xl shadow-sm border p-4 sm:p-6 hover:shadow-md transition-shadow cursor-pointer">
                   <Icon size={32} className="text-indigo-500 mb-3" />
                   <h3 className="font-semibold text-gray-900 mb-2">{template.name}</h3>
                   <p className="text-sm text-gray-500">{template.sections.length} sections included</p>
@@ -588,7 +588,7 @@ export function CEOBoardPacket() {
 
         {showEditorModal && editingPacket && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl shadow-xl w-full max-w-6xl h-[90vh] flex flex-col">
+            <div className="bg-white rounded-xl shadow-xl w-full max-w-md sm:max-w-2xl lg:max-w-6xl h-[90vh] flex flex-col">
               <div className="flex items-center justify-between p-4 border-b">
                 <div>
                   <h2 className="text-xl font-bold text-gray-900">{editingPacket.title}</h2>

@@ -235,12 +235,12 @@ export function GalaxyDock({ onOpenMap }: GalaxyDockProps) {
   const clock = useClock();
   const dockRef = useRef<HTMLDivElement>(null);
 
-  // Auto-minimize on mobile when screen size changes
+  // Auto-minimize when screen transitions to mobile size
   useEffect(() => {
-    if (isMobile && !isMinimized) {
+    if (isMobile) {
       setIsMinimized(true);
     }
-  }, [isMobile, isMinimized]);
+  }, [isMobile]);
   
   // Mouse position for magnification effect
   const mouseX = useMotionValue(Infinity);

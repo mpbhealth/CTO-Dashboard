@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
     <!-- DNS Prefetch and Preconnect for Supabase -->
     <link rel="dns-prefetch" href="https://supabase.co" />
@@ -90,10 +90,10 @@
       })();
     </script>
   </head>
-  <body>
+  <body style="margin:0;padding:0;background:#f1f5f9;min-height:100vh;">
     <div id="root">
       <!-- Initial loading indicator - will be replaced when React mounts -->
-      <div id="initial-loader" style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: #f8fafc; font-family: system-ui, sans-serif;">
+      <div id="initial-loader" style="display: flex; align-items: center; justify-content: center; min-height: 100vh; min-height: 100dvh; background: #f1f5f9; font-family: system-ui, sans-serif;">
         <div style="text-align: center; max-width: 500px; padding: 20px;">
           <div style="width: 48px; height: 48px; border: 3px solid #e2e8f0; border-top-color: #ec4899; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px;"></div>
           <p id="loading-text" style="color: #64748b; font-size: 14px; font-weight: 500;">Loading MPB Health Dashboard...</p>

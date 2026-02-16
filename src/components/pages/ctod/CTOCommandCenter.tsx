@@ -562,7 +562,7 @@ function QuickActionsPanel() {
         <h3 className="text-sm font-bold text-white uppercase tracking-wider">Quick Actions</h3>
       </div>
 
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
         {actions.map((action) => {
           const Icon = action.icon;
           return (
@@ -779,7 +779,7 @@ export function CTOCommandCenter() {
   ];
 
   return (
-    <div className="relative min-h-screen -m-4 sm:-m-6 lg:-m-8 p-4 sm:p-6 lg:p-8">
+    <div className="relative min-h-screen min-h-[100dvh] -m-4 sm:-m-6 md:-m-8 lg:-m-12 -mb-20 sm:-mb-24 p-4 sm:p-6 md:p-8 lg:p-12 pb-24">
       <CommandCenterBackground />
 
       <div className="relative z-10 max-w-[1800px] mx-auto">
@@ -808,7 +808,7 @@ export function CTOCommandCenter() {
 
             {/* Time Display */}
             <div className="text-right">
-              <div className="text-3xl font-mono font-bold text-cyan-400">
+              <div className="text-xl sm:text-3xl font-mono font-bold text-cyan-400">
                 {currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
               </div>
               <div className="text-xs text-slate-500 font-mono uppercase">
@@ -818,25 +818,25 @@ export function CTOCommandCenter() {
           </div>
 
           {/* Status Bar */}
-          <div className="flex items-center gap-4 mt-4 p-3 rounded-lg bg-slate-800/30 border border-slate-700/30">
-            <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 sm:gap-4 mt-4 p-3 rounded-lg bg-slate-800/30 border border-slate-700/30 overflow-x-auto">
+            <div className="flex items-center gap-2 flex-shrink-0">
               <PulsingDot color="bg-emerald-500" />
-              <span className="text-xs text-emerald-400 font-mono">ALL SYSTEMS OPERATIONAL</span>
+              <span className="text-xs text-emerald-400 font-mono whitespace-nowrap">ALL SYSTEMS OPERATIONAL</span>
             </div>
-            <div className="h-4 w-px bg-slate-700" />
-            <div className="flex items-center gap-2 text-xs text-slate-400">
+            <div className="h-4 w-px bg-slate-700 flex-shrink-0" />
+            <div className="flex items-center gap-2 text-xs text-slate-400 flex-shrink-0">
               <Bell className="w-3 h-3" />
               <span>{notifications?.length || 0} alerts</span>
             </div>
-            <div className="h-4 w-px bg-slate-700" />
-            <div className="flex items-center gap-2 text-xs text-slate-400">
+            <div className="h-4 w-px bg-slate-700 flex-shrink-0 hidden sm:block" />
+            <div className="flex items-center gap-2 text-xs text-slate-400 flex-shrink-0 hidden sm:flex">
               <Calendar className="w-3 h-3" />
-              <span>{todayEvents?.length || 0} events today</span>
+              <span>{todayEvents?.length || 0} events</span>
             </div>
-            <div className="h-4 w-px bg-slate-700" />
-            <div className="flex items-center gap-2 text-xs text-slate-400">
+            <div className="h-4 w-px bg-slate-700 flex-shrink-0 hidden sm:block" />
+            <div className="flex items-center gap-2 text-xs text-slate-400 flex-shrink-0 hidden sm:flex">
               <Eye className="w-3 h-3" />
-              <span>{realTimeData?.activeNow || 0} visitors live</span>
+              <span>{realTimeData?.activeNow || 0} live</span>
             </div>
           </div>
         </motion.div>

@@ -187,8 +187,7 @@ const AdminEmail = lazy(() => import('./components/pages/admin/AdminEmail').then
 
 const LoadingFallback = () => (
   <div
-    className="flex items-center justify-center min-h-screen bg-slate-50"
-    style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}
+    className="flex items-center justify-center min-h-[50vh] bg-transparent"
     role="status"
     aria-live="polite"
   >
@@ -318,10 +317,7 @@ function DualDashboardContent() {
 
   if (loading) {
     return (
-      <div 
-        className="flex items-center justify-center min-h-screen bg-slate-50"
-        style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}
-      >
+      <div className="flex items-center justify-center min-h-screen min-h-[100dvh] bg-slate-50">
         <div className="text-center px-4">
           <div className="animate-spin rounded-full h-10 w-10 md:h-12 md:w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
           <p className="text-gray-600 text-sm md:text-base">Authenticating...</p>
@@ -332,10 +328,7 @@ function DualDashboardContent() {
 
   if (!profileReady) {
     return (
-      <div 
-        className="flex items-center justify-center min-h-screen bg-slate-50"
-        style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}
-      >
+      <div className="flex items-center justify-center min-h-screen min-h-[100dvh] bg-slate-50">
         <div className="text-center px-4">
           <div className="animate-spin rounded-full h-10 w-10 md:h-12 md:w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
           <p className="text-gray-600 text-sm md:text-base">Loading your dashboard...</p>
@@ -345,7 +338,7 @@ function DualDashboardContent() {
   }
 
   return (
-    <div className="flex min-h-screen bg-slate-50 overflow-x-hidden">
+    <div className="flex min-h-screen min-h-[100dvh] bg-slate-50 overflow-x-hidden">
       {/* Skip to main content link for keyboard/screen reader users */}
       <a
         href="#main-content"
@@ -367,9 +360,9 @@ function DualDashboardContent() {
       {shouldShowCTOSidebar && isMobile && !isSidebarExpanded && (
         <button
           className="
-            fixed z-50 md:hidden
+            fixed z-[70] md:hidden
             p-3 rounded-xl
-            bg-indigo-600 text-white 
+            bg-indigo-600 text-white
             shadow-lg shadow-indigo-500/30
             touch-manipulation
             active:scale-95 active:bg-indigo-700
@@ -392,14 +385,14 @@ function DualDashboardContent() {
       <main
         id="main-content"
         className={`
-          flex-1 overflow-y-auto overflow-x-hidden
+          flex-1 overflow-y-auto overflow-x-hidden min-h-screen min-h-[100dvh]
           ${isCEORoute || isAdminRoute
             ? ''
             : `
               transition-all duration-300 ease-out
               ${isMobile
-                ? 'px-4 py-4'
-                : 'px-6 md:px-8 lg:px-12 py-6 md:py-8'
+                ? 'px-4 py-4 pb-20'
+                : 'px-6 md:px-8 lg:px-12 py-6 md:py-8 pb-24'
               }
               ${isSidebarExpanded
                 ? 'md:pl-[21rem] lg:pl-[22rem]'
@@ -412,13 +405,11 @@ function DualDashboardContent() {
         `}
         style={{
           // Add top padding for mobile hamburger button when sidebar is closed
-          paddingTop: shouldShowCTOSidebar && isMobile && !isSidebarExpanded 
-            ? 'max(4.5rem, calc(env(safe-area-inset-top) + 3.5rem))' 
-            : isMobile 
-              ? 'max(1rem, env(safe-area-inset-top))' 
+          paddingTop: shouldShowCTOSidebar && isMobile && !isSidebarExpanded
+            ? 'max(4.5rem, calc(env(safe-area-inset-top) + 3.5rem))'
+            : isMobile
+              ? 'max(1rem, env(safe-area-inset-top))'
               : undefined,
-          // Add bottom safe area
-          paddingBottom: isMobile ? 'max(1rem, env(safe-area-inset-bottom))' : undefined,
         }}
       >
         <Breadcrumbs />

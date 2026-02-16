@@ -392,13 +392,15 @@ function AdminSidebarComponent({ isExpanded, onToggle }: AdminSidebarProps) {
         aria-label="Admin navigation"
         className={cn(
           'bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950',
-          'text-white h-screen flex flex-col overflow-hidden',
-          'fixed top-0 left-0 z-40 shadow-2xl',
+          'text-white h-screen h-[100dvh] flex flex-col overflow-hidden',
+          'fixed top-0 left-0 shadow-2xl',
           'transition-transform duration-300 ease-out',
           'border-r border-slate-800',
           'will-change-transform',
+          isMobile ? 'z-[60]' : 'z-40',
           isExpanded ? 'w-72' : 'w-[72px]',
-          isMobile && !isExpanded ? '-translate-x-full' : 'translate-x-0'
+          isMobile && !isExpanded ? '-translate-x-full' : 'translate-x-0',
+          !isMobile && 'translate-x-0'
         )}
         style={{
           transform: sidebarTransform,

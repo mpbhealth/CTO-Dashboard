@@ -234,7 +234,7 @@ export default function APIStatus() {
       {showAddApi && <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200"><h3 className="text-lg font-semibold text-slate-900 mb-4">Add New API</h3><ApiForm onSubmit={handleAddApi} /></div>}
       {showAddIncident && <div className="bg-white p-6 rounded-xl shadow-sm border border-red-200"><h3 className="text-lg font-semibold text-slate-900 mb-4">Report New Incident</h3><IncidentForm onSubmit={handleAddIncident} /></div>}
 
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4 md:gap-6">
         {[
           { icon: CheckCircle, color: 'emerald', label: 'Healthy', value: stats.healthy },
           { icon: AlertTriangle, color: 'amber', label: 'Warning', value: stats.warning },
@@ -273,7 +273,7 @@ export default function APIStatus() {
                     <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(api.status)}`}>{api.status}</span>
                   </div>
                 </div>
-                <div className="grid grid-cols-3 gap-4 mb-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-4">
                   <div className="bg-slate-50 p-4 rounded-lg"><p className="text-sm font-medium text-slate-600 mb-1">Response</p>
                     <p className={`text-xl font-bold ${getResponseTimeColor(api.response_time)}`}>{api.response_time === 0 ? 'N/A' : `${api.response_time}ms`}</p></div>
                   <div className="bg-slate-50 p-4 rounded-lg"><p className="text-sm font-medium text-slate-600 mb-1">Uptime</p>

@@ -126,8 +126,7 @@ export default function Settings() {
 
   return (
     <div 
-      className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 p-4 sm:p-6 md:p-8"
-      style={{ paddingTop: 'max(1rem, env(safe-area-inset-top))' }}
+      className="w-full min-h-full p-4 sm:p-6 md:p-8"
     >
       <div className="max-w-2xl mx-auto">
         {/* Header */}

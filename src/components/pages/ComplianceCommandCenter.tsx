@@ -171,12 +171,12 @@ const ComplianceCommandCenter: React.FC = () => {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl p-6 shadow-lg text-white">
+      <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl p-4 sm:p-6 shadow-lg text-white">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold mb-2">Compliance Command Center</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold mb-2">Compliance Command Center</h1>
             <p className="text-indigo-100">HIPAA Compliance Management System</p>
           </div>
           <Shield className="w-16 h-16 opacity-50" />
@@ -184,7 +184,7 @@ const ComplianceCommandCenter: React.FC = () => {
       </div>
 
       {/* KPI Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {kpis.map((kpi, idx) => (
           <div
             key={idx}
@@ -218,7 +218,7 @@ const ComplianceCommandCenter: React.FC = () => {
           <Activity className="w-5 h-5" />
           <span>Quick Actions</span>
         </h2>
-        <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
           {quickActions.map((action, idx) => (
             <button
               key={idx}
@@ -256,7 +256,7 @@ const ComplianceCommandCenter: React.FC = () => {
               <p>All caught up! No pending tasks.</p>
             </div>
           ) : (
-            <div className="space-y-3 max-h-96 overflow-y-auto">
+            <div className="space-y-3 max-h-[60vh] sm:max-h-96 overflow-y-auto">
               {myTasks.slice(0, 10).map((task) => {
                 const isOverdue = task.due_date && new Date(task.due_date) < new Date();
                 return (

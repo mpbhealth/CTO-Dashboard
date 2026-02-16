@@ -46,7 +46,7 @@ function AdminLayoutContent({ children, showStatsBar = true }: AdminLayoutProps)
   };
 
   return (
-    <div className="flex min-h-screen bg-slate-50 overflow-hidden">
+    <div className="flex min-h-screen min-h-[100dvh] bg-slate-50 overflow-hidden">
       <AdminSidebar
         isExpanded={isSidebarExpanded}
         onToggle={toggleSidebar}
@@ -56,7 +56,7 @@ function AdminLayoutContent({ children, showStatsBar = true }: AdminLayoutProps)
       {isMobile && !isSidebarExpanded && (
         <button
           className="
-            fixed z-50
+            fixed z-[70]
             p-3 rounded-xl
             bg-emerald-600 text-white
             shadow-lg shadow-emerald-500/30
@@ -80,18 +80,19 @@ function AdminLayoutContent({ children, showStatsBar = true }: AdminLayoutProps)
 
       <main
         className={`
-          flex-1 min-h-screen
+          flex-1 min-h-screen min-h-[100dvh]
           overflow-y-auto overflow-x-hidden
           transition-all duration-300 ease-out
+          bg-slate-50
           ${getMainContentClass()}
         `}
       >
         {/* Stats Bar */}
         {showStatsBar && <AdminStatsBar />}
 
-        {/* Main content container - pb-24 for Galaxy Dock clearance */}
+        {/* Main content container */}
         <div
-          className="w-full pb-24"
+          className="w-full pb-20 sm:pb-24"
           style={{
             paddingTop: isMobile && !showStatsBar ? 'max(4.5rem, calc(env(safe-area-inset-top) + 3.5rem))' : undefined,
           }}

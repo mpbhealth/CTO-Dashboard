@@ -182,9 +182,9 @@ export function CEOConciergeTracking() {
   return (
     
       <div className="w-full space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+            <h1 className="text-xl sm:text-3xl font-bold text-gray-900 flex items-center gap-3">
               <MessageSquare className="text-[#1a3d97]" size={32} />
               Concierge Tracking
             </h1>
@@ -192,14 +192,14 @@ export function CEOConciergeTracking() {
           </div>
           <button
             onClick={() => setShowExportModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity"
+            className="flex items-center gap-2 px-4 py-2 min-h-[44px] bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity"
           >
             <Download size={18} />
             Export
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
             <div className="flex items-center justify-between mb-2">
               <TrendingUp className="text-[#1a3d97]" size={20} />
@@ -237,14 +237,14 @@ export function CEOConciergeTracking() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-3 sm:gap-6">
           <div className="lg:col-span-3 space-y-4">
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 sm:p-6">
               <div className="flex items-center gap-2 mb-4">
                 <Filter size={20} className="text-gray-600" />
                 <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">From Date</label>
                   <input
@@ -412,7 +412,7 @@ export function CEOConciergeTracking() {
         </div>
 
         {uploadedFiles.length > 0 && (
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 sm:p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
               <FileSpreadsheet size={20} className="text-[#1a3d97]" />
               Uploaded Files
@@ -444,7 +444,7 @@ export function CEOConciergeTracking() {
                   </div>
                   <button
                     onClick={() => handleViewFile(file)}
-                    className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity text-sm"
+                    className="w-full flex items-center justify-center gap-2 px-3 py-2 min-h-[44px] bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity text-sm"
                   >
                     <Eye size={14} />
                     View Data

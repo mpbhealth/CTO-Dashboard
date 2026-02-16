@@ -315,9 +315,9 @@ export function CEOFinance() {
 
   return (
       <div className="w-full space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+            <h1 className="text-xl sm:text-3xl font-bold text-gray-900 flex items-center gap-3">
               <DollarSign className="text-[#1a3d97]" size={32} />
               Finance Dashboard
             </h1>
@@ -332,8 +332,8 @@ export function CEOFinance() {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-          <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-6">
+          <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-6 shadow-sm">
             <div className="flex items-center justify-between mb-2">
               <TrendingUp className="text-emerald-600" size={20} />
               <span className="text-xs font-medium text-slate-500">REVENUE</span>
@@ -342,7 +342,7 @@ export function CEOFinance() {
             <div className="text-sm text-slate-500">Total Revenue</div>
           </div>
 
-          <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+          <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-6 shadow-sm">
             <div className="flex items-center justify-between mb-2">
               <TrendingDown className="text-red-600" size={20} />
               <span className="text-xs font-medium text-slate-500">EXPENSES</span>
@@ -351,7 +351,7 @@ export function CEOFinance() {
             <div className="text-sm text-slate-500">Total Expenses</div>
           </div>
 
-          <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+          <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-6 shadow-sm">
             <div className="flex items-center justify-between mb-2">
               <DollarSign className="text-indigo-500" size={20} />
               <span className="text-xs font-medium text-slate-500">AR</span>
@@ -360,7 +360,7 @@ export function CEOFinance() {
             <div className="text-sm text-slate-500">Receivables</div>
           </div>
 
-          <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+          <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-6 shadow-sm">
             <div className="flex items-center justify-between mb-2">
               <AlertCircle className="text-amber-600" size={20} />
               <span className="text-xs font-medium text-slate-500">AP</span>
@@ -369,7 +369,7 @@ export function CEOFinance() {
             <div className="text-sm text-slate-500">Payables</div>
           </div>
 
-          <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+          <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-6 shadow-sm">
             <div className="flex items-center justify-between mb-2">
               <TrendingUp className="text-purple-600" size={20} />
               <span className="text-xs font-medium text-slate-500">PROFIT</span>
@@ -379,12 +379,12 @@ export function CEOFinance() {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+        <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-6 shadow-sm">
           <div className="flex items-center gap-2 mb-4">
             <Filter size={20} className="text-slate-600" />
             <h2 className="text-lg font-semibold text-slate-900">Filters</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             <div>
               <label className="block text-xs font-medium text-gray-700 mb-1">From Date</label>
               <input
@@ -421,8 +421,8 @@ export function CEOFinance() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-6">
+          <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-6 shadow-sm">
             <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
               <BarChart3 size={20} />
               Revenue vs Expenses (12 Months)
@@ -454,7 +454,7 @@ export function CEOFinance() {
             </ResponsiveContainer>
           </div>
 
-          <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+          <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-6 shadow-sm">
             <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
               <PieChart size={20} />
               Category Breakdown
@@ -480,7 +480,7 @@ export function CEOFinance() {
             </ResponsiveContainer>
           </div>
 
-          <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+          <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-6 shadow-sm">
             <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
               <Calendar size={20} />
               Cash Flow Analysis
@@ -498,7 +498,7 @@ export function CEOFinance() {
             </ResponsiveContainer>
           </div>
 
-          <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+          <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-6 shadow-sm">
             <h2 className="text-lg font-semibold text-slate-900 mb-4">Top Vendors & Customers</h2>
             <div className="w-full space-y-3 max-h-[300px] overflow-y-auto">
               {topVendorsCustomers.map((item, index) => (
@@ -517,35 +517,35 @@ export function CEOFinance() {
         </div>
 
         <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
-          <div className="p-6 border-b border-slate-200">
+          <div className="p-4 sm:p-6 border-b border-slate-200">
             <h2 className="text-lg font-semibold text-slate-900">Recent Transactions</h2>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase">Date</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase">Category</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase">Description</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase">Vendor/Customer</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase">Amount</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase">Status</th>
+                  <th className="px-2 py-2 sm:px-4 sm:py-3 text-left text-xs font-medium text-gray-700 uppercase">Date</th>
+                  <th className="px-2 py-2 sm:px-4 sm:py-3 text-left text-xs font-medium text-gray-700 uppercase">Category</th>
+                  <th className="px-2 py-2 sm:px-4 sm:py-3 text-left text-xs font-medium text-gray-700 uppercase">Description</th>
+                  <th className="px-2 py-2 sm:px-4 sm:py-3 text-left text-xs font-medium text-gray-700 uppercase">Vendor/Customer</th>
+                  <th className="px-2 py-2 sm:px-4 sm:py-3 text-left text-xs font-medium text-gray-700 uppercase">Amount</th>
+                  <th className="px-2 py-2 sm:px-4 sm:py-3 text-left text-xs font-medium text-gray-700 uppercase">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {filteredRecords.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
+                    <td colSpan={6} className="px-2 sm:px-4 py-8 text-center text-gray-500">
                       No financial records found
                     </td>
                   </tr>
                 ) : (
                   filteredRecords.slice(0, 50).map((record) => (
                     <tr key={record.id} className="hover:bg-gray-50">
-                      <td className="px-4 py-3 text-sm text-gray-900">
+                      <td className="px-2 sm:px-4 py-3 text-sm text-gray-900">
                         {record.record_date ? new Date(record.record_date).toLocaleDateString() : 'N/A'}
                       </td>
-                      <td className="px-4 py-3 text-sm">
+                      <td className="px-2 sm:px-4 py-3 text-sm">
                         <span
                           className="inline-block px-2 py-1 rounded text-xs font-medium"
                           style={{
@@ -556,12 +556,12 @@ export function CEOFinance() {
                           {record.category.toUpperCase()}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-900">{record.description || 'N/A'}</td>
-                      <td className="px-4 py-3 text-sm text-gray-900">{record.vendor_customer || 'N/A'}</td>
-                      <td className="px-4 py-3 text-sm font-bold text-[#1a3d97]">
+                      <td className="px-2 sm:px-4 py-3 text-sm text-gray-900">{record.description || 'N/A'}</td>
+                      <td className="px-2 sm:px-4 py-3 text-sm text-gray-900">{record.vendor_customer || 'N/A'}</td>
+                      <td className="px-2 sm:px-4 py-3 text-sm font-bold text-[#1a3d97]">
                         {formatCurrency(record.amount)}
                       </td>
-                      <td className="px-4 py-3 text-sm">
+                      <td className="px-2 sm:px-4 py-3 text-sm">
                         <span className="inline-block px-2 py-1 bg-green-100 text-green-700 rounded text-xs">
                           {record.status || 'Active'}
                         </span>
@@ -575,7 +575,7 @@ export function CEOFinance() {
         </div>
 
         {uploadedFiles.length > 0 && (
-          <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+          <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-6 shadow-sm">
             <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
               <FileSpreadsheet size={20} className="text-indigo-600" />
               Uploaded Files

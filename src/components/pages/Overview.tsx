@@ -227,10 +227,10 @@ export default function Overview() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-bold text-slate-900">Company Overview</h1>
-            <p className="text-slate-600 mt-2 text-lg">
+            <h1 className="text-2xl sm:text-4xl font-bold text-slate-900">Company Overview</h1>
+            <p className="text-slate-600 mt-1 sm:mt-2 text-sm sm:text-lg">
               High-level metrics and organizational insights for MPB Health
             </p>
           </div>
@@ -238,7 +238,7 @@ export default function Overview() {
             <select
               value={timeRange}
               onChange={(e) => setTimeRange(e.target.value)}
-              className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+              className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent text-sm"
               aria-label="Select time range"
             >
               <option value="7d">Last 7 days</option>
@@ -262,9 +262,9 @@ export default function Overview() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.1 }}
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6"
       >
-        <div className="bg-gradient-to-br from-sky-500 to-sky-600 p-6 rounded-xl shadow-lg text-white">
+        <div className="bg-gradient-to-br from-sky-500 to-sky-600 p-4 sm:p-6 rounded-xl shadow-lg text-white">
           <div className="flex items-center justify-between mb-4">
             <Building2 className="w-10 h-10 opacity-80" />
             <span className="text-3xl font-bold">{orgMetrics.departments}</span>
@@ -273,7 +273,7 @@ export default function Overview() {
           <p className="text-sky-100 text-sm mt-1">{orgMetrics.totalHeadcount} total employees</p>
         </div>
 
-        <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 p-6 rounded-xl shadow-lg text-white">
+        <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 p-4 sm:p-6 rounded-xl shadow-lg text-white">
           <div className="flex items-center justify-between mb-4">
             <DollarSign className="w-10 h-10 opacity-80" />
             <span className="text-3xl font-bold">
@@ -284,7 +284,7 @@ export default function Overview() {
           <p className="text-emerald-100 text-sm mt-1">${(orgMetrics.saasSpend / 1000).toFixed(1)}K monthly SaaS spend</p>
         </div>
 
-        <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 p-6 rounded-xl shadow-lg text-white">
+        <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 p-4 sm:p-6 rounded-xl shadow-lg text-white">
           <div className="flex items-center justify-between mb-4">
             <Briefcase className="w-10 h-10 opacity-80" />
             <span className="text-3xl font-bold">{orgMetrics.activeProjects}</span>
@@ -293,7 +293,7 @@ export default function Overview() {
           <p className="text-indigo-100 text-sm mt-1">{orgMetrics.completedProjects} completed</p>
         </div>
 
-        <div className="bg-gradient-to-br from-amber-500 to-amber-600 p-6 rounded-xl shadow-lg text-white">
+        <div className="bg-gradient-to-br from-amber-500 to-amber-600 p-4 sm:p-6 rounded-xl shadow-lg text-white">
           <div className="flex items-center justify-between mb-4">
             <Shield className="w-10 h-10 opacity-80" />
             <span className="text-3xl font-bold">{orgMetrics.completedAudits}</span>
@@ -313,7 +313,7 @@ export default function Overview() {
           <BarChart3 className="w-6 h-6 mr-2 text-indigo-600" />
           Key Performance Indicators
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
           {kpiData.map((kpi) => (
             <KPICard key={kpi.id} data={kpi} />
           ))}
@@ -332,8 +332,8 @@ export default function Overview() {
             <Ticket className="w-6 h-6 mr-2 text-indigo-600" />
             IT Support Tickets
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+            <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-slate-600">Open Tickets</p>
@@ -445,13 +445,13 @@ export default function Overview() {
       )}
 
       {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Organization Growth Trends */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="bg-white p-6 rounded-xl shadow-sm border border-slate-200"
+          className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200"
         >
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-slate-900 flex items-center">
@@ -508,7 +508,7 @@ export default function Overview() {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="bg-white p-6 rounded-xl shadow-sm border border-slate-200"
+          className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200"
         >
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-slate-900 flex items-center">
@@ -636,7 +636,7 @@ export default function Overview() {
             </button>
           </div>
 
-          <div className="space-y-3 max-h-[32rem] overflow-y-auto pr-2">
+          <div className="space-y-3 max-h-[20rem] sm:max-h-[32rem] overflow-y-auto pr-2">
             {teamMembers.length === 0 ? (
               <div className="text-center py-8 text-slate-500">
                 <Users className="w-12 h-12 mx-auto mb-2 opacity-50" />
@@ -670,14 +670,14 @@ export default function Overview() {
                     <div className="flex items-center space-x-1">
                       <button
                         onClick={() => handleEditMember(member)}
-                        className="p-1 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
+                        className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
                         title="Edit team member"
                       >
                         <Edit className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleDeleteMember(member)}
-                        className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                        className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
                         title="Delete team member"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -704,7 +704,7 @@ export default function Overview() {
               {departments.filter(d => d.is_active).length}
             </span>
           </div>
-          <div className="space-y-3 max-h-[32rem] overflow-y-auto pr-2">
+          <div className="space-y-3 max-h-[20rem] sm:max-h-[32rem] overflow-y-auto pr-2">
             {departments.filter(d => d.is_active).length === 0 ? (
               <div className="text-center py-8 text-slate-500">
                 <Building2 className="w-12 h-12 mx-auto mb-2 opacity-50" />
@@ -871,7 +871,7 @@ export default function Overview() {
             {projects.length}
           </span>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
           {projects.slice(0, 6).map((project) => (
             <div
               key={project.id}

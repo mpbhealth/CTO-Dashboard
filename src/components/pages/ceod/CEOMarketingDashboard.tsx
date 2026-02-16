@@ -69,17 +69,17 @@ export function CEOMarketingDashboard() {
   return (
     
       <div className="w-full space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Marketing Suite</h1>
+            <h1 className="text-xl sm:text-3xl font-bold text-gray-900">Marketing Suite</h1>
             <p className="text-gray-600 mt-1">Campaign planning, content calendar, and performance tracking</p>
           </div>
-          <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium">
+          <button className="px-4 py-2 min-h-[44px] bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium">
             Export Report
           </button>
         </div>
 
-        <div className="border-b border-gray-200">
+        <div className="border-b border-gray-200 overflow-x-auto">
           <nav className="flex gap-1">
             {[
               { id: 'overview', label: 'Overview', icon: BarChart3 },
@@ -126,7 +126,7 @@ export function CEOMarketingDashboard() {
               })}
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Active Campaigns Summary</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="text-center p-4 bg-purple-50 rounded-lg">
@@ -154,7 +154,7 @@ export function CEOMarketingDashboard() {
           <div className="w-full space-y-4">
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-semibold text-gray-900">Campaign Planner</h2>
-              <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+              <button className="px-4 py-2 min-h-[44px] bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
                 New Campaign
               </button>
             </div>
@@ -167,7 +167,7 @@ export function CEOMarketingDashboard() {
                   Completed: 'bg-gray-100 text-gray-700',
                 };
                 return (
-                  <div key={index} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                  <div key={index} className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
                     <div className="flex items-start justify-between mb-4">
                       <div>
                         <h3 className="text-lg font-semibold text-gray-900">{campaign.name}</h3>
@@ -179,7 +179,7 @@ export function CEOMarketingDashboard() {
                         {campaign.status}
                       </span>
                     </div>
-                    <div className="grid grid-cols-3 gap-4 mb-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
                       <div>
                         <div className="text-sm text-gray-500">Budget</div>
                         <div className="text-lg font-semibold text-gray-900">{campaign.budget}</div>
@@ -213,7 +213,7 @@ export function CEOMarketingDashboard() {
           <div className="w-full space-y-4">
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-semibold text-gray-900">Content Calendar</h2>
-              <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+              <button className="px-4 py-2 min-h-[44px] bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
                 Add Content
               </button>
             </div>
@@ -267,7 +267,7 @@ export function CEOMarketingDashboard() {
               {budgetByChannel.map((item) => {
                 const utilization = (item.spent / item.budget) * 100;
                 return (
-                  <div key={item.channel} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                  <div key={item.channel} className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="text-lg font-semibold text-gray-900">{item.channel}</h3>
                       <div className="text-right">
@@ -275,7 +275,7 @@ export function CEOMarketingDashboard() {
                         <div className="text-lg font-semibold text-green-600">{item.roi}x</div>
                       </div>
                     </div>
-                    <div className="grid grid-cols-3 gap-4 mb-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
                       <div>
                         <div className="text-sm text-gray-500">Budget</div>
                         <div className="text-lg font-semibold text-gray-900">${item.budget.toLocaleString()}</div>
@@ -309,13 +309,13 @@ export function CEOMarketingDashboard() {
           <div className="w-full space-y-4">
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-semibold text-gray-900">Brand Asset Library</h2>
-              <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+              <button className="px-4 py-2 min-h-[44px] bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
                 Upload Asset
               </button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {['Brand Guidelines', 'Logo Pack', 'Ad Creatives', 'Email Templates', 'Social Media Assets', 'Presentation Decks'].map((category) => (
-                <div key={category} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow cursor-pointer">
+                <div key={category} className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 hover:shadow-md transition-shadow cursor-pointer">
                   <Image size={40} className="text-purple-600 mb-3" />
                   <h3 className="font-semibold text-gray-900 mb-2">{category}</h3>
                   <p className="text-sm text-gray-500">12 files</p>

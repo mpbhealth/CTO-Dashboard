@@ -60,37 +60,38 @@
   html, body {
     overscroll-behavior: none;
     -webkit-overflow-scrolling: touch;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* Root element should fill viewport */
+  #root {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
   }
 
   /* Mobile-friendly body defaults */
   body {
-    padding-top: var(--safe-area-top);
-    padding-bottom: var(--safe-area-bottom);
-    padding-left: var(--safe-area-left);
-    padding-right: var(--safe-area-right);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    min-height: 100dvh;
+    background-color: theme('colors.slate.100');
   }
 
   /* Mobile hamburger menu */
   .mobile-hamburger {
-    z-index: 999;
+    z-index: 70;
     pointer-events: auto;
   }
 
-  /* Ensure all interactive elements are clickable */
-  button, a, [role="button"] {
-    pointer-events: auto !important;
-    cursor: pointer !important;
-  }
-  
-  /* Fix for sidebar nav items */
-  nav ul li, 
-  nav ul li button, 
-  nav div,
+  /* Ensure sidebar interactive elements are clickable */
   .sidebar-item {
-    pointer-events: auto !important; 
-    cursor: pointer !important;
+    pointer-events: auto;
+    cursor: pointer;
     position: relative;
-    z-index: 41;
   }
 
   /* Better input styling on iOS */
@@ -520,49 +521,26 @@
   /* Sidebar component utilities */
   .sidebar-menu-item {
     position: relative;
-    z-index: 45;
-    pointer-events: auto !important;
   }
 
   .sidebar-wrapper {
-    pointer-events: auto !important;
     position: relative;
-    z-index: 40;
   }
-  
+
   .sidebar-category {
     position: relative;
-    z-index: 41;
-    pointer-events: auto !important;
   }
-  
+
   .sidebar-btn {
     position: relative;
-    z-index: 45;
-    pointer-events: auto !important;
   }
-  
-  .sidebar-icon {
-    pointer-events: auto !important;
-  }
-  
+
   .sidebar-section {
     position: relative;
-    z-index: 42;
-    pointer-events: auto !important;
   }
-  
+
   /* Mobile-specific adjustments */
   @media (max-width: 767px) {
-    .sidebar-wrapper {
-      z-index: 999;
-    }
-    
-    .sidebar-btn, 
-    .sidebar-menu-item,
-    .sidebar-category {
-      z-index: 1000;
-    }
 
     /* Larger tap targets on mobile */
     .mobile-tap-target {

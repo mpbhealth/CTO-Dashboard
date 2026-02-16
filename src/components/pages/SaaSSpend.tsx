@@ -184,12 +184,12 @@ export default function SaaSSpend() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">SaaS Spend Management</h1>
-          <p className="text-slate-600 mt-2">Track and optimize software subscriptions and departmental SaaS costs</p>
+          <h1 className="text-xl sm:text-3xl font-bold text-slate-900">SaaS Spend Management</h1>
+          <p className="text-slate-600 mt-1 sm:mt-2 text-sm sm:text-base">Track and optimize software subscriptions and departmental SaaS costs</p>
         </div>
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-2 sm:space-x-3 flex-wrap">
           <button 
             onClick={() => setShowImporter(!showImporter)}
             className="flex items-center space-x-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors"
@@ -246,8 +246,8 @@ export default function SaaSSpend() {
       )}
 
       {/* Spend Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
+        <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200">
           <div className="flex items-center space-x-3">
             <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
               <DollarSign className="w-6 h-6 text-indigo-600" />
@@ -316,13 +316,13 @@ export default function SaaSSpend() {
           <table className="w-full">
             <thead className="bg-slate-50 border-b border-slate-200">
               <tr>
-                <th className="text-left px-6 py-4 text-sm font-semibold text-slate-900">Application</th>
-                <th className="text-left px-6 py-4 text-sm font-semibold text-slate-900">Department</th>
-                <th className="text-left px-6 py-4 text-sm font-semibold text-slate-900">Monthly Cost</th>
-                <th className="text-left px-6 py-4 text-sm font-semibold text-slate-900">Annual Cost</th>
-                <th className="text-left px-6 py-4 text-sm font-semibold text-slate-900">Renewal</th>
-                <th className="text-left px-6 py-4 text-sm font-semibold text-slate-900">Platform</th>
-                <th className="text-left px-6 py-4 text-sm font-semibold text-slate-900">Actions</th>
+                <th className="text-left px-3 py-3 sm:px-6 sm:py-4 text-sm font-semibold text-slate-900">Application</th>
+                <th className="text-left px-3 py-3 sm:px-6 sm:py-4 text-sm font-semibold text-slate-900">Department</th>
+                <th className="text-left px-3 py-3 sm:px-6 sm:py-4 text-sm font-semibold text-slate-900">Monthly Cost</th>
+                <th className="text-left px-3 py-3 sm:px-6 sm:py-4 text-sm font-semibold text-slate-900">Annual Cost</th>
+                <th className="text-left px-3 py-3 sm:px-6 sm:py-4 text-sm font-semibold text-slate-900">Renewal</th>
+                <th className="text-left px-3 py-3 sm:px-6 sm:py-4 text-sm font-semibold text-slate-900">Platform</th>
+                <th className="text-left px-3 py-3 sm:px-6 sm:py-4 text-sm font-semibold text-slate-900">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
@@ -330,20 +330,20 @@ export default function SaaSSpend() {
                 const renewalStatus = expense.renewal_date ? getRenewalStatus(expense.renewal_date) : { status: 'ok', color: 'bg-slate-100 text-slate-600' };
                 return (
                   <tr key={expense.id} className="hover:bg-slate-50 transition-colors">
-                    <td className="px-6 py-4">
+                    <td className="px-3 py-3 sm:px-6 sm:py-4">
                       <div>
                         <p className="font-semibold text-slate-900">{expense.application}</p>
                         <p className="text-sm text-slate-600">{expense.description}</p>
                       </div>
                     </td>
                     <td className="px-6 py-4 text-sm text-slate-900">{expense.department}</td>
-                    <td className="px-6 py-4">
+                    <td className="px-3 py-3 sm:px-6 sm:py-4">
                       <span className="font-semibold text-slate-900">${expense.cost_monthly}</span>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-3 py-3 sm:px-6 sm:py-4">
                       <span className="font-semibold text-slate-900">${expense.cost_annual}</span>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-3 py-3 sm:px-6 sm:py-4">
                       {expense.renewal_date ? (
                         <div>
                           <p className="text-sm text-slate-900">{new Date(expense.renewal_date).toLocaleDateString()}</p>
@@ -356,7 +356,7 @@ export default function SaaSSpend() {
                         <span className="text-sm text-slate-500">Not set</span>
                       )}
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-3 py-3 sm:px-6 sm:py-4">
                       <div>
                         <p className="text-sm text-slate-900">{expense.platform || 'N/A'}</p>
                         {expense.url && (
@@ -371,7 +371,7 @@ export default function SaaSSpend() {
                         )}
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-3 py-3 sm:px-6 sm:py-4">
                       <div className="flex items-center space-x-2">
                         <button 
                           onClick={() => handleEditExpense(expense)}

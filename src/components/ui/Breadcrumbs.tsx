@@ -97,7 +97,7 @@ export function Breadcrumbs() {
   return (
     <nav
       aria-label="Breadcrumb"
-      className="flex items-center gap-1.5 text-sm text-slate-500 mb-4 overflow-x-auto"
+      className="hidden sm:flex items-center gap-1.5 text-sm text-slate-500 mb-4 overflow-x-auto"
     >
       <Home className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
       {breadcrumbs.map((crumb, index) => (

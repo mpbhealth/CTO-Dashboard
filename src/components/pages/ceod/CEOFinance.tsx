@@ -305,7 +305,7 @@ export function CEOFinance() {
   if (isLoading) {
     return (
         <div className="flex items-center justify-center min-h-96">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1a3d97]"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#db2777]"></div>
         </div>
       );
   }
@@ -333,14 +333,14 @@ export function CEOFinance() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-xl sm:text-3xl font-bold text-gray-900 flex items-center gap-3">
-              <DollarSign className="text-[#1a3d97]" size={32} />
+              <DollarSign className="text-[#db2777]" size={32} />
               Finance Dashboard
             </h1>
             <p className="text-gray-600 mt-1">Comprehensive financial analytics and reporting</p>
           </div>
           <button
             onClick={() => setShowExportModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity"
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#db2777] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity"
           >
             <Download size={18} />
             Export
@@ -368,7 +368,7 @@ export function CEOFinance() {
 
           <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-6 shadow-sm">
             <div className="flex items-center justify-between mb-2">
-              <DollarSign className="text-indigo-500" size={20} />
+              <DollarSign className="text-pink-500" size={20} />
               <span className="text-xs font-medium text-slate-500">AR</span>
             </div>
             <div className="text-2xl font-bold text-slate-900">{formatCurrency(metrics.accountsReceivable)}</div>
@@ -406,7 +406,7 @@ export function CEOFinance() {
                 type="date"
                 value={dateFrom}
                 onChange={(e) => setDateFrom(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1a3d97] focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#db2777] focus:border-transparent"
               />
             </div>
             <div>
@@ -415,7 +415,7 @@ export function CEOFinance() {
                 type="date"
                 value={dateTo}
                 onChange={(e) => setDateTo(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1a3d97] focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#db2777] focus:border-transparent"
               />
             </div>
             <div>
@@ -424,7 +424,7 @@ export function CEOFinance() {
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 aria-label="Filter by category"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1a3d97] focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#db2777] focus:border-transparent"
               >
                 <option value="">All Categories</option>
                 {categories.map((category) => (
@@ -520,12 +520,12 @@ export function CEOFinance() {
               {topVendorsCustomers.map((item, index) => (
                 <div key={item.name} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-full bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white text-xs flex items-center justify-center font-bold">
+                    <div className="w-6 h-6 rounded-full bg-gradient-to-r from-[#db2777] to-[#00A896] text-white text-xs flex items-center justify-center font-bold">
                       {index + 1}
                     </div>
                     <span className="text-sm font-medium text-gray-900">{item.name}</span>
                   </div>
-                  <span className="text-sm font-bold text-[#1a3d97]">{formatCurrency(item.value)}</span>
+                  <span className="text-sm font-bold text-[#db2777]">{formatCurrency(item.value)}</span>
                 </div>
               ))}
             </div>
@@ -574,7 +574,7 @@ export function CEOFinance() {
                       </td>
                       <td className="px-2 sm:px-4 py-3 text-sm text-gray-900">{record.description || 'N/A'}</td>
                       <td className="px-2 sm:px-4 py-3 text-sm text-gray-900">{record.vendor_customer || 'N/A'}</td>
-                      <td className="px-2 sm:px-4 py-3 text-sm font-bold text-[#1a3d97]">
+                      <td className="px-2 sm:px-4 py-3 text-sm font-bold text-[#db2777]">
                         {formatCurrency(record.amount)}
                       </td>
                       <td className="px-2 sm:px-4 py-3 text-sm">
@@ -593,14 +593,14 @@ export function CEOFinance() {
         {uploadedFiles.length > 0 && (
           <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-6 shadow-sm">
             <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
-              <FileSpreadsheet size={20} className="text-indigo-600" />
+              <FileSpreadsheet size={20} className="text-pink-600" />
               Uploaded Files
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {uploadedFiles.map((file: UploadedFile) => (
                 <div
                   key={file.id}
-                  className="border border-slate-200 rounded-xl p-4 hover:border-indigo-300 transition-colors shadow-sm"
+                  className="border border-slate-200 rounded-xl p-4 hover:border-pink-300 transition-colors shadow-sm"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
@@ -623,7 +623,7 @@ export function CEOFinance() {
                   </div>
                   <button
                     onClick={() => handleViewFile(file)}
-                    className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity text-sm"
+                    className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-r from-[#db2777] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity text-sm"
                   >
                     <Eye size={14} />
                     View Data

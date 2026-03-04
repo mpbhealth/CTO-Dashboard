@@ -156,7 +156,7 @@ export function CEOOperations() {
     return (
       <div className="w-full space-y-6">
         <div className="flex items-center justify-center min-h-96">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1a3d97]"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#db2777]"></div>
         </div>
       </div>
     );
@@ -185,14 +185,14 @@ export function CEOOperations() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-xl sm:text-3xl font-bold text-gray-900 flex items-center gap-3">
-              <Activity className="text-[#1a3d97]" size={32} />
+              <Activity className="text-[#db2777]" size={32} />
               Operations Overview
             </h1>
             <p className="text-gray-600 mt-1">Monitor cancellations and churn metrics</p>
           </div>
           <button
             onClick={() => setShowExportModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity"
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#db2777] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity"
           >
             <Download size={18} />
             Export
@@ -220,7 +220,7 @@ export function CEOOperations() {
 
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 sm:p-6">
             <div className="flex items-center justify-between mb-2">
-              <Users className="text-indigo-500" size={20} />
+              <Users className="text-pink-500" size={20} />
               <span className="text-xs font-medium text-gray-500">SAVES</span>
             </div>
             <div className="text-2xl font-bold text-gray-900">{metrics.saveSuccessful}</div>
@@ -257,7 +257,7 @@ export function CEOOperations() {
                     type="date"
                     value={dateFrom}
                     onChange={(e) => setDateFrom(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1a3d97] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#db2777] focus:border-transparent"
                   />
                 </div>
                 <div>
@@ -266,7 +266,7 @@ export function CEOOperations() {
                     type="date"
                     value={dateTo}
                     onChange={(e) => setDateTo(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1a3d97] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#db2777] focus:border-transparent"
                   />
                 </div>
                 <div>
@@ -275,7 +275,7 @@ export function CEOOperations() {
                     value={selectedReason}
                     onChange={(e) => setSelectedReason(e.target.value)}
                     aria-label="Filter by reason"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1a3d97] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#db2777] focus:border-transparent"
                   >
                     <option value="">All Reasons</option>
                     {reasons.map((reason) => (
@@ -296,7 +296,7 @@ export function CEOOperations() {
                   <XAxis dataKey="month" />
                   <YAxis />
                   <Tooltip />
-                  <Line type="monotone" dataKey="count" stroke="#1a3d97" strokeWidth={2} />
+                  <Line type="monotone" dataKey="count" stroke="#db2777" strokeWidth={2} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -368,7 +368,7 @@ export function CEOOperations() {
                   <XAxis type="number" />
                   <YAxis dataKey="name" type="category" width={120} />
                   <Tooltip />
-                  <Bar dataKey="value" fill="#1a3d97" />
+                  <Bar dataKey="value" fill="#db2777" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -377,14 +377,14 @@ export function CEOOperations() {
       {uploadedFiles.length > 0 && (
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 sm:p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <FileSpreadsheet size={20} className="text-[#1a3d97]" />
+            <FileSpreadsheet size={20} className="text-[#db2777]" />
             Uploaded Files
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {uploadedFiles.map((file: UploadedFile) => (
               <div
                 key={file.id}
-                className="border border-gray-200 rounded-lg p-4 hover:border-[#1a3d97] transition-colors"
+                className="border border-gray-200 rounded-lg p-4 hover:border-[#db2777] transition-colors"
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
@@ -407,7 +407,7 @@ export function CEOOperations() {
                 </div>
                 <button
                   onClick={() => handleViewFile(file)}
-                  className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity text-sm"
+                  className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-r from-[#db2777] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity text-sm"
                 >
                   <Eye size={14} />
                   View Data

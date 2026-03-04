@@ -49,7 +49,7 @@ export const SalesPanel = memo(function SalesPanel() {
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-          <ShoppingCart className="w-5 h-5 text-[#1a3d97]" />
+          <ShoppingCart className="w-5 h-5 text-[#db2777]" />
           Sales Pipeline
         </h3>
         <div className="flex items-center gap-2 text-sm">
@@ -62,7 +62,7 @@ export const SalesPanel = memo(function SalesPanel() {
       <div className="mb-6">
         <div className="grid grid-cols-4 gap-3">
           {metrics.pipeline.map((stage, index) => {
-            const colors = ['blue', 'indigo', 'purple', 'green'];
+            const colors = ['blue', 'pink', 'purple', 'green'];
             const color = colors[index];
             return (
               <div key={stage.stage} className={`bg-${color}-50 rounded-lg p-3 border border-${color}-200`}>

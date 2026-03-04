@@ -210,7 +210,7 @@ export function CEOSaudeMAXReports() {
 
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
             <div className="flex items-center justify-between mb-2">
-              <Target className="text-indigo-500" size={20} />
+              <Target className="text-pink-500" size={20} />
               <span className="text-xs font-medium text-gray-500">ENGAGEMENT</span>
             </div>
             <div className="text-2xl font-bold text-gray-900">{metrics.avgEngagement}</div>

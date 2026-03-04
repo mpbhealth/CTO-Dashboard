@@ -98,12 +98,12 @@ export function CEOHome() {
           className="
             inline-flex items-center justify-center gap-2 
             px-4 sm:px-6 py-3 
-            bg-gradient-to-r from-indigo-500 to-indigo-600 
+            bg-gradient-to-r from-pink-500 to-pink-600 
             text-white rounded-xl 
-            hover:from-indigo-600 hover:to-indigo-700
+            hover:from-pink-600 hover:to-pink-700
             active:scale-[0.98]
             transition-all duration-200 
-            shadow-lg shadow-indigo-500/20
+            shadow-lg shadow-pink-500/20
             font-medium text-sm sm:text-base
             min-h-[44px]
             touch-manipulation
@@ -164,7 +164,7 @@ export function CEOHome() {
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
             <div className="p-4 sm:p-6 border-b border-slate-200">
               <h2 className="text-base sm:text-lg font-semibold text-gray-900 flex items-center gap-2">
-                <Target size={20} className="text-indigo-500" />
+                <Target size={20} className="text-pink-500" />
                 Top Priorities
               </h2>
             </div>
@@ -172,7 +172,7 @@ export function CEOHome() {
               {priorities.map((priority, index) => {
                 const statusColors = {
                   green: 'bg-green-100 text-green-700',
-                  blue: 'bg-indigo-100 text-indigo-700',
+                  blue: 'bg-pink-100 text-pink-700',
                   yellow: 'bg-yellow-100 text-yellow-700',
                 };
                 return (
@@ -180,7 +180,7 @@ export function CEOHome() {
                     key={index} 
                     className="
                       border border-gray-200 rounded-xl p-3 sm:p-4
-                      hover:border-indigo-200 hover:bg-indigo-50/30
+                      hover:border-pink-200 hover:bg-pink-50/30
                       transition-colors duration-200
                       touch-manipulation
                     "
@@ -206,7 +206,7 @@ export function CEOHome() {
                     <div className="flex items-center gap-3">
                       <div className="flex-1 bg-gray-200 rounded-full h-2">
                         <div
-                          className="bg-indigo-500 h-2 rounded-full transition-all duration-500"
+                          className="bg-pink-500 h-2 rounded-full transition-all duration-500"
                           style={{ width: `${priority.progress}%` }}
                         />
                       </div>
@@ -224,7 +224,7 @@ export function CEOHome() {
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
             <div className="p-4 sm:p-6 border-b border-slate-200">
               <h2 className="text-base sm:text-lg font-semibold text-gray-900 flex items-center gap-2">
-                <Share2 size={20} className="text-indigo-500" />
+                <Share2 size={20} className="text-pink-500" />
                 Shared from CTO
               </h2>
               <p className="text-xs sm:text-sm text-gray-500 mt-1">
@@ -245,15 +245,15 @@ export function CEOHome() {
                   <div 
                     key={resource.id} 
                     className="
-                      p-4 hover:bg-indigo-50 
+                      p-4 hover:bg-pink-50 
                       transition-colors duration-200 
                       group touch-manipulation
-                      active:bg-indigo-100
+                      active:bg-pink-100
                     "
                   >
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex items-center gap-3 min-w-0 flex-1">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-400 to-indigo-500 flex items-center justify-center flex-shrink-0">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-400 to-pink-500 flex items-center justify-center flex-shrink-0">
                           <FileText size={18} className="text-white" />
                         </div>
                         <div className="min-w-0">
@@ -267,7 +267,7 @@ export function CEOHome() {
                       </div>
                       <button className="
                         px-3 py-2 
-                        bg-gradient-to-r from-indigo-500 to-indigo-600 
+                        bg-gradient-to-r from-pink-500 to-pink-600 
                         text-white rounded-lg text-sm font-medium 
                         opacity-90 group-hover:opacity-100 
                         transition-all duration-200
@@ -291,7 +291,7 @@ export function CEOHome() {
           {/* Quick Actions Card */}
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6">
             <h2 className="text-base sm:text-lg font-semibold text-gray-900 flex items-center gap-2 mb-4">
-              <TrendingUp size={20} className="text-indigo-500" />
+              <TrendingUp size={20} className="text-pink-500" />
               Quick Actions
             </h2>
             <div className="space-y-2">
@@ -300,9 +300,9 @@ export function CEOHome() {
                 className="
                   flex items-center justify-between
                   w-full px-4 py-3 
-                  bg-gradient-to-r from-indigo-500 to-indigo-600 
+                  bg-gradient-to-r from-pink-500 to-pink-600 
                   text-white rounded-xl 
-                  hover:from-indigo-600 hover:to-indigo-700
+                  hover:from-pink-600 hover:to-pink-700
                   active:scale-[0.98]
                   transition-all duration-200 
                   font-medium text-sm
@@ -318,9 +318,9 @@ export function CEOHome() {
                 className="
                   flex items-center justify-between
                   w-full px-4 py-3 
-                  bg-indigo-50 text-indigo-600 rounded-xl 
-                  hover:bg-indigo-100 
-                  active:bg-indigo-200 active:scale-[0.98]
+                  bg-pink-50 text-pink-600 rounded-xl 
+                  hover:bg-pink-100 
+                  active:bg-pink-200 active:scale-[0.98]
                   transition-all duration-200 
                   font-medium text-sm
                   min-h-[44px]
@@ -335,9 +335,9 @@ export function CEOHome() {
                 className="
                   flex items-center justify-between
                   w-full px-4 py-3 
-                  bg-indigo-50 text-indigo-600 rounded-xl 
-                  hover:bg-indigo-100 
-                  active:bg-indigo-200 active:scale-[0.98]
+                  bg-pink-50 text-pink-600 rounded-xl 
+                  hover:bg-pink-100 
+                  active:bg-pink-200 active:scale-[0.98]
                   transition-all duration-200 
                   font-medium text-sm
                   min-h-[44px]
@@ -352,9 +352,9 @@ export function CEOHome() {
                 className="
                   flex items-center justify-between
                   w-full px-4 py-3 
-                  bg-indigo-50 text-indigo-600 rounded-xl 
-                  hover:bg-indigo-100 
-                  active:bg-indigo-200 active:scale-[0.98]
+                  bg-pink-50 text-pink-600 rounded-xl 
+                  hover:bg-pink-100 
+                  active:bg-pink-200 active:scale-[0.98]
                   transition-all duration-200 
                   font-medium text-sm
                   min-h-[44px]
@@ -368,19 +368,19 @@ export function CEOHome() {
           </div>
 
           {/* Company Health Card */}
-          <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl shadow-lg p-4 sm:p-6 text-white">
+          <div className="bg-gradient-to-br from-pink-500 to-pink-600 rounded-xl shadow-lg p-4 sm:p-6 text-white">
             <CheckCircle size={28} className="mb-3" />
             <h3 className="font-semibold text-lg mb-2">Company Health</h3>
-            <p className="text-indigo-100 text-sm mb-4">
+            <p className="text-pink-100 text-sm mb-4">
               Strong performance across all metrics
             </p>
             <div className="space-y-3 text-sm">
               <div className="flex items-center justify-between py-2 border-t border-white/20">
-                <span className="text-indigo-100">Revenue Growth</span>
+                <span className="text-pink-100">Revenue Growth</span>
                 <span className="font-semibold">+12%</span>
               </div>
               <div className="flex items-center justify-between py-2 border-t border-white/20">
-                <span className="text-indigo-100">Team Satisfaction</span>
+                <span className="text-pink-100">Team Satisfaction</span>
                 <span className="font-semibold">8.7/10</span>
               </div>
             </div>
@@ -393,7 +393,7 @@ export function CEOHome() {
             </h2>
             <div className="space-y-4">
               <div className="flex items-start gap-3">
-                <div className="w-2.5 h-2.5 bg-indigo-600 rounded-full mt-1.5 flex-shrink-0" />
+                <div className="w-2.5 h-2.5 bg-pink-600 rounded-full mt-1.5 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-gray-900">Board Meeting</p>
                   <p className="text-xs text-gray-500">Tomorrow, 2:00 PM</p>

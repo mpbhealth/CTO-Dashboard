@@ -257,7 +257,7 @@ export function CEODepartmentUpload() {
       <div className="w-full space-y-6">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <Upload className="text-[#1a3d97]" size={32} />
+            <Upload className="text-[#db2777]" size={32} />
             Department Data Upload
           </h1>
           <p className="text-gray-600 mt-1">
@@ -279,10 +279,10 @@ export function CEODepartmentUpload() {
           </div>
         )}
 
-        <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4">
+        <div className="bg-pink-50 border border-pink-200 rounded-lg p-4">
           <div className="flex items-start gap-3">
-            <Info className="w-5 h-5 text-indigo-500 mt-0.5 flex-shrink-0" />
-            <div className="text-sm text-indigo-800">
+            <Info className="w-5 h-5 text-pink-500 mt-0.5 flex-shrink-0" />
+            <div className="text-sm text-pink-800">
               <p className="font-medium mb-2">How to use this portal:</p>
               <ol className="list-decimal list-inside space-y-1 text-xs">
                 <li>Select your department from the options below</li>
@@ -304,14 +304,14 @@ export function CEODepartmentUpload() {
                 onClick={() => setSelectedDepartment(dept.value)}
                 className={`p-4 border-2 rounded-lg text-left transition-all ${
                   selectedDepartment === dept.value
-                    ? 'border-[#1a3d97] bg-indigo-50'
+                    ? 'border-[#db2777] bg-pink-50'
                     : 'border-gray-200 hover:border-gray-300'
                 }`}
               >
                 <div className="flex items-center gap-2 mb-1">
                   <FileSpreadsheet
                     size={20}
-                    className={selectedDepartment === dept.value ? 'text-[#1a3d97]' : 'text-gray-400'}
+                    className={selectedDepartment === dept.value ? 'text-[#db2777]' : 'text-gray-400'}
                   />
                   <h3 className="font-semibold text-gray-900">{dept.label}</h3>
                 </div>
@@ -324,7 +324,7 @@ export function CEODepartmentUpload() {
             <div className="mt-4 flex justify-end">
               <button
                 onClick={handleDownloadTemplate}
-                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity"
+                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#db2777] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity"
               >
                 <Download size={18} />
                 Download Template
@@ -343,7 +343,7 @@ export function CEODepartmentUpload() {
               onDrop={handleDrop}
               className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
                 dragActive
-                  ? 'border-indigo-500 bg-indigo-50'
+                  ? 'border-pink-500 bg-pink-50'
                   : 'border-gray-300 hover:border-gray-400'
               } ${uploading ? 'opacity-50 pointer-events-none' : ''}`}
             >
@@ -375,7 +375,7 @@ export function CEODepartmentUpload() {
               <div className="mt-4 flex justify-end">
                 <button
                   onClick={handleUpload}
-                  className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity font-medium"
+                  className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#db2777] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity font-medium"
                 >
                   <Upload size={20} />
                   Upload Data
@@ -391,7 +391,7 @@ export function CEODepartmentUpload() {
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div
-                    className="bg-gradient-to-r from-[#1a3d97] to-[#00A896] h-2 rounded-full transition-all duration-300"
+                    className="bg-gradient-to-r from-[#db2777] to-[#00A896] h-2 rounded-full transition-all duration-300"
                     style={{ width: `${progress}%` }}
                   />
                 </div>
@@ -454,7 +454,7 @@ export function CEODepartmentUpload() {
                       <div className="mt-4">
                         <button
                           onClick={handleUpload}
-                          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity text-sm font-medium"
+                          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#db2777] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity text-sm font-medium"
                         >
                           <Upload size={16} />
                           Retry Upload
@@ -468,16 +468,16 @@ export function CEODepartmentUpload() {
           </div>
         )}
 
-        <div className="bg-gradient-to-br from-[#1a3d97] to-[#00A896] rounded-lg p-6 text-white">
+        <div className="bg-gradient-to-br from-[#db2777] to-[#00A896] rounded-lg p-6 text-white">
           <h3 className="font-semibold text-lg mb-2">Need Help?</h3>
-          <p className="text-indigo-50 text-sm mb-4">
+          <p className="text-pink-50 text-sm mb-4">
             If you encounter any issues with uploading data or need assistance with the template format,
             please contact your system administrator or the CEO office.
           </p>
           <div className="flex gap-3">
             <a
               href="/ceod/data"
-              className="px-4 py-2 bg-white text-[#1a3d97] rounded-lg hover:bg-indigo-50 transition-colors text-sm font-medium"
+              className="px-4 py-2 bg-white text-[#db2777] rounded-lg hover:bg-pink-50 transition-colors text-sm font-medium"
             >
               View Upload History
             </a>

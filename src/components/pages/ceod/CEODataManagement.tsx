@@ -61,8 +61,8 @@ export function CEODataManagement() {
       name: 'Lead Reports',
       description: 'CRM lead pipeline data with sources and status',
       icon: FileSpreadsheet,
-      color: 'text-indigo-500',
-      bgColor: 'bg-indigo-50',
+      color: 'text-pink-500',
+      bgColor: 'bg-pink-50',
     },
     {
       id: 'sales' as const,
@@ -136,7 +136,7 @@ export function CEODataManagement() {
         <div className="flex flex-col gap-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-              <Database className="text-[#1a3d97]" size={32} />
+              <Database className="text-[#db2777]" size={32} />
               Data Management Command Center
             </h1>
             <p className="text-gray-600 mt-1">Import, manage, and monitor all department data uploads</p>
@@ -150,14 +150,14 @@ export function CEODataManagement() {
                 setUploadLinkCopied(true);
                 setTimeout(() => setUploadLinkCopied(false), 2000);
               }}
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-400 to-indigo-500 text-white rounded-lg hover:opacity-90 transition-opacity shadow-md"
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-400 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity shadow-md"
             >
               {uploadLinkCopied ? <CheckCircle size={18} /> : <Share2 size={18} />}
               {uploadLinkCopied ? 'Copied!' : 'Share Upload Portal'}
             </button>
             <button
               onClick={handleCopyUploadLink}
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-400 to-indigo-500 text-white rounded-lg hover:opacity-90 transition-opacity shadow-md"
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-400 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity shadow-md"
             >
               {uploadLinkCopied ? <CheckCircle size={18} /> : <Copy size={18} />}
               {uploadLinkCopied ? 'Copied!' : 'Upload Department Data'}
@@ -168,7 +168,7 @@ export function CEODataManagement() {
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
             <div className="flex items-center justify-between mb-2">
-              <Database className="text-[#1a3d97]" size={20} />
+              <Database className="text-[#db2777]" size={20} />
               <span className="text-xs font-medium text-gray-500">TOTAL</span>
             </div>
             <div className="text-2xl font-bold text-gray-900">{uploadStats.total}</div>
@@ -209,7 +209,7 @@ export function CEODataManagement() {
               onClick={() => setActiveTab('import')}
               className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === 'import'
-                  ? 'border-[#1a3d97] text-[#1a3d97]'
+                  ? 'border-[#db2777] text-[#db2777]'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
@@ -220,7 +220,7 @@ export function CEODataManagement() {
               onClick={() => setActiveTab('uploads')}
               className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === 'uploads'
-                  ? 'border-[#1a3d97] text-[#1a3d97]'
+                  ? 'border-[#db2777] text-[#db2777]'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
@@ -231,7 +231,7 @@ export function CEODataManagement() {
               onClick={() => setActiveTab('history')}
               className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === 'history'
-                  ? 'border-[#1a3d97] text-[#1a3d97]'
+                  ? 'border-[#db2777] text-[#db2777]'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
@@ -254,7 +254,7 @@ export function CEODataManagement() {
                       onClick={() => setSelectedDataset(dataset.id)}
                       className={`text-left p-4 rounded-lg border-2 transition-all ${
                         selectedDataset === dataset.id
-                          ? 'border-indigo-500 bg-indigo-50'
+                          ? 'border-pink-500 bg-pink-50'
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                     >
@@ -312,7 +312,7 @@ export function CEODataManagement() {
                   <select
                     value={filterDepartment}
                     onChange={(e) => setFilterDepartment(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1a3d97] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#db2777] focus:border-transparent"
                   >
                     <option value="">All Departments</option>
                     <option value="concierge">Concierge</option>
@@ -326,7 +326,7 @@ export function CEODataManagement() {
                   <select
                     value={filterStatus}
                     onChange={(e) => setFilterStatus(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1a3d97] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#db2777] focus:border-transparent"
                   >
                     <option value="">All Statuses</option>
                     <option value="completed">Completed</option>
@@ -344,7 +344,7 @@ export function CEODataManagement() {
                 <h2 className="text-lg font-semibold text-gray-900">Department Uploads</h2>
                 <button
                   onClick={() => refetchUploads()}
-                  className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-[#1a3d97] hover:bg-indigo-50 rounded-lg transition-colors"
+                  className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-[#db2777] hover:bg-pink-50 rounded-lg transition-colors"
                 >
                   <RefreshCw className="w-4 h-4" />
                   <span>Refresh</span>
@@ -385,7 +385,7 @@ export function CEODataManagement() {
                             {new Date(upload.created_at).toLocaleDateString()}
                           </td>
                           <td className="px-4 py-3 text-sm">
-                            <span className="inline-block px-2 py-1 bg-indigo-100 text-indigo-500 rounded text-xs font-medium capitalize">
+                            <span className="inline-block px-2 py-1 bg-pink-100 text-pink-500 rounded text-xs font-medium capitalize">
                               {upload.department}
                             </span>
                           </td>
@@ -405,7 +405,7 @@ export function CEODataManagement() {
                                   : upload.status === 'failed'
                                   ? 'bg-red-100 text-red-700'
                                   : upload.status === 'approved'
-                                  ? 'bg-indigo-100 text-indigo-500'
+                                  ? 'bg-pink-100 text-pink-500'
                                   : 'bg-yellow-100 text-yellow-700'
                               }`}
                             >
@@ -416,7 +416,7 @@ export function CEODataManagement() {
                             {upload.status === 'completed' && (
                               <button
                                 onClick={() => handleApproveUpload(upload.id)}
-                                className="text-[#1a3d97] hover:text-[#00A896] font-medium"
+                                className="text-[#db2777] hover:text-[#00A896] font-medium"
                               >
                                 Approve
                               </button>
@@ -438,7 +438,7 @@ export function CEODataManagement() {
               <h2 className="text-lg font-semibold text-gray-900">Recent Imports</h2>
               <button
                 onClick={() => refetchHistory()}
-                className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-[#1a3d97] hover:bg-indigo-50 rounded-lg transition-colors"
+                className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-[#db2777] hover:bg-pink-50 rounded-lg transition-colors"
               >
                 <RefreshCw className="w-4 h-4" />
                 <span>Refresh</span>

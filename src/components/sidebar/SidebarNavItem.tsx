@@ -51,11 +51,11 @@ export interface SidebarSubItemProps {
 
 const themeStyles = {
   ceo: {
-    active: 'bg-indigo-900 font-semibold shadow-lg text-white',
-    hover: 'text-indigo-50 hover:bg-indigo-800 hover:text-white active:bg-indigo-900',
-    submenuActive: 'bg-indigo-900 font-semibold text-white',
-    submenuHover: 'text-indigo-100 hover:bg-indigo-800 hover:text-white active:bg-indigo-900',
-    submenuBorder: 'border-indigo-800',
+    active: 'bg-pink-900 font-semibold shadow-lg text-white',
+    hover: 'text-pink-50 hover:bg-pink-800 hover:text-white active:bg-pink-900',
+    submenuActive: 'bg-pink-900 font-semibold text-white',
+    submenuHover: 'text-pink-100 hover:bg-pink-800 hover:text-white active:bg-pink-900',
+    submenuBorder: 'border-pink-800',
     iconActive: 'text-white',
   },
   cto: {
@@ -296,7 +296,7 @@ export const SidebarCategoryHeader = memo(function SidebarCategoryHeader({
   if (!isExpanded) return null;
 
   const colorClass = {
-    ceo: 'text-indigo-200',
+    ceo: 'text-pink-200',
     cto: 'text-slate-400',
     admin: 'text-slate-500',
   }[theme];

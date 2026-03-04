@@ -169,7 +169,7 @@ export function CEOConciergeTracking() {
     return (
       
         <div className="flex items-center justify-center min-h-96">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1a3d97]"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#db2777]"></div>
         </div>
       
     );
@@ -199,14 +199,14 @@ export function CEOConciergeTracking() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-xl sm:text-3xl font-bold text-gray-900 flex items-center gap-3">
-              <MessageSquare className="text-[#1a3d97]" size={32} />
+              <MessageSquare className="text-[#db2777]" size={32} />
               Concierge Tracking
             </h1>
             <p className="text-gray-600 mt-1">Monitor member touchpoints and agent performance</p>
           </div>
           <button
             onClick={() => setShowExportModal(true)}
-            className="flex items-center gap-2 px-4 py-2 min-h-[44px] bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity"
+            className="flex items-center gap-2 px-4 py-2 min-h-[44px] bg-gradient-to-r from-[#db2777] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity"
           >
             <Download size={18} />
             Export
@@ -216,7 +216,7 @@ export function CEOConciergeTracking() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
             <div className="flex items-center justify-between mb-2">
-              <TrendingUp className="text-[#1a3d97]" size={20} />
+              <TrendingUp className="text-[#db2777]" size={20} />
               <span className="text-xs font-medium text-gray-500">TOTAL</span>
             </div>
             <div className="text-2xl font-bold text-gray-900">{metrics.total}</div>
@@ -243,7 +243,7 @@ export function CEOConciergeTracking() {
 
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
             <div className="flex items-center justify-between mb-2">
-              <TrendingUp className="text-indigo-500" size={20} />
+              <TrendingUp className="text-pink-500" size={20} />
               <span className="text-xs font-medium text-gray-500">SLA</span>
             </div>
             <div className="text-2xl font-bold text-gray-900">{metrics.slaCompliance}%</div>
@@ -265,7 +265,7 @@ export function CEOConciergeTracking() {
                     type="date"
                     value={dateFrom}
                     onChange={(e) => setDateFrom(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1a3d97] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#db2777] focus:border-transparent"
                   />
                 </div>
                 <div>
@@ -274,7 +274,7 @@ export function CEOConciergeTracking() {
                     type="date"
                     value={dateTo}
                     onChange={(e) => setDateTo(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1a3d97] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#db2777] focus:border-transparent"
                   />
                 </div>
                 <div>
@@ -283,7 +283,7 @@ export function CEOConciergeTracking() {
                     value={selectedAgent}
                     onChange={(e) => setSelectedAgent(e.target.value)}
                     aria-label="Filter by agent"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1a3d97] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#db2777] focus:border-transparent"
                   >
                     <option value="">All Agents</option>
                     {agents.map((agent) => (
@@ -298,7 +298,7 @@ export function CEOConciergeTracking() {
                   <select
                     value={selectedChannel}
                     onChange={(e) => setSelectedChannel(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1a3d97] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#db2777] focus:border-transparent"
                   >
                     <option value="">All Channels</option>
                     {channels.map((channel) => (
@@ -313,7 +313,7 @@ export function CEOConciergeTracking() {
                   <select
                     value={selectedResult}
                     onChange={(e) => setSelectedResult(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1a3d97] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#db2777] focus:border-transparent"
                   >
                     <option value="">All Results</option>
                     {results.map((result) => (
@@ -373,7 +373,7 @@ export function CEOConciergeTracking() {
                             {interaction.agent_name || 'N/A'}
                           </td>
                           <td className="px-4 py-3 text-sm">
-                            <span className="inline-block px-2 py-1 bg-indigo-100 text-indigo-500 rounded text-xs">
+                            <span className="inline-block px-2 py-1 bg-pink-100 text-pink-500 rounded text-xs">
                               {interaction.channel || 'N/A'}
                             </span>
                           </td>
@@ -403,19 +403,19 @@ export function CEOConciergeTracking() {
           <div className="w-full space-y-4">
             <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
               <div className="flex items-center gap-2 mb-4">
-                <User size={20} className="text-[#1a3d97]" />
+                <User size={20} className="text-[#db2777]" />
                 <h3 className="text-sm font-semibold text-gray-900">Top Agents</h3>
               </div>
               <div className="w-full space-y-3">
                 {agentLeaderboard.map(([agent, count], index) => (
                   <div key={agent} className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white text-xs flex items-center justify-center font-bold">
+                      <div className="w-6 h-6 rounded-full bg-gradient-to-r from-[#db2777] to-[#00A896] text-white text-xs flex items-center justify-center font-bold">
                         {index + 1}
                       </div>
                       <span className="text-sm font-medium text-gray-900">{agent}</span>
                     </div>
-                    <span className="text-sm font-bold text-[#1a3d97]">{count}</span>
+                    <span className="text-sm font-bold text-[#db2777]">{count}</span>
                   </div>
                 ))}
                 {agentLeaderboard.length === 0 && (
@@ -429,14 +429,14 @@ export function CEOConciergeTracking() {
         {uploadedFiles.length > 0 && (
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 sm:p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <FileSpreadsheet size={20} className="text-[#1a3d97]" />
+              <FileSpreadsheet size={20} className="text-[#db2777]" />
               Uploaded Files
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {uploadedFiles.map((file) => (
                 <div
                   key={file.id}
-                  className="border border-gray-200 rounded-lg p-4 hover:border-[#1a3d97] transition-colors"
+                  className="border border-gray-200 rounded-lg p-4 hover:border-[#db2777] transition-colors"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
@@ -447,7 +447,7 @@ export function CEOConciergeTracking() {
                         {new Date(file.created_at).toLocaleDateString()}
                       </p>
                     </div>
-                    <span className="px-2 py-1 text-xs font-medium rounded-full bg-[#1a3d97] text-white">
+                    <span className="px-2 py-1 text-xs font-medium rounded-full bg-[#db2777] text-white">
                       {file.subdepartment ? file.subdepartment.replace('_', ' ') : 'Concierge'}
                     </span>
                   </div>
@@ -459,7 +459,7 @@ export function CEOConciergeTracking() {
                   </div>
                   <button
                     onClick={() => handleViewFile(file)}
-                    className="w-full flex items-center justify-center gap-2 px-3 py-2 min-h-[44px] bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity text-sm"
+                    className="w-full flex items-center justify-center gap-2 px-3 py-2 min-h-[44px] bg-gradient-to-r from-[#db2777] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity text-sm"
                   >
                     <Eye size={14} />
                     View Data

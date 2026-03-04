@@ -78,7 +78,7 @@ export const ExecutiveOverviewPanel = memo(function ExecutiveOverviewPanel() {
         return (
           <div
             key={metric.label}
-            className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:border-[#1a3d97] transition-colors"
+            className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:border-[#db2777] transition-colors"
           >
             <div className="flex items-center justify-between mb-4">
               <div className={`p-3 bg-gradient-to-br ${metric.color} rounded-lg`}>

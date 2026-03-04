@@ -17,7 +17,7 @@ interface SalesOrder {
   status: string | null;
 }
 
-const COLORS = ['#1a3d97', '#00A896', '#02c9b3', '#2851c7', '#007f6d'];
+const COLORS = ['#db2777', '#00A896', '#02c9b3', '#2851c7', '#007f6d'];
 
 export function CEOSalesReports() {
   const [dateFrom, setDateFrom] = useState('');
@@ -120,7 +120,7 @@ export function CEOSalesReports() {
     return (
       
         <div className="flex items-center justify-center min-h-96">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1a3d97]"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#db2777]"></div>
         </div>
       
     );
@@ -132,14 +132,14 @@ export function CEOSalesReports() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-              <ShoppingCart className="text-[#1a3d97]" size={32} />
+              <ShoppingCart className="text-[#db2777]" size={32} />
               Sales Reports & Tracking
             </h1>
             <p className="text-gray-600 mt-1">Monitor sales performance and pipeline metrics</p>
           </div>
           <button
             onClick={() => setShowExportModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity"
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#db2777] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity"
           >
             <Download size={18} />
             Export
@@ -149,7 +149,7 @@ export function CEOSalesReports() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
             <div className="flex items-center justify-between mb-2">
-              <DollarSign className="text-[#1a3d97]" size={20} />
+              <DollarSign className="text-[#db2777]" size={20} />
               <span className="text-xs font-medium text-gray-500">MTD</span>
             </div>
             <div className="text-2xl font-bold text-gray-900">${(metrics.mtdSales / 1000).toFixed(1)}K</div>
@@ -167,7 +167,7 @@ export function CEOSalesReports() {
 
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
             <div className="flex items-center justify-between mb-2">
-              <Target className="text-indigo-500" size={20} />
+              <Target className="text-pink-500" size={20} />
               <span className="text-xs font-medium text-gray-500">AVG DEAL</span>
             </div>
             <div className="text-2xl font-bold text-gray-900">${metrics.avgDealSize.toFixed(0)}</div>
@@ -195,7 +195,7 @@ export function CEOSalesReports() {
                     type="date"
                     value={dateFrom}
                     onChange={(e) => setDateFrom(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1a3d97] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#db2777] focus:border-transparent"
                   />
                 </div>
                 <div>
@@ -204,7 +204,7 @@ export function CEOSalesReports() {
                     type="date"
                     value={dateTo}
                     onChange={(e) => setDateTo(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1a3d97] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#db2777] focus:border-transparent"
                   />
                 </div>
                 <div>
@@ -212,7 +212,7 @@ export function CEOSalesReports() {
                   <select
                     value={selectedRep}
                     onChange={(e) => setSelectedRep(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1a3d97] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#db2777] focus:border-transparent"
                   >
                     <option value="">All Reps</option>
                     {reps.map((rep) => (
@@ -227,7 +227,7 @@ export function CEOSalesReports() {
                   <select
                     value={selectedChannel}
                     onChange={(e) => setSelectedChannel(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1a3d97] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#db2777] focus:border-transparent"
                   >
                     <option value="">All Channels</option>
                     {channels.map((channel) => (
@@ -291,7 +291,7 @@ export function CEOSalesReports() {
                           </td>
                           <td className="px-4 py-3 text-sm text-gray-900">{order.order_id || 'N/A'}</td>
                           <td className="px-4 py-3 text-sm text-gray-900">{order.member_id || 'N/A'}</td>
-                          <td className="px-4 py-3 text-sm font-bold text-[#1a3d97]">
+                          <td className="px-4 py-3 text-sm font-bold text-[#db2777]">
                             ${order.amount.toFixed(2)}
                           </td>
                           <td className="px-4 py-3 text-sm text-gray-900">{order.plan || 'N/A'}</td>
@@ -308,7 +308,7 @@ export function CEOSalesReports() {
           <div className="w-full space-y-4">
             <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
               <div className="flex items-center gap-2 mb-4">
-                <Award size={20} className="text-[#1a3d97]" />
+                <Award size={20} className="text-[#db2777]" />
                 <h3 className="text-sm font-semibold text-gray-900">Top Performers</h3>
               </div>
               <div className="w-full space-y-3">
@@ -316,12 +316,12 @@ export function CEOSalesReports() {
                   <div key={rep} className="w-full space-y-1">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-full bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white text-xs flex items-center justify-center font-bold">
+                        <div className="w-6 h-6 rounded-full bg-gradient-to-r from-[#db2777] to-[#00A896] text-white text-xs flex items-center justify-center font-bold">
                           {index + 1}
                         </div>
                         <span className="text-sm font-medium text-gray-900">{rep}</span>
                       </div>
-                      <span className="text-sm font-bold text-[#1a3d97]">
+                      <span className="text-sm font-bold text-[#db2777]">
                         ${(stats.sales / 1000).toFixed(1)}K
                       </span>
                     </div>

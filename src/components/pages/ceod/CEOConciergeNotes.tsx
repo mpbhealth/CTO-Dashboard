@@ -63,7 +63,7 @@ export function CEOConciergeNotes() {
     return (
       
         <div className="flex items-center justify-center min-h-96">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1a3d97]"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#db2777]"></div>
         </div>
       
     );
@@ -75,14 +75,14 @@ export function CEOConciergeNotes() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-              <FileText className="text-[#1a3d97]" size={32} />
+              <FileText className="text-[#db2777]" size={32} />
               Concierge Notes & Tracking
             </h1>
             <p className="text-gray-600 mt-1">Search and filter member interaction notes</p>
           </div>
           <button
             onClick={() => setShowExportModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity"
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#db2777] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity"
           >
             <Download size={18} />
             Export
@@ -98,7 +98,7 @@ export function CEOConciergeNotes() {
                 placeholder="Search notes by content..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a3d97] focus:border-transparent"
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#db2777] focus:border-transparent"
               />
             </div>
 
@@ -109,7 +109,7 @@ export function CEOConciergeNotes() {
                   type="date"
                   value={dateFrom}
                   onChange={(e) => setDateFrom(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1a3d97] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#db2777] focus:border-transparent"
                 />
               </div>
               <div>
@@ -118,7 +118,7 @@ export function CEOConciergeNotes() {
                   type="date"
                   value={dateTo}
                   onChange={(e) => setDateTo(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1a3d97] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#db2777] focus:border-transparent"
                 />
               </div>
               <div>
@@ -126,7 +126,7 @@ export function CEOConciergeNotes() {
                 <select
                   value={selectedOwner}
                   onChange={(e) => setSelectedOwner(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1a3d97] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#db2777] focus:border-transparent"
                 >
                   <option value="">All Owners</option>
                   {owners.map((owner) => (
@@ -141,7 +141,7 @@ export function CEOConciergeNotes() {
                 <select
                   value={selectedPriority}
                   onChange={(e) => setSelectedPriority(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1a3d97] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#db2777] focus:border-transparent"
                 >
                   <option value="">All Priorities</option>
                   {priorities.map((priority) => (
@@ -165,11 +165,11 @@ export function CEOConciergeNotes() {
             filteredNotes.map((note) => (
               <div
                 key={note.staging_id}
-                className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 hover:border-[#1a3d97] transition-colors"
+                className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 hover:border-[#db2777] transition-colors"
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-[#1a3d97] to-[#00A896] flex items-center justify-center text-white font-bold">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-[#db2777] to-[#00A896] flex items-center justify-center text-white font-bold">
                       {note.owner?.charAt(0).toUpperCase() || 'N'}
                     </div>
                     <div>
@@ -213,7 +213,7 @@ export function CEOConciergeNotes() {
                     {note.tags.split(',').map((tag, index) => (
                       <span
                         key={index}
-                        className="px-2 py-1 bg-indigo-50 text-indigo-500 text-xs rounded"
+                        className="px-2 py-1 bg-pink-50 text-pink-500 text-xs rounded"
                       >
                         {tag.trim()}
                       </span>

@@ -22,17 +22,17 @@
   }
 
   :root[data-role='ceo'] {
-    --brand-primary: #1a3d97;
-    --brand-primary-dark: #0f2a6d;
-    --brand-primary-light: #2851c7;
-    --brand-secondary: #00A896;
-    --brand-secondary-dark: #007f6d;
-    --brand-secondary-light: #02c9b3;
-    --brand-gradient-start: #1a3d97;
-    --brand-gradient-end: #00A896;
+    --brand-primary: #db2777;
+    --brand-primary-dark: #be185d;
+    --brand-primary-light: #ec4899;
+    --brand-secondary: #7c3aed;
+    --brand-secondary-dark: #6d28d9;
+    --brand-secondary-light: #8b5cf6;
+    --brand-gradient-start: #db2777;
+    --brand-gradient-end: #ec4899;
     --brand-contrast: #ffffff;
-    --brand-bg: #f0f9ff;
-    --brand-border: #bfdbfe;
+    --brand-bg: #fdf2f8;
+    --brand-border: #fbcfe8;
   }
 
   :root[data-role='cto'] {

@@ -93,7 +93,7 @@ export function CEOFiles() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-              <FileText className="text-[#1a3d97]" size={32} />
+              <FileText className="text-[#db2777]" size={32} />
               Files
             </h1>
             <p className="text-gray-600 mt-1">Upload, manage, and share documents</p>
@@ -111,7 +111,7 @@ export function CEOFiles() {
                   file:mr-4 file:py-2 file:px-4
                   file:rounded-lg file:border-0
                   file:text-sm file:font-medium
-                  file:bg-gradient-to-r file:from-indigo-400 file:to-indigo-500
+                  file:bg-gradient-to-r file:from-pink-400 file:to-pink-500
                   file:text-white
                   hover:file:opacity-90
                   file:cursor-pointer
@@ -122,7 +122,7 @@ export function CEOFiles() {
             <button
               onClick={handleUpload}
               disabled={!selectedFile || isUploading}
-              className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-indigo-400 to-indigo-500 text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed shadow-md font-medium"
+              className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-pink-400 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed shadow-md font-medium"
             >
               <Upload size={18} />
               {isUploading ? 'Uploading...' : 'Upload'}
@@ -130,7 +130,7 @@ export function CEOFiles() {
           </div>
           {selectedFile && (
             <div className="mt-3 text-sm text-gray-600">
-              Selected: <span className="font-medium text-indigo-500">{selectedFile.name}</span> ({formatFileSize(selectedFile.size)})
+              Selected: <span className="font-medium text-pink-500">{selectedFile.name}</span> ({formatFileSize(selectedFile.size)})
             </div>
           )}
         </div>
@@ -146,11 +146,11 @@ export function CEOFiles() {
             {resources.map((resource) => (
               <div
                 key={resource.id}
-                className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 hover:border-[#1a3d97] transition-colors"
+                className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 hover:border-[#db2777] transition-colors"
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-[#1a3d97] to-[#00A896] flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-[#db2777] to-[#00A896] flex items-center justify-center">
                       <FileText size={20} className="text-white" />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -166,7 +166,7 @@ export function CEOFiles() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleDownload(resource)}
-                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition-colors text-sm"
+                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-pink-50 text-pink-600 rounded-lg hover:bg-pink-100 transition-colors text-sm"
                   >
                     <Download size={16} />
                     Download

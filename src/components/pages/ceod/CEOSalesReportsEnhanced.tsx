@@ -54,7 +54,7 @@ interface UploadedFile {
   status?: string;
 }
 
-const COLORS = ['#1a3d97', '#00A896', '#02c9b3', '#2851c7', '#007f6d'];
+const COLORS = ['#db2777', '#00A896', '#02c9b3', '#2851c7', '#007f6d'];
 
 export function CEOSalesReportsEnhanced() {
   const [activeTab, setActiveTab] = useState<'orders' | 'leads' | 'churn'>('orders');
@@ -283,7 +283,7 @@ export function CEOSalesReportsEnhanced() {
     return (
       <div className="flex items-center justify-center min-h-96">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-10 w-10 md:h-12 md:w-12 border-b-2 border-[#1a3d97] mx-auto"></div>
+          <div className="animate-spin rounded-full h-10 w-10 md:h-12 md:w-12 border-b-2 border-[#db2777] mx-auto"></div>
           <p className="text-gray-500 text-sm mt-3">Loading sales data...</p>
         </div>
       </div>
@@ -296,7 +296,7 @@ export function CEOSalesReportsEnhanced() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 flex items-center gap-2 sm:gap-3">
-            <ShoppingCart className="text-[#1a3d97]" size={24} />
+            <ShoppingCart className="text-[#db2777]" size={24} />
             <span className="truncate">Sales Intelligence</span>
           </h1>
           <p className="text-gray-600 mt-1 text-sm md:text-base">
@@ -308,7 +308,7 @@ export function CEOSalesReportsEnhanced() {
           className="
             flex items-center justify-center gap-2 
             px-4 py-3 sm:py-2.5
-            bg-gradient-to-r from-[#1a3d97] to-[#00A896] 
+            bg-gradient-to-r from-[#db2777] to-[#00A896] 
             text-white rounded-xl 
             hover:opacity-90 active:scale-[0.98]
             transition-all duration-200
@@ -325,10 +325,10 @@ export function CEOSalesReportsEnhanced() {
 
       {/* KPI Cards - 2x2 grid on mobile */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-        <div className="bg-white rounded-xl md:rounded-lg border border-gray-200 p-3 sm:p-4 hover:border-[#1a3d97] transition-colors">
+        <div className="bg-white rounded-xl md:rounded-lg border border-gray-200 p-3 sm:p-4 hover:border-[#db2777] transition-colors">
           <div className="flex items-center justify-between mb-1.5 sm:mb-2">
             <div className="p-1.5 bg-blue-50 rounded-lg">
-              <DollarSign className="text-[#1a3d97]" size={16} />
+              <DollarSign className="text-[#db2777]" size={16} />
             </div>
             <span className="text-[10px] sm:text-xs font-medium text-gray-500">MTD SALES</span>
           </div>
@@ -381,7 +381,7 @@ export function CEOSalesReportsEnhanced() {
               transition-colors whitespace-nowrap
               touch-manipulation
               ${activeTab === 'orders'
-                ? 'text-[#1a3d97] border-b-2 border-[#1a3d97] bg-blue-50'
+                ? 'text-[#db2777] border-b-2 border-[#db2777] bg-blue-50'
                 : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50 active:bg-gray-100'
               }
             `}
@@ -439,7 +439,7 @@ export function CEOSalesReportsEnhanced() {
                   <span>Filters</span>
                   <span className="md:hidden flex items-center gap-2">
                     {(dateFrom || dateTo || selectedRep || selectedChannel) && (
-                      <span className="w-2 h-2 bg-[#1a3d97] rounded-full"></span>
+                      <span className="w-2 h-2 bg-[#db2777] rounded-full"></span>
                     )}
                     {showFilters ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                   </span>
@@ -510,13 +510,13 @@ export function CEOSalesReportsEnhanced() {
                     onClick={() => setViewMode('cards')}
                     className={`p-2 rounded-md transition-colors ${viewMode === 'cards' ? 'bg-white shadow-sm' : ''}`}
                   >
-                    <LayoutGrid size={16} className={viewMode === 'cards' ? 'text-[#1a3d97]' : 'text-gray-500'} />
+                    <LayoutGrid size={16} className={viewMode === 'cards' ? 'text-[#db2777]' : 'text-gray-500'} />
                   </button>
                   <button
                     onClick={() => setViewMode('table')}
                     className={`p-2 rounded-md transition-colors ${viewMode === 'table' ? 'bg-white shadow-sm' : ''}`}
                   >
-                    <List size={16} className={viewMode === 'table' ? 'text-[#1a3d97]' : 'text-gray-500'} />
+                    <List size={16} className={viewMode === 'table' ? 'text-[#db2777]' : 'text-gray-500'} />
                   </button>
                 </div>
               </div>
@@ -542,7 +542,7 @@ export function CEOSalesReportsEnhanced() {
                               {order.order_date ? new Date(order.order_date).toLocaleDateString() : 'N/A'}
                             </p>
                           </div>
-                          <span className="text-lg font-bold text-[#1a3d97]">
+                          <span className="text-lg font-bold text-[#db2777]">
                             ${order.amount.toFixed(2)}
                           </span>
                         </div>
@@ -581,7 +581,7 @@ export function CEOSalesReportsEnhanced() {
                               {order.order_date ? new Date(order.order_date).toLocaleDateString() : 'N/A'}
                             </td>
                             <td className="px-3 sm:px-4 py-3 text-sm text-gray-900">{order.member_id || 'N/A'}</td>
-                            <td className="px-3 sm:px-4 py-3 text-sm font-bold text-[#1a3d97]">
+                            <td className="px-3 sm:px-4 py-3 text-sm font-bold text-[#db2777]">
                               ${order.amount.toFixed(2)}
                             </td>
                             <td className="px-3 sm:px-4 py-3 text-sm text-gray-900">{order.plan || 'N/A'}</td>
@@ -768,14 +768,14 @@ export function CEOSalesReportsEnhanced() {
       {uploadedFiles.length > 0 && (
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <FileSpreadsheet size={20} className="text-[#1a3d97]" />
+            <FileSpreadsheet size={20} className="text-[#db2777]" />
             Uploaded Files
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {uploadedFiles.map((file: UploadedFile) => (
               <div
                 key={file.id}
-                className="border border-gray-200 rounded-lg p-4 hover:border-[#1a3d97] transition-colors"
+                className="border border-gray-200 rounded-lg p-4 hover:border-[#db2777] transition-colors"
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
@@ -810,7 +810,7 @@ export function CEOSalesReportsEnhanced() {
                 </div>
                 <button
                   onClick={() => handleViewFile(file)}
-                  className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity text-sm"
+                  className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-r from-[#db2777] to-[#00A896] text-white rounded-lg hover:opacity-90 transition-opacity text-sm"
                 >
                   <Eye size={14} />
                   View Data

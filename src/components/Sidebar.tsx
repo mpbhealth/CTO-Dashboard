@@ -257,7 +257,7 @@ function SidebarComponent({
 
           // Theme
           isCEO
-            ? 'bg-gradient-to-b from-indigo-600 to-indigo-700'
+            ? 'bg-gradient-to-b from-pink-600 to-pink-700'
             : 'bg-slate-900',
 
           // Width - responsive for all screen sizes

@@ -47,7 +47,7 @@ export const CompliancePanel = memo(function CompliancePanel() {
   const complianceColor = getComplianceColor(metrics.complianceScore);
   const colorClasses = {
     green: 'from-green-500 to-green-600 text-green-600',
-    blue: 'from-blue-500 to-blue-600 text-indigo-500',
+    blue: 'from-blue-500 to-blue-600 text-pink-500',
     yellow: 'from-yellow-500 to-yellow-600 text-yellow-600',
     red: 'from-red-500 to-red-600 text-red-600',
   };
@@ -56,7 +56,7 @@ export const CompliancePanel = memo(function CompliancePanel() {
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-          <Shield className="w-5 h-5 text-[#1a3d97]" />
+          <Shield className="w-5 h-5 text-[#db2777]" />
           Compliance Pulse
         </h3>
         <span className="text-xs text-gray-500">HIPAA Status</span>
@@ -101,12 +101,12 @@ export const CompliancePanel = memo(function CompliancePanel() {
         </div>
 
         <div className="lg:col-span-2 space-y-3">
-          <div className="flex items-center justify-between p-3 bg-indigo-50 rounded-lg border border-indigo-200">
+          <div className="flex items-center justify-between p-3 bg-pink-50 rounded-lg border border-pink-200">
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-5 h-5 text-indigo-500" />
-              <span className="text-sm font-medium text-indigo-900">HIPAA Audits</span>
+              <CheckCircle2 className="w-5 h-5 text-pink-500" />
+              <span className="text-sm font-medium text-pink-900">HIPAA Audits</span>
             </div>
-            <span className="text-lg font-bold text-indigo-900">{metrics.hipaaAuditCount}</span>
+            <span className="text-lg font-bold text-pink-900">{metrics.hipaaAuditCount}</span>
           </div>
 
           <div className="flex items-center justify-between p-3 bg-amber-50 rounded-lg border border-amber-200">

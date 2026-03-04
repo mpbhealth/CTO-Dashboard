@@ -42,16 +42,16 @@ export const ConciergePanel = memo(function ConciergePanel() {
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-          <MessageSquare className="w-5 h-5 text-[#1a3d97]" />
+          <MessageSquare className="w-5 h-5 text-[#db2777]" />
           Concierge Tracking
         </h3>
         <span className="text-xs text-gray-500">Last 24 hours</span>
       </div>
 
       <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="text-center p-4 bg-indigo-50 rounded-lg">
-          <div className="text-2xl font-bold text-indigo-900">{metrics.ticketsToday}</div>
-          <div className="text-xs text-indigo-500 mt-1">Tickets Today</div>
+        <div className="text-center p-4 bg-pink-50 rounded-lg">
+          <div className="text-2xl font-bold text-pink-900">{metrics.ticketsToday}</div>
+          <div className="text-xs text-pink-500 mt-1">Tickets Today</div>
         </div>
         <div className="text-center p-4 bg-green-50 rounded-lg">
           <div className="text-2xl font-bold text-green-900">{metrics.slaMetPercent}%</div>

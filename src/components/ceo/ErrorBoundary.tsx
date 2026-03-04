@@ -103,7 +103,7 @@ export class CEOErrorBoundary extends Component<Props, State> {
             <div className="flex flex-col gap-3">
               <button
                 onClick={this.handleReset}
-                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#1a3d97] to-[#00A896] text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity font-medium"
+                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#db2777] to-[#00A896] text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity font-medium"
               >
                 <RefreshCw className="w-4 h-4" />
                 Try Again

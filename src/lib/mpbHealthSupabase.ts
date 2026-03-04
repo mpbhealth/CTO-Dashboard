@@ -37,10 +37,14 @@ const isValidKey = mpbHealthAnonKey &&
 
 export const isMpbHealthConfigured = !!(isValidUrl && isValidKey);
 
+// Use placeholder values if not configured to prevent createClient from throwing
+const finalUrl = isMpbHealthConfigured ? mpbHealthUrl : 'https://placeholder.supabase.co';
+const finalKey = isMpbHealthConfigured ? mpbHealthAnonKey : 'placeholder-key';
+
 // Create the client with the anon key (respects RLS).
 // For admin operations that bypass RLS, use a Supabase Edge Function with
 // Deno.env.get('MPB_HEALTH_SUPABASE_SERVICE_KEY') instead.
-export const mpbHealthSupabase = createClient(mpbHealthUrl, mpbHealthAnonKey, {
+export const mpbHealthSupabase = createClient(finalUrl, finalKey, {
   auth: {
     persistSession: false,
     autoRefreshToken: false,

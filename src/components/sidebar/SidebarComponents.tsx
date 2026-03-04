@@ -53,14 +53,14 @@ export interface SidebarUserProfileProps {
 
 const themeConfig = {
   ceo: {
-    bg: 'bg-gradient-to-b from-indigo-600 to-indigo-700',
-    toggleBg: 'bg-indigo-800 hover:bg-indigo-700',
-    mobileToggleBg: 'bg-indigo-600',
-    userHover: 'hover:bg-indigo-800 active:bg-indigo-900',
-    userAvatar: 'bg-indigo-300 text-indigo-900',
-    userText: 'text-indigo-100',
-    settingsHover: 'text-indigo-100 hover:bg-indigo-800 active:bg-indigo-900',
-    logoutHover: 'text-indigo-100',
+    bg: 'bg-gradient-to-b from-pink-600 to-pink-700',
+    toggleBg: 'bg-pink-800 hover:bg-pink-700',
+    mobileToggleBg: 'bg-pink-600',
+    userHover: 'hover:bg-pink-800 active:bg-pink-900',
+    userAvatar: 'bg-pink-300 text-pink-900',
+    userText: 'text-pink-100',
+    settingsHover: 'text-pink-100 hover:bg-pink-800 active:bg-pink-900',
+    logoutHover: 'text-pink-100',
   },
   cto: {
     bg: 'bg-slate-900',
@@ -221,7 +221,7 @@ export const SidebarHeader = memo(function SidebarHeader({
               loading="lazy"
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg" />
+            <div className="w-full h-full bg-gradient-to-br from-pink-500 to-purple-600 rounded-lg" />
           )}
         </div>
 
@@ -317,7 +317,7 @@ export const SidebarUserProfile = memo(function SidebarUserProfile({
             <span
               className={cn(
                 'text-sm font-bold',
-                theme === 'ceo' ? 'text-indigo-900' : 'text-white'
+                theme === 'ceo' ? 'text-pink-900' : 'text-white'
               )}
             >
               {initials}
@@ -411,7 +411,7 @@ export const AdminRoleSwitcher = memo(function AdminRoleSwitcher({
             'transition-all duration-200 touch-manipulation',
             `active:scale-95 min-h-[${SIDEBAR_CONSTANTS.MIN_TOUCH_TARGET}px]`,
             activeMode === 'ceo'
-              ? 'bg-indigo-500 text-white shadow-md'
+              ? 'bg-pink-500 text-white shadow-md'
               : 'bg-white/10 text-white/70 hover:bg-white/20'
           )}
         >

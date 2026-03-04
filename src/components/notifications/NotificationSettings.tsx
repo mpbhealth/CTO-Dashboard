@@ -18,9 +18,59 @@ import {
   Rocket,
   Check,
   Loader2,
+  Send,
+  Download,
+  Smartphone,
+  Share,
 } from 'lucide-react';
 import { useNotifications } from '../../hooks/useNotifications';
+import { useInstallPrompt } from '../../hooks/useInstallPrompt';
 import type { NotificationPreferences } from '../../types/notifications';
+
+function InstallAppSection() {
+  const { canInstall, isInstalled, isIOS, platform, promptInstall } = useInstallPrompt();
+
+  if (isInstalled) return null;
+  if (!canInstall && !isIOS) return null;
+
+  return (
+    <div className="pb-6 border-b border-gray-100">
+      <h4 className="text-sm font-semibold text-gray-900 mb-4">Install App</h4>
+
+      <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+        <div className="flex items-center gap-3">
+          {isIOS ? (
+            <Smartphone className="w-5 h-5 text-blue-500" />
+          ) : (
+            <Download className="w-5 h-5 text-indigo-600" />
+          )}
+          <div>
+            <p className="text-sm font-medium text-gray-900">
+              {platform === 'desktop' ? 'Desktop App' : 'Mobile App'}
+            </p>
+            <p className="text-xs text-gray-500">
+              {isIOS ? (
+                <>Tap <Share className="w-3 h-3 inline-block mx-0.5 -mt-0.5" /> then &quot;Add to Home Screen&quot;</>
+              ) : (
+                'Install for faster access and offline support'
+              )}
+            </p>
+          </div>
+        </div>
+
+        {canInstall && (
+          <button
+            type="button"
+            onClick={promptInstall}
+            className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
+          >
+            Install
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
 
 interface NotificationSettingsProps {
   className?: string;
@@ -66,6 +116,9 @@ export function NotificationSettings({ className = '' }: NotificationSettingsPro
     permissionStatus,
     requestPermission,
     sendTestNotification,
+    pushSubscription,
+    subscribeToPush,
+    unsubscribeFromPush,
   } = useNotifications();
 
   const [localPrefs, setLocalPrefs] = useState<Partial<NotificationPreferences>>({});
@@ -301,6 +354,48 @@ export function NotificationSettings({ className = '' }: NotificationSettingsPro
             )}
           </div>
         </div>
+
+        {/* Push Notifications */}
+        {pushSubscription.isSupported && (
+          <div className="pb-6 border-b border-gray-100">
+            <h4 className="text-sm font-semibold text-gray-900 mb-4">Push Notifications</h4>
+
+            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center gap-3">
+                <Send className={`w-5 h-5 ${pushSubscription.isSubscribed ? 'text-green-600' : 'text-gray-400'}`} />
+                <div>
+                  <p className="text-sm font-medium text-gray-900">Background Notifications</p>
+                  <p className="text-xs text-gray-500">
+                    {pushSubscription.isSubscribed
+                      ? 'Receiving notifications even when the app is closed'
+                      : 'Get notified even when the app is closed'}
+                  </p>
+                </div>
+              </div>
+
+              {pushSubscription.isLoading ? (
+                <Loader2 className="w-5 h-5 text-gray-400 animate-spin" />
+              ) : pushSubscription.isSubscribed ? (
+                <button
+                  onClick={unsubscribeFromPush}
+                  className="px-4 py-2 bg-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-300 transition-colors"
+                >
+                  Unsubscribe
+                </button>
+              ) : (
+                <button
+                  onClick={subscribeToPush}
+                  className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
+                >
+                  Subscribe
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Install App */}
+        <InstallAppSection />
 
         {/* Notification Types */}
         <div>

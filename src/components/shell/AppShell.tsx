@@ -38,7 +38,7 @@ interface AppShellProps {
 export function AppShell({ children }: AppShellProps) {
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
   const [isMapOpen, setIsMapOpen] = useState(false);
-  const [isDockVisible, setIsDockVisible] = useState(true);
+  const [isDockVisible, setIsDockVisible] = useState(false);
 
   // Command Palette controls
   const openPalette = useCallback(() => setIsPaletteOpen(true), []);

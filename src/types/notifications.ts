@@ -67,6 +67,12 @@ export interface NotificationPayload {
 
 export type PermissionStatus = 'granted' | 'denied' | 'default';
 
+export interface PushSubscriptionState {
+  isSubscribed: boolean;
+  isSupported: boolean;
+  isLoading: boolean;
+}
+
 export interface NotificationContextValue {
   notifications: Notification[];
   unreadCount: number;
@@ -74,12 +80,15 @@ export interface NotificationContextValue {
   permissionStatus: PermissionStatus;
   isLoading: boolean;
   preferences: NotificationPreferences | null;
+  pushSubscription: PushSubscriptionState;
   requestPermission: () => Promise<PermissionStatus>;
   markAsRead: (id: string) => Promise<void>;
   markAllAsRead: () => Promise<void>;
   dismissNotification: (id: string) => Promise<void>;
   updatePreferences: (prefs: Partial<NotificationPreferences>) => Promise<void>;
   sendTestNotification: () => void;
+  subscribeToPush: () => Promise<void>;
+  unsubscribeFromPush: () => Promise<void>;
 }
 
 // Notification icon mapping for UI

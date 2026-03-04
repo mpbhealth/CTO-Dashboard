@@ -304,7 +304,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     
     // Clear timeout warning
     setTimeoutWarning(null);
-    
+
+    // Broadcast logout to other tabs
+    try { new BroadcastChannel('mpb_session').postMessage({ type: 'LOGOUT' }); } catch { /* ignore */ }
+
     // Sign out the user
     await supabase.auth.signOut();
     setProfile(null);
@@ -433,6 +436,76 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     };
   }, [sessionTimeout.enabled, user, isDemoMode, resetActivityTimer]);
+
+  // Cross-tab session synchronization via BroadcastChannel
+  useEffect(() => {
+    if (!user || isDemoMode) return;
+
+    let channel: BroadcastChannel | null = null;
+    try {
+      channel = new BroadcastChannel('mpb_session');
+      channel.onmessage = (event) => {
+        if (event.data?.type === 'LOGOUT') {
+          // Another tab logged out — clear state and redirect
+          setUser(null);
+          setSession(null);
+          setProfile(null);
+          setProfileReady(false);
+          setTimeoutWarning(null);
+          if (activityTimerRef.current) {
+            clearTimeout(activityTimerRef.current);
+            activityTimerRef.current = null;
+          }
+          if (warningTimerRef.current) {
+            clearInterval(warningTimerRef.current);
+            warningTimerRef.current = null;
+          }
+          window.location.href = '/login';
+        }
+        if (event.data?.type === 'ACTIVITY') {
+          // Another tab had activity — keep our timer in sync
+          lastActivityRef.current = Date.now();
+        }
+      };
+    } catch {
+      // BroadcastChannel not supported — fall back to storage event
+    }
+
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === 'mpb-auth-token' && !e.newValue) {
+        window.location.href = '/login';
+      }
+    };
+    window.addEventListener('storage', handleStorage);
+
+    return () => {
+      channel?.close();
+      window.removeEventListener('storage', handleStorage);
+    };
+  }, [user, isDemoMode]);
+
+  // Tab visibility change — check timeout when returning to foreground
+  useEffect(() => {
+    if (!sessionTimeout.enabled || !user || isDemoMode) return;
+
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        // Tab came to foreground — check if we should have timed out
+        const elapsed = Date.now() - lastActivityRef.current;
+        const timeoutMs = sessionTimeout.timeoutMinutes * 60 * 1000;
+        if (elapsed >= timeoutMs) {
+          handleSessionTimeout();
+        } else {
+          resetActivityTimer();
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [sessionTimeout.enabled, sessionTimeout.timeoutMinutes, user, isDemoMode, handleSessionTimeout, resetActivityTimer]);
 
   useEffect(() => {
     if (initializingRef.current) return;
@@ -604,6 +677,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       window.location.href = '/login';
       return;
     }
+
+    // Broadcast logout to other tabs
+    try { new BroadcastChannel('mpb_session').postMessage({ type: 'LOGOUT' }); } catch { /* ignore */ }
 
     // Log logout for security auditing - non-blocking to prevent logout failures
     if (user) {

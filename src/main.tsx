@@ -208,6 +208,8 @@ if ('serviceWorker' in navigator && !Environment.isStackBlitz()) {
     navigator.serviceWorker.register('/sw.js')
       .then((registration) => {
         Environment.log('Service Worker registered successfully', registration);
+        // Store registration for update checking (useAppUpdate hook)
+        (window as unknown as Record<string, unknown>).__SW_REGISTRATION__ = registration;
       })
       .catch((registrationError) => {
         // Service worker failure should not prevent app from loading

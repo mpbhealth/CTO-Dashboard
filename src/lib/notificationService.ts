@@ -504,3 +504,112 @@ export function createNotificationPayload(
   };
 }
 
+// ============================================
+// Web Push Subscription Management
+// ============================================
+
+/**
+ * Convert VAPID public key from URL-safe base64 to Uint8Array
+ */
+function urlBase64ToUint8Array(base64String: string): Uint8Array {
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const rawData = window.atob(base64);
+  return Uint8Array.from(rawData, (char) => char.charCodeAt(0));
+}
+
+/**
+ * Get the VAPID public key from environment
+ */
+export function getVapidPublicKey(): string {
+  return import.meta.env.VITE_VAPID_PUBLIC_KEY || '';
+}
+
+/**
+ * Subscribe to Web Push notifications
+ */
+export async function subscribeToPush(userId: string): Promise<boolean> {
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+    logger.warn('[Push] Push notifications not supported in this browser');
+    return false;
+  }
+
+  const vapidKey = getVapidPublicKey();
+  if (!vapidKey) {
+    logger.error('[Push] VAPID public key not configured');
+    return false;
+  }
+
+  try {
+    const registration = await navigator.serviceWorker.ready;
+    const subscription = await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(vapidKey),
+    });
+
+    const subJson = subscription.toJSON();
+
+    const { error } = await supabase.from('push_subscriptions').upsert(
+      {
+        user_id: userId,
+        endpoint: subJson.endpoint,
+        p256dh: subJson.keys?.p256dh,
+        auth: subJson.keys?.auth,
+        user_agent: navigator.userAgent,
+      },
+      { onConflict: 'user_id,endpoint' }
+    );
+
+    if (error) {
+      logger.error('[Push] Failed to save push subscription:', error);
+      return false;
+    }
+
+    logger.log('[Push] Successfully subscribed to push notifications');
+    return true;
+  } catch (err) {
+    logger.error('[Push] Failed to subscribe:', err);
+    return false;
+  }
+}
+
+/**
+ * Unsubscribe from Web Push notifications
+ */
+export async function unsubscribeFromPush(userId: string): Promise<boolean> {
+  try {
+    const registration = await navigator.serviceWorker.ready;
+    const subscription = await registration.pushManager.getSubscription();
+
+    if (subscription) {
+      const endpoint = subscription.endpoint;
+      await subscription.unsubscribe();
+      await supabase
+        .from('push_subscriptions')
+        .delete()
+        .eq('user_id', userId)
+        .eq('endpoint', endpoint);
+    }
+
+    logger.log('[Push] Successfully unsubscribed from push notifications');
+    return true;
+  } catch (err) {
+    logger.error('[Push] Failed to unsubscribe:', err);
+    return false;
+  }
+}
+
+/**
+ * Check if currently subscribed to Web Push
+ */
+export async function isPushSubscribed(): Promise<boolean> {
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) return false;
+  try {
+    const registration = await navigator.serviceWorker.ready;
+    const subscription = await registration.pushManager.getSubscription();
+    return !!subscription;
+  } catch {
+    return false;
+  }
+}
+

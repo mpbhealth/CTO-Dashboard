@@ -1,9 +1,35 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import crypto from 'crypto';
+import fs from 'fs';
+
+const buildHash = crypto.randomBytes(8).toString('hex');
+const buildTime = new Date().toISOString();
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    {
+      name: 'version-json',
+      closeBundle() {
+        const versionData = JSON.stringify({
+          version: process.env.npm_package_version || '2.0.0',
+          hash: buildHash,
+          buildTime,
+        });
+        const outDir = path.resolve(__dirname, 'dist');
+        if (fs.existsSync(outDir)) {
+          fs.writeFileSync(path.resolve(outDir, 'version.json'), versionData);
+        }
+      },
+    },
+  ],
+  define: {
+    '__APP_VERSION__': JSON.stringify(process.env.npm_package_version || '2.0.0'),
+    '__BUILD_HASH__': JSON.stringify(buildHash),
+    '__BUILD_TIME__': JSON.stringify(buildTime),
+  },
   base: '/',
   resolve: {
     alias: {

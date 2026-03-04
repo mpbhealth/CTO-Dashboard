@@ -13,6 +13,9 @@ import { AIAssistantProvider } from './providers/AIAssistantProvider';
 import { GlobalAIAssistant } from './components/ai/GlobalAIAssistant';
 import { Breadcrumbs } from './components/ui/Breadcrumbs';
 import { KeyboardShortcutsModal } from './components/ui/KeyboardShortcutsModal';
+import { SessionTimeoutWarning } from './components/security/SessionTimeoutWarning';
+import { UpdateBanner } from './components/ui/UpdateBanner';
+import { InstallAppBanner } from './components/ui/InstallAppBanner';
 
 const CTOHome = lazy(() => import('./components/pages/ctod/CTOCommandCenter').then(m => ({ default: m.CTOCommandCenter })));
 const CTOOperations = lazy(() => import('./components/pages/ctod/CTOOperations').then(m => ({ default: m.CTOOperations })));
@@ -642,6 +645,9 @@ export default function DualDashboardApp() {
         <DualDashboardContent />
         <GlobalAIAssistant />
         <KeyboardShortcutsModal />
+        <SessionTimeoutWarning />
+        <UpdateBanner />
+        <InstallAppBanner />
       </AppShell>
     </AIAssistantProvider>
   );

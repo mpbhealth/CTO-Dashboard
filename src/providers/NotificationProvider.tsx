@@ -26,6 +26,9 @@ import {
   markAllNotificationsAsRead as markAllReadService,
   dismissNotification as dismissService,
   createNotificationPayload,
+  subscribeToPush as subscribeToPushService,
+  unsubscribeFromPush as unsubscribeFromPushService,
+  isPushSubscribed,
 } from '../lib/notificationService';
 import {
   initializeRealtimeNotifications,
@@ -37,6 +40,7 @@ import type {
   NotificationPreferences,
   NotificationContextValue,
   PermissionStatus,
+  PushSubscriptionState,
 } from '../types/notifications';
 import { logger } from '../lib/logger';
 
@@ -61,6 +65,12 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
   const [permissionStatus, setPermissionStatus] = useState<PermissionStatus>('default');
   const [isLoading, setIsLoading] = useState(true);
   
+  const [pushSubscription, setPushSubscription] = useState<PushSubscriptionState>({
+    isSubscribed: false,
+    isSupported: typeof window !== 'undefined' && 'PushManager' in window,
+    isLoading: false,
+  });
+
   // Refs for cleanup
   const initializedRef = useRef(false);
   const userIdRef = useRef<string | null>(null);
@@ -141,6 +151,12 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
         // Fetch existing notifications
         const existingNotifications = await fetchNotificationsService(user.id);
         setNotifications(existingNotifications as Notification[]);
+
+        // Check push subscription status
+        if ('PushManager' in window) {
+          const subscribed = await isPushSubscribed();
+          setPushSubscription(prev => ({ ...prev, isSubscribed: subscribed }));
+        }
 
         // Get user role for realtime subscriptions
         const userRole = (profile?.role?.toLowerCase() || 'staff') as 'cto' | 'ceo' | 'admin' | 'staff';
@@ -233,6 +249,32 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
   );
 
   /**
+   * Subscribe to Web Push notifications
+   */
+  const subscribeToPush = useCallback(async () => {
+    if (!user?.id) return;
+    setPushSubscription(prev => ({ ...prev, isLoading: true }));
+    const perm = await requestNotificationPermission();
+    setPermissionStatus(perm);
+    if (perm !== 'granted') {
+      setPushSubscription(prev => ({ ...prev, isLoading: false }));
+      return;
+    }
+    const success = await subscribeToPushService(user.id);
+    setPushSubscription(prev => ({ ...prev, isSubscribed: success, isLoading: false }));
+  }, [user?.id]);
+
+  /**
+   * Unsubscribe from Web Push notifications
+   */
+  const unsubscribeFromPush = useCallback(async () => {
+    if (!user?.id) return;
+    setPushSubscription(prev => ({ ...prev, isLoading: true }));
+    await unsubscribeFromPushService(user.id);
+    setPushSubscription(prev => ({ ...prev, isSubscribed: false, isLoading: false }));
+  }, [user?.id]);
+
+  /**
    * Send a test notification (for debugging/demo)
    */
   const sendTestNotification = useCallback(() => {
@@ -258,12 +300,15 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
       permissionStatus,
       isLoading,
       preferences,
+      pushSubscription,
       requestPermission,
       markAsRead,
       markAllAsRead,
       dismissNotification,
       updatePreferences,
       sendTestNotification,
+      subscribeToPush,
+      unsubscribeFromPush,
     }),
     [
       notifications,
@@ -272,12 +317,15 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
       permissionStatus,
       isLoading,
       preferences,
+      pushSubscription,
       requestPermission,
       markAsRead,
       markAllAsRead,
       dismissNotification,
       updatePreferences,
       sendTestNotification,
+      subscribeToPush,
+      unsubscribeFromPush,
     ]
   );
 

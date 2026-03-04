@@ -419,7 +419,7 @@ function DualDashboardContent() {
               : undefined,
         }}
       >
-        <Breadcrumbs />
+        {!isCEORoute && !isAdminRoute && <Breadcrumbs />}
         <CEOErrorBoundary>
           <Suspense fallback={<LoadingFallback />}>
             <Routes>

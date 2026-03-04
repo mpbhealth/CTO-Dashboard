@@ -219,42 +219,42 @@ export default function Analytics() {
           transition={{ duration: 0.5 }}
         >
           <div className="flex items-center gap-2 mb-4">
-            <div className="w-1 h-5 bg-indigo-600 rounded" />
-            <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Member Overview — Live Data</h2>
+            <div className="w-1 h-5 bg-sky-400 rounded" />
+            <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider">Member Overview — Live Data</h2>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             {[
-              { label: 'Active Primary', value: memberOverview.data.activePrimary.toLocaleString(), sub: `${memberOverview.data.activeDependents.toLocaleString()} dependents`, icon: Users, color: 'bg-emerald-100 text-emerald-600', border: 'border-emerald-200' },
-              { label: 'Registered on App', value: memberOverview.data.appUsers.toLocaleString(), sub: `${memberOverview.data.appAdoptionRate}% adoption`, icon: Smartphone, color: 'bg-blue-100 text-blue-600', border: 'border-blue-200' },
-              { label: 'Currently Active', value: memberOverview.data.activeMembers.toLocaleString(), sub: `${memberOverview.data.retentionRate}% retention`, icon: UserCheck, color: 'bg-green-100 text-green-600', border: 'border-green-200' },
-              { label: 'Net Change', value: `${memberOverview.data.netChange > 0 ? '+' : ''}${memberOverview.data.netChange}`, sub: `${memberOverview.data.activatedThisMonth} activated this month`, icon: Activity, color: memberOverview.data.netChange >= 0 ? 'bg-teal-100 text-teal-600' : 'bg-red-100 text-red-600', border: memberOverview.data.netChange >= 0 ? 'border-teal-200' : 'border-red-200' },
+              { label: 'Active Primary', value: memberOverview.data.activePrimary.toLocaleString(), sub: `${memberOverview.data.activeDependents.toLocaleString()} dependents`, icon: Users, color: 'bg-emerald-50 text-emerald-500', border: 'border-emerald-100' },
+              { label: 'Registered on App', value: memberOverview.data.appUsers.toLocaleString(), sub: `${memberOverview.data.appAdoptionRate}% adoption`, icon: Smartphone, color: 'bg-sky-50 text-sky-500', border: 'border-sky-100' },
+              { label: 'Currently Active', value: memberOverview.data.activeMembers.toLocaleString(), sub: `${memberOverview.data.retentionRate}% retention`, icon: UserCheck, color: 'bg-green-50 text-green-500', border: 'border-green-100' },
+              { label: 'Net Change', value: `${memberOverview.data.netChange > 0 ? '+' : ''}${memberOverview.data.netChange}`, sub: `${memberOverview.data.activatedThisMonth} activated this month`, icon: Activity, color: memberOverview.data.netChange >= 0 ? 'bg-teal-50 text-teal-500' : 'bg-red-50 text-red-400', border: memberOverview.data.netChange >= 0 ? 'border-teal-100' : 'border-red-100' },
             ].map((kpi, i) => (
               <motion.div
                 key={kpi.label}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: i * 0.1 }}
-                className={`bg-white rounded-xl border-2 ${kpi.border} p-5`}
+                className={`bg-white rounded-xl border ${kpi.border} p-5 shadow-sm`}
               >
                 <div className="flex items-center gap-3 mb-2">
                   <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${kpi.color}`}>
                     <kpi.icon className="w-5 h-5" />
                   </div>
-                  <span className="text-sm font-medium text-slate-500">{kpi.label}</span>
+                  <span className="text-sm font-medium text-slate-400">{kpi.label}</span>
                 </div>
-                <p className="text-2xl font-bold text-slate-900">{kpi.value}</p>
-                <p className="text-xs text-slate-500 mt-1">{kpi.sub}</p>
+                <p className="text-2xl font-bold text-slate-800">{kpi.value}</p>
+                <p className="text-xs text-slate-400 mt-1">{kpi.sub}</p>
               </motion.div>
             ))}
           </div>
 
           {/* Activations vs Inactivations Mini Chart */}
           {monthlyActivity.data.length > 0 && (
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-8">
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 mb-8">
               <div className="flex items-center gap-2 mb-4">
-                <TrendingUp className="w-5 h-5 text-indigo-500" />
-                <h3 className="text-base font-semibold text-slate-900">Activations vs Inactivations — Last 6 Months</h3>
+                <TrendingUp className="w-5 h-5 text-sky-400" />
+                <h3 className="text-base font-semibold text-slate-700">Activations vs Inactivations — Last 6 Months</h3>
               </div>
               <ResponsiveContainer width="100%" height={280}>
                 <BarChart data={monthlyActivity.data} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
@@ -263,8 +263,8 @@ export default function Analytics() {
                   <YAxis stroke="#64748B" fontSize={12} />
                   <Tooltip contentStyle={{ backgroundColor: 'white', border: '1px solid #E2E8F0', borderRadius: '8px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }} />
                   <Legend />
-                  <Bar dataKey="activations" fill="#10B981" name="Activations" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="inactivations" fill="#6366F1" name="Inactivations" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="activations" fill="#34D399" name="Activations" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="inactivations" fill="#F87171" name="Inactivations" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>

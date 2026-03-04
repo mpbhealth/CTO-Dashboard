@@ -104,11 +104,42 @@ export interface AdvisorAnalyticsData {
   advisors: AdvisorRow[];
 }
 
-// ─── Helper ─────────────────────────────────
+// ─── Helpers ────────────────────────────────
 
 function formatMonth(dateStr: string): string {
   const d = new Date(dateStr + '-01');
   return d.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+}
+
+// Supabase JS defaults to 1,000 rows. We fetch in pages to get ALL rows.
+const PAGE_SIZE = 1000;
+
+async function fetchAllPaged(
+  table: string,
+  selectCols: string,
+  filters?: { column: string; op: string; value: string }[]
+) {
+  const all: Record<string, unknown>[] = [];
+  let from = 0;
+
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    let q = mpbMemberSupabase.from(table).select(selectCols);
+    if (filters) {
+      for (const f of filters) {
+        if (f.op === 'not.is') q = q.not(f.column, 'is', null);
+        else if (f.op === 'gte') q = q.gte(f.column, f.value);
+      }
+    }
+    const { data, error } = await q.range(from, from + PAGE_SIZE - 1);
+    if (error) throw error;
+    const rows = (data || []) as Record<string, unknown>[];
+    all.push(...rows);
+    if (rows.length < PAGE_SIZE) break;
+    from += PAGE_SIZE;
+  }
+
+  return all;
 }
 
 // ─── useMemberOverview ──────────────────────
@@ -129,24 +160,18 @@ export function useMemberOverview() {
       setLoading(true);
       setError(null);
 
-      // Fetch all members with key fields in one query
-      const { data: allMembers, error: memErr } = await mpbMemberSupabase
-        .from('members')
-        .select('is_active, is_primary, active_date, inactive_date');
+      // Fetch ALL members (paginated to bypass 1,000-row limit)
+      const allMembers = await fetchAllPaged('members', 'is_active, is_primary, active_date, inactive_date');
 
-      if (memErr) throw memErr;
-
-      // Fetch app users
+      // Fetch app users count
       const { count: appUsersCount } = await mpbMemberSupabase
         .from('users')
         .select('*', { count: 'exact', head: true });
 
-      // Fetch app user breakdown (primary vs dependent)
-      const { data: appUserRows } = await mpbMemberSupabase
-        .from('users')
-        .select('is_primary');
+      // Fetch app user breakdown (primary vs dependent) — paginated
+      const appUserRows = await fetchAllPaged('users', 'is_primary');
 
-      const members = allMembers || [];
+      const members = allMembers;
       const now = new Date();
       const todayStr = now.toISOString().split('T')[0];
       const monthStartStr = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
@@ -265,18 +290,15 @@ export function useMemberGrowth(months = 12) {
       const cutoff = new Date();
       cutoff.setMonth(cutoff.getMonth() - months);
 
-      const { data: members, error: err } = await mpbMemberSupabase
-        .from('members')
-        .select('active_date, is_primary')
-        .not('active_date', 'is', null)
-        .gte('active_date', cutoff.toISOString().split('T')[0]);
-
-      if (err) throw err;
+      const members = await fetchAllPaged('members', 'active_date, is_primary', [
+        { column: 'active_date', op: 'not.is', value: '' },
+        { column: 'active_date', op: 'gte', value: cutoff.toISOString().split('T')[0] },
+      ]);
 
       // Aggregate by month
       const byMonth: Record<string, { total: number; primary: number; dependents: number }> = {};
 
-      for (const m of members || []) {
+      for (const m of members) {
         const month = (m.active_date as string).substring(0, 7);
         if (!byMonth[month]) byMonth[month] = { total: 0, primary: 0, dependents: 0 };
         byMonth[month].total++;
@@ -327,18 +349,15 @@ export function useAppAdoption(months = 12) {
       const cutoff = new Date();
       cutoff.setMonth(cutoff.getMonth() - months);
 
-      const { data: users, error: err } = await mpbMemberSupabase
-        .from('users')
-        .select('created_date')
-        .not('created_date', 'is', null)
-        .gte('created_date', cutoff.toISOString());
-
-      if (err) throw err;
+      const users = await fetchAllPaged('users', 'created_date', [
+        { column: 'created_date', op: 'not.is', value: '' },
+        { column: 'created_date', op: 'gte', value: cutoff.toISOString() },
+      ]);
 
       // Aggregate by month
       const byMonth: Record<string, number> = {};
 
-      for (const u of users || []) {
+      for (const u of users) {
         const month = (u.created_date as string).substring(0, 7);
         byMonth[month] = (byMonth[month] || 0) + 1;
       }
@@ -390,17 +409,13 @@ export function useMonthlyActivity(months = 6) {
       cutoff.setMonth(cutoff.getMonth() - months);
       const cutoffStr = cutoff.toISOString().split('T')[0];
 
-      // Fetch activations (active_date) and inactivations (inactive_date) in the range
-      const { data: members, error: err } = await mpbMemberSupabase
-        .from('members')
-        .select('active_date, inactive_date');
-
-      if (err) throw err;
+      // Fetch ALL activations/inactivations (paginated)
+      const members = await fetchAllPaged('members', 'active_date, inactive_date');
 
       const activByMonth: Record<string, number> = {};
       const inactivByMonth: Record<string, number> = {};
 
-      for (const m of members || []) {
+      for (const m of members) {
         if (m.active_date && (m.active_date as string) >= cutoffStr) {
           const month = (m.active_date as string).substring(0, 7);
           activByMonth[month] = (activByMonth[month] || 0) + 1;
@@ -452,16 +467,12 @@ export function useProductDistribution() {
       setLoading(true);
       setError(null);
 
-      const { data: members, error: err } = await mpbMemberSupabase
-        .from('members')
-        .select('product_label, is_active');
-
-      if (err) throw err;
+      const members = await fetchAllPaged('members', 'product_label, is_active');
 
       // Aggregate
       const byProduct: Record<string, { total: number; active: number; inactive: number }> = {};
 
-      for (const m of members || []) {
+      for (const m of members) {
         const label = (m.product_label as string) || 'Unknown';
         if (!byProduct[label]) byProduct[label] = { total: 0, active: 0, inactive: 0 };
         byProduct[label].total++;
@@ -510,14 +521,8 @@ export function useMemberRetentionData() {
       setLoading(true);
       setError(null);
 
-      // Get all members for retention/churn calculations
-      const { data: members, error: err } = await mpbMemberSupabase
-        .from('members')
-        .select('is_active, active_date, inactive_date, inactive_reason');
-
-      if (err) throw err;
-
-      const allMembers = members || [];
+      // Get ALL members for retention/churn calculations (paginated)
+      const allMembers = await fetchAllPaged('members', 'is_active, active_date, inactive_date, inactive_reason');
       const total = allMembers.length;
       const active = allMembers.filter(m => m.is_active).length;
       const inactive = total - active;
@@ -623,23 +628,15 @@ export function useAdvisorAnalytics() {
       setLoading(true);
       setError(null);
 
-      // Fetch advisors
-      const { data: advisors, error: advErr } = await mpbMemberSupabase
-        .from('advisors')
-        .select('agent_id, first_name, last_name');
+      // Fetch all advisors (paginated)
+      const advisors = await fetchAllPaged('advisors', 'agent_id, first_name, last_name');
 
-      if (advErr) throw advErr;
-
-      // Fetch all members with agent_id
-      const { data: members, error: memErr } = await mpbMemberSupabase
-        .from('members')
-        .select('agent_id, is_active');
-
-      if (memErr) throw memErr;
+      // Fetch ALL members with agent_id (paginated)
+      const members = await fetchAllPaged('members', 'agent_id, is_active');
 
       // Build advisor → member map
       const membersByAdvisor: Record<string, { total: number; active: number }> = {};
-      for (const m of members || []) {
+      for (const m of members) {
         if (!m.agent_id) continue;
         const id = m.agent_id as string;
         if (!membersByAdvisor[id]) membersByAdvisor[id] = { total: 0, active: 0 };

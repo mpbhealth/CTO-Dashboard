@@ -1,10 +1,5 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.39.0';
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-};
+import { corsHeaders } from '../_shared/cors.ts';
 
 interface PropertySummary {
   property_id: string;
@@ -135,10 +130,6 @@ Deno.serve(async (req: Request) => {
     // Generate email content
     const emailContent = generateEmailContent(propertySummaries, startOfMonth, endOfMonth);
     
-    // In a real implementation, you would send emails here
-    // For now, we'll just log the report and store it
-    console.log('Monthly Marketing Report Generated:', emailContent);
-
     // Store the report in the database for audit purposes
     await supabase
       .from('sync_logs')

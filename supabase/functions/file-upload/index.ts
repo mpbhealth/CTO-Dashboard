@@ -1,17 +1,16 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
-};
+import { corsHeaders } from '../_shared/cors.ts';
 
 interface UploadResult {
   success: boolean;
   key: string;
   publicUrl?: string;
   path: string;
+}
+
+interface UserRole {
+  role: string;
 }
 
 Deno.serve(async (req: Request) => {
@@ -54,7 +53,7 @@ Deno.serve(async (req: Request) => {
       .eq("user_id", user.id);
 
     const allowedRoles = ["admin", "hipaa_officer", "privacy_officer", "security_officer", "ceo"];
-    const hasPermission = userRoles?.some((r: any) => allowedRoles.includes(r.role));
+    const hasPermission = userRoles?.some((r: UserRole) => allowedRoles.includes(r.role));
 
     if (!hasPermission) {
       return new Response(
@@ -138,10 +137,10 @@ Deno.serve(async (req: Request) => {
         "Content-Type": "application/json",
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Upload error:", error);
     return new Response(
-      JSON.stringify({ error: error.message || "Upload failed" }),
+      JSON.stringify({ error: error instanceof Error ? error.message : "Upload failed" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }

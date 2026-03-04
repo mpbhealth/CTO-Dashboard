@@ -316,7 +316,7 @@ export function GalaxyDock({ onOpenMap }: GalaxyDockProps) {
 
   const handleActionExecuted = (_action: unknown, result: { success: boolean; message: string }) => {
     // Could show a toast notification here
-    console.log('Action executed:', result.message);
+    void result;
   };
 
   const formatTime = (date: Date) => {

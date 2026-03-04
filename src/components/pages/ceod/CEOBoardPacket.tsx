@@ -1,4 +1,6 @@
 import { useState, useRef } from 'react';
+import { downloadFile } from '@/utils/downloadFile';
+import DOMPurify from 'dompurify';
 import { FileText, Download, Plus, Calendar, Users, X, Edit, Bold, Italic, Underline, List, ListOrdered, AlignLeft, AlignCenter, AlignRight, Save } from 'lucide-react';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
@@ -146,6 +148,12 @@ export function CEOBoardPacket() {
 
   const editorRef = useRef<HTMLDivElement>(null);
 
+  // TODO: Migrate to Tiptap editor to replace deprecated document.execCommand.
+  // execCommand is deprecated but remains the only way to apply formatting
+  // commands (bold, italic, underline, fontSize, alignment, lists, foreColor,
+  // hiliteColor) to a raw contentEditable div. It still works in all major
+  // browsers. A Tiptap/ProseMirror migration would provide a modern,
+  // non-deprecated API (e.g. editor.chain().focus().toggleBold().run()).
   const applyFormat = (command: string, value?: string) => {
     document.execCommand(command, false, value);
     if (editorRef.current) {
@@ -273,14 +281,7 @@ export function CEOBoardPacket() {
     `;
 
     const blob = new Blob([content], { type: 'application/msword' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${packet.title.replace(/[^a-z0-9]/gi, '_')}_Board_Packet.doc`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    downloadFile(blob, `${packet.title.replace(/[^a-z0-9]/gi, '_')}_Board_Packet.doc`);
   };
 
   const handleExportPDF = (packet: BoardPacket) => {
@@ -731,7 +732,7 @@ export function CEOBoardPacket() {
                         ref={editorRef}
                         contentEditable
                         onInput={(e) => setEditorContent(e.currentTarget.innerHTML)}
-                        dangerouslySetInnerHTML={{ __html: editorContent }}
+                        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(editorContent) }}
                         className="min-h-[400px] p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                         style={{
                           lineHeight: '1.6',

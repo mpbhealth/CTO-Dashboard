@@ -1,10 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
-};
+import { corsHeaders } from '../_shared/cors.ts';
 
 interface NotificationPayload {
   note_id: string;
@@ -347,9 +342,6 @@ Deno.serve(async (req: Request) => {
       payload,
       payload.metadata?.shared_by_email || "recipient@example.com"
     );
-
-    console.log(`Email notification prepared for ${payload.recipient_user_id}`);
-    console.log(`Subject: ${emailTemplate.subject}`);
 
     return new Response(
       JSON.stringify({

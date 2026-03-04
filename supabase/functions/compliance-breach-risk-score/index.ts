@@ -2,11 +2,7 @@
 // Computes risk scores for potential HIPAA breaches based on various factors
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+import { corsHeaders } from '../_shared/cors.ts';
 
 interface RiskFactors {
   affected_individuals: number;
@@ -15,6 +11,15 @@ interface RiskFactors {
   data_encrypted: boolean;
   external_exposure: boolean;
   malicious_intent: boolean;
+}
+
+interface ScoreBreakdown {
+  individuals: number;
+  phi_types: number;
+  duration: number;
+  encryption: number;
+  external: number;
+  malicious: number;
 }
 
 serve(async (req) => {
@@ -35,7 +40,14 @@ serve(async (req) => {
 
     // Calculate risk score components
     let riskScore = 0;
-    const scoreBreakdown: any = {};
+    const scoreBreakdown: ScoreBreakdown = {
+      individuals: 0,
+      phi_types: 0,
+      duration: 0,
+      encryption: 0,
+      external: 0,
+      malicious: 0,
+    };
 
     // 1. Number of affected individuals (0-50 points)
     if (factors.affected_individuals === 0) {
@@ -164,9 +176,9 @@ serve(async (req) => {
       JSON.stringify(response),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
-  } catch (error) {
+  } catch (error: unknown) {
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: error instanceof Error ? error.message : 'An error occurred' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }

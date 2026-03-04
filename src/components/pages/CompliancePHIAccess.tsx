@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Plus, Shield, Download, Filter } from 'lucide-react';
 import { usePHIAccessLogs, useLogPHIAccess } from '../../hooks/useComplianceData';
 import type { PHIAccessFormData, PurposeCategory } from '../../types/compliance';
+import { downloadFile } from '@/utils/downloadFile';
 
 const CompliancePHIAccess: React.FC = () => {
   const [showLogModal, setShowLogModal] = useState(false);
@@ -52,12 +53,7 @@ const CompliancePHIAccess: React.FC = () => {
     ].join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `phi_access_log_${new Date().toISOString().split('T')[0]}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadFile(blob, `phi_access_log_${new Date().toISOString().split('T')[0]}.csv`);
   };
 
   const categoryCounts = {

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { downloadFile } from '@/utils/downloadFile';
 import { motion } from 'framer-motion';
 import {
   FileText,
@@ -109,14 +110,7 @@ Last Updated: ${new Date(policy.updated_at).toLocaleDateString()}
 
       // Create and download file
       const blob = new Blob([docContent], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `${policy.title.replace(/\s+/g, '_')}_v${policy.version}.txt`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+      downloadFile(blob, `${policy.title.replace(/\s+/g, '_')}_v${policy.version}.txt`);
     } catch (err) {
       console.error('Error downloading policy:', err);
       alert('Failed to download policy. Please try again.');

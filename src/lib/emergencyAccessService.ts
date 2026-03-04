@@ -289,7 +289,6 @@ async function notifySecurityOfficer(accessRequest: EmergencyAccessRequest): Pro
       .single();
 
     if (!settings?.value) {
-      console.log('[Emergency Access] No security officer email configured');
       return;
     }
 
@@ -335,7 +334,6 @@ async function notifySecurityOfficer(accessRequest: EmergencyAccessRequest): Pro
       },
     });
 
-    console.log('[Emergency Access] Security officer notified');
   } catch (error) {
     console.error('[Emergency Access] Failed to notify security officer:', error);
   }

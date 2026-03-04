@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { downloadFile } from '@/utils/downloadFile';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Users,
@@ -203,12 +204,7 @@ export default function AdvisorCommandCenter({
       .join('\n');
 
     const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `members_export_${new Date().toISOString().split('T')[0]}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadFile(blob, `members_export_${new Date().toISOString().split('T')[0]}.csv`);
   };
 
   return (

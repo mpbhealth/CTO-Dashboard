@@ -21,7 +21,6 @@ import type {
  */
 export async function getDownlineAdvisorIds(advisorId: string): Promise<string[]> {
   if (!isSupabaseConfigured) {
-    console.warn('[AdvisorHierarchy] Supabase not configured, returning mock data');
     return [advisorId];
   }
 

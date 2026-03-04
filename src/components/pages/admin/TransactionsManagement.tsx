@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { downloadFile } from '@/utils/downloadFile';
 import {
   Search,
   Download,
@@ -15,6 +16,7 @@ import {
   Calendar,
 } from 'lucide-react';
 import { mpbHealthSupabase, isMpbHealthConfigured } from '../../../lib/mpbHealthSupabase';
+import { sanitizeSearchTerm } from '../../../utils/sanitize';
 
 interface Transaction {
   id: string;
@@ -156,7 +158,8 @@ export function TransactionsManagement() {
         .select('*, member_profiles(first_name, last_name)', { count: 'exact' });
 
       if (searchTerm) {
-        query = query.or(`reference_number.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`);
+        const safeTerm = sanitizeSearchTerm(searchTerm);
+        query = query.or(`reference_number.ilike.%${safeTerm}%,description.ilike.%${safeTerm}%`);
       }
 
       if (statusFilter !== 'all') {
@@ -230,11 +233,7 @@ export function TransactionsManagement() {
 
     const csv = [headers, ...rows].map(row => row.join(',')).join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `transactions-export-${new Date().toISOString().split('T')[0]}.csv`;
-    a.click();
+    downloadFile(blob, `transactions-export-${new Date().toISOString().split('T')[0]}.csv`);
   };
 
   return (

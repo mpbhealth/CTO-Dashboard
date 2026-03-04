@@ -303,6 +303,7 @@ export default function SaaSSpend() {
           className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
+          aria-label="Filter by department"
         >
           {departments.map(department => (
             <option key={department} value={department}>{department}</option>

@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef } from 'react';
+import DOMPurify from 'dompurify';
 import { RichTextEditor } from './RichTextEditor';
 import {
   Save,
@@ -370,7 +371,7 @@ export function SignatureEditor({
               <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-800 min-h-[300px]">
                 <div className="border-t-2 border-gray-300 dark:border-gray-600 pt-4 mt-4">
                   <div
-                    dangerouslySetInnerHTML={{ __html: generatePreviewHtml() }}
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(generatePreviewHtml()) }}
                     className="prose prose-sm dark:prose-invert max-w-none"
                   />
                 </div>

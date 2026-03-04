@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { downloadFile } from '@/utils/downloadFile';
 import {
   FileText,
   Upload,
@@ -98,14 +99,7 @@ const EmployeeDocumentStorage: React.FC = () => {
         throw new Error(`Download failed: ${error.message}`);
       }
 
-      const url = window.URL.createObjectURL(data);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = doc.title;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
+      downloadFile(data, doc.title);
     } catch (error) {
       console.error('Error downloading file:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to download file';

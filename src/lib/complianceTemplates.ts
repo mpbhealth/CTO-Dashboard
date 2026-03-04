@@ -1,3 +1,5 @@
+import { downloadFile } from '../utils/downloadFile';
+
 export const complianceTemplates = {
   '1': { name: 'Privacy Officer Designation Letter', content: `[ORGANIZATION LETTERHEAD]
 Date: [DATE]
@@ -521,12 +523,5 @@ export function generateTemplate(templateId: string): string {
 export function downloadTemplate(templateId: string, templateName: string): void {
   const content = generateTemplate(templateId);
   const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = `${templateName.replace(/[^a-zA-Z0-9 ]/g, '_')}.txt`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
+  downloadFile(blob, `${templateName.replace(/[^a-zA-Z0-9 ]/g, '_')}.txt`);
 }

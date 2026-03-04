@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X, CheckCircle2, AlertTriangle, Download } from 'lucide-react';
+import { downloadFile } from '@/utils/downloadFile';
 
 interface ComplianceChecklistModalProps {
   isOpen: boolean;
@@ -125,12 +126,7 @@ export const ComplianceChecklistModal: React.FC<ComplianceChecklistModalProps> =
     });
 
     const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `hipaa-compliance-checklist-${timestamp}.csv`;
-    a.click();
-    window.URL.revokeObjectURL(url);
+    downloadFile(blob, `hipaa-compliance-checklist-${timestamp}.csv`);
   };
 
   return (

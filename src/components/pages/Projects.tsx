@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useProjects } from '../../hooks/useSupabaseData';
 import { FolderOpen, Github, ExternalLink, Users, BarChart3, Plus, Edit, Trash2, Globe } from 'lucide-react';
 import AddProjectModal from '../modals/AddProjectModal';
@@ -35,6 +35,32 @@ export default function Projects() {
       </div>
     );
   }
+
+  const exportData = useMemo(() => ({
+    title: 'MPB Health Active Projects',
+    data: projects.map(project => ({
+      Name: project.name,
+      Description: project.description,
+      Status: project.status,
+      Progress: `${project.progress}%`,
+      Team: project.team.join(', '),
+      'GitHub Link': project.github_link || 'N/A',
+      'Monday Link': project.monday_link || 'N/A',
+      'Website URL': project.website_url || 'N/A',
+      'Created Date': new Date(project.created_at).toLocaleDateString(),
+      'Updated Date': new Date(project.updated_at).toLocaleDateString()
+    })),
+    headers: ['Name', 'Description', 'Status', 'Progress', 'Team', 'GitHub Link', 'Website URL'],
+    filename: 'MPB_Health_Active_Projects'
+  }), [projects]);
+
+  const avgProgress = useMemo(() => {
+    return projects.length > 0 ? Math.round(projects.reduce((acc, p) => acc + p.progress, 0) / projects.length) : 0;
+  }, [projects]);
+
+  const uniqueTeamMembers = useMemo(() => {
+    return Array.from(new Set(projects.flatMap(p => p.team))).length;
+  }, [projects]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -97,23 +123,7 @@ export default function Projects() {
           <p className="text-slate-600 mt-1 sm:mt-2 text-sm sm:text-base">Track progress and manage development projects across MPB Health</p>
         </div>
         <div className="flex items-center space-x-3">
-          <ExportDropdown data={{
-            title: 'MPB Health Active Projects',
-            data: projects.map(project => ({
-              Name: project.name,
-              Description: project.description,
-              Status: project.status,
-              Progress: `${project.progress}%`,
-              Team: project.team.join(', '),
-              'GitHub Link': project.github_link || 'N/A',
-              'Monday Link': project.monday_link || 'N/A',
-              'Website URL': project.website_url || 'N/A',
-              'Created Date': new Date(project.created_at).toLocaleDateString(),
-              'Updated Date': new Date(project.updated_at).toLocaleDateString()
-            })),
-            headers: ['Name', 'Description', 'Status', 'Progress', 'Team', 'GitHub Link', 'Website URL'],
-            filename: 'MPB_Health_Active_Projects'
-          }} />
+          <ExportDropdown data={exportData} />
           <button
             onClick={() => setIsAddModalOpen(true)}
             className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
@@ -147,7 +157,7 @@ export default function Projects() {
             <div>
               <p className="text-sm font-medium text-slate-600">Avg Progress</p>
               <p className="text-2xl font-bold text-slate-900">
-                {projects.length > 0 ? Math.round(projects.reduce((acc, p) => acc + p.progress, 0) / projects.length) : 0}%
+                {avgProgress}%
               </p>
             </div>
           </div>
@@ -161,7 +171,7 @@ export default function Projects() {
             <div>
               <p className="text-sm font-medium text-slate-600">Team Members</p>
               <p className="text-2xl font-bold text-slate-900">
-                {Array.from(new Set(projects.flatMap(p => p.team))).length}
+                {uniqueTeamMembers}
               </p>
             </div>
           </div>

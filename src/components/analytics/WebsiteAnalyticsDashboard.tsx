@@ -64,7 +64,7 @@ export default function WebsiteAnalyticsDashboard() {
           </p>
           <div className="bg-slate-100 rounded-lg p-4 text-left text-sm font-mono text-slate-700">
             <p>VITE_MPB_HEALTH_SUPABASE_URL</p>
-            <p>VITE_MPB_HEALTH_SUPABASE_SERVICE_KEY</p>
+            <p>VITE_MPB_HEALTH_SUPABASE_ANON_KEY</p>
           </div>
           <a
             href="https://mpb.health/admin"

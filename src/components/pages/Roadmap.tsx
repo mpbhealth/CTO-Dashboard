@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import type { ChangeEvent } from 'react';
 import { motion } from 'framer-motion';
 import { useRoadmapItems, useProjects } from '../../hooks/useSupabaseData';
@@ -67,12 +67,12 @@ export default function Roadmap() {
   }
 
   // Get unique values for filters
-  const quarters = ['All', ...Array.from(new Set(roadmapItems.map(item => item.quarter).filter(Boolean) as string[])).sort()];
+  const quarters = useMemo(() => ['All', ...Array.from(new Set(roadmapItems.map(item => item.quarter).filter(Boolean) as string[])).sort()], [roadmapItems]);
   const statuses = ['All', 'Backlog', 'In Progress', 'Complete'];
-  const departments = ['All', ...Array.from(new Set(roadmapItems.map(item => item.department).filter(Boolean) as string[]))];
+  const departments = useMemo(() => ['All', ...Array.from(new Set(roadmapItems.map(item => item.department).filter(Boolean) as string[]))], [roadmapItems]);
 
   // Filter roadmap items
-  const filteredItems = roadmapItems.filter(item => {
+  const filteredItems = useMemo(() => roadmapItems.filter(item => {
     const matchesSearch = searchTerm === '' ||
       (item.title || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
       (item.description || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -83,7 +83,7 @@ export default function Roadmap() {
     const matchesDepartment = selectedDepartment === 'All' || item.department === selectedDepartment;
 
     return matchesSearch && matchesQuarter && matchesStatus && matchesDepartment;
-  });
+  }), [roadmapItems, searchTerm, selectedQuarter, selectedStatus, selectedDepartment]);
 
   // Check if roadmap item exists in projects
   const isInProjects = (roadmapTitle: string) => {
@@ -94,11 +94,11 @@ export default function Roadmap() {
   };
 
   // Get suggested items to remove (not in projects)
-  const itemsToRemove = roadmapItems.filter(item => {
+  const itemsToRemove = useMemo(() => roadmapItems.filter(item => {
     const shouldRemove = ['CarePilot Insurance AI', 'Crypto Optimizer Platform', 'OwnBite Food Scanner']
       .some(_name => item.title.includes('Insurance AI Platform') || item.title.includes('Financial Optimizer') || item.title.includes('Health Tech Scanner'));
     return shouldRemove;
-  });
+  }), [roadmapItems]);
 
   const getStatusIcon = (status: string) => {
     switch (status) {

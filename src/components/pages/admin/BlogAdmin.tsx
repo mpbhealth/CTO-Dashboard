@@ -15,6 +15,7 @@ import {
   MoreHorizontal,
 } from 'lucide-react';
 import { mpbHealthSupabase, isMpbHealthConfigured } from '../../../lib/mpbHealthSupabase';
+import { sanitizeSearchTerm } from '../../../utils/sanitize';
 
 interface Article {
   id: string;
@@ -152,7 +153,8 @@ export function BlogAdmin() {
         .select('*', { count: 'exact' });
 
       if (searchTerm) {
-        query = query.or(`title.ilike.%${searchTerm}%,category.ilike.%${searchTerm}%`);
+        const safeTerm = sanitizeSearchTerm(searchTerm);
+        query = query.or(`title.ilike.%${safeTerm}%,category.ilike.%${safeTerm}%`);
       }
 
       if (statusFilter !== 'all') {

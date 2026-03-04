@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { downloadFile } from '@/utils/downloadFile';
 import { Upload, FileSpreadsheet, Download, Info, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 import { useAuth } from '../../../contexts/AuthContext';
@@ -245,14 +246,7 @@ export function CEODepartmentUpload() {
       ].join('\n');
 
       const blob = new Blob([csv], { type: 'text/csv' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${selectedDepartment}_upload_template.csv`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
+      downloadFile(blob, `${selectedDepartment}_upload_template.csv`);
     } catch (error) {
       console.error('Template download error:', error);
       alert('Failed to download template');

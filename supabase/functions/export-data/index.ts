@@ -1,18 +1,19 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import ExcelJS from "npm:exceljs@4.4.0";
+import { corsHeaders } from '../_shared/cors.ts';
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
-};
+type ExportCellValue = string | number | boolean | null | undefined;
 
 interface ExportRequest {
   format: "csv" | "xlsx";
-  data: Record<string, any>[];
+  data: Record<string, ExportCellValue>[];
   filename?: string;
   sheetName?: string;
+}
+
+interface UserRole {
+  role: string;
 }
 
 Deno.serve(async (req: Request) => {
@@ -55,7 +56,7 @@ Deno.serve(async (req: Request) => {
       .eq("user_id", user.id);
 
     const allowedRoles = ["admin", "ceo", "hipaa_officer"];
-    const hasPermission = userRoles?.some((r: any) => allowedRoles.includes(r.role));
+    const hasPermission = userRoles?.some((r: UserRole) => allowedRoles.includes(r.role));
 
     if (!hasPermission) {
       return new Response(
@@ -147,10 +148,10 @@ Deno.serve(async (req: Request) => {
         "Content-Disposition": `attachment; filename="${exportFilename}"`,
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Export error:", error);
     return new Response(
-      JSON.stringify({ error: error.message || "Export failed" }),
+      JSON.stringify({ error: error instanceof Error ? error.message : "Export failed" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }

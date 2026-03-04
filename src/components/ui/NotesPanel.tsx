@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Plus, Edit, Trash2, Save, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -17,7 +17,7 @@ interface NotesPanelProps {
   title?: string;
 }
 
-export function NotesPanel({
+export const NotesPanel = React.memo(function NotesPanel({
   notes,
   onAddNote,
   onUpdateNote,
@@ -198,6 +198,6 @@ export function NotesPanel({
       </div>
     </div>
   );
-}
+});
 
 export default NotesPanel;

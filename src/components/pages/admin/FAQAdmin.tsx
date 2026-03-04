@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import DOMPurify from 'dompurify';
 import {
   Search,
   Plus,
@@ -14,6 +15,7 @@ import {
   X,
 } from 'lucide-react';
 import { mpbHealthSupabase, isMpbHealthConfigured } from '../../../lib/mpbHealthSupabase';
+import { sanitizeSearchTerm } from '../../../utils/sanitize';
 
 interface FAQItem {
   id: string;
@@ -128,7 +130,8 @@ export function FAQAdmin() {
       let query = mpbHealthSupabase.from('faq_items').select('*');
 
       if (searchTerm) {
-        query = query.or(`title.ilike.%${searchTerm}%,content_html.ilike.%${searchTerm}%`);
+        const safeTerm = sanitizeSearchTerm(searchTerm);
+        query = query.or(`title.ilike.%${safeTerm}%,content_html.ilike.%${safeTerm}%`);
       }
 
       if (categoryFilter !== 'all') {
@@ -329,7 +332,7 @@ export function FAQAdmin() {
                   <h3 className="font-semibold text-slate-900 mb-2">{faq.title}</h3>
                   <div
                     className="text-sm text-slate-600 line-clamp-2"
-                    dangerouslySetInnerHTML={{ __html: faq.content_html }}
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(faq.content_html) }}
                   />
                 </div>
 

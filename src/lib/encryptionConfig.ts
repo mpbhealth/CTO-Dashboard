@@ -154,11 +154,6 @@ export function logEncryptionStatus(): void {
   if (import.meta.env.DEV) {
     const generalConfigured = isEncryptionConfigured();
     const phiConfigured = isPHIEncryptionConfigured();
-    const keyVersion = getEncryptionKeyVersion();
-    
-    console.log('[Encryption] General:', generalConfigured ? '✓ Configured' : '✗ Not configured');
-    console.log('[Encryption] PHI:', phiConfigured ? '✓ Configured' : '✗ Not configured');
-    console.log('[Encryption] Key Version:', keyVersion);
     
     if (!generalConfigured) {
       console.warn(

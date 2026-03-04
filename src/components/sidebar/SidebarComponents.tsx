@@ -309,7 +309,7 @@ export const SidebarUserProfile = memo(function SidebarUserProfile({
           {profile?.avatar_url ? (
             <img
               src={profile.avatar_url}
-              alt=""
+              alt="User avatar"
               className="w-full h-full rounded-full object-cover"
               loading="lazy"
             />

@@ -1,13 +1,16 @@
-import { createClient } from 'npm:@supabase/supabase-js';
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-auth',
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Max-Age': '86400',
-};
+import { createClient, SupabaseClient } from 'npm:@supabase/supabase-js';
+import { corsHeaders } from '../_shared/cors.ts';
 
 // Types
+
+interface EmailAttachment {
+  name: string;
+  contentType: string;
+  contentBytes?: string;
+  size?: number;
+  id?: string;
+}
+
 interface EmailAccount {
   id: string;
   user_id: string;
@@ -16,6 +19,7 @@ interface EmailAccount {
   access_token: string;
   refresh_token?: string;
   token_expires_at: string;
+  refreshing_token?: boolean;
 }
 
 interface EmailFolder {
@@ -43,7 +47,7 @@ interface EmailMessage {
   isRead: boolean;
   isDraft: boolean;
   hasAttachments: boolean;
-  attachments?: any[];
+  attachments?: EmailAttachment[];
   importance: string;
   receivedAt: string;
   sentAt?: string;
@@ -62,8 +66,106 @@ interface Attachment {
   isInline: boolean;
 }
 
+/** Microsoft Graph API response types */
+interface MicrosoftEmailAddress {
+  address: string;
+  name?: string;
+}
+
+interface MicrosoftRecipient {
+  emailAddress: MicrosoftEmailAddress;
+}
+
+interface MicrosoftFolder {
+  id: string;
+  displayName: string;
+  unreadItemCount: number;
+  totalItemCount: number;
+}
+
+interface MicrosoftMessageBody {
+  contentType: string;
+  content: string;
+}
+
+interface MicrosoftMessage {
+  id: string;
+  subject: string;
+  bodyPreview: string;
+  body?: MicrosoftMessageBody;
+  from?: { emailAddress: MicrosoftEmailAddress };
+  toRecipients?: MicrosoftRecipient[];
+  ccRecipients?: MicrosoftRecipient[];
+  bccRecipients?: MicrosoftRecipient[];
+  receivedDateTime: string;
+  sentDateTime?: string;
+  isRead: boolean;
+  isDraft: boolean;
+  hasAttachments: boolean;
+  importance: string;
+  conversationId?: string;
+  webLink?: string;
+  parentFolderId?: string;
+  attachments?: MicrosoftAttachment[];
+}
+
+interface MicrosoftAttachment {
+  id: string;
+  name: string;
+  contentType: string;
+  size: number;
+  contentBytes?: string;
+  contentId?: string;
+  isInline?: boolean;
+}
+
+interface MicrosoftSendMailPayload {
+  subject: string;
+  body: { contentType: string; content: string };
+  toRecipients: MicrosoftRecipient[];
+  importance: string;
+  ccRecipients?: MicrosoftRecipient[];
+  bccRecipients?: MicrosoftRecipient[];
+  attachments?: {
+    '@odata.type': string;
+    name: string;
+    contentType: string;
+    contentBytes: string;
+  }[];
+}
+
+/** Gmail API response types */
+interface GmailHeader {
+  name: string;
+  value: string;
+}
+
+interface GmailMessagePartBody {
+  attachmentId?: string;
+  size?: number;
+  data?: string;
+}
+
+interface GmailMessagePart {
+  mimeType: string;
+  filename?: string;
+  headers?: GmailHeader[];
+  body?: GmailMessagePartBody;
+  parts?: GmailMessagePart[];
+}
+
+/** Union type for all possible action results */
+type EmailActionResult =
+  | EmailFolder[]
+  | { messages: EmailMessage[]; nextLink?: string }
+  | { messages: EmailMessage[]; nextPageToken?: string }
+  | EmailMessage
+  | EmailMessage[]
+  | Attachment
+  | { success: boolean };
+
 // Helper to get valid access token (with race condition protection)
-async function getValidAccessToken(supabaseClient: any, accountId: string): Promise<{ token: string; account: EmailAccount }> {
+async function getValidAccessToken(supabaseClient: SupabaseClient, accountId: string): Promise<{ token: string; account: EmailAccount }> {
   const { data: account, error } = await supabaseClient
     .from('user_email_accounts')
     .select('*')
@@ -167,7 +269,7 @@ async function outlookListFolders(accessToken: string): Promise<EmailFolder[]> {
     'archive': 'archive',
   };
 
-  return (data.value || []).map((folder: any) => ({
+  return (data.value || []).map((folder: MicrosoftFolder) => ({
     id: folder.id,
     name: folder.displayName.toLowerCase().replace(/\s+/g, ''),
     displayName: folder.displayName,
@@ -208,7 +310,7 @@ async function outlookListMessages(
 
   const data = await response.json();
 
-  const messages: EmailMessage[] = (data.value || []).map((msg: any) => ({
+  const messages: EmailMessage[] = (data.value || []).map((msg: MicrosoftMessage) => ({
     id: msg.id,
     provider: 'outlook',
     messageId: msg.id,
@@ -221,15 +323,15 @@ async function outlookListMessages(
       email: msg.from?.emailAddress?.address || '',
       name: msg.from?.emailAddress?.name,
     },
-    to: (msg.toRecipients || []).map((r: any) => ({
+    to: (msg.toRecipients || []).map((r: MicrosoftRecipient) => ({
       email: r.emailAddress?.address || '',
       name: r.emailAddress?.name,
     })),
-    cc: (msg.ccRecipients || []).map((r: any) => ({
+    cc: (msg.ccRecipients || []).map((r: MicrosoftRecipient) => ({
       email: r.emailAddress?.address || '',
       name: r.emailAddress?.name,
     })),
-    bcc: (msg.bccRecipients || []).map((r: any) => ({
+    bcc: (msg.bccRecipients || []).map((r: MicrosoftRecipient) => ({
       email: r.emailAddress?.address || '',
       name: r.emailAddress?.name,
     })),
@@ -275,22 +377,22 @@ async function outlookGetMessage(accessToken: string, messageId: string): Promis
       email: msg.from?.emailAddress?.address || '',
       name: msg.from?.emailAddress?.name,
     },
-    to: (msg.toRecipients || []).map((r: any) => ({
+    to: (msg.toRecipients || []).map((r: MicrosoftRecipient) => ({
       email: r.emailAddress?.address || '',
       name: r.emailAddress?.name,
     })),
-    cc: (msg.ccRecipients || []).map((r: any) => ({
+    cc: (msg.ccRecipients || []).map((r: MicrosoftRecipient) => ({
       email: r.emailAddress?.address || '',
       name: r.emailAddress?.name,
     })),
-    bcc: (msg.bccRecipients || []).map((r: any) => ({
+    bcc: (msg.bccRecipients || []).map((r: MicrosoftRecipient) => ({
       email: r.emailAddress?.address || '',
       name: r.emailAddress?.name,
     })),
     isRead: msg.isRead || false,
     isDraft: msg.isDraft || false,
     hasAttachments: msg.hasAttachments || false,
-    attachments: (msg.attachments || []).map((att: any) => ({
+    attachments: (msg.attachments || []).map((att: MicrosoftAttachment) => ({
       id: att.id,
       name: att.name,
       contentType: att.contentType,
@@ -319,7 +421,7 @@ async function outlookSendMessage(
     attachments?: { name: string; contentType: string; contentBytes: string }[];
   }
 ): Promise<void> {
-  const emailMessage: any = {
+  const emailMessage: MicrosoftSendMailPayload = {
     subject: message.subject,
     body: {
       contentType: 'html',
@@ -466,7 +568,7 @@ async function outlookSearchMessages(
 
   const data = await response.json();
 
-  return (data.value || []).map((msg: any) => ({
+  return (data.value || []).map((msg: MicrosoftMessage) => ({
     id: msg.id,
     provider: 'outlook',
     messageId: msg.id,
@@ -476,7 +578,7 @@ async function outlookSearchMessages(
       email: msg.from?.emailAddress?.address || '',
       name: msg.from?.emailAddress?.name,
     },
-    to: (msg.toRecipients || []).map((r: any) => ({
+    to: (msg.toRecipients || []).map((r: MicrosoftRecipient) => ({
       email: r.emailAddress?.address || '',
       name: r.emailAddress?.name,
     })),
@@ -636,7 +738,7 @@ async function gmailListMessages(
         const headers = msgData.payload?.headers || [];
 
         const getHeader = (name: string) =>
-          headers.find((h: any) => h.name.toLowerCase() === name.toLowerCase())?.value || '';
+          headers.find((h: GmailHeader) => h.name.toLowerCase() === name.toLowerCase())?.value || '';
 
         const parseRecipients = (value: string): { email: string; name?: string }[] => {
           if (!value) return [];
@@ -662,7 +764,7 @@ async function gmailListMessages(
           bcc: [],
           isRead: !msgData.labelIds?.includes('UNREAD'),
           isDraft: msgData.labelIds?.includes('DRAFT') || false,
-          hasAttachments: msgData.payload?.parts?.some((p: any) => p.filename && p.filename.length > 0) || false,
+          hasAttachments: msgData.payload?.parts?.some((p: GmailMessagePart) => p.filename && p.filename.length > 0) || false,
           importance: 'normal',
           receivedAt: new Date(parseInt(msgData.internalDate)).toISOString(),
           folderId: labelId,
@@ -695,7 +797,7 @@ async function gmailGetMessage(accessToken: string, messageId: string): Promise<
   const headers = msgData.payload?.headers || [];
 
   const getHeader = (name: string) =>
-    headers.find((h: any) => h.name.toLowerCase() === name.toLowerCase())?.value || '';
+    headers.find((h: GmailHeader) => h.name.toLowerCase() === name.toLowerCase())?.value || '';
 
   const parseRecipients = (value: string): { email: string; name?: string }[] => {
     if (!value) return [];
@@ -712,7 +814,7 @@ async function gmailGetMessage(accessToken: string, messageId: string): Promise<
   let bodyHtml = '';
   let bodyText = '';
 
-  const extractBody = (part: any): void => {
+  const extractBody = (part: GmailMessagePart): void => {
     if (part.mimeType === 'text/html' && part.body?.data) {
       bodyHtml = atob(part.body.data.replace(/-/g, '+').replace(/_/g, '/'));
     } else if (part.mimeType === 'text/plain' && part.body?.data) {
@@ -727,17 +829,14 @@ async function gmailGetMessage(accessToken: string, messageId: string): Promise<
   }
 
   // Extract attachments
-  const attachments: any[] = [];
-  const extractAttachments = (part: any): void => {
+  const attachments: EmailAttachment[] = [];
+  const extractAttachments = (part: GmailMessagePart): void => {
     if (part.filename && part.filename.length > 0 && part.body?.attachmentId) {
       attachments.push({
         id: part.body.attachmentId,
         name: part.filename,
         contentType: part.mimeType,
         size: part.body.size || 0,
-        isInline: (part.headers || []).some((h: any) => 
-          h.name.toLowerCase() === 'content-disposition' && h.value.includes('inline')
-        ),
       });
     }
     if (part.parts) {
@@ -1011,7 +1110,7 @@ Deno.serve(async (req: Request) => {
     const provider = account.provider;
 
     // Route to provider-specific implementation
-    let result: any;
+    let result: EmailActionResult;
 
     switch (action) {
       case 'listFolders': {
@@ -1144,13 +1243,13 @@ Deno.serve(async (req: Request) => {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
     );
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error in email-api function:', error);
 
     return new Response(
       JSON.stringify({
         success: false,
-        error: error.message || 'An error occurred',
+        error: error instanceof Error ? error.message : 'An error occurred',
       }),
       {
         status: 400,

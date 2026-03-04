@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Upload, AlertCircle, CheckCircle2, Download } from 'lucide-react';
 import ExcelJS from 'exceljs';
+import { downloadFile } from '@/utils/downloadFile';
 
 interface ColumnMapping {
   sourceColumn: string;
@@ -225,14 +226,7 @@ export const ImporterModal: React.FC<ImporterModalProps> = ({
     // Generate and download file
     const buffer = await workbook.xlsx.writeBuffer();
     const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${title.replace(/\s+/g, '_')}_template.xlsx`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    downloadFile(blob, `${title.replace(/\s+/g, '_')}_template.xlsx`);
   };
 
   const reset = () => {

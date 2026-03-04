@@ -1,10 +1,5 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Client-Info, Apikey, X-Public-Upload-Token',
-};
+import { corsHeaders } from '../_shared/cors.ts';
 
 interface UploadRequest {
   department: 'concierge' | 'sales' | 'sales-leads' | 'sales-cancelations' | 'operations' | 'finance' | 'saudemax';
@@ -66,12 +61,6 @@ Deno.serve(async (req: Request) => {
 
     const batchId = crypto.randomUUID();
     const uploadId = crypto.randomUUID();
-
-    console.log('[UPLOAD] Starting upload for department:', department);
-    console.log('[UPLOAD] Metadata:', JSON.stringify(metadata, null, 2));
-    console.log('[UPLOAD] Row count:', data.length);
-    console.log('[UPLOAD] User ID:', userId);
-    console.log('[UPLOAD] Org ID:', orgId);
 
     const uploadRecord = {
       id: uploadId,

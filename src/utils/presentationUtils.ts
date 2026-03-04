@@ -1,5 +1,5 @@
-export function exportToPresentation(data: Record<string, unknown>) {
-  console.log('Exporting to presentation:', data);
+export function exportToPresentation(_data: Record<string, unknown>) {
+  // Presentation export stub
 }
 
 export function formatSlideContent(content: Record<string, unknown>) {
@@ -41,8 +41,8 @@ export function generatePresentationData(roadmapItems: Record<string, unknown>[]
   return { slides };
 }
 
-export function exportToPowerPoint(data: Record<string, unknown>) {
-  console.log('Exporting to PowerPoint:', data);
+export function exportToPowerPoint(_data: Record<string, unknown>) {
+  // PowerPoint export stub
 }
 
 export const GraphicsUtils = {

@@ -1,11 +1,11 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient, SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { corsHeaders } from '../_shared/cors.ts';
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-};
+/** Strip PostgREST filter special characters from search input. */
+function sanitizeSearchInput(input: string): string {
+  return input.replace(/[.,()\!\%\\]/g, '').trim().substring(0, 200);
+}
 
 interface _ChatMessage {
   role: "system" | "user" | "assistant";
@@ -20,6 +20,44 @@ interface _ToolCall {
     arguments: string;
   };
 }
+
+interface ToolResult {
+  tool_call_id: string;
+  name: string;
+  result: Record<string, unknown>;
+  success: boolean;
+}
+
+interface CreateTicketArgs {
+  title: string;
+  description: string;
+  priority?: string;
+  category?: string;
+}
+
+interface SearchKbArgs {
+  query: string;
+  category?: string;
+}
+
+interface GetMemberInfoArgs {
+  member_id?: string;
+  email?: string;
+}
+
+interface ListTicketsArgs {
+  status?: string;
+  priority?: string;
+  limit?: number;
+}
+
+interface UpdateTicketStatusArgs {
+  ticket_id: string;
+  status: string;
+  note?: string;
+}
+
+type ToolArgs = CreateTicketArgs | SearchKbArgs | GetMemberInfoArgs | ListTicketsArgs | UpdateTicketStatusArgs;
 
 // Define available tools for the AI agent
 const tools = [
@@ -104,20 +142,21 @@ const tools = [
 
 // Execute tool calls
 async function executeTool(
-  supabase: any,
+  supabase: SupabaseClient,
   toolName: string,
-  args: Record<string, any>
-): Promise<{ success: boolean; result: any }> {
+  args: ToolArgs
+): Promise<{ success: boolean; result: Record<string, unknown> }> {
   try {
     switch (toolName) {
       case "create_ticket": {
+        const ticketArgs = args as CreateTicketArgs;
         const { data, error } = await supabase
           .from("it_tickets")
           .insert({
-            title: args.title,
-            description: args.description,
-            priority: args.priority || "medium",
-            category: args.category || "general",
+            title: ticketArgs.title,
+            description: ticketArgs.description,
+            priority: ticketArgs.priority || "medium",
+            category: ticketArgs.category || "general",
             status: "open",
           })
           .select()
@@ -128,10 +167,11 @@ async function executeTool(
       }
 
       case "search_kb": {
+        const searchArgs = args as SearchKbArgs;
         const { data, error } = await supabase
           .from("knowledge_base")
           .select("id, title, content, category")
-          .textSearch("content", args.query)
+          .textSearch("content", searchArgs.query)
           .limit(5);
 
         if (error) {
@@ -139,7 +179,7 @@ async function executeTool(
           const { data: fallbackData, error: fallbackError } = await supabase
             .from("knowledge_base")
             .select("id, title, content, category")
-            .ilike("content", `%${args.query}%`)
+            .ilike("content", `%${sanitizeSearchInput(searchArgs.query)}%`)
             .limit(5);
 
           if (fallbackError) throw fallbackError;
@@ -150,12 +190,13 @@ async function executeTool(
       }
 
       case "get_member_info": {
+        const memberArgs = args as GetMemberInfoArgs;
         let query = supabase.from("profiles").select("*");
 
-        if (args.member_id) {
-          query = query.eq("id", args.member_id);
-        } else if (args.email) {
-          query = query.eq("email", args.email);
+        if (memberArgs.member_id) {
+          query = query.eq("id", memberArgs.member_id);
+        } else if (memberArgs.email) {
+          query = query.eq("email", memberArgs.email);
         } else {
           return { success: false, result: { error: "Either member_id or email is required" } };
         }
@@ -169,12 +210,13 @@ async function executeTool(
       }
 
       case "list_tickets": {
+        const listArgs = args as ListTicketsArgs;
         let query = supabase.from("it_tickets").select("*");
 
-        if (args.status) query = query.eq("status", args.status);
-        if (args.priority) query = query.eq("priority", args.priority);
+        if (listArgs.status) query = query.eq("status", listArgs.status);
+        if (listArgs.priority) query = query.eq("priority", listArgs.priority);
 
-        query = query.order("created_at", { ascending: false }).limit(args.limit || 10);
+        query = query.order("created_at", { ascending: false }).limit(listArgs.limit || 10);
 
         const { data, error } = await query;
         if (error) throw error;
@@ -183,35 +225,36 @@ async function executeTool(
       }
 
       case "update_ticket_status": {
+        const updateArgs = args as UpdateTicketStatusArgs;
         const { data, error } = await supabase
           .from("it_tickets")
           .update({
-            status: args.status,
+            status: updateArgs.status,
             updated_at: new Date().toISOString(),
           })
-          .eq("id", args.ticket_id)
+          .eq("id", updateArgs.ticket_id)
           .select()
           .single();
 
         if (error) throw error;
 
         // Add note if provided
-        if (args.note) {
+        if (updateArgs.note) {
           await supabase.from("ticket_notes").insert({
-            ticket_id: args.ticket_id,
-            content: args.note,
+            ticket_id: updateArgs.ticket_id,
+            content: updateArgs.note,
           });
         }
 
-        return { success: true, result: { message: `Ticket ${args.ticket_id} updated to ${args.status}`, ticket: data } };
+        return { success: true, result: { message: `Ticket ${updateArgs.ticket_id} updated to ${updateArgs.status}`, ticket: data } };
       }
 
       default:
         return { success: false, result: { error: `Unknown tool: ${toolName}` } };
     }
-  } catch (error) {
+  } catch (error: unknown) {
     console.error(`Tool execution error (${toolName}):`, error);
-    return { success: false, result: { error: error.message } };
+    return { success: false, result: { error: error instanceof Error ? error.message : String(error) } };
   }
 }
 
@@ -288,10 +331,10 @@ serve(async (req) => {
     const assistantMessage = openaiData.choices[0].message;
 
     // Handle tool calls if present
-    const toolResults: any[] = [];
+    const toolResults: ToolResult[] = [];
     if (assistantMessage.tool_calls && assistantMessage.tool_calls.length > 0) {
       for (const toolCall of assistantMessage.tool_calls) {
-        const args = JSON.parse(toolCall.function.arguments);
+        const args = JSON.parse(toolCall.function.arguments) as ToolArgs;
         const result = await executeTool(supabaseClient, toolCall.function.name, args);
         toolResults.push({
           tool_call_id: toolCall.id,
@@ -355,10 +398,10 @@ serve(async (req) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       }
     );
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Error:", error);
     return new Response(
-      JSON.stringify({ error: error.message || "Internal server error" }),
+      JSON.stringify({ error: error instanceof Error ? error.message : "Internal server error" }),
       {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { downloadFile } from '@/utils/downloadFile';
 import {
   Search,
   Filter,
@@ -16,6 +17,7 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import { mpbHealthSupabase, isMpbHealthConfigured } from '../../../lib/mpbHealthSupabase';
+import { sanitizeSearchTerm } from '../../../utils/sanitize';
 
 interface Member {
   id: string;
@@ -157,7 +159,8 @@ export function MemberManagement() {
         .select('*', { count: 'exact' });
 
       if (searchTerm) {
-        query = query.or(`first_name.ilike.%${searchTerm}%,last_name.ilike.%${searchTerm}%,membership_number.ilike.%${searchTerm}%,phone.ilike.%${searchTerm}%`);
+        const safeTerm = sanitizeSearchTerm(searchTerm);
+        query = query.or(`first_name.ilike.%${safeTerm}%,last_name.ilike.%${safeTerm}%,membership_number.ilike.%${safeTerm}%,phone.ilike.%${safeTerm}%`);
       }
 
       if (statusFilter !== 'all') {
@@ -202,11 +205,7 @@ export function MemberManagement() {
     
     const csv = [headers, ...rows].map(row => row.join(',')).join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `members-export-${new Date().toISOString().split('T')[0]}.csv`;
-    a.click();
+    downloadFile(blob, `members-export-${new Date().toISOString().split('T')[0]}.csv`);
   };
 
   return (

@@ -4,38 +4,45 @@
  * for members, claims, tickets, transactions, and more.
  *
  * IMPORTANT: Configure these environment variables in your .env file:
- * - VITE_MPB_HEALTH_SUPABASE_URL
- * - VITE_MPB_HEALTH_SUPABASE_SERVICE_KEY
+ * - VITE_MPB_HEALTH_SUPABASE_URL  (safe for client-side, uses VITE_ prefix)
+ * - MPB_HEALTH_SUPABASE_SERVICE_KEY  (server-side only, NO VITE_ prefix)
+ *
+ * SECURITY NOTE:
+ * The service role key (MPB_HEALTH_SUPABASE_SERVICE_KEY) does NOT have a VITE_
+ * prefix, which means Vite will NOT bundle it into client-side JavaScript.
+ * This is intentional — service role keys bypass Row Level Security and must
+ * never be exposed in the browser. All operations requiring the service key
+ * should go through Supabase Edge Functions or a server-side API route.
+ *
+ * This client-side module uses the anon key as a fallback so that RLS-safe
+ * queries still work. For admin/service-role operations, call an Edge Function.
  */
 import { createClient } from '@supabase/supabase-js';
 
 // MPB Health Backend Configuration
-// All credentials MUST be provided via environment variables
 const mpbHealthUrl = import.meta.env.VITE_MPB_HEALTH_SUPABASE_URL || '';
-const mpbHealthServiceKey = import.meta.env.VITE_MPB_HEALTH_SUPABASE_SERVICE_KEY || '';
+
+// SECURITY: The service role key is NOT available client-side (no VITE_ prefix).
+// We use the anon key here so RLS-protected queries still work in the browser.
+// For operations that need elevated access, use a Supabase Edge Function instead.
+const mpbHealthAnonKey = import.meta.env.VITE_MPB_HEALTH_SUPABASE_ANON_KEY || '';
 
 // Validate configuration
 const isValidUrl = mpbHealthUrl &&
   mpbHealthUrl.startsWith('https://') &&
   mpbHealthUrl.includes('supabase.co');
 
-const isValidKey = mpbHealthServiceKey &&
-  mpbHealthServiceKey.length > 20;
+const isValidKey = mpbHealthAnonKey &&
+  mpbHealthAnonKey.length > 20;
 
 export const isMpbHealthConfigured = !!(isValidUrl && isValidKey);
 
-// Log configuration status in development
-if (import.meta.env.DEV) {
-  console.log('[MPB Health Supabase] Connected to MPB Health backend:', {
-    url: mpbHealthUrl.substring(0, 45) + '...',
-    configured: isMpbHealthConfigured,
-  });
-}
-
-// Create the client with service role key (bypasses RLS for admin dashboard access)
-export const mpbHealthSupabase = createClient(mpbHealthUrl, mpbHealthServiceKey, {
+// Create the client with the anon key (respects RLS).
+// For admin operations that bypass RLS, use a Supabase Edge Function with
+// Deno.env.get('MPB_HEALTH_SUPABASE_SERVICE_KEY') instead.
+export const mpbHealthSupabase = createClient(mpbHealthUrl, mpbHealthAnonKey, {
   auth: {
-    persistSession: false, // No need to persist session for service role
+    persistSession: false,
     autoRefreshToken: false,
   },
   db: {

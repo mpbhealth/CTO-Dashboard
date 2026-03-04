@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import DOMPurify from 'dompurify';
 import { FileText, Eye } from 'lucide-react';
 
 interface MarkdownEditorProps {
@@ -82,7 +83,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
         // List items
         if (line.startsWith('- ') || line.startsWith('* ')) {
           return (
-            <li key={i} className="ml-4" dangerouslySetInnerHTML={{ __html: processedLine.substring(2) }} />
+            <li key={i} className="ml-4" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(processedLine.substring(2)) }} />
           );
         }
 
@@ -93,7 +94,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
 
         // Regular paragraph
         return (
-          <p key={i} className="mb-2" dangerouslySetInnerHTML={{ __html: processedLine }} />
+          <p key={i} className="mb-2" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(processedLine) }} />
         );
       });
   };

@@ -197,7 +197,7 @@ b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
 s.parentNode.insertBefore(b, s);})(window.lintrk);
 </script>
 <noscript>
-<img height="1" width="1" style="display:none;" alt=""
+<img height="1" width="1" style="display:none;" alt="LinkedIn tracking pixel"
 src="https://px.ads.linkedin.com/collect/?pid=${platform.tracking_id}&fmt=gif" />
 </noscript>`,
       hotjar: `<!-- Hotjar Tracking Code -->

@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { downloadFile } from '@/utils/downloadFile';
 import { Filter, RefreshCw, Mail, MessageSquare, Download, CheckCircle, AlertCircle, Calendar, TrendingUp } from 'lucide-react';
 import { useDepartmentData } from '../../../hooks/useDepartmentData';
 import { useDepartmentNotes } from '../../../hooks/useDepartmentNotes';
@@ -98,12 +99,7 @@ View detailed report: ${window.location.href}
     ].map(row => row.join(',')).join('\n');
 
     const blob = new Blob([csv], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${department}-data-${new Date().toISOString().split('T')[0]}.csv`;
-    a.click();
-    window.URL.revokeObjectURL(url);
+    downloadFile(blob, `${department}-data-${new Date().toISOString().split('T')[0]}.csv`);
   };
 
   const formatFileSize = (bytes: number) => {

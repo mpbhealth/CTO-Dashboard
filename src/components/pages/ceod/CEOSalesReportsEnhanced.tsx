@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { ExportModal } from '../../modals/ExportModal';
 import { FileViewerModal } from '../../modals/FileViewerModal';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { downloadFile } from '@/utils/downloadFile';
 
 interface SalesOrder {
   staging_id: string;
@@ -173,12 +174,7 @@ export function CEOSalesReportsEnhanced() {
     ].join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = selectedFile?.file_name || 'export.csv';
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadFile(blob, selectedFile?.file_name || 'export.csv');
   };
 
   const filteredOrders = useMemo(() => {

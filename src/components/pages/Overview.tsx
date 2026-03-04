@@ -131,6 +131,47 @@ export default function Overview() {
     }));
   }, []);
 
+  // Active departments sorted by headcount
+  const activeDepartments = useMemo(() => {
+    return departments
+      .filter(d => d.is_active)
+      .sort((a, b) => (b.headcount || 0) - (a.headcount || 0));
+  }, [departments]);
+
+  // Recent activity feed
+  const recentActivity = useMemo(() => [
+    {
+      time: '2 hours ago',
+      event: `New project "${projects[0]?.name || 'Dashboard'}" updated`,
+      type: 'project',
+      icon: Briefcase,
+    },
+    {
+      time: '4 hours ago',
+      event: `Security audit ${orgMetrics.completedAudits > 0 ? 'completed' : 'scheduled'}`,
+      type: 'security',
+      icon: Shield,
+    },
+    {
+      time: '6 hours ago',
+      event: `${teamMembers.length} team members in directory`,
+      type: 'team',
+      icon: Users,
+    },
+    {
+      time: '1 day ago',
+      event: `${activeDepartments.length} active departments`,
+      type: 'organization',
+      icon: Building2,
+    },
+    {
+      time: '2 days ago',
+      event: `${orgMetrics.saasTools} SaaS tools managed`,
+      type: 'tech',
+      icon: Package,
+    },
+  ], [projects, orgMetrics.completedAudits, orgMetrics.saasTools, teamMembers.length, activeDepartments.length]);
+
   // Project status distribution
   const projectStatusData = useMemo(() => {
     const statusCount = projects.reduce((acc, p) => {
@@ -701,20 +742,17 @@ export default function Overview() {
             <Building2 className="w-5 h-5 text-indigo-600" />
             <h2 className="text-xl font-semibold text-slate-900">Departments</h2>
             <span className="bg-indigo-100 text-indigo-700 text-xs font-semibold px-2 py-1 rounded-full">
-              {departments.filter(d => d.is_active).length}
+              {activeDepartments.length}
             </span>
           </div>
           <div className="space-y-3 max-h-[20rem] sm:max-h-[32rem] overflow-y-auto pr-2">
-            {departments.filter(d => d.is_active).length === 0 ? (
+            {activeDepartments.length === 0 ? (
               <div className="text-center py-8 text-slate-500">
                 <Building2 className="w-12 h-12 mx-auto mb-2 opacity-50" />
                 <p>No departments found</p>
               </div>
             ) : (
-              departments
-                .filter(d => d.is_active)
-                .sort((a, b) => (b.headcount || 0) - (a.headcount || 0))
-                .map((dept) => (
+              activeDepartments.map((dept) => (
                   <div
                     key={dept.id}
                     className="flex items-center justify-between p-4 border border-slate-200 rounded-lg hover:border-indigo-300 hover:shadow-sm transition-all"
@@ -915,38 +953,7 @@ export default function Overview() {
           <h2 className="text-xl font-semibold text-slate-900">Recent Activity</h2>
         </div>
         <div className="space-y-3">
-          {[
-            {
-              time: '2 hours ago',
-              event: `New project "${projects[0]?.name || 'Dashboard'}" updated`,
-              type: 'project',
-              icon: Briefcase,
-            },
-            {
-              time: '4 hours ago',
-              event: `Security audit ${orgMetrics.completedAudits > 0 ? 'completed' : 'scheduled'}`,
-              type: 'security',
-              icon: Shield,
-            },
-            {
-              time: '6 hours ago',
-              event: `${teamMembers.length} team members in directory`,
-              type: 'team',
-              icon: Users,
-            },
-            {
-              time: '1 day ago',
-              event: `${departments.filter(d => d.is_active).length} active departments`,
-              type: 'organization',
-              icon: Building2,
-            },
-            {
-              time: '2 days ago',
-              event: `${orgMetrics.saasTools} SaaS tools managed`,
-              type: 'tech',
-              icon: Package,
-            },
-          ].map((activity, index) => {
+          {recentActivity.map((activity, index) => {
             const Icon = activity.icon;
             return (
               <div

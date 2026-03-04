@@ -13,6 +13,7 @@ import {
   Eye,
 } from 'lucide-react';
 import { mpbHealthSupabase, isMpbHealthConfigured } from '../../../lib/mpbHealthSupabase';
+import { sanitizeSearchTerm } from '../../../utils/sanitize';
 
 interface Ticket {
   id: string;
@@ -180,7 +181,8 @@ export function SupportTickets() {
         .select('*', { count: 'exact' });
 
       if (searchTerm) {
-        query = query.or(`ticket_number.ilike.%${searchTerm}%,subject.ilike.%${searchTerm}%`);
+        const safeTerm = sanitizeSearchTerm(searchTerm);
+        query = query.or(`ticket_number.ilike.%${safeTerm}%,subject.ilike.%${safeTerm}%`);
       }
 
       if (statusFilter !== 'all') {

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { X, Download, FileText, Table, FileSpreadsheet } from 'lucide-react';
+import { downloadFile } from '@/utils/downloadFile';
 
 interface ExportModalProps {
   open: boolean;
@@ -58,14 +59,7 @@ export function ExportModal({ open, setOpen, rows, defaultFilename = 'export', t
       }
 
       const blob = new Blob([content], { type: mimeType });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `${filename}.${extension}`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+      downloadFile(blob, `${filename}.${extension}`);
 
       setOpen(false);
     } catch (error: unknown) {

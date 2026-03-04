@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { downloadFile } from '@/utils/downloadFile';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Upload, FileSpreadsheet, CheckCircle, AlertCircle, ArrowLeft, Download, Eye } from 'lucide-react';
 import Papa from 'papaparse';
@@ -255,14 +256,7 @@ export function PublicDepartmentUpload() {
 
   const handleDownloadTemplate = () => {
     const blob = new Blob([config.sampleData], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${department}_template.csv`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    downloadFile(blob, `${department}_template.csv`);
   };
 
   return (

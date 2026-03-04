@@ -1,10 +1,34 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.39.0';
+import { corsHeaders } from '../_shared/cors.ts';
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-};
+interface MarketingMetricInput {
+  date?: string;
+  sessions?: string | number;
+  users?: string | number;
+  pageviews?: string | number;
+  bounce_rate?: string | number;
+  conversions?: string | number;
+  avg_session_duration?: string | number;
+  revenue?: string | number;
+  traffic_source?: string | null;
+  campaign_name?: string | null;
+  conversion_type?: string | null;
+}
+
+interface ProcessedMetric {
+  property_id: string;
+  date: string;
+  sessions: number;
+  users: number;
+  pageviews: number;
+  bounce_rate: number;
+  conversions: number;
+  avg_session_duration: number;
+  revenue: number;
+  traffic_source: string | null;
+  campaign_name: string | null;
+  conversion_type: string | null;
+}
 
 Deno.serve(async (req: Request) => {
   // Handle CORS preflight requests
@@ -64,18 +88,18 @@ Deno.serve(async (req: Request) => {
     }
 
     // Process and validate metrics
-    const processedMetrics = metrics.map((metric: any) => {
+    const processedMetrics: ProcessedMetric[] = metrics.map((metric: MarketingMetricInput) => {
       // Ensure required fields exist
-      const processedMetric = {
+      const processedMetric: ProcessedMetric = {
         property_id,
         date: metric.date || new Date().toISOString().split('T')[0],
-        sessions: parseInt(metric.sessions) || 0,
-        users: parseInt(metric.users) || 0,
-        pageviews: parseInt(metric.pageviews) || 0,
-        bounce_rate: parseFloat(metric.bounce_rate) || 0,
-        conversions: parseInt(metric.conversions) || 0,
-        avg_session_duration: parseFloat(metric.avg_session_duration) || 0,
-        revenue: parseFloat(metric.revenue) || 0,
+        sessions: parseInt(String(metric.sessions)) || 0,
+        users: parseInt(String(metric.users)) || 0,
+        pageviews: parseInt(String(metric.pageviews)) || 0,
+        bounce_rate: parseFloat(String(metric.bounce_rate)) || 0,
+        conversions: parseInt(String(metric.conversions)) || 0,
+        avg_session_duration: parseFloat(String(metric.avg_session_duration)) || 0,
+        revenue: parseFloat(String(metric.revenue)) || 0,
         traffic_source: metric.traffic_source || null,
         campaign_name: metric.campaign_name || null,
         conversion_type: metric.conversion_type || null
@@ -131,8 +155,10 @@ Deno.serve(async (req: Request) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error processing request:', error);
+    
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     
     // Log the error
     try {
@@ -147,16 +173,16 @@ Deno.serve(async (req: Request) => {
           service: 'ga4',
           operation: 'ingest_metrics',
           status: 'failed',
-          message: error.message || 'Unknown error occurred',
-          details: { error: error.toString() },
+          message: errorMessage,
+          details: { error: String(error) },
           records_processed: 0
         }]);
-    } catch (logError) {
+    } catch (logError: unknown) {
       console.error('Failed to log error:', logError);
     }
 
     return new Response(
-      JSON.stringify({ error: error.message || 'An error occurred processing the request' }),
+      JSON.stringify({ error: errorMessage }),
       { 
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

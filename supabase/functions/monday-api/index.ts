@@ -1,11 +1,5 @@
 import { createClient } from 'npm:@supabase/supabase-js';
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-auth',
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Max-Age': '86400',
-};
+import { corsHeaders } from '../_shared/cors.ts';
 
 Deno.serve(async (req: Request) => {
   // Handle CORS preflight requests - must return 200 OK for CORS to pass
@@ -29,8 +23,6 @@ Deno.serve(async (req: Request) => {
 
     // If no config exists, return mock data for demo purposes
     if (configError || !configs || configs.length === 0 || !configs[0]?.access_token) {
-      console.log('No Monday.com configuration found, returning demo data');
-      
       // Return demo data structure
       const demoData = {
         data: {

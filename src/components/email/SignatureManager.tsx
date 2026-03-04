@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import DOMPurify from 'dompurify';
 import { SignatureEditor } from './SignatureEditor';
 import {
   Plus,
@@ -154,7 +155,7 @@ export function SignatureManager({
                   />
                 )}
                 <div
-                  dangerouslySetInnerHTML={{ __html: signature.html_content }}
+                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(signature.html_content) }}
                   className="prose prose-sm dark:prose-invert max-w-none text-xs opacity-75"
                   style={{ transform: 'scale(0.85)', transformOrigin: 'top left' }}
                 />

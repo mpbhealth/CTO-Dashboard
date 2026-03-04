@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import {
   CheckSquare,
@@ -189,7 +189,7 @@ export default function Assignments() {
   }
 
   // Filter assignments
-  const filteredAssignments = assignments.filter(assignment => {
+  const filteredAssignments = useMemo(() => assignments.filter(assignment => {
     const matchesSearch = searchTerm === '' ||
       assignment.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       assignment.description?.toLowerCase().includes(searchTerm.toLowerCase());
@@ -199,7 +199,7 @@ export default function Assignments() {
     const matchesAssignee = selectedAssignee === 'All' || assignment.assigned_to === selectedAssignee;
     
     return matchesSearch && matchesProject && matchesStatus && matchesAssignee;
-  });
+  }), [assignments, searchTerm, selectedProject, selectedStatus, selectedAssignee]);
 
   const statuses = ['All', 'todo', 'in_progress', 'done'];
 
@@ -321,11 +321,11 @@ export default function Assignments() {
   };
 
   // Group assignments by status for kanban view
-  const groupedAssignments = {
+  const groupedAssignments = useMemo(() => ({
     todo: filteredAssignments.filter(a => a.status === 'todo'),
     in_progress: filteredAssignments.filter(a => a.status === 'in_progress'),
     done: filteredAssignments.filter(a => a.status === 'done')
-  };
+  }), [filteredAssignments]);
 
   const renderKanbanColumn = (status: string, title: string, assignments: AssignmentWithDetails[]) => (
     <div className="bg-slate-50 p-4 rounded-xl min-h-96">

@@ -19,6 +19,7 @@ import {
   Save,
 } from 'lucide-react';
 import { isMpbHealthConfigured } from '../../../lib/mpbHealthSupabase';
+import { sanitizeSearchTerm } from '../../../utils/sanitize';
 
 interface Notification {
   id: string;
@@ -171,7 +172,8 @@ export function NotificationsAdmin() {
         .select('*', { count: 'exact' });
 
       if (searchTerm) {
-        query = query.or(`title.ilike.%${searchTerm}%,message.ilike.%${searchTerm}%`);
+        const safeTerm = sanitizeSearchTerm(searchTerm);
+        query = query.or(`title.ilike.%${safeTerm}%,message.ilike.%${safeTerm}%`);
       }
 
       if (statusFilter !== 'all') {

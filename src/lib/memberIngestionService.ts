@@ -1,5 +1,6 @@
 import Papa from 'papaparse';
 import { supabase, isSupabaseConfigured } from './supabase';
+import { downloadFile } from '../utils/downloadFile';
 import type {
   Member,
   MemberImportLog,
@@ -334,7 +335,6 @@ export async function importMembers(
   fileName: string
 ): Promise<ImportResult> {
   if (!isSupabaseConfigured) {
-    console.warn('[MemberIngestion] Supabase not configured, simulating import');
     return simulateImport(validatedData, fileName);
   }
 
@@ -501,14 +501,7 @@ export function generateCSVTemplate(): string {
 export function downloadCSVTemplate(): void {
   const content = generateCSVTemplate();
   const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
-  const link = document.createElement('a');
-  const url = URL.createObjectURL(blob);
-  link.setAttribute('href', url);
-  link.setAttribute('download', 'member_import_template.csv');
-  link.style.visibility = 'hidden';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+  downloadFile(blob, 'member_import_template.csv');
 }
 
 // ============================================

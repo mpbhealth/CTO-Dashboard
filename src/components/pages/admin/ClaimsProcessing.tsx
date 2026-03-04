@@ -16,6 +16,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { mpbHealthSupabase, isMpbHealthConfigured } from '../../../lib/mpbHealthSupabase';
+import { sanitizeSearchTerm } from '../../../utils/sanitize';
 
 interface Claim {
   id: string;
@@ -168,7 +169,8 @@ export function ClaimsProcessing() {
         .select('*, member_profiles(first_name, last_name)', { count: 'exact' });
 
       if (searchTerm) {
-        query = query.or(`claim_number.ilike.%${searchTerm}%,provider_name.ilike.%${searchTerm}%`);
+        const safeTerm = sanitizeSearchTerm(searchTerm);
+        query = query.or(`claim_number.ilike.%${safeTerm}%,provider_name.ilike.%${safeTerm}%`);
       }
 
       if (statusFilter === 'pending_review') {

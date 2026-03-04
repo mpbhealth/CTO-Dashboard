@@ -1,11 +1,5 @@
 import { createClient } from 'npm:@supabase/supabase-js';
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-auth',
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Max-Age': '86400',
-};
+import { corsHeaders } from '../_shared/cors.ts';
 
 interface OutlookConfig {
   id: string;
@@ -16,6 +10,27 @@ interface OutlookConfig {
   refresh_token?: string;
   token_expires_at?: string;
   is_active: boolean;
+}
+
+interface OutlookEventDateTime {
+  dateTime: string;
+  timeZone: string;
+}
+
+interface OutlookEventAttendee {
+  emailAddress: { address: string };
+  type: string;
+}
+
+interface OutlookEventBody {
+  subject?: string;
+  body?: { contentType: string; content: string };
+  start?: OutlookEventDateTime;
+  end?: OutlookEventDateTime;
+  isAllDay?: boolean;
+  location?: { displayName: string };
+  attendees?: OutlookEventAttendee[];
+  toRecipients?: unknown[];
 }
 
 interface CalendarEvent {
@@ -205,7 +220,7 @@ async function createCalendarEvent(
     ? `https://graph.microsoft.com/v1.0/users/${userEmail}/calendar/events`
     : 'https://graph.microsoft.com/v1.0/me/calendar/events';
 
-  const eventBody: any = {
+  const eventBody: OutlookEventBody = {
     subject: event.subject,
     start: {
       dateTime: event.start,
@@ -293,7 +308,7 @@ async function updateCalendarEvent(
     ? `https://graph.microsoft.com/v1.0/users/${userEmail}/calendar/events/${eventId}`
     : `https://graph.microsoft.com/v1.0/me/calendar/events/${eventId}`;
 
-  const eventBody: any = {};
+  const eventBody: OutlookEventBody = {};
 
   if (event.subject !== undefined) {
     eventBody.subject = event.subject;
@@ -392,8 +407,6 @@ Deno.serve(async (req: Request) => {
 
     // If no config exists, return demo data
     if (configError || !configs || configs.length === 0) {
-      console.log('No Outlook configuration found, returning demo data');
-      
       if (action === 'getEvents') {
         const demoEvents = generateDemoEvents(
           startDate || new Date().toISOString(),
@@ -461,11 +474,11 @@ Deno.serve(async (req: Request) => {
       default:
         throw new Error(`Unknown action: ${action}`);
     }
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error in outlook-calendar function:', error);
     
     return new Response(
-      JSON.stringify({ error: error.message || 'An error occurred' }),
+      JSON.stringify({ error: error instanceof Error ? error.message : 'An error occurred' }),
       { 
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

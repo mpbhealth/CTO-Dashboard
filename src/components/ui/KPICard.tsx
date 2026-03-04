@@ -1,3 +1,4 @@
+import React from 'react';
 import { motion } from 'framer-motion';
 import { LucideIcon, TrendingUp, TrendingDown } from 'lucide-react';
 
@@ -23,7 +24,7 @@ interface KPICardProps {
   data?: KPIData;
 }
 
-export default function KPICard({
+const KPICard = React.memo(function KPICard({
   title,
   value,
   icon: Icon,
@@ -93,4 +94,6 @@ export default function KPICard({
       )}
     </motion.div>
   );
-}
+});
+
+export default KPICard;

@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { downloadFile } from '@/utils/downloadFile';
 import { Activity, Download, TrendingDown, AlertTriangle, Users, DollarSign, FileSpreadsheet, Eye } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 import { useQuery } from '@tanstack/react-query';
@@ -34,7 +35,7 @@ export function CEOOperations() {
   const [selectedFile, setSelectedFile] = useState<UploadedFile | null>(null);
   const [fileData, setFileData] = useState<Record<string, unknown>[]>([]);
 
-  const { data: cancellations = [], isLoading } = useQuery({
+  const { data: cancellations = [], isLoading, error, refetch } = useQuery({
     queryKey: ['plan_cancellations'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -91,12 +92,7 @@ export function CEOOperations() {
     ].join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = selectedFile?.file_name || 'operations_export.csv';
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadFile(blob, selectedFile?.file_name || 'operations_export.csv');
   };
 
   const filteredCancellations = useMemo(() => {
@@ -168,6 +164,24 @@ export function CEOOperations() {
 
   return (
     <div className="w-full space-y-6">
+        {error && (
+          <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 mb-6 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <AlertTriangle className="w-5 h-5 text-red-400" />
+              <div>
+                <p className="text-red-400 font-medium">Failed to load operations data</p>
+                <p className="text-red-400/70 text-sm">{error.message || 'An unexpected error occurred'}</p>
+              </div>
+            </div>
+            <button
+              onClick={() => refetch()}
+              className="px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg text-sm transition-colors"
+            >
+              Retry
+            </button>
+          </div>
+        )}
+
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-xl sm:text-3xl font-bold text-gray-900 flex items-center gap-3">
@@ -260,6 +274,7 @@ export function CEOOperations() {
                   <select
                     value={selectedReason}
                     onChange={(e) => setSelectedReason(e.target.value)}
+                    aria-label="Filter by reason"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1a3d97] focus:border-transparent"
                   >
                     <option value="">All Reasons</option>

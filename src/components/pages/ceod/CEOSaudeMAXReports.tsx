@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { ExportModal } from '../../modals/ExportModal';
 import { FileViewerModal } from '../../modals/FileViewerModal';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { downloadFile } from '@/utils/downloadFile';
 
 interface SaudeMAXRecord {
   id: string;
@@ -95,12 +96,7 @@ export function CEOSaudeMAXReports() {
     ].join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = selectedFile?.file_name || 'saudemax_export.csv';
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadFile(blob, selectedFile?.file_name || 'saudemax_export.csv');
   };
 
   const filteredRecords = useMemo(() => {

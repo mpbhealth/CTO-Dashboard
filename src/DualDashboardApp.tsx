@@ -324,10 +324,10 @@ function DualDashboardContent() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen min-h-[100dvh] bg-slate-50">
+      <div className="flex items-center justify-center min-h-screen min-h-[100dvh] bg-slate-950">
         <div className="text-center px-4">
-          <div className="animate-spin rounded-full h-10 w-10 md:h-12 md:w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 text-sm md:text-base">Authenticating...</p>
+          <div className="animate-spin rounded-full h-10 w-10 md:h-12 md:w-12 border-b-2 border-indigo-400 mx-auto mb-4"></div>
+          <p className="text-slate-400 text-sm md:text-base">Authenticating...</p>
         </div>
       </div>
     );
@@ -335,17 +335,17 @@ function DualDashboardContent() {
 
   if (!profileReady) {
     return (
-      <div className="flex items-center justify-center min-h-screen min-h-[100dvh] bg-slate-50">
+      <div className="flex items-center justify-center min-h-screen min-h-[100dvh] bg-slate-950">
         <div className="text-center px-4">
-          <div className="animate-spin rounded-full h-10 w-10 md:h-12 md:w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 text-sm md:text-base">Loading your dashboard...</p>
+          <div className="animate-spin rounded-full h-10 w-10 md:h-12 md:w-12 border-b-2 border-indigo-400 mx-auto mb-4"></div>
+          <p className="text-slate-400 text-sm md:text-base">Loading your dashboard...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen min-h-[100dvh] bg-slate-50 overflow-x-hidden">
+    <div className={`flex min-h-screen min-h-[100dvh] overflow-x-hidden ${isCEORoute ? 'bg-slate-50' : 'bg-slate-950'}`}>
       {/* Skip to main content link for keyboard/screen reader users */}
       <a
         href="#main-content"

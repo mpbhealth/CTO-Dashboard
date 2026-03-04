@@ -1,333 +1,272 @@
-import { useState } from 'react';
 import { motion } from 'framer-motion';
-import KPICard from '../ui/KPICard';
-import CsvUploader from '../ui/CsvUploader';
 import {
-  ResponsiveContainer, 
-  LineChart, 
-  XAxis, 
-  YAxis, 
-  Tooltip, 
-  Area,
+  ResponsiveContainer,
   BarChart,
-  Bar
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  Legend,
 } from 'recharts';
-import { TrendingDown, TrendingUp, Users, Calendar, Upload, BarChart3 } from 'lucide-react';
-import { retentionKPIs, churnReasons, retentionTimeline, churnTimeline, cohortAnalysis } from '../../data/consolidatedMockData';
-import { useMemberStatus } from '../../hooks/useSupabaseTable';
+import {
+  TrendingDown,
+  TrendingUp,
+  Users,
+  ShieldCheck,
+  Loader2,
+  AlertCircle,
+  RefreshCw,
+  Activity,
+} from 'lucide-react';
+import {
+  useMemberOverview,
+  useMemberRetentionData,
+  useMonthlyActivity,
+} from '../../hooks/useMemberAnalytics';
+
+const tooltipStyle = {
+  backgroundColor: 'white',
+  border: '1px solid #E2E8F0',
+  borderRadius: '8px',
+  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+};
 
 export default function MemberRetention() {
-  const [selectedTimeframe, setSelectedTimeframe] = useState('6m');
-  const [showImporter, setShowImporter] = useState(false);
-  const { refetch: refetchStatus } = useMemberStatus();
+  const overview = useMemberOverview();
+  const retention = useMemberRetentionData();
+  const activity = useMonthlyActivity(12);
 
-  const timeframes = [
-    { value: '3m', label: 'Last 3 months' },
-    { value: '6m', label: 'Last 6 months' },
-    { value: '1y', label: 'Last year' },
+  const isLoading = retention.loading || overview.loading;
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-24">
+        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+        <span className="ml-3 text-slate-600">Loading retention data...</span>
+      </div>
+    );
+  }
+
+  if (retention.error && !retention.data) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 text-center">
+        <AlertCircle className="w-12 h-12 text-red-400 mb-4" />
+        <h3 className="text-lg font-semibold text-slate-900 mb-2">Unable to Load Data</h3>
+        <p className="text-slate-500 mb-4">{retention.error}</p>
+        <button
+          type="button"
+          onClick={retention.refetch}
+          className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+        >
+          <RefreshCw className="w-4 h-4" />
+          Retry
+        </button>
+      </div>
+    );
+  }
+
+  const rd = retention.data;
+  const ov = overview.data;
+
+  const kpis = [
+    {
+      label: 'Retention Rate',
+      value: `${rd?.retentionRate ?? 0}%`,
+      sub: 'Active / total members',
+      icon: ShieldCheck,
+      color: 'bg-emerald-100 text-emerald-600',
+      border: 'border-emerald-200',
+    },
+    {
+      label: 'Total Churned',
+      value: rd?.totalChurned.toLocaleString() ?? '0',
+      sub: 'All-time inactive members',
+      icon: Users,
+      color: 'bg-red-100 text-red-500',
+      border: 'border-red-200',
+    },
+    {
+      label: 'Churn This Month',
+      value: rd?.churnThisMonth.toLocaleString() ?? '0',
+      sub: 'Inactivated in current month',
+      icon: TrendingDown,
+      color: 'bg-amber-100 text-amber-600',
+      border: 'border-amber-200',
+    },
+    {
+      label: 'Net Change',
+      value: `${(ov?.netChange ?? 0) > 0 ? '+' : ''}${ov?.netChange ?? 0}`,
+      sub: 'Activations minus inactivations',
+      icon: Activity,
+      color: (ov?.netChange ?? 0) >= 0 ? 'bg-teal-100 text-teal-600' : 'bg-red-100 text-red-600',
+      border: (ov?.netChange ?? 0) >= 0 ? 'border-teal-200' : 'border-red-200',
+    },
   ];
 
   return (
     <div className="space-y-8">
-      {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900">Member Retention & Churn</h1>
-          <p className="text-slate-600 mt-2">Track member lifecycle, retention patterns, and churn analysis</p>
-        </div>
-        
-        <select
-          value={selectedTimeframe}
-          onChange={(e) => setSelectedTimeframe(e.target.value)}
-          className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
-        >
-          {timeframes.map(timeframe => (
-            <option key={timeframe.value} value={timeframe.value}>{timeframe.label}</option>
-          ))}
-        </select>
+      <div>
+        <h1 className="text-3xl font-bold text-slate-900">Member Retention & Churn</h1>
+        <p className="text-slate-600 mt-2">Track member lifecycle, retention patterns, and churn analysis</p>
       </div>
-      
-      {/* CSV Import Section */}
-      {showImporter && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
-          exit={{ opacity: 0, height: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <CsvUploader
-            onSuccess={refetchStatus}
-            title="Import Member Status Data"
-            description="Upload member status changes to track retention trends"
-          />
-        </motion.div>
-      )}
-      
+
       {/* KPI Cards */}
-      <motion.div 
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {kpis.map((kpi, i) => (
+          <motion.div
+            key={kpi.label}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: i * 0.1 }}
+            className={`bg-white rounded-xl border-2 ${kpi.border} p-5`}
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${kpi.color}`}>
+                <kpi.icon className="w-5 h-5" />
+              </div>
+              <span className="text-sm font-medium text-slate-500">{kpi.label}</span>
+            </div>
+            <p className="text-2xl font-bold text-slate-900">{kpi.value}</p>
+            <p className="text-xs text-slate-500 mt-1">{kpi.sub}</p>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Activations vs Inactivations */}
+      <motion.div
+        className="bg-white p-6 rounded-xl shadow-sm border border-slate-200"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
       >
-        {retentionKPIs.length > 0 ? (
-          <>
-            {/* Import Status Data Button */}
-            <button
-              onClick={() => setShowImporter(!showImporter)}
-              className="flex items-center space-x-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors"
-            >
-              <Calendar className="w-4 h-4" />
-              <span>{showImporter ? 'Hide Importer' : 'Import Status Data'}</span>
-            </button>
-            
-            {/* KPI Cards */}
-            {retentionKPIs.map((metric, index) => (
-              <motion.div
-                key={metric.title}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-              >
-                <KPICard data={metric} />
-              </motion.div>
-            ))}
-          </>
-        ) : (
-          <div className="col-span-full bg-slate-50 rounded-xl p-12 text-center border-2 border-dashed border-slate-200">
-            <BarChart3 className="h-12 w-12 text-slate-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-slate-900 mb-2">No Member Retention Data Available</h3>
-            <p className="text-slate-500 mb-4">Upload member status data to track retention rates, churn analysis, and cohort performance.</p>
-            <button
-              onClick={() => setShowImporter(!showImporter)}
-              className="inline-flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
-            >
-              <Upload className="h-4 w-4" />
-              <span>Upload Retention Data</span>
-            </button>
-          </div>
-        )}
+        <div className="flex items-center gap-2 mb-4">
+          <TrendingUp className="w-5 h-5 text-indigo-500" />
+          <h2 className="text-base font-semibold text-slate-900">Activations vs Inactivations — Last 12 Months</h2>
+        </div>
+        <ResponsiveContainer width="100%" height={320}>
+          <BarChart data={activity.data} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
+            <XAxis dataKey="month" stroke="#64748B" fontSize={12} />
+            <YAxis stroke="#64748B" fontSize={12} />
+            <Tooltip contentStyle={tooltipStyle} />
+            <Legend />
+            <Bar dataKey="activations" fill="#10B981" name="Activations" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="inactivations" fill="#EF4444" name="Inactivations" radius={[4, 4, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
       </motion.div>
 
-      {/* Main Charts Section */}
-      {retentionTimeline.length > 0 || churnTimeline.length > 0 ? (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Retention Rate Timeline */}
-        <motion.div 
-          className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow"
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          <div className="flex items-center space-x-3 mb-4">
-            <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
-              <TrendingUp className="w-5 h-5 text-emerald-600" />
-            </div>
-            <div>
-              <h2 className="text-lg font-semibold text-slate-900">Retention Rate Over Time</h2>
-              <p className="text-sm text-slate-600">Monthly retention percentage trends</p>
-            </div>
-          </div>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={retentionTimeline} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-              <defs>
-                <linearGradient id="retentionGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#10B981" stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor="#10B981" stopOpacity={0}/>
-                </linearGradient>
-              </defs>
-              <XAxis dataKey="month" stroke="#64748B" />
-              <YAxis domain={[85, 92]} stroke="#64748B" tickFormatter={(value) => `${value}%`} />
-              <Tooltip 
-                formatter={(value, name) => [
-                  name === 'retention' ? `${value}%` : value,
-                  name === 'retention' ? 'Retention Rate' : name
-                ]}
-                contentStyle={{ 
-                  backgroundColor: 'white', 
-                  border: '1px solid #E2E8F0',
-                  borderRadius: '8px',
-                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-                }}
-              />
-              <Area 
-                type="monotone" 
-                dataKey="retention" 
-                stroke="#10B981" 
-                strokeWidth={3}
-                fill="url(#retentionGradient)" 
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </motion.div>
-
-        {/* Churn Volume */}
-        <motion.div 
-          className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow"
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-        >
-          <div className="flex items-center space-x-3 mb-4">
-            <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-              <TrendingDown className="w-5 h-5 text-red-600" />
-            </div>
-            <div>
-              <h2 className="text-lg font-semibold text-slate-900">Churn Volume</h2>
-              <p className="text-sm text-slate-600">Monthly member churn breakdown</p>
-            </div>
-          </div>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={churnTimeline} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-              <XAxis dataKey="month" stroke="#64748B" />
-              <YAxis stroke="#64748B" />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: 'white', 
-                  border: '1px solid #E2E8F0',
-                  borderRadius: '8px',
-                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-                }}
-              />
-              <Bar dataKey="voluntary" stackId="a" fill="#EF4444" name="Voluntary Churn" />
-              <Bar dataKey="involuntary" stackId="a" fill="#FCA5A5" name="Involuntary Churn" />
-            </BarChart>
-          </ResponsiveContainer>
-        </motion.div>
-        </div>
-      ) : null}
-
-      {/* Secondary Analytics */}
-      {churnReasons.length > 0 || cohortAnalysis.length > 0 ? (
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      {/* Churn Reasons & Monthly Churn */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Churn Reasons */}
-        <motion.div 
-          className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow"
+        <motion.div
+          className="bg-white p-6 rounded-xl shadow-sm border border-slate-200"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
         >
-          <div className="flex items-center space-x-3 mb-4">
+          <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
               <Users className="w-5 h-5 text-amber-600" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-slate-900">Churn Reasons</h2>
-              <p className="text-sm text-slate-600">Why members leave</p>
+              <h2 className="text-base font-semibold text-slate-900">Churn Reasons</h2>
+              <p className="text-xs text-slate-500">Why members leave</p>
             </div>
           </div>
-          
+
           <div className="space-y-3">
-            {churnReasons.map((reason, index) => (
-              <div key={reason.reason} className="flex items-center justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-medium text-slate-700">{reason.reason}</span>
-                    <span className="text-sm text-slate-600">{reason.percentage}%</span>
-                  </div>
-                  <div className="w-full bg-slate-200 rounded-full h-2">
-                    <motion.div 
-                      className="bg-amber-500 h-2 rounded-full"
-                      initial={{ width: 0 }}
-                      animate={{ width: `${reason.percentage}%` }}
-                      transition={{ duration: 1, delay: 0.5 + index * 0.1 }}
-                    ></motion.div>
-                  </div>
-                  <p className="text-xs text-slate-500 mt-1">{reason.count} members</p>
+            {(rd?.churnReasons ?? []).map((reason, index) => (
+              <div key={reason.reason}>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-sm font-medium text-slate-700 truncate max-w-[70%]">{reason.reason}</span>
+                  <span className="text-sm text-slate-600">{reason.percentage}%</span>
                 </div>
+                <div className="w-full bg-slate-200 rounded-full h-2">
+                  <motion.div
+                    className="bg-amber-500 h-2 rounded-full"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${reason.percentage}%` }}
+                    transition={{ duration: 0.8, delay: 0.5 + index * 0.05 }}
+                  />
+                </div>
+                <p className="text-xs text-slate-400 mt-0.5">{reason.count} members</p>
               </div>
             ))}
           </div>
         </motion.div>
 
-        {/* Cohort Analysis */}
-        <motion.div 
-          className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow lg:col-span-2"
+        {/* Monthly Churn Volume */}
+        <motion.div
+          className="bg-white p-6 rounded-xl shadow-sm border border-slate-200"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
         >
-          <div className="flex items-center space-x-3 mb-4">
-            <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-              <Calendar className="w-5 h-5 text-indigo-600" />
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+              <TrendingDown className="w-5 h-5 text-red-600" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-slate-900">Cohort Retention Analysis</h2>
-              <p className="text-sm text-slate-600">Member retention by signup month</p>
+              <h2 className="text-base font-semibold text-slate-900">Monthly Churn Volume</h2>
+              <p className="text-xs text-slate-500">Members inactivated per month</p>
             </div>
           </div>
-          
+          <ResponsiveContainer width="100%" height={280}>
+            <BarChart data={rd?.monthlyChurn ?? []} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
+              <XAxis dataKey="month" stroke="#64748B" fontSize={12} />
+              <YAxis stroke="#64748B" fontSize={12} />
+              <Tooltip contentStyle={tooltipStyle} />
+              <Bar dataKey="churned" fill="#EF4444" name="Churned" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </motion.div>
+      </div>
+
+      {/* Cohort Retention Table */}
+      {(rd?.cohorts ?? []).length > 0 && (
+        <motion.div
+          className="bg-white p-6 rounded-xl shadow-sm border border-slate-200"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.6 }}
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+              <ShieldCheck className="w-5 h-5 text-indigo-600" />
+            </div>
+            <div>
+              <h2 className="text-base font-semibold text-slate-900">Cohort Retention</h2>
+              <p className="text-xs text-slate-500">Retention rate by enrollment month</p>
+            </div>
+          </div>
+
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-slate-200">
                   <th className="text-left py-2 px-3 font-medium text-slate-700">Cohort</th>
-                  <th className="text-center py-2 px-3 font-medium text-slate-700">Month 1</th>
-                  <th className="text-center py-2 px-3 font-medium text-slate-700">Month 2</th>
-                  <th className="text-center py-2 px-3 font-medium text-slate-700">Month 3</th>
-                  <th className="text-center py-2 px-3 font-medium text-slate-700">Month 4</th>
-                  <th className="text-center py-2 px-3 font-medium text-slate-700">Month 5</th>
-                  <th className="text-center py-2 px-3 font-medium text-slate-700">Month 6</th>
+                  <th className="text-right py-2 px-3 font-medium text-slate-700">Enrolled</th>
+                  <th className="text-right py-2 px-3 font-medium text-slate-700">Still Active</th>
+                  <th className="text-right py-2 px-3 font-medium text-slate-700">Retention</th>
                 </tr>
               </thead>
               <tbody>
-                {cohortAnalysis.map((cohort) => (
-                  <tr key={cohort.cohort} className="border-b border-slate-100">
+                {(rd?.cohorts ?? []).map((cohort) => (
+                  <tr key={cohort.cohort} className="border-b border-slate-100 hover:bg-slate-50">
                     <td className="py-2 px-3 font-medium text-slate-900">{cohort.cohort}</td>
-                    <td className="py-2 px-3 text-center">
-                      <span className="inline-block px-2 py-1 bg-emerald-100 text-emerald-800 rounded text-xs font-medium">
-                        {cohort.month1}%
+                    <td className="py-2 px-3 text-right text-slate-600">{cohort.totalEnrolled.toLocaleString()}</td>
+                    <td className="py-2 px-3 text-right text-slate-600">{cohort.stillActive.toLocaleString()}</td>
+                    <td className="py-2 px-3 text-right">
+                      <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
+                        cohort.retentionRate >= 95 ? 'bg-emerald-100 text-emerald-800' :
+                        cohort.retentionRate >= 85 ? 'bg-amber-100 text-amber-800' :
+                        'bg-red-100 text-red-800'
+                      }`}>
+                        {cohort.retentionRate}%
                       </span>
-                    </td>
-                    <td className="py-2 px-3 text-center">
-                      {cohort.month2 && (
-                        <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
-                          cohort.month2 >= 90 ? 'bg-emerald-100 text-emerald-800' :
-                          cohort.month2 >= 85 ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800'
-                        }`}>
-                          {cohort.month2}%
-                        </span>
-                      )}
-                    </td>
-                    <td className="py-2 px-3 text-center">
-                      {cohort.month3 && (
-                        <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
-                          cohort.month3 >= 85 ? 'bg-emerald-100 text-emerald-800' :
-                          cohort.month3 >= 80 ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800'
-                        }`}>
-                          {cohort.month3}%
-                        </span>
-                      )}
-                    </td>
-                    <td className="py-2 px-3 text-center">
-                      {cohort.month4 && (
-                        <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
-                          cohort.month4 >= 80 ? 'bg-emerald-100 text-emerald-800' :
-                          cohort.month4 >= 75 ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800'
-                        }`}>
-                          {cohort.month4}%
-                        </span>
-                      )}
-                    </td>
-                    <td className="py-2 px-3 text-center">
-                      {cohort.month5 && (
-                        <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
-                          cohort.month5 >= 75 ? 'bg-emerald-100 text-emerald-800' :
-                          cohort.month5 >= 70 ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800'
-                        }`}>
-                          {cohort.month5}%
-                        </span>
-                      )}
-                    </td>
-                    <td className="py-2 px-3 text-center">
-                      {cohort.month6 && (
-                        <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
-                          cohort.month6 >= 70 ? 'bg-emerald-100 text-emerald-800' :
-                          cohort.month6 >= 65 ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800'
-                        }`}>
-                          {cohort.month6}%
-                        </span>
-                      )}
                     </td>
                   </tr>
                 ))}
@@ -335,48 +274,7 @@ export default function MemberRetention() {
             </table>
           </div>
         </motion.div>
-      </div>
-      ) : null}
-
-      {/* Insights Section */}
-      {retentionKPIs.length > 0 ? (
-      <motion.div 
-        className="bg-white p-6 rounded-xl shadow-sm border border-slate-200"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.6 }}
-      >
-        <h2 className="text-lg font-semibold text-slate-900 mb-4">Key Insights & Recommendations</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="p-4 bg-emerald-50 rounded-lg border border-emerald-200">
-            <h3 className="font-medium text-emerald-900 mb-2">✅ Positive Trends</h3>
-            <ul className="text-sm text-emerald-800 space-y-1">
-              <li>• Retention rate improved 1.5% this month</li>
-              <li>• Voluntary churn decreased by 6.1%</li>
-              <li>• Average tenure increased to 13.2 months</li>
-            </ul>
-          </div>
-          
-          <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
-            <h3 className="font-medium text-amber-900 mb-2">⚠️ Areas of Concern</h3>
-            <ul className="text-sm text-amber-800 space-y-1">
-              <li>• 34% of churn due to cost concerns</li>
-              <li>• Service issues causing 18% of departures</li>
-              <li>• Month 3-4 retention drop in newer cohorts</li>
-            </ul>
-          </div>
-          
-          <div className="p-4 bg-indigo-50 rounded-lg border border-indigo-200">
-            <h3 className="font-medium text-indigo-900 mb-2">💡 Recommendations</h3>
-            <ul className="text-sm text-indigo-800 space-y-1">
-              <li>• Implement value-focused onboarding</li>
-              <li>• Address service quality issues</li>
-              <li>• Create month 3 engagement campaign</li>
-            </ul>
-          </div>
-        </div>
-      </motion.div>
-      ) : null}
+      )}
     </div>
   );
 }

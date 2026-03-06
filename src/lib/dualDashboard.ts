@@ -82,11 +82,11 @@ export async function getCurrentProfile(): Promise<Profile | null> {
 
     logger.debug('Authenticated user', { id: user.id, email: user.email });
 
-    // Query with simplified field selection - only columns that exist in the table
+    // Query profile with all fields needed by workspace/resource operations
     const { data, error } = await supabase
       .from('profiles')
-      .select('id, role')
-      .eq('id', user.id)
+      .select('user_id, email, full_name, display_name, role, org_id')
+      .eq('user_id', user.id)
       .maybeSingle();
 
     logger.debug('Profile query result', { hasData: !!data, hasError: !!error });
@@ -145,6 +145,11 @@ export async function getOrCreateWorkspace(
   kind: WorkspaceKind,
   name: string
 ): Promise<Workspace | null> {
+  if (!orgId) {
+    logger.error('getOrCreateWorkspace called with empty orgId');
+    return null;
+  }
+
   const { data: existing } = await supabase
     .from('workspaces')
     .select('*')

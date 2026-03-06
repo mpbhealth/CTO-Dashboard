@@ -137,8 +137,8 @@ export default function QuoteLeads() {
             <FileSpreadsheet className="w-5 h-5 text-indigo-600" />
           </div>
           <div>
-            <h2 className="text-xl font-semibold text-slate-900">Quote Leads</h2>
-            <p className="text-sm text-slate-500">Track quote submissions and sync status</p>
+            <h2 className="text-xl font-semibold text-slate-900">Quick Quote Leads</h2>
+            <p className="text-sm text-slate-500">Website quote submissions and Zoho sync status</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
@@ -227,13 +227,13 @@ export default function QuoteLeads() {
                     Contact
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                    Details
+                    Coverage
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
                     Source
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                    Status
+                    Zoho Status
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
                     Date
@@ -254,7 +254,14 @@ export default function QuoteLeads() {
                         <div className="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center">
                           <User className="w-4 h-4 text-slate-500" />
                         </div>
-                        <span className="font-medium text-slate-900">{submission.name}</span>
+                        <div>
+                          <span className="font-medium text-slate-900">
+                            {submission.first_name} {submission.last_name}
+                          </span>
+                          {submission.zip_code && (
+                            <span className="block text-xs text-slate-400">ZIP: {submission.zip_code}</span>
+                          )}
+                        </div>
                       </div>
                     </td>
                     <td className="px-4 py-4">
@@ -272,21 +279,28 @@ export default function QuoteLeads() {
                       </div>
                     </td>
                     <td className="px-4 py-4">
-                      <div className="text-sm text-slate-600 max-w-48 truncate">
-                        {submission.details && typeof submission.details === 'object' 
-                          ? Object.entries(submission.details)
-                              .slice(0, 2)
-                              .map(([key, value]) => `${key}: ${value}`)
-                              .join(', ')
-                          : '-'
-                        }
+                      <div className="text-sm text-slate-600 space-y-0.5">
+                        {submission.coverage_preference && (
+                          <div className="truncate max-w-40">{submission.coverage_preference}</div>
+                        )}
+                        {submission.household_size && (
+                          <div className="text-xs text-slate-400">Household: {submission.household_size}</div>
+                        )}
+                        {submission.primary_concern && (
+                          <div className="text-xs text-slate-400 truncate max-w-40">{submission.primary_concern}</div>
+                        )}
                       </div>
                     </td>
                     <td className="px-4 py-4">
-                      <span className="text-sm text-slate-600">{submission.source || '-'}</span>
+                      <div className="text-sm text-slate-600">
+                        {submission.source_cta?.replace(/-/g, ' ').replace(/hero calculator /i, '') || '-'}
+                      </div>
+                      {submission.utm_source && (
+                        <div className="text-xs text-slate-400">{submission.utm_source}</div>
+                      )}
                     </td>
                     <td className="px-4 py-4">
-                      {getStatusBadge(submission.status)}
+                      {getStatusBadge(submission.zoho_sync_status || 'pending')}
                     </td>
                     <td className="px-4 py-4">
                       <span className="text-sm text-slate-500">

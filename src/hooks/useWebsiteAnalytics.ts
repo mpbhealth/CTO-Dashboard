@@ -54,14 +54,30 @@ export interface AnalyticsSession {
 
 export interface LeadSubmission {
   id: string;
-  name: string;
+  first_name: string;
+  last_name: string;
   email: string;
   phone: string | null;
-  details: Record<string, unknown>;
-  source: string;
-  status: 'pending' | 'synced' | 'failed';
+  household_size: number | null;
+  current_insurance: string | null;
+  monthly_premium: string | null;
+  coverage_preference: string | null;
+  zip_code: string | null;
+  primary_concern: string | null;
+  contact_preference: string | null;
+  source_page: string | null;
+  source_cta: string | null;
+  utm_source: string | null;
+  utm_medium: string | null;
+  utm_campaign: string | null;
+  zoho_lead_id: string | null;
+  zoho_sync_status: string | null;
+  pipeline_stage: string | null;
+  assigned_to: string | null;
+  priority: string | null;
+  lead_score: number | null;
   created_at: string;
-  synced_at: string | null;
+  updated_at: string;
 }
 
 // Real-time analytics data
@@ -827,21 +843,20 @@ export function useQuoteLeads(statusFilter?: 'pending' | 'synced' | 'failed') {
     }
 
     try {
-      // Try to get from lead_submissions table
+      // Query from zoho_lead_submissions (Quick Quote leads from website)
       let query = mpbHealthSupabase
-        .from('lead_submissions')
+        .from('zoho_lead_submissions')
         .select('*')
         .order('created_at', { ascending: false });
 
       if (statusFilter) {
-        query = query.eq('status', statusFilter);
+        query = query.eq('zoho_sync_status', statusFilter);
       }
 
       const { data: submissions, error: submissionsError } = await query;
 
       if (submissionsError) {
-        // Table might not exist or be empty, return empty data
-        console.warn('Lead submissions table error:', submissionsError);
+        console.warn('Lead submissions fetch error:', submissionsError);
         setData({
           totalSubmissions: 0,
           successfullySynced: 0,
@@ -858,9 +873,9 @@ export function useQuoteLeads(statusFilter?: 'pending' | 'synced' | 'failed') {
 
       // Calculate counts
       const totalSubmissions = leads.length;
-      const successfullySynced = leads.filter(l => l.status === 'synced').length;
-      const pendingSync = leads.filter(l => l.status === 'pending').length;
-      const failedSyncs = leads.filter(l => l.status === 'failed').length;
+      const successfullySynced = leads.filter(l => l.zoho_sync_status === 'synced').length;
+      const pendingSync = leads.filter(l => l.zoho_sync_status === 'pending').length;
+      const failedSyncs = leads.filter(l => l.zoho_sync_status === 'failed' || l.zoho_sync_status === 'error').length;
 
       setData({
         totalSubmissions,

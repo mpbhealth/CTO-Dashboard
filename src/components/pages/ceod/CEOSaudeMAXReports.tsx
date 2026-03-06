@@ -42,7 +42,7 @@ export function CEOSaudeMAXReports() {
       const { data, error } = await supabase
         .from('saudemax_data')
         .select('*')
-        .order('enrollment_date', { ascending: false })
+        .order('created_at', { ascending: false })
         .limit(1000);
 
       if (error) {

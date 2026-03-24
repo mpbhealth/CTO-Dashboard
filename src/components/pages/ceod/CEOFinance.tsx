@@ -81,9 +81,14 @@ export function CEOFinance() {
         .order('record_date', { ascending: false })
         .limit(2000);
 
-      if (error) throw error;
+      if (error) {
+        // Table may not exist yet — return empty instead of retrying
+        console.warn('finance_records query error:', error.code, error.message);
+        return [] as FinanceRecord[];
+      }
       return data as FinanceRecord[];
     },
+    retry: 1,
   });
 
   const { data: uploadedFiles = [] } = useQuery({

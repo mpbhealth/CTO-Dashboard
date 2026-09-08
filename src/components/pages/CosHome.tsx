@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { syncConnectors } from '@/lib/connectors';
 import { ArrowUpRight, RefreshCw } from 'lucide-react';
+import { AryxLogo } from '../brand/AryxLogo';
 
 interface Snapshot {
   source: string;
@@ -63,22 +64,25 @@ export function CosHome() {
   }
 
   return (
-    <div className="relative w-full px-4 py-10 md:py-16">
-      <div className="pointer-events-none fixed inset-0 -z-10 bg-[#050505]">
-        <div className="absolute -top-24 left-1/4 h-80 w-80 rounded-full bg-emerald-500/10 blur-3xl" />
-        <div className="absolute bottom-0 right-1/5 h-96 w-96 rounded-full bg-violet-500/10 blur-3xl" />
+    <div className="relative w-full bg-aryx-bg py-10 text-aryx-ink md:py-16">
+      <div className="pointer-events-none fixed inset-0 -z-10 bg-aryx-bg">
+        <div className="absolute -top-24 left-1/4 h-80 w-80 rounded-full bg-aryx-accent/10 blur-3xl" />
+        <div className="absolute bottom-0 right-1/5 h-96 w-96 rounded-full bg-aryx-gold/10 blur-3xl" />
       </div>
 
-      <div className="mx-auto max-w-6xl">
-        <p className="mb-4 inline-flex rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-white/60">
+      <div className="cos-page w-full">
+        <div className="mb-6">
+          <AryxLogo wordmark />
+        </div>
+        <p className="mb-4 inline-flex rounded-full border border-aryx-line bg-aryx-elevated px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-aryx-muted">
           Aryx Chief of Staff
         </p>
         <div className="mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
-            <h1 className="text-4xl font-semibold tracking-tight text-white md:text-6xl">
+            <h1 className="font-display text-4xl font-semibold tracking-tight text-aryx-ink md:text-6xl">
               Company, in one view.
             </h1>
-            <p className="mt-4 max-w-xl text-sm text-white/50 md:text-base">
+            <p className="mt-4 max-w-xl text-sm text-aryx-muted md:text-base">
               Read-only analytics from CRM, enrollment, and operations. Mail and notes live here.
             </p>
           </div>
@@ -86,11 +90,11 @@ export function CosHome() {
             type="button"
             onClick={() => refresh.mutate()}
             disabled={refresh.isPending}
-            className="group inline-flex items-center gap-3 rounded-full bg-white px-6 py-3 text-sm font-medium text-black transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] active:scale-[0.98]"
+            className="group inline-flex items-center gap-3 rounded-full bg-aryx-accent px-6 py-3 text-sm font-medium text-white transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] active:scale-[0.98]"
           >
             <RefreshCw className={`h-4 w-4 ${refresh.isPending ? 'animate-spin' : ''}`} />
             Refresh sources
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-black/5 transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-1 group-hover:-translate-y-px">
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/15 transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-1 group-hover:-translate-y-px">
               <ArrowUpRight className="h-4 w-4" />
             </span>
           </button>
@@ -98,22 +102,22 @@ export function CosHome() {
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
           {Array.from(latestByMetric.values()).slice(0, 6).map((metric) => (
-            <div key={metric.metric_key} className="rounded-[2rem] bg-white/5 p-1.5 ring-1 ring-white/10 md:col-span-4">
-              <div className="rounded-[calc(2rem-0.375rem)] bg-[#0a0a0a] p-6 shadow-[inset_0_1px_1px_rgba(255,255,255,0.12)]">
-                <p className="text-[10px] uppercase tracking-[0.18em] text-white/40">
+            <div key={metric.metric_key} className="rounded-[2rem] bg-aryx-ink/5 p-1.5 ring-1 ring-aryx-line md:col-span-4">
+              <div className="rounded-[calc(2rem-0.375rem)] bg-aryx-elevated p-6">
+                <p className="text-[10px] uppercase tracking-[0.18em] text-aryx-faint">
                   {METRIC_LABELS[metric.metric_key] || metric.metric_key}
                 </p>
-                <p className="mt-3 text-4xl font-semibold text-white">
+                <p className="mt-3 text-4xl font-semibold text-aryx-ink">
                   {isLoading ? '—' : metric.value ?? '—'}
                 </p>
-                <p className="mt-2 text-xs text-white/35">{metric.source}</p>
+                <p className="mt-2 text-xs text-aryx-faint">{metric.source}</p>
               </div>
             </div>
           ))}
 
           {latestByMetric.size === 0 && (
-            <div className="rounded-[2rem] bg-white/5 p-1.5 ring-1 ring-white/10 md:col-span-12">
-              <div className="rounded-[calc(2rem-0.375rem)] bg-[#0a0a0a] p-10 text-white/50">
+            <div className="rounded-[2rem] bg-aryx-ink/5 p-1.5 ring-1 ring-aryx-line md:col-span-12">
+              <div className="rounded-[calc(2rem-0.375rem)] bg-aryx-elevated p-10 text-aryx-muted">
                 No snapshots yet. Refresh sources after connector secrets are set, or open CRM and Inbox to work.
               </div>
             </div>
@@ -125,7 +129,7 @@ export function CosHome() {
             <Link
               key={href}
               to={href}
-              className="rounded-full border border-white/10 bg-white/5 px-6 py-4 text-sm text-white/80 transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-white/10"
+              className="rounded-full border border-aryx-line bg-aryx-elevated px-6 py-4 text-sm text-aryx-ink transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] hover:border-aryx-accent"
             >
               {['Open inbox', 'Open CRM', 'Open analytics'][i]}
             </Link>
@@ -136,7 +140,7 @@ export function CosHome() {
           {sources.map((source) => (
             <span
               key={source.key}
-              className="rounded-full border border-white/10 px-3 py-1 text-[10px] uppercase tracking-wider text-white/45"
+              className="rounded-full border border-aryx-line px-3 py-1 text-[10px] uppercase tracking-wider text-aryx-faint"
             >
               {source.key} · {source.status}
             </span>

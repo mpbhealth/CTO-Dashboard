@@ -355,7 +355,7 @@ export function ShareModal({ resource, onClose }: ShareModalProps) {
 
       {/* Desktop Modal */}
       <div className="hidden md:flex items-center justify-center min-h-screen p-4">
-        <div className="relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden animate-scale-in">
+        <div className="cos-modal relative bg-white rounded-2xl shadow-2xl w-full max-h-[90vh] overflow-hidden animate-scale-in">
           {/* Header */}
           <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between z-10">
             <div className="flex items-center gap-3 min-w-0">

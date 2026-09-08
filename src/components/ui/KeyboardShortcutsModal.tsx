@@ -82,7 +82,7 @@ export function KeyboardShortcutsModal() {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
       <div
-        className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl w-full max-w-lg max-h-[80vh] overflow-hidden flex flex-col"
+        className="cos-modal bg-white dark:bg-slate-900 rounded-xl shadow-2xl w-full max-h-[80vh] overflow-hidden flex flex-col"
         role="dialog"
         aria-label="Keyboard shortcuts"
       >

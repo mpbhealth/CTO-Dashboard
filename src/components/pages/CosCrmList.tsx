@@ -33,28 +33,28 @@ export function CosCrmList() {
   });
 
   return (
-    <div className="w-full px-4 py-10">
-      <p className="mb-3 text-[10px] uppercase tracking-[0.2em] text-white/40">ARYX CRM · read only</p>
-      <h1 className="mb-8 text-4xl font-semibold text-white">Relationships</h1>
-      {isLoading && <p className="text-white/40">Loading…</p>}
-      {error && <p className="text-amber-200/80">{(error as Error).message}</p>}
+    <div className="w-full bg-aryx-bg py-10 text-aryx-ink">
+      <p className="mb-3 text-[10px] uppercase tracking-[0.2em] text-aryx-faint">ARYX CRM · read only</p>
+      <h1 className="mb-8 font-display text-4xl font-semibold text-aryx-ink">Relationships</h1>
+      {isLoading && <p className="text-aryx-muted">Loading…</p>}
+      {error && <p className="text-amber-700 dark:text-amber-200">{(error as Error).message}</p>}
       {!isLoading && !error && (data || []).length === 0 && (
-        <p className="text-white/40">No CRM records returned. Confirm the ARYX CRM connector secrets, then refresh.</p>
+        <p className="text-aryx-muted">No CRM records returned. Confirm the ARYX CRM connector secrets, then refresh.</p>
       )}
       <div className="space-y-3">
         {(data || []).map((row) => (
           <Link
             key={`${row.kind}-${row.id}`}
             to={`/crm/${row.kind}/${row.id}`}
-            className="block rounded-[1.5rem] bg-white/5 p-1.5 ring-1 ring-white/10"
+            className="block rounded-[1.5rem] bg-aryx-ink/5 p-1.5 ring-1 ring-aryx-line"
           >
-            <div className="rounded-[calc(1.5rem-0.375rem)] bg-[#0a0a0a] px-5 py-4">
+            <div className="rounded-[calc(1.5rem-0.375rem)] bg-aryx-elevated px-5 py-4">
               <div className="flex items-center justify-between gap-4">
                 <div>
-                  <p className="text-white">{row.name || 'Untitled'}</p>
-                  <p className="text-xs text-white/40">{row.email || 'No email'}</p>
+                  <p className="text-aryx-ink">{row.name || 'Untitled'}</p>
+                  <p className="text-xs text-aryx-faint">{row.email || 'No email'}</p>
                 </div>
-                <span className="rounded-full border border-white/10 px-3 py-1 text-[10px] uppercase tracking-wider text-white/50">
+                <span className="rounded-full border border-aryx-line px-3 py-1 text-[10px] uppercase tracking-wider text-aryx-muted">
                   {row.kind} · {row.status || 'open in CRM'}
                 </span>
               </div>

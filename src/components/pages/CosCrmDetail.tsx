@@ -36,24 +36,24 @@ export function CosCrmDetail() {
   });
 
   return (
-    <div className="w-full px-4 py-10">
-      <Link to="/crm" className="text-xs uppercase tracking-[0.18em] text-white/40">
+    <div className="w-full bg-aryx-bg py-10 text-aryx-ink">
+      <Link to="/crm" className="text-xs uppercase tracking-[0.18em] text-aryx-faint">
         Back to CRM
       </Link>
-      {isLoading && <p className="mt-6 text-white/40">Loading…</p>}
-      {error && <p className="mt-6 text-amber-200/80">{(error as Error).message}</p>}
+      {isLoading && <p className="mt-6 text-aryx-muted">Loading…</p>}
+      {error && <p className="mt-6 text-amber-700 dark:text-amber-200">{(error as Error).message}</p>}
       {data && (
-        <div className="mt-6 max-w-2xl rounded-[2rem] bg-white/5 p-1.5 ring-1 ring-white/10">
-          <div className="rounded-[calc(2rem-0.375rem)] bg-[#0a0a0a] p-8">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-white/40">{data.kind}</p>
-            <h1 className="mt-2 text-3xl font-semibold text-white">{data.name}</h1>
-            <p className="mt-2 text-white/50">{data.email || 'No email on file'}</p>
-            <p className="mt-6 text-sm text-white/40">Status · {data.status || '—'}</p>
+        <div className="mt-6 w-full rounded-[2rem] bg-aryx-ink/5 p-1.5 ring-1 ring-aryx-line">
+          <div className="rounded-[calc(2rem-0.375rem)] bg-aryx-elevated p-8">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-aryx-faint">{data.kind}</p>
+            <h1 className="mt-2 font-display text-3xl font-semibold text-aryx-ink">{data.name}</h1>
+            <p className="mt-2 text-aryx-muted">{data.email || 'No email on file'}</p>
+            <p className="mt-6 text-sm text-aryx-faint">Status · {data.status || '—'}</p>
             <a
               href={data.href || `${ARYX_CRM_HREF}/${data.kind}/${data.id}`}
               target="_blank"
               rel="noreferrer"
-              className="mt-8 inline-flex rounded-full bg-white px-5 py-2 text-sm text-black"
+              className="mt-8 inline-flex rounded-full bg-aryx-accent px-5 py-2 text-sm text-white"
             >
               Open in ARYX CRM
             </a>

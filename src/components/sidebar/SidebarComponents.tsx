@@ -25,7 +25,7 @@ export interface SidebarToggleButtonProps {
   isExpanded: boolean;
   onToggle: () => void;
   variant: 'mobile' | 'desktop';
-  theme?: 'ceo' | 'cto' | 'admin';
+  theme?: 'ceo' | 'cto' | 'admin' | 'aryx';
 }
 
 export interface SidebarHeaderProps {
@@ -35,7 +35,7 @@ export interface SidebarHeaderProps {
   logoSrc?: string;
   logoAlt?: string;
   children?: React.ReactNode;
-  theme?: 'ceo' | 'cto' | 'admin';
+  theme?: 'ceo' | 'cto' | 'admin' | 'aryx';
 }
 
 export interface SidebarUserProfileProps {
@@ -43,7 +43,7 @@ export interface SidebarUserProfileProps {
   isExpanded: boolean;
   onSettingsClick?: () => void;
   onLogout: () => void;
-  theme?: 'ceo' | 'cto' | 'admin';
+  theme?: 'ceo' | 'cto' | 'admin' | 'aryx';
   roleLabel?: string;
 }
 
@@ -52,6 +52,16 @@ export interface SidebarUserProfileProps {
 // ============================================================================
 
 const themeConfig = {
+  aryx: {
+    bg: 'bg-aryx-void',
+    toggleBg: 'bg-aryx-void hover:bg-white/10',
+    mobileToggleBg: 'bg-aryx-void',
+    userHover: 'hover:bg-white/5',
+    userAvatar: 'bg-aryx-accent text-white',
+    userText: 'text-white/45',
+    settingsHover: 'text-white/55 hover:bg-white/5 hover:text-[#F4F1EA]',
+    logoutHover: 'text-white/55',
+  },
   ceo: {
     bg: 'bg-gradient-to-b from-pink-600 to-pink-700',
     toggleBg: 'bg-pink-800 hover:bg-pink-700',
@@ -123,7 +133,7 @@ export const SidebarToggleButton = memo(function SidebarToggleButton({
   isExpanded,
   onToggle,
   variant,
-  theme = 'cto',
+  theme = 'aryx',
 }: SidebarToggleButtonProps) {
   const config = themeConfig[theme];
 
@@ -137,8 +147,8 @@ export const SidebarToggleButton = memo(function SidebarToggleButton({
           'p-2.5 sm:p-3 rounded-full min-w-[44px] min-h-[44px]',
           'flex items-center justify-center',
           config.mobileToggleBg,
-          'text-white md:hidden z-50',
-          'shadow-lg active:scale-95 transition-transform',
+          'text-[#F4F1EA] ring-1 ring-white/15 md:hidden z-50',
+          'active:scale-[0.98] transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)]',
           'touch-manipulation select-none',
           // Safe area support
           'safe-top'
@@ -167,9 +177,9 @@ export const SidebarToggleButton = memo(function SidebarToggleButton({
         'absolute top-6 right-0 transform translate-x-1/2',
         'w-8 h-8 rounded-full',
         config.toggleBg,
-        'text-white z-50 cursor-pointer',
-        'transition-all duration-200 hover:scale-110',
-        'focus:outline-none focus:ring-2 focus:ring-white/50'
+        'text-[#F4F1EA] ring-1 ring-white/15 z-50 cursor-pointer',
+        'transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] hover:scale-105',
+        'focus:outline-none focus:ring-2 focus:ring-aryx-gold/40'
       )}
       onClick={onToggle}
       aria-label={isExpanded ? 'Collapse sidebar' : 'Expand sidebar'}
@@ -207,8 +217,8 @@ export const SidebarHeader = memo(function SidebarHeader({
           className={cn(
             // Responsive logo size
             isExpanded ? 'w-10 h-10 sm:w-12 sm:h-12' : 'w-10 h-10',
-            'rounded-xl flex items-center justify-center shadow-lg',
-            'cursor-pointer bg-white p-1 sm:p-1.5',
+            'rounded-xl flex items-center justify-center',
+            'cursor-pointer overflow-hidden bg-aryx-void ring-1 ring-white/10 p-0',
             'active:scale-95 transition-transform touch-manipulation',
             'flex-shrink-0'
           )}
@@ -228,8 +238,8 @@ export const SidebarHeader = memo(function SidebarHeader({
         {/* Title */}
         {isExpanded && (
           <div className="flex-1 min-w-0 overflow-hidden">
-            <h1 className="text-lg sm:text-xl font-bold text-white truncate">{title}</h1>
-            <p className="text-slate-300 text-xs sm:text-sm font-medium truncate">
+            <h1 className="font-display text-sm font-semibold tracking-[0.28em] text-[#F4F1EA] truncate">{title}</h1>
+            <p className="text-[10px] uppercase tracking-[0.2em] text-aryx-gold truncate">
               {subtitle}
             </p>
           </div>
@@ -250,7 +260,7 @@ export const SidebarUserProfile = memo(function SidebarUserProfile({
   isExpanded,
   onSettingsClick,
   onLogout,
-  theme = 'cto',
+  theme = 'aryx',
   roleLabel,
 }: SidebarUserProfileProps) {
   const config = themeConfig[theme];
@@ -267,6 +277,8 @@ export const SidebarUserProfile = memo(function SidebarUserProfile({
     ? 'CEO'
     : theme === 'admin'
     ? 'AD'
+    : theme === 'aryx'
+    ? 'COS'
     : 'CTO';
 
   // Get display role
@@ -285,7 +297,7 @@ export const SidebarUserProfile = memo(function SidebarUserProfile({
   }, [onLogout]);
 
   return (
-    <div className="mt-auto pt-4 md:pt-6 border-t border-white/10">
+    <div className="mt-auto border-t border-white/10 pt-4 md:pt-6">
       {/* User Info */}
       <div
         className={cn(
@@ -441,22 +453,25 @@ export const AdminRoleSwitcher = memo(function AdminRoleSwitcher({
 export const SidebarSearchHint = memo(function SidebarSearchHint({
   isExpanded,
   shortcut = '⌘K',
+  onClick,
 }: {
   isExpanded: boolean;
   shortcut?: string;
+  onClick?: () => void;
 }) {
   if (!isExpanded) return null;
 
   return (
-    <div className="mb-4 px-3 py-2 bg-slate-800/50 rounded-lg text-xs text-slate-400 flex items-center gap-2">
-      <span>
-        Press{' '}
-        <kbd className="px-1.5 py-0.5 bg-slate-700 rounded text-slate-300 font-mono">
-          {shortcut}
-        </kbd>{' '}
-        to search
-      </span>
-    </div>
+    <button
+      type="button"
+      onClick={onClick}
+      className="mb-4 flex w-full items-center justify-between rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-left text-[11px] text-white/45 transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] hover:border-aryx-gold/40 hover:text-[#F4F1EA] active:scale-[0.98]"
+    >
+      <span>Search workspace</span>
+      <kbd className="rounded-full border border-white/10 px-1.5 py-0.5 font-mono text-[10px] text-white/70">
+        {shortcut}
+      </kbd>
+    </button>
   );
 });
 

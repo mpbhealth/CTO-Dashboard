@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { getAuthCallbackUrl, getResetPasswordUrl } from '../lib/authUrls';
 import { logger } from '../lib/logger';
 import { logLogin, logLoginFailed, logLogout, logSecurityEvent } from '../lib/auditService';
 
@@ -42,6 +43,7 @@ interface AuthContextType {
   lastActivity: Date | null;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<void>;
+  requestPasswordReset: (email: string) => Promise<void>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
   updatePassword: (currentPassword: string, newPassword: string) => Promise<void>;
@@ -566,7 +568,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'PASSWORD_RECOVERY' && typeof window !== 'undefined') {
+        sessionStorage.setItem('cos_password_recovery', '1');
+        if (!window.location.pathname.startsWith('/auth/reset-password')) {
+          window.location.replace('/auth/reset-password');
+          return;
+        }
+      }
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user?.id) {
@@ -631,13 +640,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        emailRedirectTo: getAuthCallbackUrl(),
+      },
     });
 
     if (error) throw error;
-    if (data.user) {
+    if (data.session && data.user) {
       await fetchProfile(data.user.id);
     }
   }, [fetchProfile]);
+
+  const requestPasswordReset = useCallback(async (email: string) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: getResetPasswordUrl(),
+    });
+    if (error) throw error;
+  }, []);
 
   const signOut = useCallback(async () => {
     // Clear session timeout timers first (always do this)
@@ -751,6 +770,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     lastActivity,
     signIn,
     signUp,
+    requestPasswordReset,
     signOut,
     refreshProfile,
     updatePassword,
@@ -769,6 +789,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     lastActivity,
     signIn,
     signUp,
+    requestPasswordReset,
     signOut,
     refreshProfile,
     updatePassword,

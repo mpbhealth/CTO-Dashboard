@@ -15,6 +15,8 @@ import {
   type NavItem 
 } from '../config/navigation';
 import { NotificationBell } from './notifications';
+import { ThemeToggle } from './brand/ThemeToggle';
+import { useShell } from './shell/AppShell';
 import { cn } from '../lib/utils';
 import {
   SidebarOverlay,
@@ -50,11 +52,11 @@ function SidebarComponent({
   const navigate = useNavigate();
   const location = useLocation();
   const { signOut } = useAuth();
+  const { openPalette } = useShell();
   const { data: profile } = useCurrentProfile();
 
-  // Admin role-switcher state
   const userRole = profile?.role || 'cos';
-  const theme = 'cto';
+  const theme = 'aryx' as const;
 
   // Use external state if provided, otherwise use internal
   const isControlled = externalExpanded !== undefined && externalToggle !== undefined;
@@ -84,7 +86,7 @@ function SidebarComponent({
   const handleTouchEnd = internalSidebar.handleTouchEnd;
 
   // Menu expansion state
-  const expandedMenusState = useExpandedMenus(['compliance', 'department-reporting']);
+  const expandedMenusState = useExpandedMenus([]);
 
   // Focus trap for mobile
   useFocusTrap(isMobile && isExpanded, sidebarRef);
@@ -190,8 +192,14 @@ function SidebarComponent({
     ? `translateX(${Math.max(internalSidebar.dragOffset, SIDEBAR_CONSTANTS.MAX_DRAG_OFFSET)}px)`
     : undefined;
 
-  // Get role label for user profile
-  const roleLabel = 'Chief of Staff';
+  const roleLabel =
+    profile?.role === 'ceo'
+      ? 'Chief Executive Officer'
+      : profile?.role === 'cto'
+      ? 'Chief Technology Officer'
+      : profile?.role === 'admin'
+      ? 'Administrator'
+      : 'Chief of Staff';
 
   return (
     <>
@@ -215,20 +223,14 @@ function SidebarComponent({
         aria-label="Main navigation"
         className={cn(
           // Base styles
-          'text-white h-screen h-[100dvh] flex flex-col overflow-hidden',
-          'fixed inset-y-0 left-0 shadow-2xl',
-          'transition-transform duration-300 ease-out',
-          'will-change-transform',
+          'h-screen h-[100dvh] flex flex-col overflow-hidden',
+          'fixed inset-y-0 left-0',
+          'transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)]',
+          'will-change-transform text-[#F4F1EA]',
 
-          // Z-index: higher on mobile to ensure it's above all content
           isMobile ? 'z-[60]' : 'z-40',
+          'bg-aryx-void border-r border-white/10',
 
-          // Theme
-          'bg-[#0a0a0a]',
-
-          // Width - responsive for all screen sizes
-          // Mobile: full width minus some margin, max 320px
-          // Desktop: fixed widths
           isExpanded
             ? 'w-[calc(100vw-3rem)] sm:w-80 max-w-[320px]'
             : 'w-20',
@@ -280,26 +282,24 @@ function SidebarComponent({
           {/* Header */}
           <SidebarHeader
             isExpanded={isExpanded}
-            title="ARYX COS"
+            title="ARYX"
             subtitle="Chief of Staff"
-            logoSrc="/MPB-Health-No-background.png"
-            logoAlt="ARYX COS"
+            logoSrc="/brand/aryx-mark.png"
+            logoAlt="ARYX"
             theme={theme}
           >
-            {/* Notification Bell */}
             {isExpanded && (
-              <div className="flex items-center justify-between mt-2">
-                <div className="flex-1" />
-                <NotificationBell className="text-white [&_svg]:text-white [&_svg:hover]:text-slate-200 [&_button]:hover:bg-white/10" />
+              <div className="mt-4 flex items-center justify-end gap-2">
+                <ThemeToggle className="border-white/15 bg-white/5 text-white/70 hover:text-[#F4F1EA]" />
+                <NotificationBell className="text-[#F4F1EA] [&_svg]:text-[#F4F1EA] [&_button]:hover:bg-white/10" />
               </div>
             )}
-
           </SidebarHeader>
 
-          {/* Command Palette search hint */}
           <SidebarSearchHint
             isExpanded={isExpanded}
             shortcut={navigator.platform?.includes('Mac') ? '⌘K' : 'Ctrl+K'}
+            onClick={openPalette}
           />
 
           {/* Navigation */}

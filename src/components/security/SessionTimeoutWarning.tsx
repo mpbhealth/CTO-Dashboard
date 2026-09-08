@@ -39,7 +39,7 @@ export function SessionTimeoutWarning() {
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
-          className="w-full max-w-md mx-4"
+          className="cos-modal w-full"
         >
           <div className={`
             bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900

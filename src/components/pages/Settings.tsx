@@ -123,10 +123,8 @@ export default function Settings() {
   const passwordStrength = getPasswordStrength(newPassword);
 
   return (
-    <div 
-      className="w-full min-h-full p-4 sm:p-6 md:p-8"
-    >
-      <div className="max-w-2xl mx-auto">
+    <div className="w-full min-h-full py-4 sm:py-6 md:py-8">
+      <div className="cos-page w-full">
         {/* Header */}
         <div className="mb-6 sm:mb-8">
           <button

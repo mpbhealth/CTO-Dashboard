@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/brand/aryx-mark.png" type="image/png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
     <!-- DNS Prefetch and Preconnect for Supabase -->
@@ -11,9 +11,11 @@
 
     <link rel="manifest" href="/manifest.json" />
 
-    <meta name="theme-color" content="#0ea5e9" />
-    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#0ea5e9" />
-    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#075985" />
+    <meta name="theme-color" content="#FF5A1F" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#FF5A1F" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0B0B0D" />
+    <link rel="preconnect" href="https://api.fontshare.com" />
+    <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet" />
 
     <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%230ea5e9'/%3E%3Cpath d='M45 90L67.5 67.5L90 90L135 45L157.5 67.5L90 135L45 90Z' fill='white'/%3E%3C/svg%3E" />
 
@@ -21,17 +23,36 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="ARYX COS" />
 
-    <meta name="msapplication-TileColor" content="#0ea5e9" />
+    <meta name="msapplication-TileColor" content="#FF5A1F" />
 
     <meta name="application-name" content="ARYX COS" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="format-detection" content="telephone=no" />
 
+    <style>
+      html.dark body,
+      html.dark #initial-loader {
+        background: #0B0B0D !important;
+        color: #F4F1EA;
+      }
+      html.dark #loading-text {
+        color: #C4BFB4 !important;
+      }
+    </style>
     <title>ARYX COS</title>
     <meta name="description" content="ARYX Chief of Staff workspace for mail, CRM, and company operations." />
 
     <script>
       (function() {
+        try {
+          var stored = localStorage.getItem('aryx-theme');
+          var mode = stored === 'light' || stored === 'dark'
+            ? stored
+            : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+          if (mode === 'dark') document.documentElement.classList.add('dark');
+          document.documentElement.style.colorScheme = mode;
+        } catch (e) {}
+
         const isStackBlitz = window.location.hostname.includes('stackblitz') ||
                             window.location.hostname.includes('webcontainer');
 
@@ -90,13 +111,13 @@
       })();
     </script>
   </head>
-  <body style="margin:0;padding:0;background:#020617;min-height:100vh;">
+  <body>
     <div id="root">
       <!-- Initial loading indicator - will be replaced when React mounts -->
-      <div id="initial-loader" style="display: flex; align-items: center; justify-content: center; min-height: 100vh; min-height: 100dvh; background: #020617; font-family: system-ui, sans-serif;">
+      <div id="initial-loader" style="display: flex; align-items: center; justify-content: center; min-height: 100vh; min-height: 100dvh; background: #F4F1EA; font-family: Satoshi, system-ui, sans-serif;">
         <div style="text-align: center; max-width: 500px; padding: 20px;">
-          <div style="width: 48px; height: 48px; border: 3px solid #334155; border-top-color: #818cf8; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px;"></div>
-          <p id="loading-text" style="color: #94a3b8; font-size: 14px; font-weight: 500;">Loading MPB Health Dashboard...</p>
+          <div style="width: 48px; height: 48px; border: 3px solid rgba(26,20,16,0.12); border-top-color: #FF5A1F; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px;"></div>
+          <p id="loading-text" style="color: #5C564C; font-size: 14px; font-weight: 500;">Loading ARYX COS...</p>
           <p style="color: #64748b; font-size: 12px; margin-top: 8px;">If this persists, check console (F12)</p>
           <div id="timeout-message" style="display: none; margin-top: 24px; padding: 16px; background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 4px; text-align: left;">
             <strong style="color: #92400e; display: block; margin-bottom: 8px;">⚠️ Loading is taking longer than expected</strong>

@@ -5,10 +5,19 @@
 @layer base {
   /* Safe area insets for notched devices */
   :root {
-    --color-primary: theme('colors.slate.900');
-    --color-muted: theme('colors.slate.600');
-    --color-accent: theme('colors.indigo.600');
-    --color-accent-hover: theme('colors.indigo.700');
+    --aryx-bg: #F4F1EA;
+    --aryx-bg-elevated: #FFFFFF;
+    --aryx-ink: #1A1410;
+    --aryx-muted: #5C564C;
+    --aryx-faint: #8A8478;
+    --aryx-line: rgba(26, 20, 16, 0.12);
+    --aryx-accent: #FF5A1F;
+    --aryx-gold: #FFC300;
+    --aryx-void: #0B0B0D;
+    --color-primary: #1A1410;
+    --color-muted: #5C564C;
+    --color-accent: #FF5A1F;
+    --color-accent-hover: #E04E18;
     
     /* Safe area fallbacks */
     --safe-area-top: env(safe-area-inset-top, 0px);
@@ -19,6 +28,22 @@
     /* Touch target minimum (44px is Apple's recommendation) */
     --touch-target-min: 44px;
     --touch-target-comfortable: 48px;
+  }
+
+  :root.dark {
+    --aryx-bg: #0B0B0D;
+    --aryx-bg-elevated: #141210;
+    --aryx-ink: #F4F1EA;
+    --aryx-muted: #C4BFB4;
+    --aryx-faint: #8A8478;
+    --aryx-line: rgba(244, 241, 234, 0.12);
+    --aryx-accent: #FF7A00;
+    --aryx-gold: #FFC300;
+    --aryx-void: #050505;
+    --color-primary: #F4F1EA;
+    --color-muted: #C4BFB4;
+    --color-accent: #FF7A00;
+    --color-accent-hover: #FF8C1A;
   }
 
   :root[data-role='ceo'] {
@@ -62,6 +87,8 @@
     -webkit-overflow-scrolling: touch;
     min-height: 100vh;
     min-height: 100dvh;
+    background: var(--aryx-bg);
+    color: var(--aryx-ink);
   }
 
   /* Root element should fill viewport */
@@ -78,7 +105,22 @@
     padding: 0;
     min-height: 100vh;
     min-height: 100dvh;
-    background-color: theme('colors.slate.950');
+    background-color: var(--aryx-bg);
+    color: var(--aryx-ink);
+  }
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--aryx-ink);
+    caret-color: var(--aryx-ink);
+    box-shadow: 0 0 0 1000px var(--aryx-bg) inset;
+    transition: background-color 99999s ease-out 0s;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--aryx-accent) 35%, transparent);
+    color: var(--aryx-ink);
   }
 
   /* Mobile hamburger menu */
@@ -1086,4 +1128,75 @@
       transition: none;
     }
   }
+}
+
+/* Legacy slate/gray utilities stay readable on Aryx light and dark surfaces */
+:root.dark .text-slate-900,
+:root.dark .text-slate-800,
+:root.dark .text-gray-900,
+:root.dark .text-gray-800,
+:root.dark .text-black {
+  color: var(--aryx-ink);
+}
+
+:root.dark .text-slate-700,
+:root.dark .text-slate-600,
+:root.dark .text-gray-700,
+:root.dark .text-gray-600 {
+  color: var(--aryx-muted);
+}
+
+:root.dark .bg-white {
+  background-color: var(--aryx-bg-elevated);
+}
+
+:root.dark .bg-slate-50,
+:root.dark .bg-gray-50 {
+  background-color: #1A1814;
+}
+
+:root.dark .bg-slate-100,
+:root.dark .bg-gray-100 {
+  background-color: #221F1B;
+}
+
+/* One width for workspace pages and overlay dialogs */
+.cos-page {
+  width: 100%;
+  max-width: none;
+}
+
+.cos-modal {
+  width: calc(100vw - 2rem);
+  max-width: none;
+}
+
+#main-content .max-w-7xl,
+#main-content .max-w-6xl,
+#main-content .max-w-5xl,
+#main-content .max-w-4xl.mx-auto,
+#main-content .mx-auto.max-w-4xl,
+#main-content .max-w-2xl.mx-auto,
+#main-content .mx-auto.max-w-2xl {
+  width: 100%;
+  max-width: none;
+}
+
+[data-radix-dialog-content] {
+  width: calc(100vw - 2rem) !important;
+  max-width: none !important;
+}
+
+.fixed.inset-0.flex > [class*="max-w-sm"],
+.fixed.inset-0.flex > [class*="max-w-md"],
+.fixed.inset-0.flex > [class*="max-w-lg"],
+.fixed.inset-0.flex > [class*="max-w-xl"],
+.fixed.inset-0.flex > [class*="max-w-2xl"],
+.fixed.inset-0.flex > [class*="max-w-3xl"],
+.fixed.inset-0.flex > [class*="max-w-4xl"],
+.fixed.inset-0.flex > [class*="max-w-5xl"],
+.fixed.inset-0.flex > [class*="max-w-6xl"],
+.fixed.inset-0.flex > [class*="max-w-7xl"] {
+  width: calc(100vw - 2rem) !important;
+  max-width: none !important;
 }

@@ -156,7 +156,7 @@ export function GalaxyMapModal({ isOpen, onClose }: GalaxyMapModalProps) {
     <AnimatePresence>
       <div className="galaxy-map" onClick={onClose}>
         <motion.div
-          className="relative w-full max-w-6xl max-h-[90vh] overflow-hidden rounded-2xl"
+          className="cos-modal relative w-full max-h-[90vh] overflow-hidden rounded-2xl"
           onClick={(e) => e.stopPropagation()}
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}

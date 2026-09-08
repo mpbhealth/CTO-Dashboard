@@ -77,13 +77,13 @@ export function MFARequiredGuard({ children }: MFARequiredGuardProps) {
   // Loading state
   if (checking) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
+      <div className="flex min-h-screen items-center justify-center bg-aryx-bg">
         <div className="text-center">
-          <div className="w-12 h-12 mx-auto mb-4 relative">
-            <div className="absolute inset-0 rounded-full border-4 border-cyan-500/30" />
-            <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-cyan-500 animate-spin" />
+          <div className="relative mx-auto mb-4 h-12 w-12">
+            <div className="absolute inset-0 rounded-full border-4 border-aryx-line" />
+            <div className="absolute inset-0 animate-spin rounded-full border-4 border-transparent border-t-aryx-accent" />
           </div>
-          <p className="text-slate-500 dark:text-slate-400 text-sm">Checking security status...</p>
+          <p className="text-sm text-aryx-muted">Checking security status...</p>
         </div>
       </div>
     );
@@ -115,45 +115,45 @@ export function MFARequiredGuard({ children }: MFARequiredGuardProps) {
   if (!mfaEnabled) {
     return (
       <>
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-4">
+        <div className="flex min-h-screen items-center justify-center bg-aryx-bg p-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="w-full max-w-md"
+            className="cos-page w-full"
           >
-            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 p-8">
+            <div className="rounded-2xl border border-aryx-line bg-aryx-elevated p-8 shadow-xl">
               {/* Icon */}
-              <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center">
-                <AlertTriangle className="w-8 h-8 text-amber-500" />
+              <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full border border-amber-500/30 bg-amber-500/10">
+                <AlertTriangle className="h-8 w-8 text-amber-500" />
               </div>
 
               {/* Title */}
-              <h1 className="text-2xl font-bold text-center text-slate-900 dark:text-white mb-2">
+              <h1 className="mb-2 text-center font-display text-2xl font-bold text-aryx-ink">
                 Two-Factor Authentication Required
               </h1>
 
               {/* Description */}
-              <p className="text-slate-600 dark:text-slate-400 text-center mb-6">
-                Your role as <span className="font-medium text-slate-900 dark:text-white">{profile?.role}</span>{' '}
+              <p className="mb-6 text-center text-aryx-muted">
+                Your role as <span className="font-medium text-aryx-ink">{profile?.role}</span>{' '}
                 requires multi-factor authentication for HIPAA compliance.
               </p>
 
               {/* Benefits */}
-              <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4 mb-6">
-                <h3 className="text-sm font-medium text-slate-900 dark:text-white mb-3">
+              <div className="mb-6 rounded-xl bg-aryx-ink/5 p-4">
+                <h3 className="mb-3 text-sm font-medium text-aryx-ink">
                   Why is MFA required?
                 </h3>
                 <ul className="space-y-2">
-                  <li className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-400">
-                    <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                  <li className="flex items-start gap-2 text-sm text-aryx-muted">
+                    <CheckCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-500" />
                     <span>Protects sensitive patient health information (PHI)</span>
                   </li>
-                  <li className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-400">
-                    <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                  <li className="flex items-start gap-2 text-sm text-aryx-muted">
+                    <CheckCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-500" />
                     <span>Meets HIPAA security requirements</span>
                   </li>
-                  <li className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-400">
-                    <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                  <li className="flex items-start gap-2 text-sm text-aryx-muted">
+                    <CheckCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-500" />
                     <span>Prevents unauthorized access even if password is compromised</span>
                   </li>
                 </ul>
@@ -162,7 +162,7 @@ export function MFARequiredGuard({ children }: MFARequiredGuardProps) {
               {/* Setup Button */}
               <button
                 onClick={() => setShowEnrollment(true)}
-                className="w-full py-3 px-4 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white font-medium transition-colors flex items-center justify-center gap-2"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-aryx-accent px-4 py-3 font-medium text-white transition-colors"
               >
                 <Shield className="w-5 h-5" />
                 Set Up Two-Factor Authentication

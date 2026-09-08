@@ -187,11 +187,9 @@ export async function executeQuickAction(action: QuickAction): Promise<{ success
             return { success: true, message: 'Page refreshed' };
 
           case 'toggle-theme': {
-            // Toggle dark mode class on document
-            document.documentElement.classList.toggle('dark');
-            const isDark = document.documentElement.classList.contains('dark');
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
-            return { success: true, message: isDark ? 'Dark mode enabled' : 'Light mode enabled' };
+            const { toggleTheme } = await import('../lib/theme');
+            const next = toggleTheme();
+            return { success: true, message: next === 'dark' ? 'Dark mode enabled' : 'Light mode enabled' };
           }
 
           case 'clear-cache':

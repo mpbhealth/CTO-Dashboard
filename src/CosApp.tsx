@@ -1,10 +1,10 @@
 import { lazy, Suspense, useState, useEffect, useMemo, useCallback } from 'react';
-import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Menu } from 'lucide-react';
 import { useAuth } from './contexts/AuthContext';
 import Sidebar from './components/Sidebar';
 import { AppShell } from './components/shell/AppShell';
-import { buildRouteToTabMap, buildTabToRouteMap, getNavigationForRole } from './config/navigation';
+import { buildRouteToTabMap, getNavigationForRole } from './config/navigation';
 import { AIAssistantProvider } from './providers/AIAssistantProvider';
 import { GlobalAIAssistant } from './components/ai/GlobalAIAssistant';
 import { Breadcrumbs } from './components/ui/Breadcrumbs';
@@ -14,6 +14,7 @@ import { MFARequiredGuard } from './components/security/MFARequiredGuard';
 import { UpdateBanner } from './components/ui/UpdateBanner';
 import { InstallAppBanner } from './components/ui/InstallAppBanner';
 import { remapLegacyPath } from './lib/cos';
+import { ThemeToggle } from './components/brand/ThemeToggle';
 
 const CosHome = lazy(() => import('./components/pages/CosHome'));
 const CosInbox = lazy(() => import('./components/pages/CosInbox'));
@@ -50,8 +51,8 @@ const Deployments = lazy(() => import('./components/pages/Deployments'));
 const Files = lazy(() => import('./components/pages/ctod/CTOFiles').then(m => ({ default: m.CTOFiles })));
 
 const LoadingFallback = () => (
-  <div className="flex min-h-[50vh] items-center justify-center" role="status">
-    <div className="h-10 w-10 animate-spin rounded-full border-b-2 border-white/40" />
+  <div className="flex min-h-[50vh] items-center justify-center bg-aryx-bg" role="status">
+    <div className="h-10 w-10 animate-spin rounded-full border-2 border-aryx-line border-t-aryx-accent" />
   </div>
 );
 
@@ -65,7 +66,6 @@ function LegacyRedirect() {
 }
 
 function CosContent() {
-  const navigate = useNavigate();
   const location = useLocation();
   const { profileReady, loading } = useAuth();
   const [activeTab, setActiveTab] = useState('home');
@@ -74,7 +74,6 @@ function CosContent() {
 
   const navigationItems = useMemo(() => getNavigationForRole('cos'), []);
   const routeToTabMap = useMemo(() => buildRouteToTabMap(navigationItems), [navigationItems]);
-  const tabToRouteMap = useMemo(() => buildTabToRouteMap(navigationItems), [navigationItems]);
 
   useEffect(() => {
     const check = () => {
@@ -94,20 +93,18 @@ function CosContent() {
 
   const handleTabChange = useCallback((tab: string) => {
     setActiveTab(tab);
-    const route = tabToRouteMap[tab];
-    if (route) navigate(route);
-  }, [navigate, tabToRouteMap]);
+  }, []);
 
   if (loading || !profileReady) {
     return (
-      <div className="flex min-h-[100dvh] items-center justify-center bg-[#050505]">
-        <div className="h-10 w-10 animate-spin rounded-full border-b-2 border-white/40" />
+      <div className="flex min-h-[100dvh] items-center justify-center bg-aryx-bg">
+        <div className="h-10 w-10 animate-spin rounded-full border-2 border-aryx-line border-t-aryx-accent" />
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-[100dvh] overflow-x-hidden bg-[#050505]">
+    <div className="flex min-h-[100dvh] overflow-x-hidden bg-aryx-bg text-aryx-ink">
       <Sidebar
         activeTab={activeTab}
         onTabChange={handleTabChange}
@@ -117,7 +114,7 @@ function CosContent() {
 
       {isMobile && !isSidebarExpanded && (
         <button
-          className="fixed left-4 top-4 z-[70] flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white"
+          className="fixed left-4 top-4 z-[70] flex h-11 w-11 items-center justify-center rounded-full bg-aryx-void text-[#F4F1EA] ring-1 ring-white/15"
           onClick={() => setIsSidebarExpanded(true)}
           aria-label="Open navigation"
         >
@@ -128,11 +125,15 @@ function CosContent() {
       <main
         id="main-content"
         className={`min-h-[100dvh] flex-1 overflow-y-auto ${
-          isSidebarExpanded ? 'md:pl-[21rem]' : 'md:pl-24'
+          isSidebarExpanded ? 'md:pl-80' : 'md:pl-20'
         }`}
       >
+        <div className={`flex items-center justify-end px-4 pt-4 ${isMobile ? 'pr-4' : ''}`}>
+          <ThemeToggle />
+        </div>
         <Breadcrumbs />
-        <Suspense fallback={<LoadingFallback />}>
+        <div className="cos-page w-full min-w-0 px-4 pb-8 sm:px-6 md:px-8">
+          <Suspense fallback={<LoadingFallback />}>
           <Routes>
             <Route path="/" element={<Navigate to="/home" replace />} />
             <Route path="/home" element={<CosHome />} />
@@ -172,7 +173,8 @@ function CosContent() {
             <Route path="/advisor/*" element={<Navigate to="/home" replace />} />
             <Route path="*" element={<LegacyRedirect />} />
           </Routes>
-        </Suspense>
+          </Suspense>
+        </div>
       </main>
     </div>
   );

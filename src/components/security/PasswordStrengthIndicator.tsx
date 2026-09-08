@@ -47,11 +47,11 @@ export function PasswordStrengthIndicator({
 
   const getStrengthColor = (color: string) => {
     const colors: Record<string, { bg: string; border: string; text: string }> = {
-      red: { bg: 'bg-red-500', border: 'border-red-500', text: 'text-red-400' },
-      orange: { bg: 'bg-orange-500', border: 'border-orange-500', text: 'text-orange-400' },
-      yellow: { bg: 'bg-yellow-500', border: 'border-yellow-500', text: 'text-yellow-400' },
-      blue: { bg: 'bg-blue-500', border: 'border-blue-500', text: 'text-blue-400' },
-      green: { bg: 'bg-green-500', border: 'border-green-500', text: 'text-green-400' },
+      red: { bg: 'bg-red-500', border: 'border-red-500', text: 'text-red-600 dark:text-red-400' },
+      orange: { bg: 'bg-orange-500', border: 'border-orange-500', text: 'text-orange-700 dark:text-orange-300' },
+      yellow: { bg: 'bg-yellow-500', border: 'border-yellow-500', text: 'text-amber-700 dark:text-yellow-300' },
+      blue: { bg: 'bg-blue-500', border: 'border-blue-500', text: 'text-blue-700 dark:text-blue-300' },
+      green: { bg: 'bg-green-500', border: 'border-green-500', text: 'text-emerald-700 dark:text-emerald-400' },
     };
     return colors[color] || colors.red;
   };
@@ -67,12 +67,12 @@ export function PasswordStrengthIndicator({
       {/* Strength Bar */}
       <div className="space-y-1">
         <div className="flex items-center justify-between">
-          <span className="text-xs text-slate-400">Password strength</span>
+          <span className="text-xs text-aryx-faint">Password strength</span>
           <span className={`text-xs font-medium ${strengthColors.text}`}>
             {strength.label}
           </span>
         </div>
-        <div className="h-2 bg-slate-700/50 rounded-full overflow-hidden">
+        <div className="h-2 bg-aryx-line rounded-full overflow-hidden">
           <motion.div
             className={`h-full ${strengthColors.bg} rounded-full`}
             initial={{ width: 0 }}
@@ -89,7 +89,7 @@ export function PasswordStrengthIndicator({
             <div
               key={index}
               className={`flex items-center gap-1.5 text-xs ${
-                req.met ? 'text-green-400' : 'text-slate-500'
+                req.met ? 'text-emerald-600 dark:text-emerald-400' : 'text-aryx-faint'
               }`}
             >
               {req.met ? (
@@ -109,7 +109,7 @@ export function PasswordStrengthIndicator({
           {validation.suggestions.map((suggestion, index) => (
             <div
               key={index}
-              className="flex items-start gap-1.5 text-xs text-amber-400"
+              className="flex items-start gap-1.5 text-xs text-amber-700 dark:text-amber-300"
             >
               <AlertCircle className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />
               <span>{suggestion}</span>
@@ -124,7 +124,7 @@ export function PasswordStrengthIndicator({
           {validation.errors.slice(0, 3).map((error, index) => (
             <div
               key={index}
-              className="flex items-start gap-1.5 text-xs text-red-400"
+              className="flex items-start gap-1.5 text-xs text-red-600 dark:text-red-400"
             >
               <X className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />
               <span>{error}</span>

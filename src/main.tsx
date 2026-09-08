@@ -9,12 +9,16 @@ import { ProtectedRoute } from './components/guards/ProtectedRoute.tsx';
 
 import { AuthCallback } from './components/pages/AuthCallback.tsx';
 import Login from './components/pages/Login.tsx';
+import ResetPassword from './components/pages/ResetPassword.tsx';
 import CosApp from './CosApp.tsx';
 import { PublicDepartmentUploadLanding } from './components/pages/public/PublicDepartmentUploadLanding.tsx';
 import { PublicDepartmentUpload } from './components/pages/public/PublicDepartmentUpload.tsx';
 import './index.css';
 import { Environment } from './lib/environment';
 import { isSupabaseConfigured } from './lib/supabase';
+import { initTheme } from './lib/theme';
+
+initTheme();
 import React from 'react';
 
 // Load diagnostics asynchronously to avoid circular dependency issues
@@ -385,6 +389,7 @@ try {
 
                     {/* Auth Callback Route */}
                     <Route path="/auth/callback" element={<AuthCallback />} />
+                    <Route path="/auth/reset-password" element={<ResetPassword />} />
 
                     {/* Public Department Upload Routes - No Auth Required */}
                     <Route path="/public/upload" element={<PublicDepartmentUploadLanding />} />

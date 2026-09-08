@@ -68,38 +68,38 @@ export function OAuthCallback() {
   }, [searchParams]);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 text-center">
+    <div className="flex min-h-screen items-center justify-center bg-aryx-bg p-4">
+      <div className="w-full max-w-md rounded-xl bg-aryx-elevated p-8 text-center shadow-lg ring-1 ring-aryx-line">
         {status === 'processing' && (
           <>
             <Loader2 className="w-12 h-12 mx-auto mb-4 text-blue-500 animate-spin" />
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+            <h2 className="mb-2 font-display text-xl font-semibold text-aryx-ink">
               Completing Authentication
             </h2>
-            <p className="text-gray-500 dark:text-gray-400">{message}</p>
+            <p className="text-aryx-muted">{message}</p>
           </>
         )}
 
         {status === 'success' && (
           <>
             <CheckCircle className="w-12 h-12 mx-auto mb-4 text-green-500" />
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+            <h2 className="mb-2 font-display text-xl font-semibold text-aryx-ink">
               Connected Successfully
             </h2>
-            <p className="text-gray-500 dark:text-gray-400">{message}</p>
+            <p className="text-aryx-muted">{message}</p>
           </>
         )}
 
         {status === 'error' && (
           <>
             <XCircle className="w-12 h-12 mx-auto mb-4 text-red-500" />
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+            <h2 className="mb-2 font-display text-xl font-semibold text-aryx-ink">
               Authentication Failed
             </h2>
-            <p className="text-gray-500 dark:text-gray-400 mb-4">{message}</p>
+            <p className="mb-4 text-aryx-muted">{message}</p>
             <button
               onClick={() => window.close()}
-              className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+              className="rounded-lg bg-aryx-ink/10 px-4 py-2 text-aryx-ink transition-colors hover:bg-aryx-ink/15"
             >
               Close Window
             </button>

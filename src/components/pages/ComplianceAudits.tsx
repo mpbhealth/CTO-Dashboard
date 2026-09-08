@@ -462,7 +462,7 @@ const ComplianceAudits: React.FC = () => {
 
       {showCreateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-          <div className="flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-lg bg-white shadow-xl">
+          <div className="cos-modal flex max-h-[90vh] w-full flex-col overflow-hidden rounded-lg bg-white shadow-xl">
             <div className="border-b border-gray-200 px-6 py-4">
               <h2 className="text-xl font-semibold text-gray-900">
                 Schedule New Audit

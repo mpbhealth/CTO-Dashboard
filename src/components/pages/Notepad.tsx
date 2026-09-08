@@ -351,7 +351,7 @@ export default function Notepad() {
               initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.9 }}
-              className="bg-white rounded-xl shadow-xl max-w-lg w-full p-6"
+              className="cos-modal bg-white rounded-xl shadow-xl w-full p-6"
               onClick={e => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-4">

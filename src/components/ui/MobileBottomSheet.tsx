@@ -108,8 +108,8 @@ export function MobileBottomSheet({
       <div className="hidden md:flex items-center justify-center min-h-screen p-4">
         <div 
           className={`
-            relative bg-white rounded-2xl shadow-2xl 
-            w-full max-w-lg ${heightClasses[maxHeight]}
+            cos-modal relative bg-white rounded-2xl shadow-2xl 
+            w-full ${heightClasses[maxHeight]}
             overflow-hidden animate-scale-in
           `}
         >
@@ -281,8 +281,8 @@ export function ResponsiveModal({
       {/* Modal */}
       <div 
         className={`
-          relative bg-white rounded-2xl shadow-2xl 
-          w-full ${widthClasses[maxWidth]}
+          cos-modal relative bg-white rounded-2xl shadow-2xl 
+          w-full
           max-h-[90vh] overflow-hidden
           animate-scale-in
         `}

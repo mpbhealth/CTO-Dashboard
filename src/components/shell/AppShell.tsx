@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
 import { GalaxyDock } from './GalaxyDock';
 import { GalaxyMapModal } from './GalaxyMapModal';
 import { CommandPalette } from './CommandPalette';
@@ -54,6 +54,22 @@ export function AppShell({ children }: AppShellProps) {
   const showDock = useCallback(() => setIsDockVisible(true), []);
   const hideDock = useCallback(() => setIsDockVisible(false), []);
   const toggleDock = useCallback(() => setIsDockVisible((prev) => !prev), []);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        const target = event.target as HTMLElement | null;
+        const tag = target?.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || target?.isContentEditable) {
+          return;
+        }
+        event.preventDefault();
+        togglePalette();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [togglePalette]);
 
   const contextValue: ShellContextType = {
     isPaletteOpen,

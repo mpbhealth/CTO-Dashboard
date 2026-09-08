@@ -1154,7 +1154,7 @@ export default function EmployeePerformance() {
 
       {activeKpi && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-          <div className="w-full max-w-lg bg-white rounded-2xl shadow-xl border border-slate-200">
+          <div className="cos-modal w-full bg-white rounded-2xl shadow-xl border border-slate-200">
             <div className="flex items-start justify-between border-b border-slate-200 px-6 py-4">
               <div>
                 <h3 className="text-lg font-semibold text-slate-900">

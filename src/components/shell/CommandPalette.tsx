@@ -15,6 +15,7 @@ import {
   Command,
 } from 'lucide-react';
 import { useApps } from '@/hooks/useApps';
+import { useShell } from './AppShell';
 
 interface CommandPaletteProps {
   isOpen: boolean;
@@ -58,6 +59,7 @@ const iconMap: Record<string, React.ElementType> = {
  */
 export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   const navigate = useNavigate();
+  const { openMap } = useShell();
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const { apps, isLoading } = useApps();
@@ -83,7 +85,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
         icon: Map,
         action: () => {
           onClose();
-          // Galaxy map will be opened via shell context
+          openMap();
         },
       },
       {
@@ -105,7 +107,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
     ];
 
     return [...appCommands, ...staticActions];
-  }, [apps, onClose]);
+  }, [apps, onClose, openMap]);
 
   // Filter commands based on search query
   const filteredCommands = useMemo(() => {

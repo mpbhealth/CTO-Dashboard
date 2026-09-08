@@ -4,7 +4,7 @@ project_id = "kylemtjsypmrtmuhmang"
 [api]
 enabled = true
 port = 54321
-schemas = ["public"]
+schemas = ["public", "graphql_public"]
 extra_search_path = ["public", "extensions"]
 max_rows = 1000
 
@@ -14,13 +14,38 @@ major_version = 17
 
 [auth]
 enabled = true
+# Local only. Live COS Site URL is https://cos.aryxtech.com — do not config-push this localhost value.
 site_url = "http://localhost:5173"
-additional_redirect_urls = ["http://localhost:5173/auth/callback", "http://localhost:5173/oauth/callback"]
+additional_redirect_urls = [
+  "http://localhost:5173/**",
+  "http://localhost:5173/auth/callback",
+  "http://localhost:5173/auth/reset-password",
+  "https://cos.aryxtech.com/**",
+  "https://cos.aryxtech.com/auth/callback",
+  "https://cos.aryxtech.com/auth/reset-password",
+  "https://aryx-cos.vercel.app/**",
+]
 jwt_expiry = 3600
 enable_signup = true
 
 [auth.email]
 enable_signup = true
+enable_confirmations = true
+double_confirm_changes = true
+max_frequency = "1m0s"
+otp_length = 8
+
+[auth.mfa]
+max_enrolled_factors = 10
+
+[auth.mfa.totp]
+enroll_enabled = true
+verify_enabled = true
+
+[auth.hook.send_email]
+enabled = true
+uri = "https://kylemtjsypmrtmuhmang.supabase.co/functions/v1/send-auth-email"
+secrets = "env(SEND_EMAIL_HOOK_SECRET)"
 
 [storage]
 enabled = true
@@ -41,4 +66,7 @@ verify_jwt = true
 verify_jwt = false
 
 [functions.mail-webhook]
+verify_jwt = false
+
+[functions.send-auth-email]
 verify_jwt = false

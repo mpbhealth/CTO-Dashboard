@@ -19,6 +19,17 @@ export default {
     },
     extend: {
       colors: {
+        aryx: {
+          bg: 'var(--aryx-bg)',
+          elevated: 'var(--aryx-bg-elevated)',
+          ink: 'var(--aryx-ink)',
+          muted: 'var(--aryx-muted)',
+          faint: 'var(--aryx-faint)',
+          line: 'var(--aryx-line)',
+          accent: 'var(--aryx-accent)',
+          gold: 'var(--aryx-gold)',
+          void: 'var(--aryx-void)',
+        },
         // shadcn/ui CSS variable colors
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
@@ -130,6 +141,10 @@ export default {
       minWidth: {
         'touch': '44px',
         'touch-lg': '48px',
+      },
+      fontFamily: {
+        display: ['Satoshi', 'Inter Tight', 'system-ui', 'sans-serif'],
+        sans: ['Satoshi', 'Inter Tight', 'system-ui', 'sans-serif'],
       },
       // Mobile-optimized font sizes
       fontSize: {

@@ -63,7 +63,7 @@ export default function ConfirmDeleteModal({
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.95, opacity: 0 }}
-          className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden"
+          className="cos-modal bg-white rounded-2xl shadow-2xl w-full overflow-hidden"
         >
           {/* Header */}
           <div className="flex items-center justify-between p-6 bg-gradient-to-r from-red-50 to-orange-50 border-b border-red-100">

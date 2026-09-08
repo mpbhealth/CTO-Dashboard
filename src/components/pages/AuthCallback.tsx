@@ -1,6 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
+import { AryxLogo } from '../brand/AryxLogo';
+
+function authTypeFromUrl(): string | null {
+  const search = new URLSearchParams(window.location.search);
+  const hash = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+  return search.get('type') || hash.get('type');
+}
 
 export function AuthCallback() {
   const navigate = useNavigate();
@@ -9,10 +16,16 @@ export function AuthCallback() {
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get('code');
+        if (code) {
+          const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+          if (exchangeError) throw exchangeError;
+        }
+
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
         if (sessionError) {
-          console.error('Session error:', sessionError);
           setError(sessionError.message);
           setTimeout(() => navigate('/login'), 2000);
           return;
@@ -25,41 +38,33 @@ export function AuthCallback() {
         }
 
         document.cookie = `role=cos; path=/; max-age=86400; samesite=lax`;
-        navigate('/home', { replace: true });
+        const type = authTypeFromUrl();
+        navigate(type === 'recovery' ? '/auth/reset-password' : '/home', { replace: true });
       } catch (err) {
-        console.error('Auth callback error:', err);
         setError(err instanceof Error ? err.message : 'Authentication failed');
         setTimeout(() => navigate('/login'), 2000);
       }
     };
 
-    handleAuthCallback();
+    void handleAuthCallback();
   }, [navigate]);
 
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="text-red-600 mb-4">
-            <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-            </svg>
-          </div>
-          <h1 className="text-xl font-semibold text-gray-900 mb-2">Authentication Error</h1>
-          <p className="text-gray-600 mb-4">{error}</p>
-          <p className="text-sm text-gray-500">Redirecting to login...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-        <h1 className="text-xl font-semibold text-gray-900 mb-2">Authenticating...</h1>
-        <p className="text-gray-600">Please wait while we set up your session</p>
-      </div>
+    <div className="relative flex min-h-[100dvh] flex-col items-center justify-center bg-aryx-bg px-4 text-aryx-ink">
+      <AryxLogo wordmark />
+      {error ? (
+        <div className="mt-8 text-center">
+          <h1 className="font-display text-xl font-semibold">Authentication error</h1>
+          <p className="mt-2 text-sm text-aryx-muted">{error}</p>
+          <p className="mt-4 text-xs text-aryx-faint">Redirecting to login...</p>
+        </div>
+      ) : (
+        <div className="mt-8 text-center">
+          <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-2 border-aryx-line border-t-aryx-accent" />
+          <h1 className="font-display text-xl font-semibold">Authenticating…</h1>
+          <p className="mt-2 text-sm text-aryx-muted">Setting up your COS session</p>
+        </div>
+      )}
     </div>
   );
 }

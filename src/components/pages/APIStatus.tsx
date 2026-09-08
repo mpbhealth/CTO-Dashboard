@@ -344,7 +344,7 @@ export default function APIStatus() {
 
       {selectedApi && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" onClick={() => setSelectedApi(null)}>
-          <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+          <div className="cos-modal bg-white rounded-xl shadow-xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="p-6 border-b border-slate-200 flex items-center justify-between">
               <div><h2 className="text-2xl font-bold text-slate-900">{selectedApi.name}</h2><p className="text-slate-600">{selectedApi.url}</p></div>
               <button onClick={() => setSelectedApi(null)} className="text-slate-400 hover:text-slate-600"><XCircle className="h-6 w-6" /></button>

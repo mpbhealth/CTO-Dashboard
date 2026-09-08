@@ -263,11 +263,6 @@ export function GalaxyDock({ onOpenMap }: GalaxyDockProps) {
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Cmd/Ctrl + K for command palette
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault();
-        openPalette();
-      }
       // Cmd/Ctrl + / for search
       if ((e.metaKey || e.ctrlKey) && e.key === '/') {
         e.preventDefault();
@@ -281,7 +276,7 @@ export function GalaxyDock({ onOpenMap }: GalaxyDockProps) {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [openPalette, isConfigOpen]);
+  }, [isConfigOpen]);
 
   // Default apps if no pinned apps loaded yet
   const defaultApps: DockItem[] = [

@@ -488,7 +488,7 @@ export function EditItemModal({
         onClick={onClose}
       >
         <motion.div
-          className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-md w-full mx-4"
+          className="cos-modal bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full mx-4"
           onClick={(e) => e.stopPropagation()}
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}

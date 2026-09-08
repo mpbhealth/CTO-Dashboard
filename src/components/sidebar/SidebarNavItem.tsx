@@ -1,4 +1,5 @@
 import { memo, useCallback, useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { SIDEBAR_CONSTANTS } from '../../hooks/useSidebar';
@@ -33,7 +34,7 @@ export interface SidebarNavItemProps {
   sidebarExpanded: boolean;
   onNavigate: (path: string, itemId: string) => void;
   onToggleSubmenu: (itemId: string) => void;
-  theme?: 'ceo' | 'cto' | 'admin';
+  theme?: 'ceo' | 'cto' | 'admin' | 'aryx';
   focusedIndex?: number;
   itemIndex?: number;
 }
@@ -42,7 +43,7 @@ export interface SidebarSubItemProps {
   item: SubNavItem;
   isActive: boolean;
   onNavigate: (path: string, itemId: string) => void;
-  theme?: 'ceo' | 'cto' | 'admin';
+  theme?: 'ceo' | 'cto' | 'admin' | 'aryx';
 }
 
 // ============================================================================
@@ -50,6 +51,14 @@ export interface SidebarSubItemProps {
 // ============================================================================
 
 const themeStyles = {
+  aryx: {
+    active: 'bg-aryx-accent font-semibold text-white',
+    hover: 'text-white/70 hover:bg-white/5 hover:text-[#F4F1EA]',
+    submenuActive: 'bg-aryx-accent font-semibold text-white',
+    submenuHover: 'text-white/55 hover:bg-white/5 hover:text-[#F4F1EA]',
+    submenuBorder: 'border-white/10',
+    iconActive: 'text-white',
+  },
   ceo: {
     active: 'bg-pink-900 font-semibold shadow-lg text-white',
     hover: 'text-pink-50 hover:bg-pink-800 hover:text-white active:bg-pink-900',
@@ -112,7 +121,7 @@ const SidebarSubItem = memo(function SidebarSubItem({
   item,
   isActive,
   onNavigate,
-  theme = 'cto',
+  theme = 'aryx',
 }: SidebarSubItemProps) {
   const styles = themeStyles[theme];
 
@@ -127,7 +136,7 @@ const SidebarSubItem = memo(function SidebarSubItem({
         aria-current={isActive ? 'page' : undefined}
         className={cn(
           'flex items-center w-full px-3 py-2.5 md:py-2',
-          'rounded-lg text-sm transition-all duration-200',
+          'rounded-full text-sm transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)]',
           'text-left touch-manipulation',
           'active:scale-[0.98] min-h-[44px]',
           isActive ? styles.submenuActive : styles.submenuHover
@@ -160,11 +169,12 @@ export const SidebarNavItem = memo(function SidebarNavItem({
   sidebarExpanded,
   onNavigate,
   onToggleSubmenu,
-  theme = 'cto',
+  theme = 'aryx',
   focusedIndex = -1,
   itemIndex = -1,
 }: SidebarNavItemProps) {
   const styles = themeStyles[theme];
+  const routeLocation = useLocation();
   const Icon = item.icon;
   const hasSubmenu = item.submenu && item.submenu.length > 0;
   const isFocused = focusedIndex === itemIndex;
@@ -189,7 +199,7 @@ export const SidebarNavItem = memo(function SidebarNavItem({
   // Button styles
   const buttonStyles = useMemo(() => cn(
     'flex items-center w-full px-3 py-3 md:py-2.5',
-    'rounded-lg transition-all duration-200',
+    'rounded-full transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)]',
     'group text-left cursor-pointer',
     'touch-manipulation active:scale-[0.98]',
     `min-h-[${SIDEBAR_CONSTANTS.MIN_TOUCH_TARGET}px]`,
@@ -270,7 +280,7 @@ export const SidebarNavItem = memo(function SidebarNavItem({
             <SidebarSubItem
               key={subItem.id}
               item={subItem}
-              isActive={location.pathname === subItem.path || location.pathname.startsWith(subItem.path + '/')}
+              isActive={routeLocation.pathname === subItem.path || routeLocation.pathname.startsWith(subItem.path + '/')}
               onNavigate={handleSubNavigate}
               theme={theme}
             />
@@ -287,15 +297,16 @@ export const SidebarNavItem = memo(function SidebarNavItem({
 export const SidebarCategoryHeader = memo(function SidebarCategoryHeader({
   title,
   isExpanded,
-  theme = 'cto',
+  theme = 'aryx',
 }: {
   title: string;
   isExpanded: boolean;
-  theme?: 'ceo' | 'cto' | 'admin';
+  theme?: 'ceo' | 'cto' | 'admin' | 'aryx';
 }) {
   if (!isExpanded) return null;
 
   const colorClass = {
+    aryx: 'text-aryx-gold',
     ceo: 'text-pink-200',
     cto: 'text-slate-400',
     admin: 'text-slate-500',
@@ -304,8 +315,7 @@ export const SidebarCategoryHeader = memo(function SidebarCategoryHeader({
   return (
     <h3
       className={cn(
-        // Responsive text and spacing
-        'text-[10px] sm:text-xs font-semibold uppercase tracking-wider',
+        'text-[10px] font-medium uppercase tracking-[0.2em]',
         'mb-1.5 sm:mb-2 md:mb-3 px-1 sm:px-2',
         colorClass
       )}

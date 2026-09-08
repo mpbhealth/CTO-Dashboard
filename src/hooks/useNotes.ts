@@ -6,8 +6,8 @@ export interface Note {
   id: string;
   title?: string;
   content: string;
-  owner_role: 'ceo' | 'cto';
-  created_for_role?: 'ceo' | 'cto' | null;
+  owner_role: 'ceo' | 'cto' | 'cos';
+  created_for_role?: 'ceo' | 'cto' | 'cos' | null;
   is_shared: boolean;
   is_collaborative: boolean;
   created_by: string;
@@ -44,12 +44,12 @@ export interface NoteNotification {
 }
 
 export interface UseNotesOptions {
-  dashboardRole: 'ceo' | 'cto';
+  dashboardRole: 'ceo' | 'cto' | 'cos';
   autoRefresh?: boolean;
 }
 
 // Demo mode mock data
-const createDemoNote = (dashboardRole: 'ceo' | 'cto', index: number): Note => ({
+const createDemoNote = (dashboardRole: 'ceo' | 'cto' | 'cos', index: number): Note => ({
   id: `demo-note-${dashboardRole}-${index}`,
   title: index === 0 ? 'Welcome to Notes' : `Sample Note ${index}`,
   content: index === 0
@@ -69,7 +69,7 @@ const createDemoNote = (dashboardRole: 'ceo' | 'cto', index: number): Note => ({
 
 const DEMO_STORAGE_KEY = 'mpb_demo_notes';
 
-function loadDemoNotes(dashboardRole: 'ceo' | 'cto'): Note[] {
+function loadDemoNotes(dashboardRole: 'ceo' | 'cto' | 'cos'): Note[] {
   try {
     const stored = localStorage.getItem(`${DEMO_STORAGE_KEY}_${dashboardRole}`);
     if (stored) {
@@ -82,7 +82,7 @@ function loadDemoNotes(dashboardRole: 'ceo' | 'cto'): Note[] {
   return [createDemoNote(dashboardRole, 0), createDemoNote(dashboardRole, 1)];
 }
 
-function saveDemoNotes(dashboardRole: 'ceo' | 'cto', notes: Note[]): void {
+function saveDemoNotes(dashboardRole: 'ceo' | 'cto' | 'cos', notes: Note[]): void {
   try {
     localStorage.setItem(`${DEMO_STORAGE_KEY}_${dashboardRole}`, JSON.stringify(notes));
   } catch {

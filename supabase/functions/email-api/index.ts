@@ -1,5 +1,7 @@
 import { createClient, SupabaseClient } from 'npm:@supabase/supabase-js';
 import { corsHeaders } from '../_shared/cors.ts';
+import { decryptToken } from '../_shared/crypto.ts';
+import { requireCaller } from '../_shared/caller.ts';
 
 // Types
 
@@ -14,6 +16,7 @@ interface EmailAttachment {
 interface EmailAccount {
   id: string;
   user_id: string;
+  owner_user_id: string;
   provider: 'outlook' | 'gmail';
   email_address: string;
   access_token: string;
@@ -164,84 +167,96 @@ type EmailActionResult =
   | Attachment
   | { success: boolean };
 
-// Helper to get valid access token (with race condition protection)
-async function getValidAccessToken(supabaseClient: SupabaseClient, accountId: string): Promise<{ token: string; account: EmailAccount }> {
+async function mapAccount(row: Record<string, unknown>): Promise<EmailAccount> {
+  return {
+    id: String(row.id),
+    user_id: String(row.owner_user_id),
+    owner_user_id: String(row.owner_user_id),
+    provider: row.provider as 'outlook' | 'gmail',
+    email_address: String(row.email_address),
+    access_token: row.encrypted_access_token ? await decryptToken(String(row.encrypted_access_token)) : '',
+    refresh_token: row.encrypted_refresh_token ? await decryptToken(String(row.encrypted_refresh_token)) : undefined,
+    token_expires_at: String(row.token_expires_at || ''),
+    refreshing_token: Boolean(row.refreshing_token),
+  };
+}
+
+async function getValidAccessToken(
+  supabaseClient: SupabaseClient,
+  accountId: string,
+  ownerUserId: string,
+): Promise<{ token: string; account: EmailAccount }> {
   const { data: account, error } = await supabaseClient
-    .from('user_email_accounts')
+    .from('mail_accounts')
     .select('*')
     .eq('id', accountId)
+    .eq('owner_user_id', ownerUserId)
     .single();
 
   if (error || !account) {
     throw new Error('Account not found');
   }
 
-  // Check if token needs refresh
   const expiresAt = new Date(account.token_expires_at);
   const needsRefresh = expiresAt.getTime() - Date.now() < 5 * 60 * 1000;
 
-  if (needsRefresh && account.refresh_token) {
-    // Check if another request is already refreshing this token
+  if (needsRefresh && account.encrypted_refresh_token) {
     if (account.refreshing_token) {
-      // Another request is already refreshing — wait briefly and re-fetch
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       const { data: retryAccount } = await supabaseClient
-        .from('user_email_accounts')
+        .from('mail_accounts')
         .select('*')
         .eq('id', accountId)
+        .eq('owner_user_id', ownerUserId)
         .single();
-
       if (retryAccount && !retryAccount.refreshing_token) {
-        return { token: retryAccount.access_token, account: retryAccount };
+        const mapped = await mapAccount(retryAccount);
+        return { token: mapped.access_token, account: mapped };
       }
-      // If still refreshing after wait, proceed anyway (stale lock protection)
     }
 
-    // Set the refreshing flag
     await supabaseClient
-      .from('user_email_accounts')
+      .from('mail_accounts')
       .update({ refreshing_token: true })
       .eq('id', accountId);
 
     try {
-      // Call the oauth function to refresh
       const oauthUrl = `${Deno.env.get('SUPABASE_URL')}/functions/v1/email-oauth`;
       const response = await fetch(oauthUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
+          Authorization: `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
         },
         body: JSON.stringify({
           action: 'refresh',
-          accountId: accountId,
+          accountId,
         }),
       });
 
       if (!response.ok) {
         throw new Error('Failed to refresh token');
       }
-
-      const result = await response.json();
     } finally {
-      // Always clear the refreshing flag
       await supabaseClient
-        .from('user_email_accounts')
+        .from('mail_accounts')
         .update({ refreshing_token: false })
         .eq('id', accountId);
     }
 
-    // Fetch updated account
     const { data: updatedAccount } = await supabaseClient
-      .from('user_email_accounts')
+      .from('mail_accounts')
       .select('*')
       .eq('id', accountId)
+      .eq('owner_user_id', ownerUserId)
       .single();
 
-    return { token: updatedAccount.access_token, account: updatedAccount };
+    const mapped = await mapAccount(updatedAccount);
+    return { token: mapped.access_token, account: mapped };
   }
 
-  return { token: account.access_token, account };
+  const mapped = await mapAccount(account);
+  return { token: mapped.access_token, account: mapped };
 }
 
 // ============ OUTLOOK PROVIDER ============
@@ -1099,14 +1114,23 @@ Deno.serve(async (req: Request) => {
       );
     }
 
+    const caller = await requireCaller(req);
+    if (!caller.userId && !caller.service) {
+      throw new Error('Not authenticated');
+    }
+
     const { action, accountId, ...payload } = body;
 
     if (!accountId) {
       throw new Error('accountId is required');
     }
 
-    // Get valid access token
-    const { token: accessToken, account } = await getValidAccessToken(supabaseClient, accountId);
+    const ownerUserId = caller.userId;
+    if (!ownerUserId) {
+      throw new Error('Not authenticated');
+    }
+
+    const { token: accessToken, account } = await getValidAccessToken(supabaseClient, accountId, ownerUserId);
     const provider = account.provider;
 
     // Route to provider-specific implementation
@@ -1137,25 +1161,97 @@ Deno.serve(async (req: Request) => {
       }
 
       case 'sendMessage': {
-        const { message } = payload;
-        provider === 'outlook'
-          ? await outlookSendMessage(accessToken, message)
-          : await gmailSendMessage(accessToken, message);
-        
-        // Log sent email
-        await supabaseClient.from('email_sent_log').insert({
-          user_id: account.user_id,
-          account_id: accountId,
-          to_recipients: message.to,
-          cc_recipients: message.cc || [],
-          bcc_recipients: message.bcc || [],
-          subject: message.subject,
-          has_attachments: (message.attachments?.length || 0) > 0,
-          attachment_count: message.attachments?.length || 0,
-          status: 'sent',
-        });
+        const { message, idempotencyKey } = payload;
+        const key = String(idempotencyKey || crypto.randomUUID());
+        const { data: existingIntent } = await supabaseClient
+          .from('mail_send_intents')
+          .select('id, status, provider_message_id')
+          .eq('mail_account_id', accountId)
+          .eq('idempotency_key', key)
+          .maybeSingle();
 
-        result = { success: true };
+        if (existingIntent?.status === 'sent') {
+          result = { success: true, duplicate: true, providerMessageId: existingIntent.provider_message_id };
+          break;
+        }
+
+        if (!existingIntent) {
+          const { error: claimError } = await supabaseClient.from('mail_send_intents').insert({
+            mail_account_id: accountId,
+            owner_user_id: account.owner_user_id,
+            idempotency_key: key,
+            status: 'claimed',
+          });
+          if (claimError && claimError.code !== '23505') throw claimError;
+          if (claimError?.code === '23505') {
+            const { data: raced } = await supabaseClient
+              .from('mail_send_intents')
+              .select('status, provider_message_id')
+              .eq('mail_account_id', accountId)
+              .eq('idempotency_key', key)
+              .maybeSingle();
+            if (raced?.status === 'sent') {
+              result = { success: true, duplicate: true, providerMessageId: raced.provider_message_id };
+              break;
+            }
+          }
+        }
+
+        try {
+          if (provider === 'outlook') {
+            await outlookSendMessage(accessToken, message);
+          } else {
+            await gmailSendMessage(accessToken, message);
+          }
+          await supabaseClient.from('mail_send_intents').update({
+            status: 'sent',
+          }).eq('mail_account_id', accountId).eq('idempotency_key', key);
+
+          const { data: localMessage } = await supabaseClient.from('mail_messages').insert({
+            mail_account_id: accountId,
+            provider_message_id: `local:${key}`,
+            direction: 'outbound',
+            origin_class: 'human',
+            sender_address: account.email_address,
+            subject: message.subject,
+            send_status: 'sent',
+            sent_at: new Date().toISOString(),
+          }).select('id').maybeSingle();
+
+          if (localMessage?.id) {
+            const recipients = [
+              ...(message.to || []).map((r: { email: string; name?: string }, i: number) => ({ type: 'to', r, i })),
+              ...(message.cc || []).map((r: { email: string; name?: string }, i: number) => ({ type: 'cc', r, i })),
+              ...(message.bcc || []).map((r: { email: string; name?: string }, i: number) => ({ type: 'bcc', r, i })),
+            ];
+            if (recipients.length) {
+              await supabaseClient.from('mail_message_recipients').insert(
+                recipients.map((item) => ({
+                  mail_message_id: localMessage.id,
+                  recipient_type: item.type,
+                  email_address: item.r.email,
+                  normalized_email: String(item.r.email || '').toLowerCase(),
+                  display_name: item.r.name ?? null,
+                  position: item.i,
+                }))
+              );
+            }
+          }
+
+          await supabaseClient.from('audit_events').insert({
+            actor_id: account.owner_user_id,
+            action: 'mail.send',
+            entity: 'mail_send_intents',
+            metadata: { account_id: accountId, has_bcc: Boolean(message.bcc?.length) },
+          });
+          result = { success: true };
+        } catch (sendError) {
+          await supabaseClient.from('mail_send_intents').update({
+            status: 'failed',
+            error: sendError instanceof Error ? sendError.message : 'send failed',
+          }).eq('mail_account_id', accountId).eq('idempotency_key', key);
+          throw sendError;
+        }
         break;
       }
 
@@ -1227,14 +1323,27 @@ Deno.serve(async (req: Request) => {
         break;
       }
 
+      case 'suggestCrmLinks': {
+        const emails = payload.emails || [];
+        const crmRes = await fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/crm-proxy`, {
+          method: 'POST',
+          headers: {
+            Authorization: req.headers.get('Authorization') || '',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ action: 'matchEmails', emails }),
+        });
+        result = crmRes.ok ? await crmRes.json() : { candidates: [] };
+        break;
+      }
+
       default:
         throw new Error(`Unknown action: ${action}`);
     }
 
-    // Update last sync time
     await supabaseClient
-      .from('user_email_accounts')
-      .update({ last_sync_at: new Date().toISOString(), sync_error: null })
+      .from('mail_accounts')
+      .update({ last_sync_at: new Date().toISOString(), last_successful_sync_at: new Date().toISOString(), sync_error: null, status: 'active' })
       .eq('id', accountId);
 
     return new Response(

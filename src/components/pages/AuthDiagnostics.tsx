@@ -240,7 +240,7 @@ export default function AuthDiagnostics() {
               <div className="flex-1">
                 <h2 className="text-xl font-bold mb-1">Demo Mode Active</h2>
                 <p className="text-white/90">You are viewing the dashboard in demo mode as <span className="font-semibold uppercase">{profile?.role || 'unknown'}</span>. This is a simulated session without Supabase authentication.</p>
-                <p className="text-sm mt-2 text-white/80">To switch roles, use: <code className="bg-white/20 px-2 py-1 rounded">?demo_role=ceo</code> or <code className="bg-white/20 px-2 py-1 rounded">?demo_role=cto</code></p>
+                <p className="text-sm mt-2 text-white/80">ARYX COS uses a single role. Demo mode is only used when Supabase is not configured.</p>
               </div>
             </div>
           </div>

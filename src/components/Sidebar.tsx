@@ -10,9 +10,7 @@ import {
   SIDEBAR_CONSTANTS 
 } from '../hooks/useSidebar';
 import { 
-  getNavigationForRole, 
-  ceoNavigationItems, 
-  ctoNavigationItems, 
+  getNavigationForRole,
   categories, 
   type NavItem 
 } from '../config/navigation';
@@ -23,7 +21,6 @@ import {
   SidebarToggleButton,
   SidebarHeader,
   SidebarUserProfile,
-  AdminRoleSwitcher,
   SidebarNavItem,
   SidebarCategoryHeader,
   SidebarSearchHint,
@@ -56,16 +53,8 @@ function SidebarComponent({
   const { data: profile } = useCurrentProfile();
 
   // Admin role-switcher state
-  const [adminViewMode, setAdminViewMode] = useState<'ceo' | 'cto'>('ceo');
-
-  // Derived role states
-  const isAdmin = profile?.role === 'admin';
-  const isCEO = useMemo(() => 
-    ['ceo', 'cfo', 'cmo'].includes(profile?.role || '') || (isAdmin && adminViewMode === 'ceo'),
-    [profile?.role, isAdmin, adminViewMode]
-  );
-  const userRole = profile?.role || 'staff';
-  const theme = isCEO ? 'ceo' : 'cto';
+  const userRole = profile?.role || 'cos';
+  const theme = 'cto';
 
   // Use external state if provided, otherwise use internal
   const isControlled = externalExpanded !== undefined && externalToggle !== undefined;
@@ -119,12 +108,7 @@ function SidebarComponent({
   }, [isMobile, isExpanded, toggle, sidebarRef]);
 
   // Get navigation items based on role
-  const menuItems = useMemo(() => {
-    if (isAdmin) {
-      return adminViewMode === 'ceo' ? ceoNavigationItems : ctoNavigationItems;
-    }
-    return getNavigationForRole(userRole);
-  }, [userRole, isAdmin, adminViewMode]);
+  const menuItems = useMemo(() => getNavigationForRole(userRole), [userRole]);
 
   // Group items by category
   const groupedItems = useMemo(() => {
@@ -180,14 +164,9 @@ function SidebarComponent({
     }
   }, [navigate, onTabChange, isMobile, toggle]);
 
-  const handleAdminModeChange = useCallback((mode: 'ceo' | 'cto') => {
-    setAdminViewMode(mode);
-    navigate(mode === 'ceo' ? '/ceod/home' : '/ctod/home');
-  }, [navigate]);
-
   const handleSettingsClick = useCallback(() => {
-    navigate(isCEO ? '/ceod/settings' : '/ctod/settings');
-  }, [navigate, isCEO]);
+    navigate('/settings');
+  }, [navigate]);
 
   // Check if a route is active
   const isActiveRoute = useCallback((itemPath: string, itemId: string, submenu?: Array<{ id: string; path: string }>) => {
@@ -212,18 +191,7 @@ function SidebarComponent({
     : undefined;
 
   // Get role label for user profile
-  const roleLabel = useMemo(() => {
-    if (['ceo', 'cfo', 'cmo'].includes(profile?.role || '')) {
-      return 'Executive';
-    }
-    if (profile?.role === 'cto') {
-      return 'Chief Technology Officer';
-    }
-    if (profile?.role === 'admin') {
-      return 'Administrator';
-    }
-    return 'Staff Member';
-  }, [profile?.role]);
+  const roleLabel = 'Chief of Staff';
 
   return (
     <>
@@ -256,9 +224,7 @@ function SidebarComponent({
           isMobile ? 'z-[60]' : 'z-40',
 
           // Theme
-          isCEO
-            ? 'bg-gradient-to-b from-pink-600 to-pink-700'
-            : 'bg-slate-900',
+          'bg-[#0a0a0a]',
 
           // Width - responsive for all screen sizes
           // Mobile: full width minus some margin, max 320px
@@ -314,10 +280,10 @@ function SidebarComponent({
           {/* Header */}
           <SidebarHeader
             isExpanded={isExpanded}
-            title="MPB Health"
-            subtitle={isCEO ? 'CEO Dashboard' : 'CTO Dashboard'}
+            title="ARYX COS"
+            subtitle="Chief of Staff"
             logoSrc="/MPB-Health-No-background.png"
-            logoAlt="MPB Health Logo"
+            logoAlt="ARYX COS"
             theme={theme}
           >
             {/* Notification Bell */}
@@ -328,14 +294,6 @@ function SidebarComponent({
               </div>
             )}
 
-            {/* Admin Role Switcher */}
-            {isAdmin && (
-              <AdminRoleSwitcher
-                isExpanded={isExpanded}
-                activeMode={adminViewMode}
-                onModeChange={handleAdminModeChange}
-              />
-            )}
           </SidebarHeader>
 
           {/* Command Palette search hint */}

@@ -16,7 +16,7 @@ import {
 import { useNotes } from '../../hooks/useNotes';
 
 interface OrganizerNotesProps {
-  dashboardRole: 'ceo' | 'cto';
+  dashboardRole: 'ceo' | 'cto' | 'cos';
   maxNotes?: number;
 }
 

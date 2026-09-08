@@ -24,30 +24,8 @@ export function AuthCallback() {
           return;
         }
 
-        const { data: profile, error: profileError } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', session.user.id)
-          .maybeSingle();
-
-        if (profileError) {
-          console.error('Error fetching profile:', profileError);
-        }
-
-        const role = profile?.role || 'staff';
-
-        document.cookie = `role=${role}; path=/; max-age=86400; samesite=lax`;
-
-        let redirectPath = '/ctod/home';
-        if (role === 'ceo') {
-          redirectPath = '/ceod/home';
-        } else if (role === 'cto') {
-          redirectPath = '/ctod/home';
-        } else {
-          redirectPath = '/ctod/home';
-        }
-
-        navigate(redirectPath, { replace: true });
+        document.cookie = `role=cos; path=/; max-age=86400; samesite=lax`;
+        navigate('/home', { replace: true });
       } catch (err) {
         console.error('Auth callback error:', err);
         setError(err instanceof Error ? err.message : 'Authentication failed');

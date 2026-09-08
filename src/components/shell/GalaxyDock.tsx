@@ -26,6 +26,8 @@ import {
   BarChart3, 
   ShieldCheck, 
   Settings,
+  Mail,
+  Briefcase,
   Map,
   Command,
   Cog,
@@ -42,7 +44,6 @@ import { DockSearchBar } from './DockSearchBar';
 import { ExternalLinkGroup } from './ExternalLinkItem';
 import { QuickActionGroup } from './QuickActionItem';
 import { DockConfigModal } from './DockConfigModal';
-import { DockDashboardSwitcher } from './DockDashboardSwitcher';
 
 /**
  * Icon mapping for dock items
@@ -55,6 +56,8 @@ const iconMap: Record<string, React.ElementType> = {
   BarChart3,
   ShieldCheck,
   Settings,
+  Mail,
+  Briefcase,
   Map,
   Command,
   Sparkles,
@@ -282,11 +285,11 @@ export function GalaxyDock({ onOpenMap }: GalaxyDockProps) {
 
   // Default apps if no pinned apps loaded yet
   const defaultApps: DockItem[] = [
-    { key: 'ceo-home', name: 'CEO Dashboard', icon: 'LayoutDashboard', href: '/ceod/home' },
-    { key: 'cto-home', name: 'CTO Dashboard', icon: 'Terminal', href: '/ctod/home' },
-    { key: 'admin', name: 'Web Control Center', icon: 'Settings', href: '/admin' },
-    { key: 'tickets', name: 'IT Support', icon: 'Ticket', href: '/ctod/operations/it-support' },
-    { key: 'compliance', name: 'Compliance', icon: 'ShieldCheck', href: '/ctod/compliance' },
+    { key: 'home', name: 'Home', icon: 'LayoutDashboard', href: '/home' },
+    { key: 'inbox', name: 'Inbox', icon: 'Mail', href: '/inbox' },
+    { key: 'crm', name: 'CRM', icon: 'Briefcase', href: '/crm' },
+    { key: 'tickets', name: 'IT Support', icon: 'Ticket', href: '/operations/it-support' },
+    { key: 'compliance', name: 'Compliance', icon: 'ShieldCheck', href: '/operations/compliance' },
   ];
 
   const dockItems = isLoading ? defaultApps : (pinnedApps.length > 0 ? pinnedApps : defaultApps);
@@ -385,9 +388,6 @@ export function GalaxyDock({ onOpenMap }: GalaxyDockProps) {
 
         {/* Search Bar */}
         <DockSearchBar />
-
-        {/* Dashboard Switcher */}
-        <DockDashboardSwitcher mouseX={mouseX} />
 
         {/* Divider */}
         <div className="dock-divider" />

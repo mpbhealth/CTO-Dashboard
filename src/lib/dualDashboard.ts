@@ -4,7 +4,7 @@ import { logger } from './logger';
 export type WorkspaceKind = 'CTO' | 'CEO' | 'SHARED';
 export type ResourceType = 'file' | 'doc' | 'kpi' | 'campaign' | 'note' | 'task' | 'dashboard';
 export type Visibility = 'private' | 'shared_to_cto' | 'shared_to_ceo' | 'org_public';
-export type UserRole = 'cto' | 'ceo' | 'admin' | 'staff' | 'cfo' | 'cmo' | 'manager' | 'member';
+export type UserRole = 'cos';
 
 export interface Profile {
   user_id: string;
@@ -100,7 +100,7 @@ export async function getCurrentProfile(): Promise<Profile | null> {
       // If profile doesn't exist, try to create it
       logger.info('No profile found, creating from auth metadata');
 
-      const role = (user.user_metadata?.role || 'staff') as 'cto' | 'ceo' | 'admin' | 'staff';
+      const role = 'cos' as const;
       const displayName = user.user_metadata?.full_name || user.email?.split('@')[0] || 'User';
 
       logger.debug('Creating profile', { role, displayName, user_id: user.id });
@@ -113,7 +113,7 @@ export async function getCurrentProfile(): Promise<Profile | null> {
           full_name: displayName,
           display_name: displayName,
           role: role,
-          org_id: '00000000-0000-0000-0000-000000000000'
+          org_id: 'a0000000-0000-0000-0000-000000000001'
         })
         .select('user_id, email, full_name, display_name, role, org_id')
         .maybeSingle();

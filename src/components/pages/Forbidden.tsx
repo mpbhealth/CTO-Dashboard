@@ -4,13 +4,10 @@ import { useAuth } from '@/contexts/AuthContext';
 
 export default function Forbidden() {
   const navigate = useNavigate();
-  const { role, user } = useAuth();
+  const { profile, user } = useAuth();
+  const role = profile?.role || 'cos';
 
-  const getDefaultPath = () => {
-    if (role === 'ceo') return '/ceod/home';
-    if (role === 'cto' || role === 'admin' || role === 'staff') return '/ctod/home';
-    return '/';
-  };
+  const getDefaultPath = () => '/home';
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 flex items-center justify-center p-4">

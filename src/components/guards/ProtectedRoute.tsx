@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 
 interface ProtectedRouteProps {
   children: ReactNode;
-  allowedRoles?: ('ceo' | 'cto' | 'admin' | 'staff')[];
+  allowedRoles?: ('cos' | 'ceo' | 'cto' | 'admin' | 'staff')[];
   requireAuth?: boolean;
 }
 
@@ -16,7 +16,7 @@ export function ProtectedRoute({
   const { user, profile, loading, profileReady, isDemoMode } = useAuth();
   const location = useLocation();
 
-  const effectiveRole = useMemo(() => profile?.role as 'ceo' | 'cto' | 'admin' | 'staff' | undefined, [profile?.role]);
+  const effectiveRole = useMemo(() => (profile?.role || 'cos') as 'cos' | 'ceo' | 'cto' | 'admin' | 'staff', [profile?.role]);
 
   if (loading) {
     return (
@@ -45,8 +45,7 @@ export function ProtectedRoute({
   }
 
   if (allowedRoles && effectiveRole && !allowedRoles.includes(effectiveRole)) {
-    const defaultPath = effectiveRole === 'ceo' ? '/ceod/home' : '/ctod/home';
-    return <Navigate to={defaultPath} replace />;
+    return <Navigate to="/home" replace />;
   }
 
   return <>{children}</>;

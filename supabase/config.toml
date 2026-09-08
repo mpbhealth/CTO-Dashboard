@@ -1,0 +1,44 @@
+# ARYX COS — linked to project kylemtjsypmrtmuhmang
+project_id = "kylemtjsypmrtmuhmang"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+major_version = 17
+
+[auth]
+enabled = true
+site_url = "http://localhost:5173"
+additional_redirect_urls = ["http://localhost:5173/auth/callback", "http://localhost:5173/oauth/callback"]
+jwt_expiry = 3600
+enable_signup = true
+
+[auth.email]
+enable_signup = true
+
+[storage]
+enabled = true
+
+[functions.email-oauth]
+verify_jwt = true
+
+[functions.email-api]
+verify_jwt = true
+
+[functions.connector-sync]
+verify_jwt = true
+
+[functions.crm-proxy]
+verify_jwt = true
+
+[functions.mail-renewal]
+verify_jwt = false
+
+[functions.mail-webhook]
+verify_jwt = false

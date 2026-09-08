@@ -60,14 +60,11 @@ export function Breadcrumbs() {
   const path = location.pathname;
 
   const breadcrumbs = useMemo((): BreadcrumbSegment[] => {
-    const isCEO = path.startsWith('/ceod/');
-    const isCTO = path.startsWith('/ctod/');
+    if (path === '/' || path === '/login') return [];
 
-    if (!isCEO && !isCTO) return [];
-
-    const navItems = isCEO ? ceoNavigationItems : ctoNavigationItems;
-    const dashboardLabel = isCEO ? 'CEO Dashboard' : 'CTO Dashboard';
-    const homePath = isCEO ? '/ceod/home' : '/ctod/home';
+    const navItems = ceoNavigationItems;
+    const dashboardLabel = 'ARYX COS';
+    const homePath = '/home';
 
     const { parent, child } = findNavMatch(path, navItems);
 

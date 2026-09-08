@@ -89,18 +89,18 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
       {
         id: 'action-go-ceo',
         type: 'action',
-        title: 'Go to CEO Dashboard',
-        description: 'Executive overview and KPIs',
+        title: 'Go to Home',
+        description: 'Company operating view',
         icon: LayoutDashboard,
-        href: '/ceod/home',
+        href: '/home',
       },
       {
-        id: 'action-go-cto',
+        id: 'action-go-inbox',
         type: 'action',
-        title: 'Go to CTO Dashboard',
-        description: 'Technology and engineering metrics',
+        title: 'Go to Inbox',
+        description: 'Connected mailbox',
         icon: Terminal,
-        href: '/ctod/home',
+        href: '/inbox',
       },
     ];
 

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { 
   Settings as SettingsIcon, 
   Lock, 
@@ -19,7 +19,6 @@ import { NotificationSettings } from '../notifications';
 
 export default function Settings() {
   const navigate = useNavigate();
-  const location = useLocation();
   const { profile, user, isDemoMode, signOut } = useAuth();
   
   const [currentPassword, setCurrentPassword] = useState('');
@@ -32,8 +31,7 @@ export default function Settings() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  const isCEORoute = location.pathname.startsWith('/ceod');
-  const backPath = isCEORoute ? '/ceod/home' : '/ctod/home';
+  const backPath = '/home';
 
   const validatePassword = (password: string): string[] => {
     const errors: string[] = [];

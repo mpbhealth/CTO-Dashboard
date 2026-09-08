@@ -14,6 +14,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import type { EmailMessage, EmailFolder } from '@/types/email';
+import { MailCrmCandidates } from './MailCrmCandidates';
 
 interface EmailViewerProps {
   message: EmailMessage | null;
@@ -221,6 +222,7 @@ export function EmailViewer({
           <h1 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
             {message.subject || '(No Subject)'}
           </h1>
+          <MailCrmCandidates message={message} />
 
           {/* Sender info */}
           <div className="flex items-start gap-4 mb-6">

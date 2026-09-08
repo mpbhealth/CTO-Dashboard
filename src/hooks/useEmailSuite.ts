@@ -226,7 +226,18 @@ export function useEmailSuite(options: UseEmailSuiteOptions = {}) {
         );
       }
 
+      const digestSource = JSON.stringify({
+        to: email.to,
+        cc: email.cc,
+        bcc: email.bcc,
+        subject: email.subject,
+        bodyHtml,
+      });
+      const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(digestSource));
+      const idempotencyKey = Array.from(new Uint8Array(digest)).map((b) => b.toString(16).padStart(2, '0')).join('');
+
       await callEmailApi(activeAccountId, 'sendMessage', {
+        idempotencyKey,
         message: {
           to: email.to,
           cc: email.cc,

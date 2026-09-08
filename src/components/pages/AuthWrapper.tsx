@@ -71,36 +71,17 @@ export default function AuthWrapper({ children }: AuthWrapperProps) {
       redirectAttemptedRef.current = true;
 
       const currentPath = location.pathname;
-      const isCEOPath = currentPath.startsWith('/ceod');
-      const isCTOPath = currentPath.startsWith('/ctod');
-      const _isSharedPath = currentPath.startsWith('/shared');
       const isRootPath = currentPath === '/' || currentPath === '';
       const isLoginPath = currentPath.startsWith('/login');
       const isAuthCallbackPath = currentPath.startsWith('/auth/callback');
 
-      if (profile.role === 'ceo') {
-        if (isCTOPath || isRootPath || isLoginPath || isAuthCallbackPath) {
-          setTimeout(() => {
-            navigate('/ceod/home', { replace: true });
-            redirectAttemptedRef.current = false;
-          }, 100);
-        } else {
+      if (isRootPath || isLoginPath || isAuthCallbackPath) {
+        setTimeout(() => {
+          navigate('/home', { replace: true });
           redirectAttemptedRef.current = false;
-        }
+        }, 100);
       } else {
-        if (isCEOPath) {
-          setTimeout(() => {
-            navigate('/ctod/home', { replace: true });
-            redirectAttemptedRef.current = false;
-          }, 100);
-        } else if (isRootPath || isLoginPath || isAuthCallbackPath) {
-          setTimeout(() => {
-            navigate('/ctod/home', { replace: true });
-            redirectAttemptedRef.current = false;
-          }, 100);
-        } else {
-          redirectAttemptedRef.current = false;
-        }
+        redirectAttemptedRef.current = false;
       }
     }
 

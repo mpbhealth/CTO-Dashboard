@@ -34,34 +34,10 @@ export function RoleGuard({ children, allowedRoles, redirectTo }: RoleGuardProps
     );
   }
 
-  // Default to 'staff' if no role - this prevents infinite redirect loops
-  const role = (profile?.role || 'staff') as UserRole;
+  const role = (profile?.role || 'cos') as UserRole;
 
-  if (!allowedRoles.includes(role)) {
-    // Determine the appropriate redirect based on the user's role
-    const getDefaultRedirect = (userRole: string): string => {
-      switch (userRole) {
-        case 'ceo':
-        case 'cfo':
-        case 'cmo':
-          return '/ceod/home';
-        case 'cto':
-        case 'manager':
-        case 'staff':
-        case 'member':
-          return '/ctod/home';
-        case 'admin':
-          // Admins can access both, but default to CEO dashboard for priority
-          return '/ceod/home';
-        default:
-          return '/ctod/home';
-      }
-    };
-    
-    const defaultRedirect = getDefaultRedirect(role);
-    // If redirectTo is provided, use it, otherwise use the role-based default.
-    // NOTE: Reliance on defaultRedirect is generally safer to prevent loops between dashboards.
-    const targetPath = redirectTo || defaultRedirect;
+  if (!allowedRoles.includes(role) && !allowedRoles.includes('cos')) {
+    const targetPath = redirectTo || '/home';
 
     // If we're already on the target path, show a simple access denied instead of rendering protected children
     if (location.pathname === targetPath) {
@@ -87,7 +63,7 @@ interface CEOOnlyProps {
 
 export function CEOOnly({ children }: CEOOnlyProps) {
   return (
-    <RoleGuard allowedRoles={['ceo', 'cfo', 'cmo', 'admin']}>
+    <RoleGuard allowedRoles={['cos']}>
       {children}
     </RoleGuard>
   );
@@ -99,7 +75,7 @@ interface CTOOnlyProps {
 
 export function CTOOnly({ children }: CTOOnlyProps) {
   return (
-    <RoleGuard allowedRoles={['cto', 'admin', 'staff', 'manager', 'member']}>
+    <RoleGuard allowedRoles={['cos']}>
       {children}
     </RoleGuard>
   );

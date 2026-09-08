@@ -24,7 +24,7 @@ export interface MFAChallenge {
 }
 
 // Roles that require MFA
-const MFA_REQUIRED_ROLES = ['admin', 'hipaa_officer', 'privacy_officer', 'security_officer', 'ceo', 'cto'];
+const MFA_REQUIRED_ROLES = ['cos', 'admin', 'hipaa_officer', 'privacy_officer', 'security_officer'];
 
 /**
  * Check if MFA is required for a user based on their role

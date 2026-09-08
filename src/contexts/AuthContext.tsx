@@ -83,36 +83,26 @@ const ACTIVITY_EVENTS = [
   'click',
 ] as const;
 
-function getDemoRoleFromQuery(): 'ceo' | 'cto' | null {
-  const params = new URLSearchParams(window.location.search);
-  const role = params.get('demo_role');
-  if (role === 'ceo' || role === 'cto') {
-    return role;
-  }
-  return null;
-}
-
-function createDemoProfile(role: 'ceo' | 'cto'): Profile {
-  const demoId = `demo-${role}-${Date.now()}`;
+function createDemoProfile(): Profile {
   return {
-    id: demoId,
-    email: `demo-${role}@mpbhealth.com`,
-    full_name: role === 'ceo' ? 'Demo CEO User' : 'Demo CTO User',
-    display_name: role === 'ceo' ? 'Demo CEO' : 'Demo CTO',
-    role: role,
-    org_id: 'demo-org-id',
+    id: 'demo-cos',
+    email: 'demo@aryx.com',
+    full_name: 'Aryx COS',
+    display_name: 'Chief of Staff',
+    role: 'cos',
+    org_id: 'a0000000-0000-0000-0000-000000000001',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString()
   };
 }
 
-function createDemoUser(role: 'ceo' | 'cto'): Partial<User> {
+function createDemoUser(): Partial<User> {
   return {
-    id: `demo-user-${role}`,
-    email: `demo-${role}@mpbhealth.com`,
+    id: 'demo-user-cos',
+    email: 'demo@aryx.com',
     created_at: new Date().toISOString(),
-    app_metadata: { role },
-    user_metadata: { role, full_name: role === 'ceo' ? 'Demo CEO' : 'Demo CTO' },
+    app_metadata: { role: 'cos' },
+    user_metadata: { role: 'cos', full_name: 'Aryx COS' },
     aud: 'authenticated',
     role: 'authenticated'
   } as User;
@@ -244,9 +234,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       if (data) {
-        setProfile(data);
-        profileCache.current.set(userId, data);
-        saveCachedProfile(userId, data);
+        const normalized = {
+          ...data,
+          id: data.user_id || data.id || userId,
+          role: 'cos',
+        };
+        setProfile(normalized);
+        profileCache.current.set(userId, normalized);
+        saveCachedProfile(userId, normalized);
         setProfileReady(true);
       } else {
         setProfile(null);
@@ -511,29 +506,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (initializingRef.current) return;
     initializingRef.current = true;
 
-    const queryRole = getDemoRoleFromQuery();
-    const _savedDemoMode = localStorage.getItem(DEMO_MODE_KEY) === 'true';
-    const savedDemoRole = localStorage.getItem(DEMO_ROLE_KEY) as 'ceo' | 'cto' | null;
-
-    if (queryRole) {
-      localStorage.setItem(DEMO_MODE_KEY, 'true');
-      localStorage.setItem(DEMO_ROLE_KEY, queryRole);
-    }
-
-    const shouldUseDemoMode = !isSupabaseConfigured || queryRole;
+    const shouldUseDemoMode = !isSupabaseConfigured;
 
     if (shouldUseDemoMode) {
-      const demoRole = queryRole || savedDemoRole || 'cto';
       setIsDemoMode(true);
-      const demoUser = createDemoUser(demoRole);
-      const demoProfile = createDemoProfile(demoRole);
+      const demoUser = createDemoUser();
+      const demoProfile = createDemoProfile();
 
       setUser(demoUser as User);
       setProfile(demoProfile);
       setProfileReady(true);
       setLoading(false);
 
-      logger.warn(`Running in DEMO MODE as ${demoRole.toUpperCase()}`);
+      logger.warn('Running in DEMO MODE as COS');
       return;
     }
 

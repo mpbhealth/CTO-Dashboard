@@ -1,844 +1,159 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Eye, EyeOff, Mail, Lock, AlertCircle, CheckCircle, User, KeyRound, Briefcase, Code2, Shield, ShieldCheck, Fingerprint } from 'lucide-react';
-import { supabase, isSupabaseConfigured, setRememberMePreference, isRememberMeEnabled } from '../../lib/supabase';
+import { Eye, EyeOff, Mail, Lock, AlertCircle, CheckCircle } from 'lucide-react';
+import { isSupabaseConfigured, setRememberMePreference, isRememberMeEnabled } from '../../lib/supabase';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 
-// Security badges component
-const SecurityBadges = () => (
-  <motion.div
-    initial={{ opacity: 0, y: 10 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.5, delay: 0.4 }}
-    className="mt-8"
-  >
-    <div className="flex items-center justify-center space-x-2 mb-4">
-      <div className="h-px flex-1 bg-gradient-to-r from-transparent via-slate-600 to-transparent"></div>
-      <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">Enterprise Security</span>
-      <div className="h-px flex-1 bg-gradient-to-r from-transparent via-slate-600 to-transparent"></div>
-    </div>
-    <div className="flex flex-wrap items-center justify-center gap-3">
-      <div className="flex items-center space-x-1.5 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
-        <Shield className="w-3.5 h-3.5 text-emerald-400" />
-        <span className="text-xs font-semibold text-emerald-400">AES-256</span>
-      </div>
-      <div className="flex items-center space-x-1.5 px-3 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded-full">
-        <ShieldCheck className="w-3.5 h-3.5 text-blue-400" />
-        <span className="text-xs font-semibold text-blue-400">HIPAA</span>
-      </div>
-      <div className="flex items-center space-x-1.5 px-3 py-1.5 bg-purple-500/10 border border-purple-500/20 rounded-full">
-        <Fingerprint className="w-3.5 h-3.5 text-purple-400" />
-        <span className="text-xs font-semibold text-purple-400">SOC 2</span>
-      </div>
-    </div>
-    <p className="text-center text-xs text-slate-500 mt-3">
-      End-to-end encryption protects all sensitive data
-    </p>
-  </motion.div>
-);
-
-type UserRole = 'ceo' | 'cto' | null;
-
-export default function Login() {
+export default function Login({ onLoginSuccess }: { onLoginSuccess?: () => void } = {}) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isDemoMode, profile, user, signIn: authSignIn, loading, profileReady } = useAuth();
+  const { profile, user, signIn: authSignIn, signUp, loading, profileReady } = useAuth();
   const [isSignUp, setIsSignUp] = useState(false);
-  const [selectedRole, setSelectedRole] = useState<UserRole>(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [passcode, setPasscode] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [rememberMe, setRememberMe] = useState(false);
-  
-  // Ref to prevent multiple redirects
   const hasRedirected = useRef(false);
 
-  // Redirect if already authenticated (including after successful login)
   useEffect(() => {
-    // Only redirect if we're on the login page and haven't already redirected
     if (location.pathname !== '/login') return;
     if (hasRedirected.current) return;
-    
-    if (!loading && profileReady && (user || isDemoMode)) {
+    if (!loading && profileReady && user) {
       hasRedirected.current = true;
-      const role = profile?.role || 'staff';
-      
-      const isCEORole = ['ceo', 'cfo', 'cmo', 'admin'].includes(role);
-      const redirectPath = isCEORole ? '/ceod/home' : '/ctod/home';
-      
-      navigate(redirectPath, { replace: true });
+      navigate('/home', { replace: true });
     }
-  }, [isDemoMode, profile, user, loading, profileReady, navigate, location.pathname]);
+  }, [profile, user, loading, profileReady, navigate, location.pathname]);
 
-  // Load remembered email and remember me preference on mount
   useEffect(() => {
     const savedEmail = localStorage.getItem('mpb_remembered_email');
-    const rememberMeEnabled = isRememberMeEnabled();
-    
-    if (savedEmail) {
-      setEmail(savedEmail);
-    }
-    if (rememberMeEnabled) {
-      setRememberMe(true);
-    }
+    if (savedEmail) setEmail(savedEmail);
+    if (isRememberMeEnabled()) setRememberMe(true);
   }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
-    setSuccess(null);
-
     try {
-      // Handle remember me preference
-      if (rememberMe) {
-        localStorage.setItem('mpb_remembered_email', email);
-      } else {
-        localStorage.removeItem('mpb_remembered_email');
-      }
+      if (rememberMe) localStorage.setItem('mpb_remembered_email', email);
+      else localStorage.removeItem('mpb_remembered_email');
       setRememberMePreference(rememberMe);
-      
-      // Use AuthContext's signIn which properly updates state and fetches profile
       await authSignIn(email, password);
-      
-      setSuccess('Login successful! Redirecting...');
-      
-      // Give React a moment to process state updates, then redirect
-      // The useEffect should handle this, but as a fallback we navigate directly
-      setTimeout(() => {
-        if (!hasRedirected.current) {
-          hasRedirected.current = true;
-          // Default to CTO dashboard if we can't determine role yet
-          navigate('/ctod/home', { replace: true });
-        }
-      }, 500);
+      onLoginSuccess?.();
+      setSuccess('Signed in.');
+      if (!hasRedirected.current) {
+        hasRedirected.current = true;
+        navigate('/home', { replace: true });
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred during login');
+      setError(err instanceof Error ? err.message : 'Login failed');
       setIsLoading(false);
     }
-    // Note: Don't reset isLoading on success - we're redirecting anyway
   };
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
-    setSuccess(null);
-
     try {
-      if (!selectedRole) {
-        throw new Error('Please select a role (CEO or CTO) before registering.');
-      }
-
-      if (password !== confirmPassword) {
-        throw new Error('Passwords do not match.');
-      }
-
-      const VALID_PASSCODE = '738294';
-      if (passcode !== VALID_PASSCODE) {
-        throw new Error('Invalid passcode. Please enter the correct passcode to register.');
-      }
-
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            full_name: name,
-            role: selectedRole,
-          },
-        },
-      });
-
-      if (error) {
-        throw error;
-      }
-
-      if (data.user) {
-        // Create profile - user_id references auth.users.id and is used by RLS policies
-        // org_id is required (NOT NULL) and uses default organization UUID
-        const defaultOrgId = '00000000-0000-0000-0000-000000000000';
-        
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .upsert({
-            user_id: data.user.id,
-            email: email,
-            full_name: name,
-            display_name: name,
-            role: selectedRole,
-            org_id: defaultOrgId,
-          }, {
-            onConflict: 'user_id'
-          });
-
-        if (profileError) {
-          console.error('Error creating profile:', profileError);
-          throw new Error(`Failed to create profile: ${profileError.message}`);
-        }
-
-        setSuccess(`Registration successful as ${selectedRole.toUpperCase()}! You can now log in with your credentials.`);
-        setIsSignUp(false);
-        setPassword('');
-        setConfirmPassword('');
-        setPasscode('');
-        setName('');
-      }
+      await signUp(email, password);
+      setSuccess('Account created. You can sign in now.');
+      setIsSignUp(false);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred during registration');
+      setError(err instanceof Error ? err.message : 'Registration failed');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const toggleAuthMode = () => {
-    setIsSignUp(!isSignUp);
-    setError(null);
-    setSuccess(null);
-  };
-
-  const handleRoleSelect = (role: UserRole) => {
-    setSelectedRole(role);
-    setError(null);
-    setSuccess(null);
-  };
-
-  const _getRoleColor = (_role: UserRole) => {
-    if (_role === 'ceo') return 'from-slate-900 via-slate-800 to-slate-900';
-    if (_role === 'cto') return 'from-slate-900 via-blue-950 to-slate-900';
-    return 'from-slate-600 to-gray-600';
-  };
-
-  const _getRoleBorderColor = (_role: UserRole) => {
-    if (_role === 'ceo') return 'border-amber-500';
-    if (_role === 'cto') return 'border-cyan-500';
-    return 'border-slate-500';
-  };
-
-  const _getRoleTextColor = (_role: UserRole) => {
-    if (_role === 'ceo') return 'text-amber-600';
-    if (_role === 'cto') return 'text-cyan-600';
-    return 'text-slate-600';
-  };
-
-  const _getRoleAccentColor = (_role: UserRole) => {
-    if (_role === 'ceo') return 'from-amber-400 via-amber-500 to-yellow-600';
-    if (_role === 'cto') return 'from-cyan-400 via-blue-500 to-blue-600';
-    return 'from-slate-400 to-gray-500';
-  };
-
-  if (!isSupabaseConfigured && !selectedRole) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-black via-slate-900 to-slate-800 flex items-center justify-center p-4 relative overflow-hidden">
-        {/* Premium Background Pattern */}
-        <div className="absolute inset-0 opacity-5" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M0 0h40v40H0z'/%3E%3Cpath d='M40 40h40v40H40z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-        }}></div>
-
-        {/* Ambient Lighting Effects */}
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-gradient-to-br from-blue-500/10 to-cyan-500/5 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-gradient-to-br from-amber-500/10 to-yellow-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="relative w-full max-w-5xl"
-        >
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-amber-600/10 backdrop-blur-xl border-2 border-amber-500/30 rounded-2xl p-6 mb-10 shadow-2xl"
-          >
-            <div className="flex items-center space-x-4">
-              <div className="flex-shrink-0 w-12 h-12 bg-amber-500/20 rounded-xl flex items-center justify-center border border-amber-500/30">
-                <svg className="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div>
-                <h2 className="text-xl font-bold text-amber-300 mb-1">Demo Mode Available</h2>
-                <p className="text-amber-100/80 text-sm leading-relaxed">Supabase is not configured. Select a role to explore the dashboard with sample data.</p>
-              </div>
-            </div>
-          </motion.div>
-
-          <div className="text-center mb-16">
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.5, type: "spring", stiffness: 200 }}
-              className="flex justify-center mb-8"
-            >
-              <img
-                src="/0001MPB.Health-Logo-png-1.png"
-                alt="MPB Health"
-                className="h-16 w-auto drop-shadow-2xl"
-              />
-            </motion.div>
-            <motion.h1
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="text-5xl font-bold text-white mb-4 tracking-tight"
-            >
-              Welcome to <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent">MPB Health</span>
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className="text-slate-300 text-lg font-medium"
-            >
-              Select your role to continue in demo mode
-            </motion.p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-6">
-            <motion.button
-              onClick={() => {
-                window.location.href = '/?demo_role=ceo';
-              }}
-              whileHover={{ scale: 1.02, y: -5 }}
-              whileTap={{ scale: 0.98 }}
-              className="group relative bg-gradient-to-br from-slate-900 via-slate-800 to-black backdrop-blur-sm rounded-2xl shadow-2xl p-8 border-2 border-amber-500/30 hover:border-amber-500 transition-all duration-300 overflow-hidden"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-amber-400/5 via-transparent to-yellow-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <div className="absolute -top-4 -right-4 w-32 h-32 bg-gradient-to-br from-amber-400 to-yellow-600 rounded-full opacity-10 blur-2xl group-hover:opacity-20 transition-opacity"></div>
-
-              <div className="relative">
-                <div className="w-20 h-20 bg-gradient-to-br from-amber-500 via-amber-600 to-yellow-700 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-xl group-hover:shadow-amber-500/50 transition-all duration-300 border border-amber-400/30">
-                  <Briefcase className="w-10 h-10 text-white" />
-                </div>
-                <div className="mb-3">
-                  <div className="inline-block px-3 py-1 bg-amber-500/20 border border-amber-500/30 rounded-full mb-3">
-                    <span className="text-xs font-bold text-amber-400 tracking-wider uppercase">Executive Suite</span>
-                  </div>
-                </div>
-                <h2 className="text-3xl font-bold text-white mb-3 tracking-tight">CEO Demo</h2>
-                <p className="text-slate-300 mb-6 text-sm leading-relaxed">
-                  Strategic command center with executive insights, comprehensive analytics, and board-level intelligence
-                </p>
-                <div className="flex items-center justify-center text-amber-400 font-semibold group-hover:text-amber-300 transition-colors">
-                  <span className="tracking-wide">Try Executive Demo</span>
-                  <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-                  </svg>
-                </div>
-              </div>
-            </motion.button>
-
-            <motion.button
-              onClick={() => {
-                window.location.href = '/?demo_role=cto';
-              }}
-              whileHover={{ scale: 1.02, y: -5 }}
-              whileTap={{ scale: 0.98 }}
-              className="group relative bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border-2 border-cyan-500/30 hover:border-cyan-400 transition-all duration-300 overflow-hidden"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/5 via-transparent to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <div className="absolute -top-4 -left-4 w-32 h-32 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-full opacity-10 blur-2xl group-hover:opacity-20 transition-opacity"></div>
-
-              <div className="relative">
-                <div className="w-20 h-20 bg-gradient-to-br from-cyan-500 via-blue-600 to-blue-700 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-xl group-hover:shadow-cyan-500/50 transition-all duration-300 border border-cyan-400/30">
-                  <Code2 className="w-10 h-10 text-white" />
-                </div>
-                <div className="mb-3">
-                  <div className="inline-block px-3 py-1 bg-cyan-500/20 border border-cyan-500/30 rounded-full mb-3">
-                    <span className="text-xs font-bold text-cyan-400 tracking-wider uppercase">Technical Operations</span>
-                  </div>
-                </div>
-                <h2 className="text-3xl font-bold text-white mb-3 tracking-tight">CTO Demo</h2>
-                <p className="text-slate-300 mb-6 text-sm leading-relaxed">
-                  Technical command center with engineering metrics, infrastructure monitoring, and operational intelligence
-                </p>
-                <div className="flex items-center justify-center text-cyan-400 font-semibold group-hover:text-cyan-300 transition-colors">
-                  <span className="tracking-wide">Try Technical Demo</span>
-                  <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-                  </svg>
-                </div>
-              </div>
-            </motion.button>
-          </div>
-
-          <SecurityBadges />
-
-          <div className="mt-6 text-center">
-            <p className="text-slate-400 text-sm">
-              © 2025 MPB Health. All rights reserved.
-            </p>
-          </div>
-        </motion.div>
-      </div>
-    );
-  }
-
-  if (!selectedRole) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-black via-slate-900 to-slate-800 flex items-center justify-center p-4 relative overflow-hidden">
-        {/* Premium Background Pattern */}
-        <div className="absolute inset-0 opacity-5" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M0 0h40v40H0z'/%3E%3Cpath d='M40 40h40v40H40z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-        }}></div>
-
-        {/* Ambient Lighting Effects */}
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-gradient-to-br from-blue-500/10 to-cyan-500/5 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-gradient-to-br from-amber-500/10 to-yellow-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="relative w-full max-w-5xl"
-        >
-          <div className="text-center mb-16">
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.5, type: "spring", stiffness: 200 }}
-              className="flex justify-center mb-8"
-            >
-              <img
-                src="/0001MPB.Health-Logo-png-1.png"
-                alt="MPB Health"
-                className="h-16 w-auto drop-shadow-2xl"
-              />
-            </motion.div>
-            <motion.h1
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="text-5xl font-bold text-white mb-4 tracking-tight"
-            >
-              <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent">Innovation Never Sleeps</span> — Neither Do We.
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className="text-slate-300 text-lg font-medium"
-            >
-              Select your role to access your Champion Executive Portal
-            </motion.p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-6">
-            <motion.button
-              onClick={() => handleRoleSelect('ceo')}
-              whileHover={{ scale: 1.02, y: -5 }}
-              whileTap={{ scale: 0.98 }}
-              className="group relative bg-gradient-to-br from-slate-900 via-slate-800 to-black backdrop-blur-sm rounded-2xl shadow-2xl p-8 border-2 border-amber-500/30 hover:border-amber-500 transition-all duration-300 overflow-hidden"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-amber-400/5 via-transparent to-yellow-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <div className="absolute -top-4 -right-4 w-32 h-32 bg-gradient-to-br from-amber-400 to-yellow-600 rounded-full opacity-10 blur-2xl group-hover:opacity-20 transition-opacity"></div>
-
-              <div className="relative">
-                <div className="w-20 h-20 bg-gradient-to-br from-amber-500 via-amber-600 to-yellow-700 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-xl group-hover:shadow-amber-500/50 transition-all duration-300 border border-amber-400/30">
-                  <Briefcase className="w-10 h-10 text-white" />
-                </div>
-                <div className="mb-3">
-                  <div className="inline-block px-3 py-1 bg-amber-500/20 border border-amber-500/30 rounded-full mb-3">
-                    <span className="text-xs font-bold text-amber-400 tracking-wider uppercase">Executive Suite</span>
-                  </div>
-                </div>
-                <h2 className="text-3xl font-bold text-white mb-3 tracking-tight">CEO Portal</h2>
-                <p className="text-slate-300 mb-6 text-sm leading-relaxed">
-                  Strategic command center with executive insights, comprehensive analytics, and board-level intelligence
-                </p>
-                <div className="flex items-center justify-center text-amber-400 font-semibold group-hover:text-amber-300 transition-colors">
-                  <span className="tracking-wide">Access Executive Suite</span>
-                  <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-                  </svg>
-                </div>
-              </div>
-            </motion.button>
-
-            <motion.button
-              onClick={() => handleRoleSelect('cto')}
-              whileHover={{ scale: 1.02, y: -5 }}
-              whileTap={{ scale: 0.98 }}
-              className="group relative bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border-2 border-cyan-500/30 hover:border-cyan-400 transition-all duration-300 overflow-hidden"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/5 via-transparent to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <div className="absolute -top-4 -left-4 w-32 h-32 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-full opacity-10 blur-2xl group-hover:opacity-20 transition-opacity"></div>
-
-              <div className="relative">
-                <div className="w-20 h-20 bg-gradient-to-br from-cyan-500 via-blue-600 to-blue-700 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-xl group-hover:shadow-cyan-500/50 transition-all duration-300 border border-cyan-400/30">
-                  <Code2 className="w-10 h-10 text-white" />
-                </div>
-                <div className="mb-3">
-                  <div className="inline-block px-3 py-1 bg-cyan-500/20 border border-cyan-500/30 rounded-full mb-3">
-                    <span className="text-xs font-bold text-cyan-400 tracking-wider uppercase">Technical Operations</span>
-                  </div>
-                </div>
-                <h2 className="text-3xl font-bold text-white mb-3 tracking-tight">CTO Portal</h2>
-                <p className="text-slate-300 mb-6 text-sm leading-relaxed">
-                  Technical command center with engineering metrics, infrastructure monitoring, and operational intelligence
-                </p>
-                <div className="flex items-center justify-center text-cyan-400 font-semibold group-hover:text-cyan-300 transition-colors">
-                  <span className="tracking-wide">Access Technical Suite</span>
-                  <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-                  </svg>
-                </div>
-              </div>
-            </motion.button>
-          </div>
-
-          <SecurityBadges />
-
-          <div className="mt-6 text-center">
-            <p className="text-slate-400 text-sm">
-              © 2025 MPB Health. All rights reserved.
-            </p>
-          </div>
-        </motion.div>
-      </div>
-    );
-  }
-
   return (
-    <div className={`min-h-screen bg-gradient-to-br ${selectedRole === 'ceo' ? 'from-black via-slate-900 to-slate-800' : 'from-slate-950 via-blue-950 to-slate-900'} flex items-center justify-center p-4 relative overflow-hidden`}>
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-10" style={{
-        backgroundImage: `url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23${selectedRole === 'ceo' ? 'fbbf24' : '06b6d4'}' fill-opacity='0.05'%3E%3Cpath d='M40 0L40 40L0 40z'/%3E%3Cpath d='M80 40L40 40L40 80z' transform='rotate(180 60 60)'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-      }}></div>
-      {selectedRole === 'ceo' ? (
-        <>
-          <div className="absolute top-20 left-20 w-64 h-64 bg-gradient-to-br from-amber-500/10 to-yellow-600/5 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-br from-amber-400/10 to-yellow-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-        </>
-      ) : (
-        <>
-          <div className="absolute top-20 right-20 w-64 h-64 bg-gradient-to-br from-cyan-500/10 to-blue-600/5 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-20 left-20 w-80 h-80 bg-gradient-to-br from-blue-500/10 to-cyan-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-        </>
-      )}
-      
+    <div className="relative flex min-h-[100dvh] items-center justify-center bg-[#050505] px-4 py-12">
+      <div className="pointer-events-none fixed inset-0">
+        <div className="absolute left-1/4 top-0 h-80 w-80 rounded-full bg-emerald-500/15 blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 h-96 w-96 rounded-full bg-violet-500/10 blur-3xl" />
+      </div>
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="relative w-full max-w-lg"
+        transition={{ duration: 0.8, ease: [0.32, 0.72, 0, 1] }}
+        className="relative w-full max-w-md"
       >
-        {/* Executive Login Card */}
-        <div className={`${selectedRole === 'ceo' ? 'bg-gradient-to-br from-slate-900/95 via-slate-800/95 to-slate-900/95 border-amber-500/20' : 'bg-gradient-to-br from-slate-900/95 via-blue-950/95 to-slate-900/95 border-cyan-500/20'} backdrop-blur-xl rounded-3xl shadow-2xl p-10 border-2`}>
-          {/* Header */}
-          <div className="text-center mb-10">
-            <button
-              onClick={() => setSelectedRole(null)}
-              className={`absolute top-6 left-6 ${selectedRole === 'ceo' ? 'text-amber-400/60 hover:text-amber-400' : 'text-cyan-400/60 hover:text-cyan-400'} transition-colors text-sm flex items-center space-x-1 font-medium`}
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-              <span>Change Role</span>
-            </button>
+        <p className="mb-4 text-center text-[10px] uppercase tracking-[0.22em] text-white/40">Aryx Chief of Staff</p>
+        <div className="rounded-[2rem] bg-white/5 p-1.5 ring-1 ring-white/10">
+          <div className="rounded-[calc(2rem-0.375rem)] bg-[#0a0a0a] p-8 shadow-[inset_0_1px_1px_rgba(255,255,255,0.12)]">
+            <h1 className="text-3xl font-semibold text-white">{isSignUp ? 'Create access' : 'Welcome back'}</h1>
+            <p className="mt-2 text-sm text-white/45">One login. One COS workspace.</p>
 
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className={`w-20 h-20 bg-gradient-to-br ${selectedRole === 'ceo' ? 'from-amber-500 via-amber-600 to-yellow-700' : 'from-cyan-500 via-blue-600 to-blue-700'} rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-xl border-2 ${selectedRole === 'ceo' ? 'border-amber-400/30' : 'border-cyan-400/30'}`}
-            >
-              {selectedRole === 'ceo' ? (
-                <Briefcase className="w-10 h-10 text-white" />
-              ) : (
-                <Code2 className="w-10 h-10 text-white" />
-              )}
-            </motion.div>
-            <div className={`inline-block px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase mb-4 ${selectedRole === 'ceo' ? 'text-amber-400 bg-amber-500/20 border border-amber-500/30' : 'text-cyan-400 bg-cyan-500/20 border border-cyan-500/30'}`}>
-              {selectedRole === 'ceo' ? 'Executive Suite' : 'Technical Operations'}
-            </div>
-            <h1 className="text-3xl font-bold mb-3 tracking-tight text-white">
-              {isSignUp ? `Create ${selectedRole === 'ceo' ? 'Executive' : 'Technical'} Account` : 'Welcome Back'}
-            </h1>
-            <p className="text-sm leading-relaxed text-slate-300">
-              {isSignUp
-                ? `Join the MPB Health ${selectedRole === 'ceo' ? 'Executive Leadership' : 'Technical Leadership'} Portal`
-                : `Access your ${selectedRole === 'ceo' ? 'Executive Command Center' : 'Technical Command Center'}`}
-            </p>
-          </div>
+            {!isSupabaseConfigured && (
+              <p className="mt-4 text-sm text-amber-200/80">Supabase is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.</p>
+            )}
 
-          {/* Error/Success Messages */}
-          {error && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center space-x-3"
-            >
-              <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
-              <p className="text-sm text-red-700">{error}</p>
-            </motion.div>
-          )}
-
-          {success && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-lg flex items-center space-x-3"
-            >
-              <CheckCircle className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-              <p className="text-sm text-emerald-700">{success}</p>
-            </motion.div>
-          )}
-
-          {/* Login Form */}
-          <form onSubmit={isSignUp ? handleSignUp : handleLogin} className="space-y-6">
-            {/* Name Field - Only for Sign Up */}
-            {isSignUp && (
-              <div>
-                <label htmlFor="name" className="block text-sm font-semibold mb-2 text-slate-200">
-                  Full Name
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <User className={`h-5 w-5 ${selectedRole === 'ceo' ? 'text-amber-400/40' : 'text-cyan-400/40'}`} />
-                  </div>
-                  <input
-                    id="name"
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                    className={`block w-full pl-12 pr-4 py-3.5 rounded-xl transition-all bg-slate-800/50 border-2 text-white placeholder-slate-400 ${
-                      selectedRole === 'ceo'
-                        ? 'border-amber-500/20 focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20'
-                        : 'border-cyan-500/20 focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20'
-                    }`}
-                    placeholder="Enter your full name"
-                  />
-                </div>
+            {error && (
+              <div className="mt-4 flex items-center gap-2 text-sm text-red-300">
+                <AlertCircle className="h-4 w-4" /> {error}
+              </div>
+            )}
+            {success && (
+              <div className="mt-4 flex items-center gap-2 text-sm text-emerald-300">
+                <CheckCircle className="h-4 w-4" /> {success}
               </div>
             )}
 
-            {/* Email Field */}
-            <div>
-              <label htmlFor="email" className="block text-sm font-semibold mb-2 text-slate-200">
-                Email Address
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Mail className={`h-5 w-5 ${selectedRole === 'ceo' ? 'text-amber-400/40' : 'text-cyan-400/40'}`} />
+            <form onSubmit={isSignUp ? handleSignUp : handleLogin} className="mt-8 space-y-5">
+              <label className="block text-sm text-white/70">
+                Email
+                <div className="relative mt-2">
+                  <Mail className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/30" />
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className="w-full rounded-full border border-white/10 bg-white/5 py-3 pl-11 pr-4 text-white outline-none"
+                  />
                 </div>
-                <input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className={`block w-full pl-12 pr-4 py-3.5 rounded-xl transition-all bg-slate-800/50 border-2 text-white placeholder-slate-400 ${
-                    selectedRole === 'ceo'
-                      ? 'border-amber-500/20 focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20'
-                      : 'border-cyan-500/20 focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20'
-                  }`}
-                  placeholder="Enter your email"
-                />
-              </div>
-            </div>
-
-            {/* Password Field */}
-            <div>
-              <label htmlFor="password" className="block text-sm font-semibold mb-2 text-slate-200">
+              </label>
+              <label className="block text-sm text-white/70">
                 Password
+                <div className="relative mt-2">
+                  <Lock className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/30" />
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    className="w-full rounded-full border border-white/10 bg-white/5 py-3 pl-11 pr-12 text-white outline-none"
+                  />
+                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40">
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
               </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Lock className={`h-5 w-5 ${selectedRole === 'ceo' ? 'text-amber-400/40' : 'text-cyan-400/40'}`} />
-                </div>
-                <input
-                  id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className={`block w-full pl-12 pr-14 py-3.5 rounded-xl transition-all bg-slate-800/50 border-2 text-white placeholder-slate-400 ${
-                    selectedRole === 'ceo'
-                      ? 'border-amber-500/20 focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20'
-                      : 'border-cyan-500/20 focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20'
-                  }`}
-                  placeholder="Enter your password"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-4 flex items-center"
-                >
-                  {showPassword ? (
-                    <EyeOff className={`h-5 w-5 ${selectedRole === 'ceo' ? 'text-amber-400/60 hover:text-amber-400' : 'text-cyan-400/60 hover:text-cyan-400'} transition-colors`} />
-                  ) : (
-                    <Eye className={`h-5 w-5 ${selectedRole === 'ceo' ? 'text-amber-400/60 hover:text-amber-400' : 'text-cyan-400/60 hover:text-cyan-400'} transition-colors`} />
-                  )}
-                </button>
-              </div>
-            </div>
-
-            {/* Confirm Password Field - Only for Sign Up */}
-            {isSignUp && (
-              <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-semibold mb-2 text-slate-200">
-                  Confirm Password
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Lock className={`h-5 w-5 ${selectedRole === 'ceo' ? 'text-amber-400/40' : 'text-cyan-400/40'}`} />
-                  </div>
-                  <input
-                    id="confirmPassword"
-                    type={showPassword ? 'text' : 'password'}
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
-                    className={`block w-full pl-12 pr-4 py-3.5 rounded-xl transition-all bg-slate-800/50 border-2 text-white placeholder-slate-400 ${
-                      selectedRole === 'ceo'
-                        ? 'border-amber-500/20 focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20'
-                        : 'border-cyan-500/20 focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20'
-                    }`}
-                    placeholder="Confirm your password"
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* Passcode Field - Only for Sign Up */}
-            {isSignUp && (
-              <div>
-                <label htmlFor="passcode" className="block text-sm font-semibold mb-2 text-slate-200">
-                  Registration Passcode
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <KeyRound className={`h-5 w-5 ${selectedRole === 'ceo' ? 'text-amber-400/40' : 'text-cyan-400/40'}`} />
-                  </div>
-                  <input
-                    id="passcode"
-                    type={showPassword ? 'text' : 'password'}
-                    value={passcode}
-                    onChange={(e) => setPasscode(e.target.value)}
-                    required
-                    className={`block w-full pl-12 pr-4 py-3.5 rounded-xl transition-all bg-slate-800/50 border-2 text-white placeholder-slate-400 ${
-                      selectedRole === 'ceo'
-                        ? 'border-amber-500/20 focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20'
-                        : 'border-cyan-500/20 focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20'
-                    }`}
-                    placeholder="Enter registration passcode"
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* Remember Me & Forgot Password */}
-            {!isSignUp && (
-              <div className="flex items-center justify-between pt-2">
-                <div className="flex items-center">
-                  <input
-                    id="remember-me"
-                    name="remember-me"
-                    type="checkbox"
-                    checked={rememberMe}
-                    onChange={(e) => setRememberMe(e.target.checked)}
-                    className={`h-4 w-4 rounded border-2 transition-colors bg-slate-800 ${
-                      selectedRole === 'ceo'
-                        ? 'text-amber-500 focus:ring-amber-500 border-amber-500/30'
-                        : 'text-cyan-500 focus:ring-cyan-500 border-cyan-500/30'
-                    }`}
-                  />
-                  <label htmlFor="remember-me" className="ml-2 block text-sm font-medium text-slate-300">
-                    Remember me
-                  </label>
-                </div>
-                <button
-                  type="button"
-                  className={`text-sm font-semibold transition-colors ${
-                    selectedRole === 'ceo'
-                      ? 'text-amber-400 hover:text-amber-300'
-                      : 'text-cyan-400 hover:text-cyan-300'
-                  }`}
-                >
-                  Forgot password?
-                </button>
-              </div>
-            )}
-
-            {/* Submit Button */}
-            <motion.button
-              type="submit"
-              disabled={isLoading}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className={`w-full flex justify-center py-4 px-6 border-2 rounded-xl shadow-lg text-base font-bold transition-all duration-300 ${
-                selectedRole === 'ceo'
-                  ? 'bg-gradient-to-r from-amber-500 via-amber-600 to-yellow-600 hover:from-amber-400 hover:via-amber-500 hover:to-yellow-500 text-white border-amber-400/30 shadow-amber-500/20 hover:shadow-amber-500/40'
-                  : 'bg-gradient-to-r from-cyan-500 via-blue-600 to-blue-700 hover:from-cyan-400 hover:via-blue-500 hover:to-blue-600 text-white border-cyan-400/30 shadow-cyan-500/20 hover:shadow-cyan-500/40'
-              } disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-4 ${
-                selectedRole === 'ceo' ? 'focus:ring-amber-500/30' : 'focus:ring-cyan-500/30'
-              }`}
-            >
-              {isLoading ? (
-                <div className="flex items-center space-x-2">
-                  <div className="w-5 h-5 border-3 border-white border-t-transparent rounded-full animate-spin"></div>
-                  <span>{isSignUp ? 'Creating account...' : 'Signing in...'}</span>
-                </div>
-              ) : (
-                <span className="tracking-wide">{isSignUp ? `Create ${selectedRole === 'ceo' ? 'Executive' : 'Technical'} Account` : `Access ${selectedRole === 'ceo' ? 'Executive' : 'Technical'} Suite`}</span>
-              )}
-            </motion.button>
-            
-            {/* Toggle between Login/Signup */}
-            <div className="text-center mt-6 pt-6 border-t border-slate-700/30">
+              <label className="flex items-center gap-2 text-xs text-white/40">
+                <input type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />
+                Remember email
+              </label>
               <button
-                type="button"
-                onClick={toggleAuthMode}
-                className={`text-sm font-semibold transition-colors ${
-                  selectedRole === 'ceo'
-                    ? 'text-amber-400 hover:text-amber-300'
-                    : 'text-cyan-400 hover:text-cyan-300'
-                }`}
+                type="submit"
+                disabled={isLoading || !isSupabaseConfigured}
+                className="w-full rounded-full bg-white py-3 text-sm font-medium text-black transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] active:scale-[0.98] disabled:opacity-50"
               >
-                {isSignUp
-                  ? 'Already have an account? Sign In'
-                  : 'Need an account? Sign Up'}
+                {isLoading ? 'Working…' : isSignUp ? 'Create account' : 'Sign in'}
               </button>
-            </div>
-          </form>
-
-          {/* Security & Footer */}
-          <div className="mt-8 pt-6 border-t border-slate-700/30">
-            <div className="flex items-center justify-center space-x-4 mb-4">
-              <div className="flex items-center space-x-1.5">
-                <Shield className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="text-xs font-medium text-slate-400">AES-256</span>
-              </div>
-              <div className="w-1 h-1 rounded-full bg-slate-600"></div>
-              <div className="flex items-center space-x-1.5">
-                <ShieldCheck className="w-3.5 h-3.5 text-blue-400" />
-                <span className="text-xs font-medium text-slate-400">HIPAA</span>
-              </div>
-              <div className="w-1 h-1 rounded-full bg-slate-600"></div>
-              <div className="flex items-center space-x-1.5">
-                <Fingerprint className="w-3.5 h-3.5 text-purple-400" />
-                <span className="text-xs font-medium text-slate-400">SOC 2</span>
-              </div>
-            </div>
-            <p className="text-xs font-medium text-slate-500 text-center">
-              © 2025 MPB Health. All rights reserved.
-            </p>
+            </form>
+            <button
+              type="button"
+              onClick={() => setIsSignUp(!isSignUp)}
+              className="mt-6 w-full text-center text-xs text-white/40"
+            >
+              {isSignUp ? 'Already have access? Sign in' : 'Need an account? Register'}
+            </button>
           </div>
         </div>
-
-        {/* Premium Floating Elements */}
-        <div className={`absolute -top-8 -right-8 w-40 h-40 bg-gradient-to-br ${selectedRole === 'ceo' ? 'from-amber-400/20 via-amber-500/10 to-yellow-600/20' : 'from-cyan-400/20 via-blue-500/10 to-blue-600/20'} rounded-full blur-3xl animate-pulse`}></div>
-        <div className={`absolute -bottom-8 -left-8 w-48 h-48 bg-gradient-to-br ${selectedRole === 'ceo' ? 'from-yellow-400/20 via-amber-500/10 to-amber-600/20' : 'from-blue-400/20 via-cyan-500/10 to-cyan-600/20'} rounded-full blur-3xl animate-pulse`} style={{ animationDelay: '1s' }}></div>
       </motion.div>
     </div>
   );

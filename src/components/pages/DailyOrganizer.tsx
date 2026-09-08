@@ -16,7 +16,7 @@ import OrganizerNotes from '../organizer/OrganizerNotes';
 import OrganizerTasks from '../organizer/OrganizerTasks';
 
 interface DailyOrganizerProps {
-  dashboardRole: 'ceo' | 'cto';
+  dashboardRole: 'ceo' | 'cto' | 'cos';
 }
 
 export default function DailyOrganizer({ dashboardRole }: DailyOrganizerProps) {

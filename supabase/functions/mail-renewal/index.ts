@@ -1,11 +1,22 @@
 import { corsHeaders } from '../_shared/cors.ts';
 import { serviceClient } from '../_shared/auth.ts';
 import { decryptToken } from '../_shared/crypto.ts';
+import { requireCronSecret } from '../_shared/secrets.ts';
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
+
+  if (req.method !== 'POST' && req.method !== 'GET') {
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+      status: 405,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  const denied = requireCronSecret(req);
+  if (denied) return denied;
 
   const admin = serviceClient();
   const horizon = new Date(Date.now() + 12 * 60 * 60 * 1000).toISOString();
@@ -17,7 +28,7 @@ Deno.serve(async (req) => {
   if (error) {
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json' },
     });
   }
 
@@ -63,7 +74,8 @@ Deno.serve(async (req) => {
         last_sync_at: new Date().toISOString(),
       }).eq('id', row.mail_account_id);
       renewed += 1;
-    } catch {
+    } catch (cause) {
+      console.error('mail-renewal row failed', row.id, cause);
       failed += 1;
       const nextCount = (row.renewal_failure_count || 0) + 1;
       await admin.from('mail_subscriptions').update({
@@ -79,6 +91,6 @@ Deno.serve(async (req) => {
   }
 
   return new Response(JSON.stringify({ due: rows.length, renewed, failed }), {
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json' },
   });
 });

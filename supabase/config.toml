@@ -64,9 +64,11 @@ verify_jwt = true
 
 [functions.mail-renewal]
 verify_jwt = false
+# Authenticated by MAIL_CRON_SECRET (Authorization: Bearer …). Fail closed if unset.
 
 [functions.mail-webhook]
 verify_jwt = false
+# Graph handshake is public; notifications require matching clientState + subscriptionId.
 
 [functions.send-auth-email]
 verify_jwt = false

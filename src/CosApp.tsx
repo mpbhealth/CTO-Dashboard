@@ -5,8 +5,6 @@ import { useAuth } from './contexts/AuthContext';
 import Sidebar from './components/Sidebar';
 import { AppShell } from './components/shell/AppShell';
 import { buildRouteToTabMap, getNavigationForRole } from './config/navigation';
-import { AIAssistantProvider } from './providers/AIAssistantProvider';
-import { GlobalAIAssistant } from './components/ai/GlobalAIAssistant';
 import { Breadcrumbs } from './components/ui/Breadcrumbs';
 import { KeyboardShortcutsModal } from './components/ui/KeyboardShortcutsModal';
 import { SessionTimeoutWarning } from './components/security/SessionTimeoutWarning';
@@ -40,7 +38,7 @@ const Projects = lazy(() => import('./components/pages/Projects'));
 const Assignments = lazy(() => import('./components/pages/Assignments'));
 const Notepad = lazy(() => import('./components/pages/Notepad'));
 
-const Operations = lazy(() => import('./components/pages/ctod/CTOOperations').then(m => ({ default: m.CTOOperations })));
+const Operations = lazy(() => import('./components/pages/CosOperations'));
 const Compliance = lazy(() => import('./components/pages/ctod/compliance/CTOComplianceDashboard').then(m => ({ default: m.CTOComplianceDashboard })));
 const SaaSSpend = lazy(() => import('./components/pages/SaaSSpend'));
 const ITSupport = lazy(() => import('./components/pages/ITSupport'));
@@ -182,17 +180,14 @@ function CosContent() {
 
 export default function CosApp() {
   return (
-    <AIAssistantProvider>
-      <AppShell>
-        <MFARequiredGuard>
-          <CosContent />
-        </MFARequiredGuard>
-        <GlobalAIAssistant />
-        <KeyboardShortcutsModal />
-        <SessionTimeoutWarning />
-        <UpdateBanner />
-        <InstallAppBanner />
-      </AppShell>
-    </AIAssistantProvider>
+    <AppShell>
+      <MFARequiredGuard>
+        <CosContent />
+      </MFARequiredGuard>
+      <KeyboardShortcutsModal />
+      <SessionTimeoutWarning />
+      <UpdateBanner />
+      <InstallAppBanner />
+    </AppShell>
   );
 }

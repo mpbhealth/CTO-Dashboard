@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
+import { shouldQueryCosTable } from '@/lib/schema/cosPublicTables';
 import { useApps, App } from './useApps';
 
 /**
@@ -25,6 +26,10 @@ export interface PinnedApp extends App {
  * Fetch pinned apps for the current user
  */
 async function fetchPinnedApps(userId: string): Promise<UserAppPin[]> {
+  if (!shouldQueryCosTable('user_app_pins')) {
+    return [];
+  }
+
   try {
     const { data, error } = await supabase
       .from('user_app_pins')
@@ -83,22 +88,25 @@ export function usePinnedApps() {
     staleTime: 1000 * 60 * 5,
   });
 
-  // Combine pins with app data
-  const pinnedApps: PinnedApp[] = pins
-    .map((pin) => {
-      const app = apps.find((a) => a.id === pin.app_id);
-      if (!app) return null;
-      return {
-        ...app,
-        pin_sort_order: pin.sort_order,
-      };
-    })
-    .filter((app): app is PinnedApp => app !== null)
-    .sort((a, b) => a.pin_sort_order - b.pin_sort_order);
+  const remotePins = shouldQueryCosTable('user_app_pins');
+  const pinnedApps: PinnedApp[] = remotePins
+    ? pins
+        .map((pin) => {
+          const app = apps.find((a) => a.id === pin.app_id);
+          if (!app) return null;
+          return {
+            ...app,
+            pin_sort_order: pin.sort_order,
+          };
+        })
+        .filter((app): app is PinnedApp => app !== null)
+        .sort((a, b) => a.pin_sort_order - b.pin_sort_order)
+    : apps.slice(0, 8).map((app, index) => ({ ...app, pin_sort_order: index }));
 
   // Pin app mutation
   const pinMutation = useMutation({
     mutationFn: async (appId: string) => {
+      if (!shouldQueryCosTable('user_app_pins')) return;
       if (!user?.id) throw new Error('Not authenticated');
 
       // Get max sort order
@@ -121,6 +129,7 @@ export function usePinnedApps() {
   // Unpin app mutation
   const unpinMutation = useMutation({
     mutationFn: async (appId: string) => {
+      if (!shouldQueryCosTable('user_app_pins')) return;
       if (!user?.id) throw new Error('Not authenticated');
 
       const { error } = await supabase
@@ -139,6 +148,7 @@ export function usePinnedApps() {
   // Reorder pins mutation
   const reorderMutation = useMutation({
     mutationFn: async (orderedAppIds: string[]) => {
+      if (!shouldQueryCosTable('user_app_pins')) return;
       if (!user?.id) throw new Error('Not authenticated');
 
       // Update sort order for each app

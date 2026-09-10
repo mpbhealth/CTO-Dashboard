@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
+import { shouldQueryCosTable } from '../lib/schema/cosPublicTables';
 
 export interface Department {
   id: string;
@@ -55,6 +56,12 @@ export function useDepartments() {
   const [error, setError] = useState<string | null>(null);
 
   const fetchDepartments = useCallback(async () => {
+    if (!shouldQueryCosTable('departments')) {
+      setData([]);
+      setError(null);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     try {
       const { data: departments, error: deptError } = await supabase
@@ -103,6 +110,12 @@ export function useEmployeeProfiles() {
   const [error, setError] = useState<string | null>(null);
 
   const fetchEmployees = useCallback(async () => {
+    if (!shouldQueryCosTable('employee_profiles')) {
+      setData([]);
+      setError(null);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     try {
       const { data: employees, error: empError } = await supabase
@@ -159,6 +172,12 @@ export function useDepartmentMetrics() {
   const [error, setError] = useState<string | null>(null);
 
   const fetchMetrics = useCallback(async () => {
+    if (!shouldQueryCosTable('department_metrics')) {
+      setData([]);
+      setError(null);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     try {
       const { data: metrics, error: metricsError } = await supabase
@@ -210,6 +229,12 @@ export function usePolicyDocuments() {
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
+    if (!shouldQueryCosTable('policy_documents')) {
+      setData([]);
+      setError(null);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     try {
       const { data: policies, error: policiesError } = await supabase
@@ -248,6 +273,12 @@ export function useDepartmentRelationships() {
   const [error, setError] = useState<string | null>(null);
 
   const fetchRelationships = useCallback(async () => {
+    if (!shouldQueryCosTable('department_relationships')) {
+      setData([]);
+      setError(null);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     try {
       const { data: relationships, error: relError } = await supabase
@@ -288,6 +319,12 @@ export function useOrgChartPositions() {
   const [error, setError] = useState<string | null>(null);
 
   const fetchPositions = useCallback(async () => {
+    if (!shouldQueryCosTable('org_chart_positions')) {
+      setData([]);
+      setError(null);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     try {
       const { data: positions, error: posError } = await supabase

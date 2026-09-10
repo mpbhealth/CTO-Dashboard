@@ -1,21 +1,33 @@
 const DEFAULT_ORIGINS = [
   'http://localhost:5173',
   'http://127.0.0.1:5173',
+  'https://cos.aryxtech.com',
   'https://cto-dashboard-mpb-healths-projects.vercel.app',
 ];
 
-export const corsHeaders = {
-  'Access-Control-Allow-Origin': Deno.env.get('ALLOWED_ORIGIN') || DEFAULT_ORIGINS[0],
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-cron-secret',
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-};
+function allowedOrigins(): string[] {
+  const extra = (Deno.env.get('ALLOWED_ORIGIN') || '')
+    .split(',')
+    .map((value) => value.trim())
+    .filter(Boolean);
+  return [...new Set([...DEFAULT_ORIGINS, ...extra])];
+}
 
-export function corsHeadersFor(req: Request): Record<string, string> {
-  const origin = req.headers.get('Origin') || '';
-  const extra = (Deno.env.get('ALLOWED_ORIGIN') || '').split(',').map((s) => s.trim()).filter(Boolean);
-  const allowed = [...DEFAULT_ORIGINS, ...extra];
+function reflectOrigin(req?: Request): string {
+  const allowed = allowedOrigins();
+  const origin = req?.headers.get('Origin') || '';
+  if (origin && allowed.includes(origin)) return origin;
+  return allowed[0];
+}
+
+export function corsHeadersFor(req?: Request): Record<string, string> {
   return {
-    ...corsHeaders,
-    'Access-Control-Allow-Origin': allowed.includes(origin) ? origin : allowed[0],
+    'Access-Control-Allow-Origin': reflectOrigin(req),
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-cron-secret',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    Vary: 'Origin',
   };
 }
+
+/** Single-origin fallback. Browser handlers must use corsHeadersFor(req). */
+export const corsHeaders = corsHeadersFor();

@@ -5,6 +5,7 @@
 
 import { RealtimeChannel } from '@supabase/supabase-js';
 import { supabase, isSupabaseConfigured } from './supabase';
+import { shouldQueryCosTable } from './schema/cosPublicTables';
 import { logger } from './logger';
 import type { NotificationPayload, NotificationPriority } from '../types/notifications';
 
@@ -330,7 +331,11 @@ export class RealtimeNotificationManager {
     }
 
     // Determine which subscriptions to use based on role
-    const subscriptions = this.getSubscriptionsForRole();
+    const subscriptions = this.getSubscriptionsForRole().filter((config) => shouldQueryCosTable(config.table));
+    if (subscriptions.length === 0) {
+      this.isSubscribed = true;
+      return;
+    }
     let successCount = 0;
     let errorCount = 0;
 

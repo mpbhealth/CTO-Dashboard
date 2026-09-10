@@ -47,31 +47,10 @@ export default function Roadmap() {
   const loading = roadmapLoading || projectsLoading;
   const dataError = roadmapError || projectsError;
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600"></div>
-      </div>
-    );
-  }
-
-  if (dataError) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <p className="text-red-600 mb-4">Error loading data: {dataError}</p>
-          <p className="text-slate-600">Please make sure you're connected to Supabase.</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Get unique values for filters
   const quarters = useMemo(() => ['All', ...Array.from(new Set(roadmapItems.map(item => item.quarter).filter(Boolean) as string[])).sort()], [roadmapItems]);
   const statuses = ['All', 'Backlog', 'In Progress', 'Complete'];
   const departments = useMemo(() => ['All', ...Array.from(new Set(roadmapItems.map(item => item.department).filter(Boolean) as string[]))], [roadmapItems]);
 
-  // Filter roadmap items
   const filteredItems = useMemo(() => roadmapItems.filter(item => {
     const matchesSearch = searchTerm === '' ||
       (item.title || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -99,6 +78,25 @@ export default function Roadmap() {
       .some(_name => item.title.includes('Insurance AI Platform') || item.title.includes('Financial Optimizer') || item.title.includes('Health Tech Scanner'));
     return shouldRemove;
   }), [roadmapItems]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600"></div>
+      </div>
+    );
+  }
+
+  if (dataError) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">Error loading data: {dataError}</p>
+          <p className="text-slate-600">Please make sure you're connected to Supabase.</p>
+        </div>
+      </div>
+    );
+  }
 
   const getStatusIcon = (status: string) => {
     switch (status) {

@@ -1,4 +1,4 @@
-import { corsHeaders } from '../_shared/cors.ts';
+import { corsHeadersFor } from '../_shared/cors.ts';
 import { requireUser, serviceClient } from '../_shared/auth.ts';
 import { loadOrgLink, resolveActiveOrg } from '../_shared/org.ts';
 
@@ -32,8 +32,9 @@ function recordHref(kind: string, id: string): string {
 }
 
 Deno.serve(async (req) => {
+  const cors = corsHeadersFor(req);
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
+    return new Response('ok', { headers: cors });
   }
 
   try {
@@ -53,14 +54,14 @@ Deno.serve(async (req) => {
     if (!link?.crm_org_id) {
       return new Response(JSON.stringify({ error: 'crm_org_not_linked' }), {
         status: 403,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...cors, 'Content-Type': 'application/json' },
       });
     }
     const crmOrgId = link.crm_org_id;
     if (!UUID_RE.test(crmOrgId)) {
       return new Response(JSON.stringify({ error: 'crm_org_invalid' }), {
         status: 403,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...cors, 'Content-Type': 'application/json' },
       });
     }
     if (req.method !== 'POST') throw new Error('method_not_allowed');
@@ -97,7 +98,7 @@ Deno.serve(async (req) => {
         }))),
       ];
       return new Response(JSON.stringify({ records }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...cors, 'Content-Type': 'application/json' },
       });
     }
 
@@ -136,7 +137,7 @@ Deno.serve(async (req) => {
           href: recordHref(kind, row.id),
         },
       }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...cors, 'Content-Type': 'application/json' },
       });
     }
 
@@ -170,7 +171,7 @@ Deno.serve(async (req) => {
         candidates.push({ email, matches, ambiguous: matches.length !== 1 });
       }
       return new Response(JSON.stringify({ candidates }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...cors, 'Content-Type': 'application/json' },
       });
     }
 
@@ -178,7 +179,7 @@ Deno.serve(async (req) => {
   } catch (error) {
     return new Response(JSON.stringify({ error: error instanceof Error ? error.message : 'CRM proxy failed' }), {
       status: 400,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { ...cors, 'Content-Type': 'application/json' },
     });
   }
 });

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
+import { shouldQueryCosTable } from '../lib/schema/cosPublicTables';
 
 export function useAudits() {
   const [data, setData] = useState<Record<string, unknown>[]>([]);
@@ -9,6 +10,11 @@ export function useAudits() {
 
   useEffect(() => {
     async function fetchAudits() {
+      if (!shouldQueryCosTable('compliance_audits')) {
+        setData([]);
+        setLoading(false);
+        return;
+      }
       try {
         const { data: audits, error: auditsError } = await supabase
           .from('compliance_audits')
@@ -105,6 +111,11 @@ export function useTasks() {
 
   useEffect(() => {
     async function fetchTasks() {
+      if (!shouldQueryCosTable('compliance_tasks')) {
+        setData([]);
+        setLoading(false);
+        return;
+      }
       try {
         const { data: tasks, error } = await supabase
           .from('compliance_tasks')
@@ -135,6 +146,11 @@ export function useAuditLog() {
 
   useEffect(() => {
     async function fetchAuditLog() {
+      if (!shouldQueryCosTable('audit_logs')) {
+        setData([]);
+        setLoading(false);
+        return;
+      }
       try {
         const { data: logs, error } = await supabase
           .from('audit_logs')
@@ -174,6 +190,11 @@ export function useComplianceDocs() {
   const [loading, setLoading] = useState(true);
 
   const fetchData = async () => {
+    if (!shouldQueryCosTable('compliance_documents')) {
+      setData([]);
+      setLoading(false);
+      return;
+    }
     try {
       const { data: docs, error } = await supabase
         .from('compliance_documents')
@@ -223,6 +244,11 @@ export function usePHIAccessLogs() {
 
   useEffect(() => {
     async function fetchLogs() {
+      if (!shouldQueryCosTable('phi_access_logs')) {
+        setData([]);
+        setLoading(false);
+        return;
+      }
       try {
         const { data: logs, error } = await supabase
           .from('phi_access_logs')
@@ -255,6 +281,11 @@ export function useIncidents() {
   const [loading, setLoading] = useState(true);
 
   const fetchData = async () => {
+    if (!shouldQueryCosTable('compliance_incidents')) {
+      setData([]);
+      setLoading(false);
+      return;
+    }
     try {
       const { data: incidents, error } = await supabase
         .from('compliance_incidents')
@@ -290,6 +321,11 @@ export function useTrainings() {
 
   useEffect(() => {
     async function fetchTrainings() {
+      if (!shouldQueryCosTable('compliance_trainings')) {
+        setData([]);
+        setLoading(false);
+        return;
+      }
       try {
         const { data: trainings, error } = await supabase
           .from('compliance_trainings')
@@ -316,6 +352,11 @@ export function useTrainingAttendance() {
 
   useEffect(() => {
     async function fetchAttendance() {
+      if (!shouldQueryCosTable('training_attendance')) {
+        setData([]);
+        setLoading(false);
+        return;
+      }
       try {
         const { data: attendance, error } = await supabase
           .from('training_attendance')
@@ -340,6 +381,7 @@ export function useBAAs() {
   return useQuery({
     queryKey: ['baas'],
     queryFn: async () => {
+      if (!shouldQueryCosTable('business_associate_agreements')) return [];
       const { data: baas, error } = await supabase
         .from('business_associate_agreements')
         .select('*')

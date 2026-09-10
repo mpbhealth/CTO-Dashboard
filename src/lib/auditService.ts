@@ -13,6 +13,7 @@
  */
 
 import { supabase, isSupabaseConfigured } from './supabase';
+import { shouldQueryCosTable } from './schema/cosPublicTables';
 
 // ============================================
 // Types
@@ -203,19 +204,36 @@ export async function logSecurityEvent(
       details: options.details,
     };
 
-    // Generate checksum for tamper detection
     const checksum = await generateChecksum(entryData);
 
-    // Insert into database
+    if (!shouldQueryCosTable('audit_events')) {
+      return { success: false, error: 'audit_events unavailable' };
+    }
+
+    const { data: orgId } = await supabase.rpc('current_org_id');
+    if (!orgId || !actorId) {
+      return { success: false, error: 'no_active_org' };
+    }
+
     const { error } = await supabase
-      .from('security_audit_log')
+      .from('audit_events')
       .insert({
-        ...entryData,
-        checksum,
+        org_id: orgId,
+        actor_id: actorId,
+        action: eventType,
+        entity: options.resourceType ?? 'session',
+        entity_id: options.resourceId ?? null,
+        metadata: {
+          action,
+          severity,
+          details: options.details ?? {},
+          checksum,
+          actor_email: actorEmail ?? null,
+        },
       });
 
     if (error) {
-      console.error('[Audit] Failed to log security event:', error);
+      console.warn('[Audit] Failed to log security event:', error.message);
       return { success: false, error: error.message };
     }
 
@@ -226,7 +244,7 @@ export async function logSecurityEvent(
 
     return { success: true };
   } catch (error) {
-    console.error('[Audit] Error logging security event:', error);
+    console.warn('[Audit] Error logging security event:', error);
     return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
   }
 }
@@ -425,8 +443,8 @@ export async function queryAuditLogs(options: AuditLogQueryOptions = {}): Promis
   count: number;
   error?: string;
 }> {
-  if (!isSupabaseConfigured) {
-    return { data: [], count: 0, error: 'Supabase not configured' };
+  if (!isSupabaseConfigured || !shouldQueryCosTable('security_audit_log')) {
+    return { data: [], count: 0 };
   }
 
   try {
@@ -529,7 +547,7 @@ export async function getAuditStatistics(days: number = 30): Promise<{
   phiAccesses: number;
   dataExports: number;
 }> {
-  if (!isSupabaseConfigured) {
+  if (!isSupabaseConfigured || !shouldQueryCosTable('security_audit_log')) {
     return {
       totalEvents: 0,
       criticalEvents: 0,

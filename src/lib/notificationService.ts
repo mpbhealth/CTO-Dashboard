@@ -10,6 +10,7 @@ import type {
   NotificationPriority,
 } from '../types/notifications';
 import { supabase, isSupabaseConfigured } from './supabase';
+import { shouldQueryCosTable } from './schema/cosPublicTables';
 import { logger } from './logger';
 
 // Sound file path
@@ -242,8 +243,7 @@ export async function saveNotificationToDatabase(
   userId: string,
   payload: NotificationPayload
 ): Promise<string | null> {
-  if (!isSupabaseConfigured) {
-    logger.warn('Supabase not configured - notification not saved');
+  if (!isSupabaseConfigured || !shouldQueryCosTable('notifications')) {
     return null;
   }
 
@@ -280,7 +280,7 @@ export async function saveNotificationToDatabase(
 export async function fetchNotificationPreferences(
   userId: string
 ): Promise<NotificationPreferences | null> {
-  if (!isSupabaseConfigured) {
+  if (!isSupabaseConfigured || !shouldQueryCosTable('notification_preferences')) {
     return null;
   }
 
@@ -309,7 +309,7 @@ export async function updateNotificationPreferences(
   userId: string,
   updates: Partial<NotificationPreferences>
 ): Promise<boolean> {
-  if (!isSupabaseConfigured) {
+  if (!isSupabaseConfigured || !shouldQueryCosTable('notification_preferences')) {
     return false;
   }
 
@@ -341,7 +341,7 @@ export async function fetchNotifications(
   userId: string,
   limit = 50
 ): Promise<Notification[]> {
-  if (!isSupabaseConfigured) {
+  if (!isSupabaseConfigured || !shouldQueryCosTable('notifications')) {
     return [];
   }
 
@@ -371,7 +371,7 @@ export async function fetchNotifications(
 export async function markNotificationAsRead(
   notificationId: string
 ): Promise<boolean> {
-  if (!isSupabaseConfigured) {
+  if (!isSupabaseConfigured || !shouldQueryCosTable('notifications')) {
     return false;
   }
 
@@ -398,7 +398,7 @@ export async function markNotificationAsRead(
 export async function markAllNotificationsAsRead(
   userId: string
 ): Promise<boolean> {
-  if (!isSupabaseConfigured) {
+  if (!isSupabaseConfigured || !shouldQueryCosTable('notifications')) {
     return false;
   }
 
@@ -426,7 +426,7 @@ export async function markAllNotificationsAsRead(
 export async function dismissNotification(
   notificationId: string
 ): Promise<boolean> {
-  if (!isSupabaseConfigured) {
+  if (!isSupabaseConfigured || !shouldQueryCosTable('notifications')) {
     return false;
   }
 

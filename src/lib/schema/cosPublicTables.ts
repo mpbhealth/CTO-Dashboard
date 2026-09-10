@@ -1,0 +1,55 @@
+/**
+ * Tables that exist on the COS Supabase project.
+ * Leftover MPB dual-dashboard queries must not hit PostgREST.
+ */
+export const COS_PUBLIC_TABLES = new Set<string>([
+  'orgs',
+  'profiles',
+  'notes',
+  'tasks',
+  'files',
+  'projects',
+  'roadmap_items',
+  'tech_stack',
+  'quick_links',
+  'vendors',
+  'saas_expenses',
+  'hipaa_policies',
+  'hipaa_baas',
+  'hipaa_incidents',
+  'hipaa_trainings',
+  'hipaa_audit_log',
+  'mail_accounts',
+  'mail_sync_cursors',
+  'mail_subscriptions',
+  'mail_folders',
+  'mail_threads',
+  'mail_messages',
+  'mail_message_folders',
+  'mail_message_recipients',
+  'mail_send_intents',
+  'email_signatures',
+  'email_drafts',
+  'integration_sources',
+  'sync_runs',
+  'analytics_snapshots',
+  'external_record_links',
+  'audit_events',
+  'phi_access_log',
+  'org_memberships',
+  'aryx_identity_map',
+  'cos_org_link',
+  'fact_enrollments_daily',
+  'fact_crm_pipeline_daily',
+  'fact_tickets_daily',
+  'fact_traffic_daily',
+  'fact_pnl_period',
+  'fact_vendor_costs_monthly',
+  'advisor_scorecards',
+  'forecast_runs',
+  'fact_product_mix',
+]);
+
+export function shouldQueryCosTable(table: string): boolean {
+  return COS_PUBLIC_TABLES.has(table);
+}

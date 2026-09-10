@@ -1,4 +1,4 @@
-import { corsHeaders } from '../_shared/cors.ts';
+import { corsHeadersFor } from '../_shared/cors.ts';
 import { serviceClient } from '../_shared/auth.ts';
 import { createClient } from 'npm:@supabase/supabase-js';
 
@@ -12,7 +12,8 @@ const ROLE_MAP: Record<string, 'owner' | 'admin' | 'viewer'> = {
 };
 
 Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+  const cors = corsHeadersFor(req);
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: cors });
 
   try {
     const body = await req.json();
@@ -20,13 +21,13 @@ Deno.serve(async (req) => {
     if (!ticket || ticket.length > 2048) {
       return new Response(JSON.stringify({ error: 'ticket required' }), {
         status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...cors, 'Content-Type': 'application/json' },
       });
     }
     if (!ACCOUNTS_ANON) {
       return new Response(JSON.stringify({ error: 'accounts_not_configured' }), {
         status: 503,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...cors, 'Content-Type': 'application/json' },
       });
     }
 
@@ -43,7 +44,7 @@ Deno.serve(async (req) => {
     if (!redeemed.ok) {
       return new Response(JSON.stringify({ error: claims.error || 'ticket redemption failed' }), {
         status: redeemed.status === 401 ? 401 : 502,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...cors, 'Content-Type': 'application/json' },
       });
     }
 
@@ -57,7 +58,7 @@ Deno.serve(async (req) => {
     if (!sub || !email || !orgIdRe.test(accountsOrg)) {
       return new Response(JSON.stringify({ error: 'ticket missing claims' }), {
         status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...cors, 'Content-Type': 'application/json' },
       });
     }
 
@@ -149,12 +150,12 @@ Deno.serve(async (req) => {
       org_id: orgId,
       role,
     }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { ...cors, 'Content-Type': 'application/json' },
     });
   } catch (error) {
     return new Response(JSON.stringify({ error: error instanceof Error ? error.message : 'sso failed' }), {
       status: 400,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { ...cors, 'Content-Type': 'application/json' },
     });
   }
 });

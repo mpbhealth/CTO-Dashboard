@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
+import { shouldQueryCosTable } from '../lib/schema/cosPublicTables';
 
 interface UseSupabaseTableOptions<_T> {
   table: string;
@@ -41,7 +42,9 @@ export function useSupabaseTable<T = Record<string, unknown>>({
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
-    if (!enabled) {
+    if (!enabled || !shouldQueryCosTable(table)) {
+      setData([]);
+      setError(null);
       setLoading(false);
       return;
     }

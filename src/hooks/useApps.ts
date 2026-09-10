@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { categories, cosNavigationItems } from '@/config/navigation';
+import { shouldQueryCosTable } from '@/lib/schema/cosPublicTables';
 
 /**
  * App type from the apps directory
@@ -73,6 +74,10 @@ const defaultApps: App[] = navigationApps();
  * Apps are filtered by RLS based on user's role
  */
 async function fetchApps(): Promise<App[]> {
+  if (!shouldQueryCosTable('apps')) {
+    return defaultApps;
+  }
+
   try {
     const { data, error } = await supabase
       .from('apps')

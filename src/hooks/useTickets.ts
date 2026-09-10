@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
+import { shouldQueryCosTable } from '../lib/schema/cosPublicTables';
 
 interface TicketStats {
   total_tickets: number;
@@ -40,6 +41,10 @@ export function useTicketStats() {
 
   useEffect(() => {
     async function fetchStats() {
+      if (!shouldQueryCosTable('tickets_cache')) {
+        setLoading(false);
+        return;
+      }
       try {
         const { data: tickets, error: ticketsError } = await supabase.from('tickets_cache').select('*');
 
@@ -117,6 +122,10 @@ export function useTicketTrends(days: number = 30) {
 
   useEffect(() => {
     async function fetchTrends() {
+      if (!shouldQueryCosTable('tickets_cache')) {
+        setLoading(false);
+        return;
+      }
       try {
         const daysAgo = new Date();
         daysAgo.setDate(daysAgo.getDate() - days);
@@ -165,6 +174,12 @@ export function useTickets() {
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = async () => {
+    if (!shouldQueryCosTable('tickets_cache')) {
+      setData([]);
+      setError(null);
+      setLoading(false);
+      return;
+    }
     try {
       setLoading(true);
       const { data: tickets, error: ticketsError } = await supabase

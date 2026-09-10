@@ -183,9 +183,8 @@ export const SidebarNavItem = memo(function SidebarNavItem({
   const handleClick = useCallback(() => {
     if (hasSubmenu && sidebarExpanded) {
       onToggleSubmenu(item.id);
-    } else {
-      onNavigate(item.path, item.id);
     }
+    onNavigate(item.path, item.id);
   }, [hasSubmenu, sidebarExpanded, item.id, item.path, onNavigate, onToggleSubmenu]);
 
   // Handle submenu item navigation

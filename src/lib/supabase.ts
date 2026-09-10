@@ -111,37 +111,17 @@ export const supabase = createClient(finalUrl, finalKey, {
   }
 });
 
-// Constants for remember me functionality
-const REMEMBER_ME_KEY = 'mpb_remember_session';
+// Email-only remember preference. Must never gate or wipe persistSession / mpb-auth-token.
+const REMEMBER_EMAIL_KEY = 'mpb_remembered_email';
 
-// Set up session cleanup for when "remember me" is not checked
-if (typeof window !== 'undefined') {
-  // Check on page load if we should clear the session
-  const shouldRemember = localStorage.getItem(REMEMBER_ME_KEY) === 'true';
-  const wasUnloaded = sessionStorage.getItem('mpb_session_active') !== 'true';
-  
-  if (!shouldRemember && wasUnloaded) {
-    // Clear session if "remember me" was not checked and this is a new browser session
-    localStorage.removeItem('mpb-auth-token');
-  }
-  
-  // Mark this session as active
-  sessionStorage.setItem('mpb_session_active', 'true');
-}
-
-// Helper to set "remember me" preference
 export const setRememberMePreference = (rememberMe: boolean) => {
   if (typeof localStorage === 'undefined') return;
-  
-  if (rememberMe) {
-    localStorage.setItem(REMEMBER_ME_KEY, 'true');
-  } else {
-    localStorage.removeItem(REMEMBER_ME_KEY);
+  if (!rememberMe) {
+    localStorage.removeItem(REMEMBER_EMAIL_KEY);
   }
 };
 
-// Check if "remember me" is enabled
 export const isRememberMeEnabled = (): boolean => {
   if (typeof localStorage === 'undefined') return false;
-  return localStorage.getItem(REMEMBER_ME_KEY) === 'true';
+  return !!localStorage.getItem(REMEMBER_EMAIL_KEY);
 };

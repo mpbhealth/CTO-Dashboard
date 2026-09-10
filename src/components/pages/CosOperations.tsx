@@ -14,6 +14,16 @@ interface SyncRow {
   started_at: string | null;
 }
 
+interface QueryErrorLike {
+  code?: string;
+  message?: string;
+  status?: number;
+}
+
+function logSoftQueryError(table: string, error: QueryErrorLike) {
+  console.warn(`[CosOperations] ${table} query skipped:`, error.code, error.message);
+}
+
 const LINKS = [
   { href: '/operations/compliance', label: 'Compliance' },
   { href: '/operations/saas-spend', label: 'SaaS spend' },
@@ -24,6 +34,17 @@ const LINKS = [
   { href: '/operations/infrastructure/deployments', label: 'Deployments' },
 ];
 
+function countOrZero(
+  table: string,
+  result: { count: number | null; error: QueryErrorLike | null }
+): number {
+  if (result.error) {
+    logSoftQueryError(table, result.error);
+    return 0;
+  }
+  return result.count ?? 0;
+}
+
 export function CosOperations() {
   const sources = useQuery({
     queryKey: ['operations-sources'],
@@ -32,9 +53,13 @@ export function CosOperations() {
         .from('integration_sources')
         .select('key, status, last_success_at')
         .order('key');
-      if (error) throw error;
+      if (error) {
+        logSoftQueryError('integration_sources', error);
+        return [] as SourceRow[];
+      }
       return (data || []) as SourceRow[];
     },
+    retry: false,
   });
 
   const counts = useQuery({
@@ -47,16 +72,15 @@ export function CosOperations() {
         supabase.from('hipaa_policies').select('id', { count: 'exact', head: true }),
         supabase.from('mail_accounts').select('id', { count: 'exact', head: true }),
       ]);
-      const firstError = [vendors, expenses, incidents, policies, mail].find((result) => result.error);
-      if (firstError?.error) throw firstError.error;
       return {
-        vendors: vendors.count ?? 0,
-        expenses: expenses.count ?? 0,
-        incidents: incidents.count ?? 0,
-        policies: policies.count ?? 0,
-        mail: mail.count ?? 0,
+        vendors: countOrZero('vendors', vendors),
+        expenses: countOrZero('saas_expenses', expenses),
+        incidents: countOrZero('hipaa_incidents', incidents),
+        policies: countOrZero('hipaa_policies', policies),
+        mail: countOrZero('mail_accounts', mail),
       };
     },
+    retry: false,
   });
 
   const syncs = useQuery({
@@ -67,9 +91,13 @@ export function CosOperations() {
         .select('source_key, status, started_at')
         .order('started_at', { ascending: false })
         .limit(8);
-      if (error) throw error;
+      if (error) {
+        logSoftQueryError('sync_runs', error);
+        return [] as SyncRow[];
+      }
       return (data || []) as SyncRow[];
     },
+    retry: false,
   });
 
   const cards = [
@@ -96,7 +124,7 @@ export function CosOperations() {
 
         {(counts.isError || sources.isError) && (
           <p className="mt-6 text-sm text-red-600 dark:text-red-300">
-            Could not load operations data. Check your session and try again.
+            Could not load operations data.
           </p>
         )}
 

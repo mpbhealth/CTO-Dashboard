@@ -470,9 +470,9 @@ export function getNotificationUrl(
     case 'compliance_alert':
       return `${prefix}/compliance`;
     case 'sla_breach':
-      return `${prefix}/operations/it-support`;
+      return `${prefix}/tickets`;
     case 'ticket_escalation':
-      return `${prefix}/operations/it-support`;
+      return `${prefix}/tickets`;
     default:
       return `${prefix}/home`;
   }

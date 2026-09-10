@@ -3,17 +3,17 @@ import {
   Activity,
   BarChart3,
   Users,
-  TrendingDown,
   Award,
   Settings,
   FileText,
   LineChart,
   LayoutDashboard,
   LayoutGrid,
-  Target,
   Code2,
   Mail,
   Briefcase,
+  Wallet,
+  Ticket,
 } from 'lucide-react';
 
 export interface NavSubItem {
@@ -30,12 +30,14 @@ export interface NavItem {
   icon: React.ComponentType<{ className?: string }>;
   category: string;
   submenu?: NavSubItem[];
-  roles?: ('cos')[];
+  roles?: string[];
   badge?: string;
+  requires?: 'tickets' | 'traffic';
 }
 
 export const categories: Record<string, string> = {
   main: 'Command',
+  finance: 'Finance',
   analytics: 'Analytics',
   crm: 'Relationships',
   development: 'Development',
@@ -48,18 +50,29 @@ export const cosNavigationItems: NavItem[] = [
   { id: 'inbox', label: 'Inbox', path: '/inbox', icon: Mail, category: 'main' },
   { id: 'crm', label: 'CRM', path: '/crm', icon: Briefcase, category: 'crm' },
   {
+    id: 'finance',
+    label: 'Finance',
+    path: '/finance',
+    icon: Wallet,
+    category: 'finance',
+    submenu: [
+      { id: 'finance-pnl', label: 'P&L', path: '/finance' },
+      { id: 'finance-vendors', label: 'Vendors', path: '/finance/vendors' },
+      { id: 'finance-forecast', label: 'Forecasts', path: '/finance/forecast' },
+    ],
+  },
+  {
     id: 'analytics',
     label: 'Analytics',
-    path: '/analytics',
+    path: '/enrollments',
     icon: BarChart3,
     category: 'analytics',
     submenu: [
-      { id: 'analytics-overview', label: 'Overview', path: '/analytics/overview', icon: BarChart3 },
-      { id: 'analytics-website', label: 'Website', path: '/analytics/website', icon: LineChart },
-      { id: 'analytics-engagement', label: 'Member Engagement', path: '/analytics/member-engagement', icon: Users },
-      { id: 'analytics-retention', label: 'Retention', path: '/analytics/member-retention', icon: TrendingDown },
-      { id: 'analytics-advisor', label: 'Advisor Performance', path: '/analytics/advisor-performance', icon: Award },
-      { id: 'analytics-marketing', label: 'Marketing', path: '/analytics/marketing', icon: Target },
+      { id: 'enrollments', label: 'Enrollment', path: '/enrollments', icon: Users },
+      { id: 'advisors', label: 'Advisors', path: '/advisors', icon: Award },
+      { id: 'pipeline', label: 'Pipeline', path: '/pipeline', icon: LineChart },
+      { id: 'tickets', label: 'Support', path: '/tickets', icon: Ticket },
+      { id: 'website', label: 'Website', path: '/analytics/website', icon: LineChart },
     ],
   },
   {
@@ -89,7 +102,6 @@ export const cosNavigationItems: NavItem[] = [
       { id: 'ops-overview', label: 'Overview', path: '/operations' },
       { id: 'ops-compliance', label: 'Compliance', path: '/operations/compliance', icon: ShieldCheck },
       { id: 'ops-saas', label: 'SaaS Spend', path: '/operations/saas-spend' },
-      { id: 'ops-it', label: 'IT Support', path: '/operations/it-support' },
       { id: 'ops-integrations', label: 'Integrations', path: '/operations/integrations' },
       { id: 'ops-policy', label: 'Policy', path: '/operations/policy-manager' },
       { id: 'ops-org', label: 'Organization', path: '/operations/organization' },
@@ -106,9 +118,9 @@ export const advisorNavigationItems = cosNavigationItems;
 
 export function buildRouteToTabMap(items: NavItem[]): Record<string, string> {
   const map: Record<string, string> = {};
-  items.forEach(item => {
+  items.forEach((item) => {
     map[item.path] = item.id;
-    item.submenu?.forEach(sub => {
+    item.submenu?.forEach((sub) => {
       map[sub.path] = sub.id;
     });
   });
@@ -117,15 +129,28 @@ export function buildRouteToTabMap(items: NavItem[]): Record<string, string> {
 
 export function buildTabToRouteMap(items: NavItem[]): Record<string, string> {
   const map: Record<string, string> = {};
-  items.forEach(item => {
+  items.forEach((item) => {
     map[item.id] = item.path;
-    item.submenu?.forEach(sub => {
+    item.submenu?.forEach((sub) => {
       map[sub.id] = sub.path;
     });
   });
   return map;
 }
 
-export function getNavigationForRole(_role?: string): NavItem[] {
-  return cosNavigationItems;
+export function getNavigationForRole(
+  _role?: string,
+  flags?: { tickets?: boolean; traffic?: boolean },
+): NavItem[] {
+  return cosNavigationItems.map((item) => {
+    if (item.id !== 'analytics') return item;
+    return {
+      ...item,
+      submenu: item.submenu?.filter((sub) => {
+        if (sub.id === 'tickets') return Boolean(flags?.tickets);
+        if (sub.id === 'website') return Boolean(flags?.traffic);
+        return true;
+      }),
+    };
+  });
 }

@@ -10,6 +10,7 @@ import { ProtectedRoute } from './components/guards/ProtectedRoute.tsx';
 import { AuthCallback } from './components/pages/AuthCallback.tsx';
 import Login from './components/pages/Login.tsx';
 import ResetPassword from './components/pages/ResetPassword.tsx';
+import { SsoCallback } from './components/pages/SsoCallback.tsx';
 import CosApp from './CosApp.tsx';
 import { PublicDepartmentUploadLanding } from './components/pages/public/PublicDepartmentUploadLanding.tsx';
 import { PublicDepartmentUpload } from './components/pages/public/PublicDepartmentUpload.tsx';
@@ -390,6 +391,7 @@ try {
                     {/* Auth Callback Route */}
                     <Route path="/auth/callback" element={<AuthCallback />} />
                     <Route path="/auth/reset-password" element={<ResetPassword />} />
+                    <Route path="/sso/callback" element={<SsoCallback />} />
 
                     {/* Public Department Upload Routes - No Auth Required */}
                     <Route path="/public/upload" element={<PublicDepartmentUploadLanding />} />

@@ -1,8 +1,12 @@
-export const ARYX_ORG_ID = 'a0000000-0000-0000-0000-000000000001';
-export const COS_ROLE = 'cos' as const;
-export type CosRole = typeof COS_ROLE;
-
+export const MPB_COS_ORG_ID = 'a0000000-0000-0000-0000-000000000001';
 export const ARYX_CRM_HREF = 'https://crm.aryx.com';
+export const ADVISORIQ_HREF = 'https://advisoriq.aryx.pro';
+
+export type CosMembershipRole = 'owner' | 'admin' | 'viewer' | 'cos';
+
+export function isOperatorRole(role?: string | null): boolean {
+  return role === 'owner' || role === 'admin' || role === 'cos';
+}
 
 export function remapLegacyPath(pathname: string): string | null {
   const exact: Record<string, string> = {
@@ -19,6 +23,13 @@ export function remapLegacyPath(pathname: string): string | null {
     '/ctod/files': '/files',
     '/ceod/command-center': '/home',
     '/ctod/command-center': '/home',
+    '/analytics': '/home',
+    '/analytics/overview': '/home',
+    '/analytics/member-engagement': '/enrollments',
+    '/analytics/member-retention': '/enrollments',
+    '/analytics/advisor-performance': '/advisors',
+    '/analytics/marketing': '/analytics/website',
+    '/operations/it-support': '/tickets',
   };
 
   if (exact[pathname]) return exact[pathname];
@@ -41,4 +52,28 @@ export function remapLegacyPath(pathname: string): string | null {
     return '/home';
   }
   return null;
+}
+
+export function money(value: number | null | undefined): string {
+  if (value == null || Number.isNaN(Number(value))) return '—';
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(Number(value));
+}
+
+export function compactNumber(value: number | null | undefined): string {
+  if (value == null || Number.isNaN(Number(value))) return '—';
+  return new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(Number(value));
+}
+
+export type PeriodKey = 'mtd' | 'qtd' | 'ytd' | 'custom';
+
+export function periodBounds(period: PeriodKey, customStart?: string, customEnd?: string): { start: string; end: string } {
+  const now = new Date();
+  const end = customEnd || now.toISOString().slice(0, 10);
+  if (period === 'custom' && customStart) return { start: customStart, end };
+  if (period === 'ytd') return { start: `${now.getUTCFullYear()}-01-01`, end };
+  if (period === 'qtd') {
+    const q = Math.floor(now.getUTCMonth() / 3) * 3;
+    return { start: `${now.getUTCFullYear()}-${String(q + 1).padStart(2, '0')}-01`, end };
+  }
+  return { start: `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}-01`, end };
 }

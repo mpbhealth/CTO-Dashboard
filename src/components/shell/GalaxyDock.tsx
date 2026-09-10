@@ -283,7 +283,7 @@ export function GalaxyDock({ onOpenMap }: GalaxyDockProps) {
     { key: 'home', name: 'Home', icon: 'LayoutDashboard', href: '/home' },
     { key: 'inbox', name: 'Inbox', icon: 'Mail', href: '/inbox' },
     { key: 'crm', name: 'CRM', icon: 'Briefcase', href: '/crm' },
-    { key: 'tickets', name: 'IT Support', icon: 'Ticket', href: '/operations/it-support' },
+    { key: 'tickets', name: 'Support', icon: 'Ticket', href: '/tickets' },
     { key: 'compliance', name: 'Compliance', icon: 'ShieldCheck', href: '/operations/compliance' },
   ];
 

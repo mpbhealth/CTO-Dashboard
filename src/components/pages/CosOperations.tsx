@@ -27,7 +27,7 @@ function logSoftQueryError(table: string, error: QueryErrorLike) {
 const LINKS = [
   { href: '/operations/compliance', label: 'Compliance' },
   { href: '/operations/saas-spend', label: 'SaaS spend' },
-  { href: '/operations/it-support', label: 'IT support' },
+  { href: '/tickets', label: 'Support' },
   { href: '/operations/integrations', label: 'Integrations' },
   { href: '/operations/policy-manager', label: 'Policy' },
   { href: '/operations/organization', label: 'Organization' },

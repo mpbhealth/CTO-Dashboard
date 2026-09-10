@@ -57,7 +57,12 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.connector-sync]
-verify_jwt = true
+verify_jwt = false
+# Authenticated by user JWT or COS_CRON_SECRET. Cron is not a license to skip org filters.
+
+[functions.sso-exchange]
+verify_jwt = false
+# Ticket redemption has no COS session yet.
 
 [functions.crm-proxy]
 verify_jwt = true

@@ -1,23 +1,117 @@
 import { corsHeaders } from '../_shared/cors.ts';
 import { requireUser, serviceClient } from '../_shared/auth.ts';
-import { CONNECTOR_SOURCES } from '../_shared/connectors.ts';
+import { listActiveOrgIds, loadOrgLink, resolveActiveOrg } from '../_shared/org.ts';
+import {
+  extractAdvisorIq,
+  extractCrm,
+  extractEnrollment,
+  extractMemberApp,
+  extractSaas,
+  extractTickets,
+  extractTraffic,
+  type ExtractorResult,
+} from '../_shared/extractors.ts';
 
-const ARYX_ORG_ID = 'a0000000-0000-0000-0000-000000000001';
+const SOURCE_KEYS = [
+  'aryx_enrollment',
+  'aryx_crm',
+  'aryx_advisoriq',
+  'it_ticketing',
+  'marketflo',
+  'saas_internal',
+  'mpb_member',
+] as const;
 
-async function countTable(baseUrl: string, serviceKey: string, table: string): Promise<number> {
-  const res = await fetch(`${baseUrl.replace(/\/$/, '')}/rest/v1/${table}?select=id&limit=1`, {
-    headers: {
-      apikey: serviceKey,
-      Authorization: `Bearer ${serviceKey}`,
-      Prefer: 'count=exact',
-    },
-  });
-  if (!res.ok) {
-    throw new Error(`${table} count failed (${res.status})`);
+function safeEq(left: string, right: string): boolean {
+  if (!left || !right || left.length !== right.length) return false;
+  let out = 0;
+  for (let i = 0; i < left.length; i += 1) out |= left.charCodeAt(i) ^ right.charCodeAt(i);
+  return out === 0;
+}
+
+function cronAuthorized(req: Request): boolean {
+  const secret = Deno.env.get('COS_CRON_SECRET') || Deno.env.get('MAIL_CRON_SECRET') || '';
+  if (!secret) return false;
+  const header = req.headers.get('x-cron-secret') || '';
+  const bearer = (req.headers.get('Authorization') || '').replace(/^Bearer\s+/i, '');
+  return safeEq(header, secret) || safeEq(bearer, secret);
+}
+
+async function markSource(
+  admin: ReturnType<typeof serviceClient>,
+  orgId: string,
+  key: string,
+  status: string,
+  error?: string,
+) {
+  await admin.from('integration_sources').upsert({
+    org_id: orgId,
+    key,
+    kind: key,
+    status,
+    last_success_at: status === 'healthy' ? new Date().toISOString() : undefined,
+    last_error: error ?? null,
+  }, { onConflict: 'org_id,key' });
+}
+
+async function syncOrg(
+  admin: ReturnType<typeof serviceClient>,
+  orgId: string,
+  requested: string,
+): Promise<ExtractorResult[]> {
+  const link = await loadOrgLink(admin, orgId);
+  if (!link || !link.is_active) {
+    return [{ source: requested, status: 'skipped', metrics: [], error: 'org_link_missing' }];
   }
-  const contentRange = res.headers.get('content-range') || '0-0/0';
-  const total = contentRange.split('/')[1];
-  return Number(total || 0);
+
+  const run = async (key: string, fn: () => Promise<ExtractorResult>) => {
+    if (requested !== 'all' && requested !== key) return null;
+    const idempotencyKey = `${key}:${new Date().toISOString().slice(0, 10)}`;
+    await admin.from('sync_runs').upsert({
+      org_id: orgId,
+      source_key: key,
+      idempotency_key: idempotencyKey,
+      status: 'running',
+      started_at: new Date().toISOString(),
+    }, { onConflict: 'org_id,idempotency_key' });
+    try {
+      const result = await fn();
+      await admin.from('sync_runs').update({
+        status: result.status === 'error' ? 'failed' : 'succeeded',
+        finished_at: new Date().toISOString(),
+        error: result.error ?? null,
+        metrics: result.metrics,
+      }).eq('org_id', orgId).eq('idempotency_key', idempotencyKey);
+      await markSource(
+        admin,
+        orgId,
+        key,
+        result.status === 'healthy' ? 'healthy' : result.status === 'unconfigured' ? 'unconfigured' : result.status === 'skipped' ? 'unconfigured' : 'error',
+        result.error,
+      );
+      return result;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'sync_failed';
+      await admin.from('sync_runs').update({
+        status: 'failed',
+        finished_at: new Date().toISOString(),
+        error: message,
+      }).eq('org_id', orgId).eq('idempotency_key', idempotencyKey);
+      await markSource(admin, orgId, key, 'error', message);
+      return { source: key, status: 'error' as const, metrics: [], error: message };
+    }
+  };
+
+  const results = await Promise.all([
+    run('aryx_enrollment', () => extractEnrollment(admin, orgId, link)),
+    run('aryx_crm', () => extractCrm(admin, orgId, link)),
+    run('aryx_advisoriq', () => extractAdvisorIq(admin, orgId, link)),
+    run('it_ticketing', () => extractTickets(admin, orgId, link)),
+    run('marketflo', () => extractTraffic(admin, orgId, link)),
+    run('saas_internal', () => extractSaas(admin, orgId)),
+    run('mpb_member', () => extractMemberApp(admin, orgId, link)),
+  ]);
+  return results.filter((row): row is ExtractorResult => Boolean(row));
 }
 
 Deno.serve(async (req) => {
@@ -26,91 +120,42 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { userClient } = requireUser(req);
-    const { data: { user } } = await userClient.auth.getUser();
-    if (!user) throw new Error('Not authenticated');
-
-    const body = await req.json().catch(() => ({ source: 'all' }));
-    const requested = body.source || 'all';
-    const targets = CONNECTOR_SOURCES.filter((s) => requested === 'all' || requested === s.key);
     const admin = serviceClient();
-    const periodStart = new Date().toISOString().slice(0, 10);
-    const results = [];
-
-    for (const source of targets) {
-      const url = Deno.env.get(source.urlEnv) ?? '';
-      const key = Deno.env.get(source.keyEnv) ?? '';
-      const idempotencyKey = `${source.key}:${periodStart}`;
-
-      await admin.from('sync_runs').upsert({
-        org_id: ARYX_ORG_ID,
-        source_key: source.key,
-        idempotency_key: idempotencyKey,
-        status: 'running',
-        started_at: new Date().toISOString(),
-      }, { onConflict: 'org_id,idempotency_key' });
-
-      if (!url || !key) {
-        await admin.from('integration_sources').update({
-          status: 'unconfigured',
-          last_error: 'Missing server credentials',
-        }).eq('key', source.key);
-        await admin.from('sync_runs').update({
-          status: 'failed',
-          finished_at: new Date().toISOString(),
-          error: 'unconfigured',
-        }).eq('org_id', ARYX_ORG_ID).eq('idempotency_key', idempotencyKey);
-        results.push({ source: source.key, status: 'unconfigured', metrics: [] });
-        continue;
-      }
-
-      try {
-        const metrics = [];
-        for (const metric of source.metrics) {
-          const value = await countTable(url, key, metric.table);
-          metrics.push({ source: source.key, metric_key: metric.metric, value, period_start: periodStart });
-          await admin.from('analytics_snapshots').upsert({
-            org_id: ARYX_ORG_ID,
-            source: source.key,
-            metric_key: metric.metric,
-            period_start: periodStart,
-            value,
-            metadata: { auto_generated: true },
-          }, { onConflict: 'org_id,source,metric_key,period_start' });
-        }
-        await admin.from('integration_sources').update({
-          status: 'healthy',
-          last_success_at: new Date().toISOString(),
-          last_error: null,
-        }).eq('key', source.key);
-        await admin.from('sync_runs').update({
-          status: 'succeeded',
-          finished_at: new Date().toISOString(),
-          metrics,
-        }).eq('org_id', ARYX_ORG_ID).eq('idempotency_key', idempotencyKey);
-        results.push({ source: source.key, status: 'healthy', metrics });
-      } catch (err) {
-        const message = err instanceof Error ? err.message : 'sync failed';
-        await admin.from('integration_sources').update({
-          status: 'error',
-          last_error: message,
-        }).eq('key', source.key);
-        await admin.from('sync_runs').update({
-          status: 'failed',
-          finished_at: new Date().toISOString(),
-          error: message,
-        }).eq('org_id', ARYX_ORG_ID).eq('idempotency_key', idempotencyKey);
-        results.push({ source: source.key, status: 'error', metrics: [], error: message });
-      }
+    const body = await req.json().catch(() => ({ source: 'all' }));
+    const requested = typeof body.source === 'string' ? body.source : 'all';
+    if (requested !== 'all' && !SOURCE_KEYS.includes(requested)) {
+      throw new Error('unknown_source');
     }
 
-    await admin.from('audit_events').insert({
-      org_id: ARYX_ORG_ID,
-      actor_id: user.id,
-      action: 'connector.sync',
-      entity: 'integration_sources',
-      metadata: { requested },
-    });
+    let orgIds: string[] = [];
+    let actorId: string | null = null;
+
+    if (cronAuthorized(req) && body.all_orgs === true) {
+      orgIds = await listActiveOrgIds(admin);
+    } else {
+      const { userClient } = requireUser(req);
+      const { data: { user } } = await userClient.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+      actorId = user.id;
+      const active = await resolveActiveOrg(admin, user.id);
+      if (!['owner', 'admin', 'cos'].includes(active.role)) {
+        throw new Error('forbidden');
+      }
+      orgIds = [active.orgId];
+    }
+
+    const results = [];
+    for (const orgId of orgIds) {
+      const orgResults = await syncOrg(admin, orgId, requested);
+      results.push({ org_id: orgId, results: orgResults });
+      await admin.from('audit_events').insert({
+        org_id: orgId,
+        actor_id: actorId,
+        action: 'connector.sync',
+        entity: 'integration_sources',
+        metadata: { requested, result_count: orgResults.length },
+      });
+    }
 
     return new Response(JSON.stringify({ success: true, results }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

@@ -10,6 +10,7 @@
     "lint": "eslint .",
     "transform:build": "npm run build --prefix csv-enrollment-transformer",
     "transform:run": "node csv-enrollment-transformer/dist/transform.js --input csv-enrollment-transformer/input.csv --output csv-enrollment-transformer/output.csv",
+    "test": "vitest run",
     "transform:test": "vitest run",
     "test:e2e": "playwright test",
     "link:check": "node ./scripts/link-check.mjs http://localhost:5173",

@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useCallback, memo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useCurrentProfile } from '../hooks/useDualDashboard';
 import { useAuth } from '../contexts/AuthContext';
+import { useOrg } from '../contexts/OrgContext';
 import { 
   useSidebar, 
   useExpandedMenus, 
@@ -54,8 +55,9 @@ function SidebarComponent({
   const { signOut } = useAuth();
   const { openPalette } = useShell();
   const { data: profile } = useCurrentProfile();
+  const { linked } = useOrg();
 
-  const userRole = profile?.role || 'cos';
+  const userRole = profile?.role || 'viewer';
   const theme = 'aryx' as const;
 
   // Use external state if provided, otherwise use internal
@@ -110,7 +112,10 @@ function SidebarComponent({
   }, [isMobile, isExpanded, toggle, sidebarRef]);
 
   // Get navigation items based on role
-  const menuItems = useMemo(() => getNavigationForRole(userRole), [userRole]);
+  const menuItems = useMemo(
+    () => getNavigationForRole(userRole, { tickets: linked.tickets, traffic: linked.traffic }),
+    [linked.tickets, linked.traffic, userRole],
+  );
 
   // Group items by category
   const groupedItems = useMemo(() => {

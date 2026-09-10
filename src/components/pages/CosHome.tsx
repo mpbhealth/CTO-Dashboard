@@ -1,8 +1,13 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMemo, useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
+import { RefreshCw } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { syncConnectors } from '@/lib/connectors';
-import { ArrowUpRight, RefreshCw } from 'lucide-react';
+import { money, compactNumber, periodBounds, type PeriodKey } from '@/lib/cos';
+import { useOrg } from '@/contexts/OrgContext';
+import { OrgPicker } from '../cos/OrgPicker';
+import { PeriodToggle } from '../cos/PeriodToggle';
 import { AryxLogo } from '../brand/AryxLogo';
 
 interface Snapshot {
@@ -10,39 +15,88 @@ interface Snapshot {
   metric_key: string;
   value: number | null;
   period_start: string;
+  org_id: string;
 }
 
-const METRIC_LABELS: Record<string, string> = {
-  crm_contact_count: 'CRM contacts',
-  crm_lead_count: 'Open leads',
-  crm_activity_count: 'CRM activities',
-  enrollment_count: 'Enrollments',
-  member_count: 'Members',
-  member_app_count: 'Member app users',
-  open_ticket_count: 'Open tickets',
-};
+interface PnlRow {
+  org_id: string;
+  period_start: string;
+  collected: number;
+  pending: number;
+  vendor_cost: number;
+  commissions: number;
+  saas_cost: number;
+  gross_margin: number;
+  net_operating: number;
+}
+
+interface TicketRow {
+  fact_date: string;
+  open_count: number;
+  created_count: number;
+}
 
 export function CosHome() {
   const queryClient = useQueryClient();
+  const { orgId, linked, rollup, memberships, isOperator } = useOrg();
+  const [period, setPeriod] = useState<PeriodKey>('mtd');
+  const [customStart, setCustomStart] = useState('');
+  const [customEnd, setCustomEnd] = useState('');
+  const bounds = periodBounds(period, customStart, customEnd);
+  const orgIds = rollup ? memberships.map((row) => row.org_id) : orgId ? [orgId] : [];
 
-  const { data: snapshots = [], isLoading } = useQuery({
-    queryKey: ['analytics-snapshots'],
+  const snapshots = useQuery({
+    queryKey: ['analytics-snapshots', orgIds.join(',')],
+    enabled: orgIds.length > 0,
     queryFn: async () => {
       const { data, error } = await supabase
         .from('analytics_snapshots')
-        .select('source, metric_key, value, period_start')
+        .select('source, metric_key, value, period_start, org_id')
+        .in('org_id', orgIds)
         .order('period_start', { ascending: false });
       if (error) throw error;
       return (data || []) as Snapshot[];
     },
   });
 
-  const { data: sources = [] } = useQuery({
-    queryKey: ['integration-sources'],
+  const pnl = useQuery({
+    queryKey: ['fact-pnl', orgIds.join(','), bounds.start],
+    enabled: orgIds.length > 0 && linked.enrollment,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('fact_pnl_period')
+        .select('org_id, period_start, collected, pending, vendor_cost, commissions, saas_cost, gross_margin, net_operating')
+        .in('org_id', orgIds)
+        .eq('period_grain', 'month')
+        .gte('period_start', bounds.start.slice(0, 7) + '-01');
+      if (error) throw error;
+      return (data || []) as PnlRow[];
+    },
+  });
+
+  const tickets = useQuery({
+    queryKey: ['fact-tickets', orgIds.join(',')],
+    enabled: orgIds.length > 0 && linked.tickets,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('fact_tickets_daily')
+        .select('fact_date, open_count, created_count')
+        .in('org_id', orgIds)
+        .order('fact_date', { ascending: false })
+        .limit(14);
+      if (error) throw error;
+      return (data || []) as TicketRow[];
+    },
+  });
+
+  const sources = useQuery({
+    queryKey: ['integration-sources', orgId],
+    enabled: Boolean(orgId),
     queryFn: async () => {
       const { data, error } = await supabase
         .from('integration_sources')
-        .select('key, status, last_success_at');
+        .select('key, status, last_success_at, last_error')
+        .eq('org_id', orgId);
       if (error) throw error;
       return data || [];
     },
@@ -50,104 +104,196 @@ export function CosHome() {
 
   const refresh = useMutation({
     mutationFn: async () => syncConnectors('all'),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['analytics-snapshots'] });
-      queryClient.invalidateQueries({ queryKey: ['integration-sources'] });
-    },
+    onSuccess: () => queryClient.invalidateQueries(),
   });
 
-  const latestByMetric = new Map<string, Snapshot>();
-  for (const row of snapshots) {
-    if (!latestByMetric.has(row.metric_key)) {
-      latestByMetric.set(row.metric_key, row);
+  const latest = useMemo(() => {
+    const map = new Map<string, Snapshot>();
+    for (const row of snapshots.data || []) {
+      if (!map.has(row.metric_key)) map.set(row.metric_key, row);
     }
+    return map;
+  }, [snapshots.data]);
+
+  const pnlSum = useMemo(() => {
+    const rows = pnl.data || [];
+    return rows.reduce((acc, row) => ({
+      collected: acc.collected + Number(row.collected),
+      pending: acc.pending + Number(row.pending),
+      vendor: acc.vendor + Number(row.vendor_cost),
+      commissions: acc.commissions + Number(row.commissions),
+      saas: acc.saas + Number(row.saas_cost),
+      gross: acc.gross + Number(row.gross_margin),
+      net: acc.net + Number(row.net_operating),
+    }), { collected: 0, pending: 0, vendor: 0, commissions: 0, saas: 0, gross: 0, net: 0 });
+  }, [pnl.data]);
+
+  const ticketSpike = useMemo(() => {
+    const rows = tickets.data || [];
+    if (rows.length < 8) return false;
+    const today = rows[0]?.created_count || 0;
+    const baseline = rows.slice(1, 8).reduce((s, row) => s + row.created_count, 0) / 7;
+    return baseline > 0 && today > baseline * 1.5;
+  }, [tickets.data]);
+
+  if (!orgId) {
+    return (
+      <div className="cos-page py-16 text-aryx-muted">
+        No organization assigned. Ask an owner to invite you, or open COS from Aryx Accounts.
+      </div>
+    );
   }
 
   return (
     <div className="relative w-full bg-aryx-bg py-10 text-aryx-ink md:py-16">
-      <div className="pointer-events-none fixed inset-0 -z-10 bg-aryx-bg">
-        <div className="absolute -top-24 left-1/4 h-80 w-80 rounded-full bg-aryx-accent/10 blur-3xl" />
-        <div className="absolute bottom-0 right-1/5 h-96 w-96 rounded-full bg-aryx-gold/10 blur-3xl" />
-      </div>
-
       <div className="cos-page w-full">
-        <div className="mb-6">
-          <AryxLogo wordmark />
-        </div>
-        <p className="mb-4 inline-flex rounded-full border border-aryx-line bg-aryx-elevated px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-aryx-muted">
+        <AryxLogo wordmark />
+        <p className="mb-4 mt-6 inline-flex rounded-full border border-aryx-line bg-aryx-elevated px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-aryx-muted">
           Aryx Chief of Staff
         </p>
-        <div className="mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+        <div className="mb-8 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
-            <h1 className="font-display text-4xl font-semibold tracking-tight text-aryx-ink md:text-6xl">
-              Company, in one view.
-            </h1>
-            <p className="mt-4 max-w-xl text-sm text-aryx-muted md:text-base">
-              Read-only analytics from CRM, enrollment, and operations. Mail and notes live here.
+            <h1 className="font-display text-4xl font-semibold tracking-tight md:text-6xl">Company, in one view.</h1>
+            <p className="mt-4 max-w-xl text-sm text-aryx-muted">
+              Read-only money, pipeline, people, and traffic. Action stays in the source apps.
             </p>
           </div>
-          <button
-            type="button"
-            onClick={() => refresh.mutate()}
-            disabled={refresh.isPending}
-            className="group inline-flex items-center gap-3 rounded-full bg-aryx-accent px-6 py-3 text-sm font-medium text-white transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] active:scale-[0.98]"
-          >
-            <RefreshCw className={`h-4 w-4 ${refresh.isPending ? 'animate-spin' : ''}`} />
-            Refresh sources
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/15 transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-1 group-hover:-translate-y-px">
-              <ArrowUpRight className="h-4 w-4" />
-            </span>
-          </button>
-        </div>
-
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
-          {Array.from(latestByMetric.values()).slice(0, 6).map((metric) => (
-            <div key={metric.metric_key} className="rounded-[2rem] bg-aryx-ink/5 p-1.5 ring-1 ring-aryx-line md:col-span-4">
-              <div className="rounded-[calc(2rem-0.375rem)] bg-aryx-elevated p-6">
-                <p className="text-[10px] uppercase tracking-[0.18em] text-aryx-faint">
-                  {METRIC_LABELS[metric.metric_key] || metric.metric_key}
-                </p>
-                <p className="mt-3 text-4xl font-semibold text-aryx-ink">
-                  {isLoading ? '—' : metric.value ?? '—'}
-                </p>
-                <p className="mt-2 text-xs text-aryx-faint">{metric.source}</p>
-              </div>
-            </div>
-          ))}
-
-          {latestByMetric.size === 0 && (
-            <div className="rounded-[2rem] bg-aryx-ink/5 p-1.5 ring-1 ring-aryx-line md:col-span-12">
-              <div className="rounded-[calc(2rem-0.375rem)] bg-aryx-elevated p-10 text-aryx-muted">
-                No snapshots yet. Refresh sources after connector secrets are set, or open CRM and Inbox to work.
-              </div>
-            </div>
+          {isOperator && (
+            <button
+              type="button"
+              onClick={() => refresh.mutate()}
+              disabled={refresh.isPending}
+              className="inline-flex items-center gap-3 rounded-full bg-aryx-accent px-6 py-3 text-sm font-medium text-white"
+            >
+              <RefreshCw className={`h-4 w-4 ${refresh.isPending ? 'animate-spin' : ''}`} />
+              Refresh sources
+            </button>
           )}
         </div>
 
-        <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-3">
-          {['/inbox', '/crm', '/analytics/overview'].map((href, i) => (
-            <Link
-              key={href}
-              to={href}
-              className="rounded-full border border-aryx-line bg-aryx-elevated px-6 py-4 text-sm text-aryx-ink transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] hover:border-aryx-accent"
-            >
-              {['Open inbox', 'Open CRM', 'Open analytics'][i]}
-            </Link>
-          ))}
+        <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <OrgPicker />
+          <PeriodToggle
+            value={period}
+            onChange={setPeriod}
+            customStart={customStart}
+            customEnd={customEnd}
+            onCustom={(start, end) => {
+              setCustomStart(start);
+              setCustomEnd(end);
+            }}
+          />
         </div>
 
+        {ticketSpike && (
+          <div className="mb-6 rounded-2xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm text-amber-800 dark:text-amber-200">
+            Ticket volume is above the 7-day baseline.
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
+          {linked.enrollment && (
+            <>
+              <HomeTile href="/finance" label="Collected" value={money(pnlSum.collected)} source="EnrollFlow" span={4} />
+              <HomeTile href="/finance" label="Pending AR" value={money(pnlSum.pending)} source="EnrollFlow" span={4} />
+              <HomeTile href="/finance" label="Contribution" value={money(pnlSum.net)} source="Rev − vendor − commissions − SaaS" span={4} />
+            </>
+          )}
+          {linked.crm && (
+            <HomeTile
+              href="/pipeline"
+              label="Weighted if-closed"
+              value={money(Number(latest.get('weighted_forecast')?.value || 0))}
+              source="ARYX CRM"
+              span={4}
+            />
+          )}
+          {linked.enrollment && (
+            <HomeTile
+              href="/enrollments"
+              label="Active members"
+              value={compactNumber(Number(latest.get('member_count')?.value || 0))}
+              source="EnrollFlow"
+              span={4}
+            />
+          )}
+          {linked.advisoriq && (
+            <>
+              <HomeTile
+                href="/advisors"
+                label="AdvisorIQ MRR"
+                value={money(Number(latest.get('iq_mrr')?.value || 0))}
+                source="AdvisorIQ"
+                span={4}
+              />
+              <HomeTile
+                href="/advisors"
+                label="AdvisorIQ retention"
+                value={latest.get('iq_retention_pct')?.value == null ? '—' : `${Number(latest.get('iq_retention_pct')?.value)}%`}
+                source="AdvisorIQ"
+                span={4}
+              />
+            </>
+          )}
+          {linked.tickets && (
+            <HomeTile
+              href="/tickets"
+              label="Open tickets"
+              value={compactNumber(Number(latest.get('open_ticket_count')?.value || 0))}
+              source="Support"
+              span={4}
+            />
+          )}
+          {linked.traffic && (
+            <HomeTile
+              href="/analytics/website"
+              label="Sessions"
+              value={compactNumber(Number(latest.get('sessions')?.value || 0))}
+              source="MarketFlow"
+              span={4}
+            />
+          )}
+        </div>
+
+        {!linked.enrollment && !linked.crm && (
+          <div className="mt-8 rounded-[2rem] bg-aryx-elevated p-10 text-aryx-muted ring-1 ring-aryx-line">
+            Sources are not linked for this organization. Remote maps are server-owned so tenants cannot point COS at another project. Home will not invent zeros.
+          </div>
+        )}
+
         <div className="mt-8 flex flex-wrap gap-2">
-          {sources.map((source) => (
-            <span
-              key={source.key}
-              className="rounded-full border border-aryx-line px-3 py-1 text-[10px] uppercase tracking-wider text-aryx-faint"
-            >
+          {(sources.data || []).map((source) => (
+            <span key={source.key} className="rounded-full border border-aryx-line px-3 py-1 text-[10px] uppercase tracking-wider text-aryx-faint">
               {source.key} · {source.status}
             </span>
           ))}
         </div>
       </div>
     </div>
+  );
+}
+
+function HomeTile({
+  href,
+  label,
+  value,
+  source,
+  span: _span,
+}: {
+  href: string;
+  label: string;
+  value: string;
+  source: string;
+  span: number;
+}) {
+  return (
+    <Link to={href} className="rounded-[2rem] bg-aryx-ink/5 p-1.5 ring-1 ring-aryx-line md:col-span-4">
+      <div className="rounded-[calc(2rem-0.375rem)] bg-aryx-elevated p-6">
+        <p className="text-[10px] uppercase tracking-[0.18em] text-aryx-faint">{label}</p>
+        <p className="mt-3 text-4xl font-semibold">{value}</p>
+        <p className="mt-2 text-xs text-aryx-faint">{source}</p>
+      </div>
+    </Link>
   );
 }
 

@@ -2,13 +2,16 @@ import { useQuery } from '@tanstack/react-query';
 import { Link, useParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { ARYX_CRM_HREF } from '@/lib/cos';
+import { useOrg } from '@/contexts/OrgContext';
+import { Unlinked } from './CosFinance';
 
 export function CosCrmDetail() {
   const { kind, id } = useParams<{ kind: string; id: string }>();
+  const { orgId, linked } = useOrg();
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ['crm-proxy', 'detail', kind, id],
-    enabled: !!kind && !!id,
+    queryKey: ['crm-proxy', 'detail', orgId, kind, id],
+    enabled: !!kind && !!id && linked.crm,
     queryFn: async () => {
       const { data: session } = await supabase.auth.getSession();
       const token = session.session?.access_token;
@@ -34,6 +37,10 @@ export function CosCrmDetail() {
       };
     },
   });
+
+  if (!linked.crm) {
+    return <Unlinked title="CRM record" message="CRM is not linked for this organization." />;
+  }
 
   return (
     <div className="w-full bg-aryx-bg py-10 text-aryx-ink">

@@ -239,7 +239,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const normalized = {
           ...data,
           id: data.user_id || data.id || userId,
-          role: 'cos',
+          role: data.role || 'viewer',
         };
         setProfile(normalized);
         profileCache.current.set(userId, normalized);

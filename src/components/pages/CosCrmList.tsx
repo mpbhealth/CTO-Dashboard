@@ -1,6 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
+import { useOrg } from '@/contexts/OrgContext';
+import { OrgPicker } from '../cos/OrgPicker';
+import { Unlinked } from './CosFinance';
 
 interface CrmRecord {
   id: string;
@@ -12,8 +15,10 @@ interface CrmRecord {
 }
 
 export function CosCrmList() {
+  const { orgId, linked } = useOrg();
   const { data, isLoading, error } = useQuery({
-    queryKey: ['crm-proxy', 'list'],
+    queryKey: ['crm-proxy', 'list', orgId],
+    enabled: Boolean(orgId) && linked.crm,
     queryFn: async () => {
       const { data: session } = await supabase.auth.getSession();
       const token = session.session?.access_token;
@@ -32,10 +37,15 @@ export function CosCrmList() {
     },
   });
 
+  if (!linked.crm) {
+    return <Unlinked title="Relationships" message="CRM is not linked for this organization." />;
+  }
+
   return (
     <div className="w-full bg-aryx-bg py-10 text-aryx-ink">
       <p className="mb-3 text-[10px] uppercase tracking-[0.2em] text-aryx-faint">ARYX CRM · read only</p>
-      <h1 className="mb-8 font-display text-4xl font-semibold text-aryx-ink">Relationships</h1>
+      <h1 className="mb-4 font-display text-4xl font-semibold text-aryx-ink">Relationships</h1>
+      <div className="mb-8"><OrgPicker /></div>
       {isLoading && <p className="text-aryx-muted">Loading…</p>}
       {error && <p className="text-amber-700 dark:text-amber-200">{(error as Error).message}</p>}
       {!isLoading && !error && (data || []).length === 0 && (

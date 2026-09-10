@@ -16,6 +16,7 @@ import {
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
 import { NotificationSettings } from '../notifications';
+import { SourceHealth } from '../cos/SourceHealth';
 
 export default function Settings() {
   const navigate = useNavigate();
@@ -188,6 +189,8 @@ export default function Settings() {
             </div>
           </div>
         </div>
+
+        <SourceHealth />
 
         {/* Password Change Card */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6">

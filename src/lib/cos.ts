@@ -65,6 +65,13 @@ export function compactNumber(value: number | null | undefined): string {
 }
 
 export type PeriodKey = 'mtd' | 'qtd' | 'ytd' | 'custom';
+export type PeriodGrain = 'month' | 'quarter' | 'year';
+
+export function grainForPeriod(period: PeriodKey): PeriodGrain {
+  if (period === 'ytd') return 'year';
+  if (period === 'qtd') return 'quarter';
+  return 'month';
+}
 
 export function periodBounds(period: PeriodKey, customStart?: string, customEnd?: string): { start: string; end: string } {
   const now = new Date();

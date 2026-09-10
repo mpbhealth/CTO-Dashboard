@@ -91,7 +91,7 @@ export default function Login({ onLoginSuccess }: { onLoginSuccess?: () => void 
     setError(null);
     try {
       await requestPasswordReset(email);
-      setSuccess('If that email has a COS account, we sent a reset link.');
+      setSuccess('If that email has an ARYX CEO account, we sent a reset link.');
       setMode('signin');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not send reset email');
@@ -103,7 +103,7 @@ export default function Login({ onLoginSuccess }: { onLoginSuccess?: () => void 
   const title = mode === 'signup' ? 'Create access' : mode === 'forgot' ? 'Reset password' : 'Welcome back';
   const subtitle = mode === 'forgot'
     ? 'We will email a one-time link to choose a new password.'
-    : 'One login. One COS workspace.';
+    : 'One login. One CEO workspace.';
 
   return (
     <AuthShell>

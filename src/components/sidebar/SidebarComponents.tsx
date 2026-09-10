@@ -278,7 +278,7 @@ export const SidebarUserProfile = memo(function SidebarUserProfile({
     : theme === 'admin'
     ? 'AD'
     : theme === 'aryx'
-    ? 'COS'
+    ? 'CEO'
     : 'CTO';
 
   // Get display role

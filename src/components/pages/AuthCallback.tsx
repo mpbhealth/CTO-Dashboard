@@ -62,7 +62,7 @@ export function AuthCallback() {
         <div className="mt-8 text-center">
           <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-2 border-aryx-line border-t-aryx-accent" />
           <h1 className="font-display text-xl font-semibold">Authenticating…</h1>
-          <p className="mt-2 text-sm text-aryx-muted">Setting up your COS session</p>
+          <p className="mt-2 text-sm text-aryx-muted">Setting up your CEO session</p>
         </div>
       )}
     </div>

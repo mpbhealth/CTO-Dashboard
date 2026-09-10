@@ -30,7 +30,7 @@ export function MFAEnrollment({ isOpen, onClose, onSuccess }: MFAEnrollmentProps
     setIsLoading(true);
     setError(null);
 
-    const result = await enrollMFA('MPB Health Dashboard');
+    const result = await enrollMFA('ARYX CEO');
 
     setIsLoading(false);
 

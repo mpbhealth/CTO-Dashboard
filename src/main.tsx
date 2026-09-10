@@ -227,7 +227,7 @@ if ('serviceWorker' in navigator && !Environment.isStackBlitz()) {
 if (import.meta.env.PROD && isSupabaseConfigured) {
   import('./lib/supabase').then(({ supabase }) => {
     supabase.auth.getSession().catch(err => {
-      console.error('[ARYX COS] Supabase connection error:', err);
+      console.error('[ARYX CEO] Supabase connection error:', err);
     });
   });
 }
@@ -279,7 +279,7 @@ function ConfigurationCheck({ children }: { children: React.ReactNode }) {
                   <div className="ml-3">
                     <h3 className="text-sm font-semibold text-amber-900">Action Required</h3>
                     <p className="mt-1 text-sm text-amber-800">
-                      ARYX COS requires Supabase configuration to function properly.
+                      ARYX CEO requires Supabase configuration to function properly.
                     </p>
                   </div>
                 </div>
@@ -415,7 +415,7 @@ try {
     </StrictMode>
   );
 } catch (error) {
-  console.error('[ARYX COS] Fatal error during React mount:', error);
+  console.error('[ARYX CEO] Fatal error during React mount:', error);
   // Display error directly in the DOM if React fails to mount
   if (rootElement) {
     rootElement.innerHTML = `
@@ -423,7 +423,7 @@ try {
         <div style="max-width: 600px; background: white; padding: 32px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.1);">
           <h1 style="color: #dc2626; margin-bottom: 16px;">⚠️ Application Failed to Start</h1>
           <p style="color: #64748b; margin-bottom: 16px;">
-            ARYX COS failed to initialize. This could be due to:
+            ARYX CEO failed to initialize. This could be due to:
           </p>
           <ul style="color: #64748b; margin-left: 20px; margin-bottom: 24px;">
             <li>Missing or invalid environment variables</li>

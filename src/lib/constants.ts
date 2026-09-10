@@ -1,10 +1,13 @@
+import { BRAND } from './brand';
+
 // Application Constants
+
 export const APP_CONFIG = {
-  NAME: 'MPB Health CTO Dashboard',
-  VERSION: '1.0.0',
-  DESCRIPTION: 'Executive Technology Leadership Dashboard',
-  AUTHOR: 'Vinnie R. Tannous, CTO',
-  ORGANIZATION: 'MPB Health',
+  NAME: BRAND.name,
+  VERSION: '2.0.0',
+  DESCRIPTION: BRAND.description,
+  AUTHOR: BRAND.title,
+  ORGANIZATION: BRAND.company,
 } as const;
 
 // Database Table Names

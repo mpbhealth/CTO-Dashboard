@@ -4,6 +4,8 @@ import { supabase } from '@/lib/supabase';
 import { compactNumber } from '@/lib/cos';
 import { useOrg } from '@/contexts/OrgContext';
 import { OrgPicker } from '../cos/OrgPicker';
+import { CommandStat, CommandStrip } from '../cos/CommandStrip';
+import { TrendSpark } from '../cos/TrendSpark';
 import { Unlinked } from './CosFinance';
 
 export function CosTickets() {
@@ -31,6 +33,17 @@ export function CosTickets() {
     return baseline > 0 && today > baseline * 1.5;
   }, [rows.data]);
 
+  const chart = useMemo(
+    () => [...(rows.data || [])].reverse().map((row) => ({
+      date: row.fact_date,
+      created: row.created_count,
+      open: row.open_count,
+      resolved: row.resolved_count,
+      sla: row.sla_pct ?? 0,
+    })),
+    [rows.data],
+  );
+
   if (!linked.tickets) {
     return <Unlinked title="Support" message="Tickets stay hidden until this org has an explicit ticket scope. ITSTS is not org-scoped." />;
   }
@@ -41,26 +54,26 @@ export function CosTickets() {
       <p className="mb-3 text-[10px] uppercase tracking-[0.2em] text-aryx-faint">Support · MPB pilot</p>
       <h1 className="mb-6 font-display text-4xl font-semibold">Tickets</h1>
       <OrgPicker />
-      {spike && (
-        <p className="mt-4 rounded-2xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm">
-          Created volume is above the 7-day baseline.
-        </p>
-      )}
-      <div className="mt-6 grid gap-4 md:grid-cols-4">
-        <Stat label="Open" value={compactNumber(latest?.open_count)} />
-        <Stat label="Resolved" value={compactNumber(latest?.resolved_count)} />
-        <Stat label="Created today" value={compactNumber(latest?.created_count)} />
-        <Stat label="SLA %" value={latest?.sla_pct == null ? '—' : `${latest.sla_pct}%`} />
+      <div className="mt-6">
+        <CommandStrip title="Latest" warning={spike ? 'Created volume is above the 7-day baseline.' : null}>
+          <CommandStat label="Open" value={compactNumber(latest?.open_count)} />
+          <CommandStat label="Resolved" value={compactNumber(latest?.resolved_count)} />
+          <CommandStat label="Created today" value={compactNumber(latest?.created_count)} />
+          <CommandStat label="SLA %" value={latest?.sla_pct == null ? '—' : `${latest.sla_pct}%`} />
+        </CommandStrip>
       </div>
-    </div>
-  );
-}
-
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-2xl bg-aryx-elevated p-5 ring-1 ring-aryx-line">
-      <p className="text-[10px] uppercase tracking-[0.16em] text-aryx-faint">{label}</p>
-      <p className="mt-2 text-2xl font-semibold">{value}</p>
+      <div className="mt-8">
+        <p className="mb-3 text-[10px] uppercase tracking-[0.16em] text-aryx-faint">Last 30 days</p>
+        <TrendSpark
+          data={chart}
+          xKey="date"
+          series={[
+            { key: 'created', color: '#FF5A1F' },
+            { key: 'open', color: '#888' },
+            { key: 'resolved', color: '#2F9E44' },
+          ]}
+        />
+      </div>
     </div>
   );
 }

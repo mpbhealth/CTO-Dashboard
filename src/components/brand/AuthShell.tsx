@@ -14,7 +14,7 @@ export function AuthShell({ children }: { children: ReactNode }) {
       <aside className="relative hidden w-[42%] flex-col justify-between bg-[#0B0B0D] px-12 py-10 text-[#F4F1EA] lg:flex">
         <AryxLogo size="lg" wordmark tone="onDark" />
         <div>
-          <p className="text-[11px] uppercase tracking-[0.24em] text-[#FFC300]">ARYX COS</p>
+          <p className="text-[11px] uppercase tracking-[0.24em] text-[#FFC300]">ARYX CEO</p>
           <h2 className="mt-4 max-w-sm font-display text-5xl font-semibold leading-tight text-[#F4F1EA]">
             One login.<br />One workspace.
           </h2>

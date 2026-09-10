@@ -14,7 +14,52 @@ interface ForecastInputs {
   pipe: Array<{ weighted_amount: number; premium_sum: number }>;
 }
 
-export function computeForecast(inputs: ForecastInputs, a: ForecastAssumptions) {
+export const HORIZON_PRESETS = [30, 90, 180, 365] as const;
+
+export interface ForecastBand {
+  pessimistic: number;
+  base: number;
+  optimistic: number;
+}
+
+export interface ForecastOutputs {
+  members: ForecastBand;
+  revenue: ForecastBand;
+  vendor: ForecastBand;
+  pnl: ForecastBand;
+  commissions: number;
+  saas: number;
+  weeks: number;
+}
+
+export function priorForecastDelta(
+  current: Pick<ForecastOutputs, 'pnl'>,
+  prior: { pnl?: { base?: number } } | null | undefined,
+): number | null {
+  const previous = Number(prior?.pnl?.base);
+  if (!Number.isFinite(previous)) return null;
+  return current.pnl.base - previous;
+}
+
+export function forecastSentence(
+  horizonDays: number,
+  pnl: ForecastBand,
+  format = (value: number) => String(Math.round(value)),
+): string {
+  return `At this pace, ${horizonDays}-day net is ${format(pnl.base)} (${format(pnl.pessimistic)}–${format(pnl.optimistic)}).`;
+}
+
+export function preferCompleteMonth<T extends { period_start?: string }>(
+  rows: T[],
+  today = new Date(),
+): T[] {
+  if (rows.length < 2) return rows;
+  const current = `${today.getUTCFullYear()}-${String(today.getUTCMonth() + 1).padStart(2, '0')}`;
+  const first = String(rows[0]?.period_start || '').slice(0, 7);
+  return first === current ? rows.slice(1) : rows;
+}
+
+export function computeForecast(inputs: ForecastInputs, a: ForecastAssumptions): ForecastOutputs {
   const weeks = Math.max(1, a.weeklyWeeks);
   const weeklyCollected = (inputs.pnl[0]?.collected || 0) / 4;
   const runRate = weeklyCollected * (a.horizonDays / 7) * a.seasonality;
@@ -46,6 +91,8 @@ export function computeForecast(inputs: ForecastInputs, a: ForecastAssumptions) 
       base: revenue.base - vendorBase - commissions - saas,
       optimistic: revenue.optimistic - vendorBase * a.optimistic - commissions - saas,
     },
+    commissions,
+    saas,
     weeks,
   };
 }

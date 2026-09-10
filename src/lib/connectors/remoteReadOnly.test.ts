@@ -8,6 +8,8 @@ describe('remote extractors stay read-only', () => {
     expect(remote).toContain("method: 'GET'");
     expect(remote).toContain('READ_RPCS');
     expect(remote).toContain('remote_write_forbidden');
+    expect(remote).toContain('restGetOrgOrNull');
+    expect(remote).toContain('SHARED_CATALOG_TABLES');
     expect(remote).not.toMatch(/method:\s*'PATCH'/);
     expect(remote).not.toMatch(/method:\s*'PUT'/);
     expect(remote).not.toMatch(/method:\s*'DELETE'/);

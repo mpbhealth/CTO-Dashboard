@@ -24,7 +24,7 @@ export function CosIntegrations() {
       <p className="mb-3 text-[10px] uppercase tracking-[0.2em] text-aryx-faint">Operations</p>
       <h1 className="mb-4 font-display text-4xl font-semibold">Integrations</h1>
       <p className="mb-6 max-w-2xl text-sm text-aryx-muted">
-        Status only. Remote organization maps are server-owned so one tenant cannot point COS at another project. COS never writes to EnrollFlow, CRM, AdvisorIQ, tickets, or MarketFlow.
+        Status only. Remote organization maps are server-owned so one tenant cannot point ARYX CEO at another project. ARYX CEO never writes to EnrollFlow, CRM, AdvisorIQ, tickets, or MarketFlow.
       </p>
       <OrgPicker />
       <div className="mt-8 grid gap-3">

@@ -119,7 +119,7 @@ export function CosOperations() {
           Company operations.
         </h1>
         <p className="mt-4 max-w-xl text-sm text-aryx-muted md:text-base">
-          Live counts from COS tables. Churn analytics stay in enrollment until that connector is configured.
+          Live warehouse counts. Churn analytics stay in enrollment until that connector is configured.
         </p>
 
         {(counts.isError || sources.isError) && (

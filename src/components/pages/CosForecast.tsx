@@ -5,7 +5,7 @@ import { money, compactNumber } from '@/lib/cos';
 import { useOrg } from '@/contexts/OrgContext';
 import { OrgPicker } from '../cos/OrgPicker';
 import { Unlinked } from './CosFinance';
-import { computeForecast, type ForecastAssumptions } from '@/lib/forecast';
+import { computeForecast, forecastSentence, HORIZON_PRESETS, preferCompleteMonth, priorForecastDelta, type ForecastAssumptions } from '@/lib/forecast';
 
 export function CosForecast() {
   const { orgId, linked, isOperator } = useOrg();
@@ -25,7 +25,7 @@ export function CosForecast() {
     enabled: Boolean(orgId) && linked.enrollment,
     queryFn: async () => {
       const [{ data: pnl }, { data: enroll }, { data: pipe }] = await Promise.all([
-        supabase.from('fact_pnl_period').select('collected, vendor_cost, commissions, saas_cost, active_members').eq('org_id', orgId).eq('period_grain', 'month').order('period_start', { ascending: false }).limit(4),
+        supabase.from('fact_pnl_period').select('period_start, collected, vendor_cost, commissions, saas_cost, active_members').eq('org_id', orgId).eq('period_grain', 'month').order('period_start', { ascending: false }).limit(4),
         supabase.from('fact_enrollments_daily').select('new_count, inactive_count, mrr, fact_date').eq('org_id', orgId).order('fact_date', { ascending: false }).limit(90),
         supabase.from('fact_crm_pipeline_daily').select('weighted_amount, premium_sum, fact_date').eq('org_id', orgId).order('fact_date', { ascending: false }).limit(30),
       ]);
@@ -51,8 +51,10 @@ export function CosForecast() {
 
   const computed = useMemo(() => {
     if (!facts.data) return null;
-    return computeForecast(facts.data, assumptions);
+    return computeForecast({ ...facts.data, pnl: preferCompleteMonth(facts.data.pnl) }, assumptions);
   }, [facts.data, assumptions]);
+
+  const priorDelta = computed ? priorForecastDelta(computed, lastRun.data?.outputs as { pnl?: { base?: number } } | null) : null;
 
   const save = useMutation({
     mutationFn: async () => {
@@ -78,13 +80,26 @@ export function CosForecast() {
       <p className="mb-3 text-[10px] uppercase tracking-[0.2em] text-aryx-faint">Finance</p>
       <h1 className="mb-2 font-display text-4xl font-semibold">Forecasts</h1>
       <p className="mb-6 max-w-2xl text-sm text-aryx-muted">
-        Trailing run-rate × seasonality ± CRM weighted pipeline. Not a guarantee. Confidence band is the pessimistic-to-optimistic spread.
+        {computed
+          ? forecastSentence(assumptions.horizonDays, computed.pnl, money)
+          : 'Trailing run-rate × seasonality ± CRM weighted pipeline. Not a guarantee.'}
       </p>
       <OrgPicker />
+      <div className="mt-6 flex flex-wrap gap-2">
+        {HORIZON_PRESETS.map((days) => (
+          <button
+            key={days}
+            type="button"
+            onClick={() => setAssumptions({ ...assumptions, horizonDays: days })}
+            className={`rounded-full px-3 py-1 text-[10px] uppercase tracking-[0.16em] ${
+              assumptions.horizonDays === days ? 'bg-aryx-accent text-white' : 'border border-aryx-line text-aryx-muted'
+            }`}
+          >
+            {days}d
+          </button>
+        ))}
+      </div>
       <div className="mt-6 grid gap-4 md:grid-cols-2">
-        <label className="text-xs text-aryx-muted">Horizon days
-          <input type="number" className="mt-1 w-full rounded-xl border border-aryx-line bg-aryx-elevated px-3 py-2 text-aryx-ink" value={assumptions.horizonDays} onChange={(e) => setAssumptions({ ...assumptions, horizonDays: Number(e.target.value) })} />
-        </label>
         <label className="text-xs text-aryx-muted">Seasonality
           <input type="number" step="0.05" className="mt-1 w-full rounded-xl border border-aryx-line bg-aryx-elevated px-3 py-2 text-aryx-ink" value={assumptions.seasonality} onChange={(e) => setAssumptions({ ...assumptions, seasonality: Number(e.target.value) })} />
         </label>
@@ -96,17 +111,52 @@ export function CosForecast() {
         </label>
       </div>
       {computed && (
-        <div className="mt-8 grid gap-4 md:grid-cols-3">
-          <Stat label="Members (base)" value={compactNumber(computed.members.base)} />
-          <Stat label="Revenue (base)" value={money(computed.revenue.base)} />
-          <Stat label="Net P&L (base)" value={money(computed.pnl.base)} />
-          <Stat label="Pessimistic revenue" value={money(computed.revenue.pessimistic)} />
-          <Stat label="Optimistic revenue" value={money(computed.revenue.optimistic)} />
-          <Stat label="Vendor outlay" value={money(computed.vendor.base)} />
+        <div className="mt-8 overflow-x-auto">
+          <table className="w-full text-left text-sm">
+            <thead className="text-[10px] uppercase tracking-[0.16em] text-aryx-faint">
+              <tr>
+                <th className="py-2">Band</th>
+                <th>Pessimistic</th>
+                <th>Base</th>
+                <th>Optimistic</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="border-t border-aryx-line">
+                <td className="py-3">Members</td>
+                <td>{compactNumber(computed.members.pessimistic)}</td>
+                <td>{compactNumber(computed.members.base)}</td>
+                <td>{compactNumber(computed.members.optimistic)}</td>
+              </tr>
+              <tr className="border-t border-aryx-line">
+                <td className="py-3">Revenue</td>
+                <td>{money(computed.revenue.pessimistic)}</td>
+                <td>{money(computed.revenue.base)}</td>
+                <td>{money(computed.revenue.optimistic)}</td>
+              </tr>
+              <tr className="border-t border-aryx-line">
+                <td className="py-3">Vendor</td>
+                <td>{money(computed.vendor.pessimistic)}</td>
+                <td>{money(computed.vendor.base)}</td>
+                <td>{money(computed.vendor.optimistic)}</td>
+              </tr>
+              <tr className="border-t border-aryx-line">
+                <td className="py-3">Net</td>
+                <td>{money(computed.pnl.pessimistic)}</td>
+                <td>{money(computed.pnl.base)}</td>
+                <td>{money(computed.pnl.optimistic)}</td>
+              </tr>
+            </tbody>
+          </table>
+          <div className="mt-4 grid gap-4 md:grid-cols-2">
+            <Stat label="Commissions (horizon)" value={money(computed.commissions)} />
+            <Stat label="SaaS (horizon)" value={money(computed.saas)} />
+          </div>
         </div>
       )}
       <p className="mt-4 text-xs text-aryx-faint">
-        Last calibration: {lastRun.data?.created_at ? new Date(lastRun.data.created_at).toLocaleString() : 'not saved'}
+        Last saved base net vs now: {priorDelta == null ? 'no prior run' : money(priorDelta)}
+        {lastRun.data?.created_at ? ` · saved ${new Date(lastRun.data.created_at).toLocaleString()}` : ''}
       </p>
       {isOperator && (
         <button type="button" onClick={() => save.mutate()} className="mt-6 rounded-full bg-aryx-accent px-5 py-2 text-sm text-white">

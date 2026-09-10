@@ -40,7 +40,7 @@ export function SsoCallback() {
   return (
     <div className="flex min-h-[100dvh] flex-col items-center justify-center bg-aryx-bg text-aryx-ink">
       <AryxLogo wordmark />
-      <p className="mt-6 text-sm text-aryx-muted">{error || 'Opening COS…'}</p>
+      <p className="mt-6 text-sm text-aryx-muted">{error || 'Opening ARYX CEO…'}</p>
     </div>
   );
 }

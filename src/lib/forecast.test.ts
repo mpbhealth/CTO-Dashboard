@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { computeForecast } from './forecast';
+import { computeForecast, forecastSentence, preferCompleteMonth, priorForecastDelta } from './forecast';
 
 describe('computeForecast', () => {
   it('returns pessimistic < base < optimistic revenue', () => {
@@ -20,5 +20,23 @@ describe('computeForecast', () => {
     expect(result.revenue.pessimistic).toBeLessThan(result.revenue.base);
     expect(result.revenue.base).toBeLessThan(result.revenue.optimistic);
     expect(result.members.base).toBeGreaterThan(0);
+    expect(result.commissions).toBeGreaterThan(0);
+    expect(result.saas).toBeGreaterThan(0);
+  });
+
+  it('compares current base net to a prior saved run', () => {
+    const current = { pnl: { pessimistic: 70, base: 100, optimistic: 130 } };
+    expect(priorForecastDelta(current, { pnl: { base: 80 } })).toBe(20);
+    expect(priorForecastDelta(current, null)).toBeNull();
+    expect(forecastSentence(90, current.pnl, (value) => `$${value}`))
+      .toBe('At this pace, 90-day net is $100 ($70–$130).');
+  });
+
+  it('skips the in-progress month when a prior month exists', () => {
+    const rows = preferCompleteMonth([
+      { period_start: '2026-09-01', collected: 780 },
+      { period_start: '2026-08-01', collected: 71841 },
+    ], new Date('2026-09-10T00:00:00Z'));
+    expect(rows[0]?.period_start).toBe('2026-08-01');
   });
 });

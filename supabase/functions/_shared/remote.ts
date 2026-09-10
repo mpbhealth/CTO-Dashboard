@@ -30,6 +30,16 @@ export function withOrgFilter(path: string, filter: OrgFilter): string {
   return `${path}${joiner}${encodeURIComponent(safe.column)}=eq.${encodeURIComponent(safe.value)}`;
 }
 
+const SHARED_CATALOG_TABLES = new Set(['vendor_costs', 'products']);
+
+export function withOrgOrNullFilter(path: string, filter: OrgFilter): string {
+  const safe = requireOrgFilter(filter);
+  const table = path.split('?')[0];
+  if (!SHARED_CATALOG_TABLES.has(table)) throw new Error('remote_shared_catalog_forbidden');
+  const rest = path.includes('?') ? path.slice(path.indexOf('?') + 1) : '';
+  return `${table}?or=(${safe.column}.is.null,${safe.column}.eq.${safe.value})${rest ? `&${rest}` : ''}`;
+}
+
 function assertReadPath(path: string) {
   const table = path.split('?')[0].toLowerCase();
   if (table.includes('/rpc/')) throw new Error('remote_write_forbidden');
@@ -60,6 +70,42 @@ export async function restGet<T>(
   assertReadPath(path);
   const url = `${baseUrl.replace(/\/$/, '')}/rest/v1/${withOrgFilter(path.replace(/^\//, ''), filter)}`;
   return await getJson<T>(url, serviceKey, 'remote_http');
+}
+
+export async function restGetOrgOrNull<T>(
+  baseUrl: string,
+  serviceKey: string,
+  path: string,
+  filter: OrgFilter,
+): Promise<T> {
+  assertReadPath(path);
+  const url = `${baseUrl.replace(/\/$/, '')}/rest/v1/${withOrgOrNullFilter(path.replace(/^\//, ''), filter)}`;
+  return await getJson<T>(url, serviceKey, 'remote_http');
+}
+
+export async function restGetPages<T extends Array<Record<string, unknown>>>(
+  baseUrl: string,
+  serviceKey: string,
+  path: string,
+  filter: OrgFilter,
+  pageSize = 1000,
+): Promise<T> {
+  const rows: Array<Record<string, unknown>> = [];
+  let offset = 0;
+  while (offset < 20000) {
+    const joiner = path.includes('?') ? '&' : '?';
+    const page = await restGet<T>(
+      baseUrl,
+      serviceKey,
+      `${path}${joiner}limit=${pageSize}&offset=${offset}`,
+      filter,
+    );
+    if (!Array.isArray(page) || page.length === 0) break;
+    rows.push(...page);
+    if (page.length < pageSize) break;
+    offset += pageSize;
+  }
+  return rows as T;
 }
 
 export async function restRpc<T>(

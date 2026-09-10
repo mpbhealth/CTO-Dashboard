@@ -1,8 +1,10 @@
+import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { compactNumber, money, ADVISORIQ_HREF } from '@/lib/cos';
 import { useOrg } from '@/contexts/OrgContext';
 import { OrgPicker } from '../cos/OrgPicker';
+import { CommandStat, CommandStrip } from '../cos/CommandStrip';
 import { Unlinked } from './CosFinance';
 
 export function CosAdvisors() {
@@ -37,8 +39,21 @@ export function CosAdvisors() {
     },
   });
 
+  const rollupStats = useMemo(() => {
+    const list = rows.data || [];
+    const totalMrr = list.reduce((s, row) => s + Number(row.mrr), 0);
+    const top10 = list.slice(0, 10).reduce((s, row) => s + Number(row.mrr), 0);
+    return {
+      books: list.length,
+      totalMrr,
+      concentration: totalMrr > 0 ? Number(((top10 / totalMrr) * 100).toFixed(1)) : 0,
+    };
+  }, [rows.data]);
+
+  const mixMax = Math.max(1, ...(mix.data || []).map((row) => Number(row.mrr)));
+
   if (!linked.advisoriq) {
-    return <Unlinked title="Advisors" message="AdvisorIQ is not linked. COS will not rebuild book scorecards." />;
+    return <Unlinked title="Advisors" message="AdvisorIQ is not linked. ARYX CEO will not rebuild book scorecards." />;
   }
 
   return (
@@ -49,14 +64,26 @@ export function CosAdvisors() {
       <a href={ADVISORIQ_HREF} className="mt-4 inline-block text-sm text-aryx-accent" target="_blank" rel="noreferrer">
         Open AdvisorIQ
       </a>
+      <div className="mt-6">
+        <CommandStrip title="Company rollup">
+          <CommandStat label="Books" value={compactNumber(rollupStats.books)} hint="Advisor keys only" />
+          <CommandStat label="Total MRR" value={money(rollupStats.totalMrr)} />
+          <CommandStat label="Top-10 concentration" value={`${rollupStats.concentration}%`} />
+        </CommandStrip>
+      </div>
       {(mix.data || []).length > 0 && (
         <div className="mt-8">
           <h2 className="mb-3 text-sm uppercase tracking-[0.16em] text-aryx-faint">Product mix</h2>
-          <div className="space-y-2">
+          <div className="space-y-3">
             {mix.data?.map((row) => (
-              <div key={row.product_key} className="flex justify-between rounded-2xl bg-aryx-elevated px-5 py-3 ring-1 ring-aryx-line">
-                <span>{row.product_key}</span>
-                <span>{compactNumber(row.active_members)} · {money(row.mrr)}</span>
+              <div key={row.product_key}>
+                <div className="mb-1 flex justify-between text-sm">
+                  <span>{row.product_key}</span>
+                  <span>{compactNumber(row.active_members)} · {money(row.mrr)}</span>
+                </div>
+                <div className="h-2 overflow-hidden rounded-full bg-aryx-ink/10">
+                  <div className="h-full rounded-full bg-aryx-accent" style={{ width: `${(Number(row.mrr) / mixMax) * 100}%` }} />
+                </div>
               </div>
             ))}
           </div>

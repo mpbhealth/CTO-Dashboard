@@ -63,7 +63,7 @@ export function Breadcrumbs() {
     if (path === '/' || path === '/login') return [];
 
     const navItems = ceoNavigationItems;
-    const dashboardLabel = 'ARYX COS';
+    const dashboardLabel = 'ARYX CEO';
     const homePath = '/home';
 
     const { parent, child } = findNavMatch(path, navItems);

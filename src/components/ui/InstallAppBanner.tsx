@@ -23,7 +23,7 @@ export function InstallAppBanner() {
                 <Smartphone className="w-5 h-5" />
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-sm mb-1">Install MPB Dashboard</h3>
+                <h3 className="font-semibold text-sm mb-1">Install ARYX CEO</h3>
                 <p className="text-xs text-slate-400 leading-relaxed">
                   Tap <Share className="w-3.5 h-3.5 inline-block mx-0.5 -mt-0.5" /> then
                   <span className="font-medium text-slate-300"> "Add to Home Screen"</span>
@@ -60,7 +60,7 @@ export function InstallAppBanner() {
               <Download className="w-5 h-5" />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-sm">Install MPB Dashboard</h3>
+              <h3 className="font-semibold text-sm">Install ARYX CEO</h3>
               <p className="text-xs text-slate-400">Get faster access from your device</p>
             </div>
             <button

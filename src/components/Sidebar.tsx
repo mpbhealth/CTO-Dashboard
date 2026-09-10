@@ -204,7 +204,7 @@ function SidebarComponent({
       ? 'Chief Technology Officer'
       : profile?.role === 'admin'
       ? 'Administrator'
-      : 'Chief of Staff';
+      : 'Chief Executive Officer';
 
   return (
     <>
@@ -288,7 +288,7 @@ function SidebarComponent({
           <SidebarHeader
             isExpanded={isExpanded}
             title="ARYX"
-            subtitle="Chief of Staff"
+            subtitle="CEO"
             logoSrc="/brand/aryx-mark.png"
             logoAlt="ARYX"
             theme={theme}

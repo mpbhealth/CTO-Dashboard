@@ -229,7 +229,7 @@ export function MFAVerification({ isOpen, onSuccess, onCancel }: MFAVerification
 
                 {/* Help Text */}
                 <p className="text-xs text-slate-500 text-center mb-6">
-                  Open your authenticator app and enter the current code for MPB Health Dashboard
+                  Open your authenticator app and enter the current code for ARYX CEO
                 </p>
 
                 {/* Cancel Button */}

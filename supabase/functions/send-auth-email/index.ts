@@ -1,7 +1,7 @@
 import { Webhook } from 'https://esm.sh/standardwebhooks@1.0.0';
 
 const APP_URL = 'https://cos.aryxtech.com';
-const FROM = 'ARYX COS <noreply@aryx.pro>';
+const FROM = 'ARYX CEO <noreply@aryx.pro>';
 
 const TEMPLATE_BY_TYPE: Record<string, string> = {
   signup: 'cos-confirm-email',
@@ -13,13 +13,13 @@ const TEMPLATE_BY_TYPE: Record<string, string> = {
 };
 
 const SUBJECT_BY_TYPE: Record<string, string> = {
-  signup: 'Confirm your ARYX COS email',
-  invite: 'You are invited to ARYX COS',
-  magiclink: 'Your ARYX COS sign-in link',
-  recovery: 'Reset your ARYX COS password',
-  email_change: 'Confirm your new ARYX COS email',
-  email: 'Confirm your ARYX COS email',
-  reauthentication: 'Your ARYX COS verification code',
+  signup: 'Confirm your ARYX CEO email',
+  invite: 'You are invited to ARYX CEO',
+  magiclink: 'Your ARYX CEO sign-in link',
+  recovery: 'Reset your ARYX CEO password',
+  email_change: 'Confirm your new ARYX CEO email',
+  email: 'Confirm your ARYX CEO email',
+  reauthentication: 'Your ARYX CEO verification code',
 };
 
 type EmailData = {
@@ -150,9 +150,9 @@ Deno.serve(async (req) => {
       return json(200, {});
     }
 
-    const subject = SUBJECT_BY_TYPE[type] || 'ARYX COS';
+    const subject = SUBJECT_BY_TYPE[type] || 'ARYX CEO';
     const text = email_data.token
-      ? `Your ARYX COS verification code is ${email_data.token}.`
+      ? `Your ARYX CEO verification code is ${email_data.token}.`
       : `Open ${APP_URL} to continue.`;
     await sendPlain(to, subject, text);
     return json(200, {});

@@ -23,3 +23,13 @@ export function withOrgFilter(path: string, filter: OrgFilter): string {
   const joiner = path.includes('?') ? '&' : '?';
   return `${path}${joiner}${encodeURIComponent(safe.column)}=eq.${encodeURIComponent(safe.value)}`;
 }
+
+const SHARED_CATALOG_TABLES = new Set(['vendor_costs', 'products']);
+
+export function withOrgOrNullFilter(path: string, filter: OrgFilter): string {
+  const safe = requireOrgFilter(filter);
+  const table = path.split('?')[0];
+  if (!SHARED_CATALOG_TABLES.has(table)) throw new Error('remote_shared_catalog_forbidden');
+  const rest = path.includes('?') ? path.slice(path.indexOf('?') + 1) : '';
+  return `${table}?or=(${safe.column}.is.null,${safe.column}.eq.${safe.value})${rest ? `&${rest}` : ''}`;
+}

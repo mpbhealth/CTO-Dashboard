@@ -15,11 +15,17 @@ export function CosVendors() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('fact_vendor_costs_monthly')
-        .select('period_start, product_key, vendor_cost, missing_match_count')
+        .select('period_start, product_key, vendor_cost, missing_match_count, metadata')
         .in('org_id', orgIds)
         .order('period_start', { ascending: false });
       if (error) throw error;
-      return data || [];
+      return (data || []) as Array<{
+        period_start: string;
+        product_key: string;
+        vendor_cost: number;
+        missing_match_count: number;
+        metadata?: { product_label?: string };
+      }>;
     },
   });
 
@@ -40,16 +46,23 @@ export function CosVendors() {
     return <Unlinked title="Vendors" message="EnrollFlow is not linked, so carrier costs stay hidden." />;
   }
 
+  const unmatched = (vendor.data || []).reduce((sum, row) => sum + Number(row.missing_match_count || 0), 0);
+
   return (
     <div className="w-full bg-aryx-bg py-10 text-aryx-ink">
       <p className="mb-3 text-[10px] uppercase tracking-[0.2em] text-aryx-faint">Finance</p>
       <h1 className="mb-6 font-display text-4xl font-semibold">Vendors</h1>
       <OrgPicker />
+      {unmatched > 0 && (
+        <p className="mt-4 rounded-2xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm">
+          {unmatched} active enrollments have no matching vendor cost row.
+        </p>
+      )}
       <h2 className="mb-3 mt-8 text-sm uppercase tracking-[0.16em] text-aryx-faint">Carrier / plan costs</h2>
       <div className="space-y-2">
         {(vendor.data || []).map((row) => (
           <div key={`${row.period_start}-${row.product_key}`} className="flex justify-between rounded-2xl bg-aryx-elevated px-5 py-3 ring-1 ring-aryx-line">
-            <span>{row.period_start} · {row.product_key || 'unmapped'}</span>
+            <span>{row.period_start} · {row.metadata?.product_label || row.product_key || 'unmapped'}</span>
             <span>{money(row.vendor_cost)} {row.missing_match_count ? `· ${row.missing_match_count} unmatched` : ''}</span>
           </div>
         ))}

@@ -1,7 +1,7 @@
 {
-  "name": "MPB Health CTO Dashboard",
-  "short_name": "MPB Dashboard",
-  "description": "Comprehensive executive dashboard for MPB Health's technology leadership team with analytics, project management, and organizational insights.",
+  "name": "ARYX CEO",
+  "short_name": "ARYX CEO",
+  "description": "ARYX Chief Executive Officer workspace for mail, CRM, and company operations.",
   "start_url": "/",
   "display": "standalone",
   "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],

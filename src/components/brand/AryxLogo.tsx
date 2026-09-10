@@ -1,3 +1,5 @@
+import { BRAND } from '../../lib/brand';
+
 type AryxLogoProps = {
   size?: 'sm' | 'md' | 'lg';
   wordmark?: boolean;
@@ -25,7 +27,7 @@ export function AryxLogo({ size = 'md', wordmark = false, tone = 'auto', classNa
       {wordmark && (
         <div className="min-w-0 text-left">
           <p className={`font-display text-sm font-semibold tracking-[0.28em] ${titleClass}`}>ARYX</p>
-          <p className={`text-[10px] uppercase tracking-[0.2em] ${subtitleClass}`}>Chief of Staff</p>
+          <p className={`text-[10px] uppercase tracking-[0.2em] ${subtitleClass}`}>{BRAND.short}</p>
         </div>
       )}
     </div>

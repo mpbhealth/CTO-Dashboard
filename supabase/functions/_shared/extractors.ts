@@ -1,6 +1,28 @@
 import type { SupabaseClient } from 'npm:@supabase/supabase-js';
 import type { CosOrgLink } from './org.ts';
-import { countFiltered, restGet, restRpc, type OrgFilter } from './remote.ts';
+import {
+  findStage,
+  ifClosed,
+  isClosedStage,
+  pickWeightedAmount,
+  quotedPremium,
+  stageProbability,
+} from './ifClosed.ts';
+import {
+  billingMonthKey,
+  commissionMonthKey,
+  emptyPnl,
+  isPaidCommissionStatus,
+  isPendingCommissionStatus,
+  matchVendorUnit,
+  pnlNet,
+  quarterStart,
+  rollupPnlMonths,
+  vendorCoveragePct,
+  yearStart,
+  type PnlParts,
+} from './moneyMatch.ts';
+import { countFiltered, restGet, restGetOrgOrNull, restGetPages, restRpc, type OrgFilter } from './remote.ts';
 
 const OPEN_TICKETS = 'in.(new,open,awaiting_customer,on_hold)';
 const RESOLVED_TICKETS = 'in.(resolved,closed)';
@@ -59,60 +81,75 @@ export async function extractEnrollment(
   const today = new Date().toISOString().slice(0, 10);
   const start = monthStart();
 
-  const enrollments = await restGet<Array<Record<string, unknown>>>(
+  const yearFrom = `${new Date().getUTCFullYear() - 1}-01-01`;
+  const enrollments = await restGetPages(
     creds.url,
     creds.key,
-    'enrollments?select=id,status,monthly_cost,enrollment_date,inactive_date,product_id,plan_type,primary_is_smoker&limit=5000',
+    'enrollments?select=id,status,monthly_cost,enrollment_date,inactive_date,product_id,plan_type,primary_is_smoker,iua_id',
     filter,
   );
-  const billing = await restGet<Array<Record<string, unknown>>>(
+  const billing = await restGetPages(
     creds.url,
     creds.key,
-    `billing?select=amount,status,paid_at,due_date,billing_type&or=(paid_at.gte.${start},due_date.gte.${start})&limit=5000`,
+    `billing?select=amount,status,paid_at,due_date,billing_type&or=(paid_at.gte.${yearFrom},due_date.gte.${yearFrom})`,
     filter,
   );
-  const commissions = await restGet<Array<Record<string, unknown>>>(
+  const commissions = await restGetPages(
     creds.url,
     creds.key,
-    `commissions?select=amount,status,commission_month,commission_type&commission_month=eq.${start.slice(0, 7)}&limit=5000`,
+    `commissions?select=amount,status,commission_month,commission_type&commission_month=gte.${yearFrom.slice(0, 7)}`,
     filter,
   );
-  const vendorCosts = await restGet<Array<Record<string, unknown>>>(
+  const vendorCosts = await restGetOrgOrNull<Array<Record<string, unknown>>>(
     creds.url,
     creds.key,
-    'vendor_costs?select=product_id,cost,tobacco_surcharge,status&status=eq.Active&limit=5000',
+    'vendor_costs?select=product_id,iua_id,cost,tobacco_surcharge,status,not_offered&limit=5000',
     filter,
   );
+  let products: Array<Record<string, unknown>> = [];
+  try {
+    products = await restGet<Array<Record<string, unknown>>>(
+      creds.url,
+      creds.key,
+      'products?select=id,name,label&limit=5000',
+      filter,
+    );
+  } catch {
+    products = [];
+  }
+
+  const productLabel = new Map<string, string>();
+  for (const row of products) {
+    const id = String(row.id || '');
+    const label = String(row.name || row.label || '').trim();
+    if (id && label) productLabel.set(id, label);
+  }
 
   const active = enrollments.filter((row) => ['Active', 'Future Active'].includes(String(row.status)));
-  const newThisMonth = enrollments.filter((row) => String(row.enrollment_date || '') >= start);
-  const inactiveThisMonth = enrollments.filter((row) => String(row.inactive_date || '') >= start);
-  const collected = billing.filter((row) => row.status === 'Paid').reduce((s, row) => s + Number(row.amount || 0), 0);
-  const pending = billing.filter((row) => row.status === 'Pending').reduce((s, row) => s + Number(row.amount || 0), 0);
-  const failed = billing.filter((row) => row.status === 'Failed').reduce((s, row) => s + Number(row.amount || 0), 0);
-  const commissionSum = commissions.reduce((s, row) => s + Number(row.amount || 0), 0);
   const mrr = active.reduce((s, row) => s + Number(row.monthly_cost || 0), 0);
 
-  const vendorByProduct = new Map<string, number>();
-  for (const row of vendorCosts) {
-    vendorByProduct.set(String(row.product_id), Number(row.cost || 0) + Number(row.tobacco_surcharge || 0));
-  }
   let vendorCost = 0;
   let missing = 0;
-  const vendorMonthly = new Map<string, { cost: number; missing: number }>();
+  let estimated = 0;
+  const vendorMonthly = new Map<string, { cost: number; missing: number; label: string }>();
   for (const row of active) {
     const key = String(row.product_id || '');
-    const unit = vendorByProduct.get(key);
-    const bucket = vendorMonthly.get(key) || { cost: 0, missing: 0 };
-    if (unit == null) {
+    const match = matchVendorUnit(vendorCosts, key, {
+      iuaId: String(row.iua_id || ''),
+      isSmoker: row.primary_is_smoker,
+    });
+    const bucket = vendorMonthly.get(key) || { cost: 0, missing: 0, label: productLabel.get(key) || key };
+    if (!match) {
       missing += 1;
       bucket.missing += 1;
     } else {
-      vendorCost += unit;
-      bucket.cost += unit;
+      vendorCost += match.unit;
+      bucket.cost += match.unit;
+      if (match.estimated) estimated += 1;
     }
     vendorMonthly.set(key, bucket);
   }
+  const coverage = vendorCoveragePct(active.length - missing, active.length);
 
   const { data: saasRows } = await admin
     .from('saas_expenses')
@@ -123,25 +160,134 @@ export async function extractEnrollment(
     return sum + (row.cadence === 'yearly' ? amount / 12 : amount);
   }, 0);
 
-  const gross = collected - vendorCost - commissionSum;
-  const net = gross - saasCost;
+  const months = new Map<string, PnlParts>();
+  const ensureMonth = (key: string) => {
+    const current = months.get(key);
+    if (current) return current;
+    const next = emptyPnl();
+    months.set(key, next);
+    return next;
+  };
 
-  await admin.from('fact_pnl_period').upsert({
-    org_id: orgId,
-    period_start: start,
-    period_grain: 'month',
-    collected,
-    pending,
-    failed,
-    vendor_cost: vendorCost,
-    commissions: commissionSum,
-    saas_cost: saasCost,
-    gross_margin: gross,
-    net_operating: net,
-    enrollment_count: newThisMonth.length,
-    active_members: active.length,
-    metadata: { missing_vendor_matches: missing },
-  }, { onConflict: 'org_id,period_start,period_grain' });
+  for (const row of billing) {
+    const key = billingMonthKey(row.paid_at || row.due_date);
+    if (!key) continue;
+    const bucket = ensureMonth(`${key}-01`);
+    const amount = Number(row.amount || 0);
+    const status = String(row.status || '');
+    if (status === 'Paid') bucket.collected += amount;
+    if (status === 'Pending') bucket.pending += amount;
+    if (status === 'Failed') bucket.failed += amount;
+  }
+  for (const row of commissions) {
+    const key = commissionMonthKey(row.commission_month);
+    if (!key) continue;
+    const bucket = ensureMonth(`${key}-01`);
+    const amount = Number(row.amount || 0);
+    if (isPaidCommissionStatus(row.status)) bucket.commissions += amount;
+    if (isPendingCommissionStatus(row.status)) bucket.commissions_pending += amount;
+  }
+  for (const row of enrollments) {
+    const enrolled = billingMonthKey(row.enrollment_date);
+    if (enrolled) ensureMonth(`${enrolled}-01`).enrollment_count += 1;
+  }
+
+  const current = ensureMonth(start);
+  current.vendor_cost = vendorCost;
+  current.saas_cost = saasCost;
+  current.active_members = active.length;
+  current.missing_vendor_matches = missing;
+  current.vendor_coverage_pct = coverage;
+
+  const monthKeys = [...months.keys()].sort();
+  for (const periodStart of monthKeys) {
+    const row = months.get(periodStart)!;
+    const { gross, net } = pnlNet(row);
+    await admin.from('fact_pnl_period').upsert({
+      org_id: orgId,
+      period_start: periodStart,
+      period_grain: 'month',
+      collected: row.collected,
+      pending: row.pending,
+      failed: row.failed,
+      vendor_cost: row.vendor_cost,
+      commissions: row.commissions,
+      saas_cost: row.saas_cost,
+      gross_margin: gross,
+      net_operating: net,
+      enrollment_count: row.enrollment_count,
+      active_members: row.active_members,
+      metadata: {
+        missing_vendor_matches: row.missing_vendor_matches,
+        vendor_coverage_pct: row.vendor_coverage_pct,
+        commissions_pending: row.commissions_pending,
+        commissions_paid: row.commissions,
+        vendor_estimated_matches: periodStart === start ? estimated : 0,
+      },
+    }, { onConflict: 'org_id,period_start,period_grain' });
+  }
+
+  const byQuarter = new Map<string, PnlParts[]>();
+  const byYear = new Map<string, PnlParts[]>();
+  for (const periodStart of monthKeys) {
+    const row = months.get(periodStart)!;
+    const q = quarterStart(periodStart);
+    const y = yearStart(periodStart);
+    byQuarter.set(q, [...(byQuarter.get(q) || []), row]);
+    byYear.set(y, [...(byYear.get(y) || []), row]);
+  }
+  for (const [periodStart, rows] of byQuarter) {
+    const rolled = rollupPnlMonths(rows);
+    const { gross, net } = pnlNet(rolled);
+    await admin.from('fact_pnl_period').upsert({
+      org_id: orgId,
+      period_start: periodStart,
+      period_grain: 'quarter',
+      collected: rolled.collected,
+      pending: rolled.pending,
+      failed: rolled.failed,
+      vendor_cost: rolled.vendor_cost,
+      commissions: rolled.commissions,
+      saas_cost: rolled.saas_cost,
+      gross_margin: gross,
+      net_operating: net,
+      enrollment_count: rolled.enrollment_count,
+      active_members: rolled.active_members,
+      metadata: {
+        missing_vendor_matches: rolled.missing_vendor_matches,
+        vendor_coverage_pct: rolled.vendor_coverage_pct,
+        commissions_pending: rolled.commissions_pending,
+        commissions_paid: rolled.commissions,
+        rolled_from_months: rows.length,
+      },
+    }, { onConflict: 'org_id,period_start,period_grain' });
+  }
+  for (const [periodStart, rows] of byYear) {
+    const rolled = rollupPnlMonths(rows);
+    const { gross, net } = pnlNet(rolled);
+    await admin.from('fact_pnl_period').upsert({
+      org_id: orgId,
+      period_start: periodStart,
+      period_grain: 'year',
+      collected: rolled.collected,
+      pending: rolled.pending,
+      failed: rolled.failed,
+      vendor_cost: rolled.vendor_cost,
+      commissions: rolled.commissions,
+      saas_cost: rolled.saas_cost,
+      gross_margin: gross,
+      net_operating: net,
+      enrollment_count: rolled.enrollment_count,
+      active_members: rolled.active_members,
+      metadata: {
+        missing_vendor_matches: rolled.missing_vendor_matches,
+        vendor_coverage_pct: rolled.vendor_coverage_pct,
+        commissions_pending: rolled.commissions_pending,
+        commissions_paid: rolled.commissions,
+        rolled_from_months: rows.length,
+      },
+    }, { onConflict: 'org_id,period_start,period_grain' });
+  }
 
   const byDay = new Map<string, { new_count: number; inactive_count: number; product_key: string; plan_type: string; mrr: number; active_count: number }>();
   for (const row of enrollments) {
@@ -185,19 +331,22 @@ export async function extractEnrollment(
       product_key: productKey,
       vendor_cost: bucket.cost,
       missing_match_count: bucket.missing,
-      metadata: {},
+      metadata: { product_label: bucket.label },
     }, { onConflict: 'org_id,period_start,product_key' });
   }
 
+  const { gross, net } = pnlNet(current);
   const metrics = [
     { metric_key: 'enrollment_count', value: enrollments.length },
     { metric_key: 'member_count', value: active.length },
-    { metric_key: 'collected_revenue', value: collected },
-    { metric_key: 'pending_ar', value: pending },
+    { metric_key: 'collected_revenue', value: current.collected },
+    { metric_key: 'pending_ar', value: current.pending },
     { metric_key: 'vendor_cost', value: vendorCost },
-    { metric_key: 'commissions', value: commissionSum },
+    { metric_key: 'commissions', value: current.commissions },
     { metric_key: 'gross_margin', value: gross },
+    { metric_key: 'net_operating', value: net },
     { metric_key: 'mrr', value: mrr },
+    { metric_key: 'vendor_coverage_pct', value: coverage },
   ];
   for (const metric of metrics) {
     await upsertSnapshot(admin, orgId, 'aryx_enrollment', metric.metric_key, metric.value, today);
@@ -230,18 +379,29 @@ export async function extractCrm(
     breakdown = [];
   }
 
-  const leads = await restGet<Array<Record<string, unknown>>>(
+  const leads = await restGetPages(
     creds.url,
     creds.key,
-    'lead_submissions?select=id,pipeline_stage,premium_amount,updated_at,created_at&limit=5000',
+    'lead_submissions?select=id,pipeline_stage,pipeline_stage_id,premium_amount,monthly_premium,updated_at,created_at',
     filter,
   );
-  const deals = await restGet<Array<Record<string, unknown>>>(
+  const deals = await restGetPages(
     creds.url,
     creds.key,
-    'crm_deals?select=id,amount,probability,expected_close_date,won_at,lost_at,stage_id&limit=5000',
+    'crm_deals?select=id,amount,probability,expected_close_date,won_at,lost_at,stage_id',
     filter,
   );
+  let stages: Array<Record<string, unknown>> = [];
+  try {
+    stages = await restGet<Array<Record<string, unknown>>>(
+      creds.url,
+      creds.key,
+      'crm_pipeline_stages?select=id,name,display_name,probability,is_won_stage,is_lost_stage&limit=500',
+      filter,
+    );
+  } catch {
+    stages = [];
+  }
   let activities = 0;
   try {
     activities = await countFiltered(creds.url, creds.key, 'crm_activities', filter);
@@ -249,20 +409,32 @@ export async function extractCrm(
     activities = 0;
   }
 
-  const byStage = new Map<string, { lead_count: number; premium_sum: number; aging: number }>();
+  const byStage = new Map<string, { lead_count: number; premium_sum: number; aging: number; lead_if_closed: number }>();
   const weekAgo = daysAgo(7);
+  let leadIfClosed = 0;
+  let quotedOpen = 0;
   for (const row of leads) {
-    const stage = String(row.pipeline_stage || 'unknown');
-    const cur = byStage.get(stage) || { lead_count: 0, premium_sum: 0, aging: 0 };
+    const stage = findStage(stages, row);
+    const stageName = String(stage?.name || row.pipeline_stage || 'unknown');
+    const cur = byStage.get(stageName) || { lead_count: 0, premium_sum: 0, aging: 0, lead_if_closed: 0 };
     cur.lead_count += 1;
-    cur.premium_sum += Number(row.premium_amount || 0);
+    const quoted = quotedPremium(row);
+    cur.premium_sum += quoted;
     if (String(row.updated_at || '').slice(0, 10) < weekAgo) cur.aging += 1;
-    byStage.set(stage, cur);
+    if (!isClosedStage(stage, stageName)) {
+      const weightedLead = ifClosed(quoted, stageProbability(stage));
+      cur.lead_if_closed += weightedLead;
+      leadIfClosed += weightedLead;
+      quotedOpen += quoted;
+    }
+    byStage.set(stageName, cur);
   }
 
   const openDeals = deals.filter((row) => !row.won_at && !row.lost_at);
+  const openDealsWithAmount = openDeals.filter((row) => Number(row.amount || 0) > 0).length;
   const dealAmount = openDeals.reduce((s, row) => s + Number(row.amount || 0), 0);
-  const weighted = openDeals.reduce((s, row) => s + Number(row.amount || 0) * Number(row.probability || 0) / 100, 0);
+  const dealWeighted = openDeals.reduce((s, row) => s + Number(row.amount || 0) * Number(row.probability || 0) / 100, 0);
+  const weighted = pickWeightedAmount(dealWeighted, leadIfClosed, openDealsWithAmount);
   const won = deals.filter((row) => row.won_at).length;
   const lost = deals.filter((row) => row.lost_at).length;
 
@@ -273,6 +445,7 @@ export async function extractCrm(
         lead_count: Number(row.lead_count || row.count || 0),
         premium_sum: Number(row.premium_sum || 0),
         aging: 0,
+        lead_if_closed: 0,
       });
     }
   }
@@ -291,7 +464,13 @@ export async function extractCrm(
       lost_count: lost,
       aging_over_7: row.aging,
       activity_count: activities,
-      metadata: {},
+      metadata: {
+        quoted_open: quotedOpen,
+        lead_if_closed: leadIfClosed,
+        deal_if_closed: dealWeighted,
+        open_deals_with_amount: openDealsWithAmount,
+        stage_if_closed: row.lead_if_closed,
+      },
     }, { onConflict: 'org_id,fact_date,stage_key' });
   }
 

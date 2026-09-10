@@ -89,8 +89,8 @@ function createDemoProfile(): Profile {
   return {
     id: 'demo-cos',
     email: 'demo@aryx.com',
-    full_name: 'Aryx COS',
-    display_name: 'Chief of Staff',
+    full_name: 'ARYX CEO',
+    display_name: 'Chief Executive Officer',
     role: 'cos',
     org_id: 'a0000000-0000-0000-0000-000000000001',
     created_at: new Date().toISOString(),
@@ -104,7 +104,7 @@ function createDemoUser(): Partial<User> {
     email: 'demo@aryx.com',
     created_at: new Date().toISOString(),
     app_metadata: { role: 'cos' },
-    user_metadata: { role: 'cos', full_name: 'Aryx COS' },
+    user_metadata: { role: 'cos', full_name: 'ARYX CEO' },
     aud: 'authenticated',
     role: 'authenticated'
   } as User;
@@ -520,7 +520,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setProfileReady(true);
       setLoading(false);
 
-      logger.warn('Running in DEMO MODE as COS');
+      logger.warn('Running in DEMO MODE as CEO');
       return;
     }
 

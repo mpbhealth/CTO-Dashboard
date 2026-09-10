@@ -65,7 +65,7 @@ export default function ResetPassword() {
       const { error: updateError } = await supabase.auth.updateUser({ password });
       if (updateError) throw updateError;
       sessionStorage.removeItem('cos_password_recovery');
-      setSuccess('Password updated. Opening COS…');
+      setSuccess('Password updated. Opening ARYX CEO…');
       setTimeout(() => navigate('/home', { replace: true }), 800);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not update password.');

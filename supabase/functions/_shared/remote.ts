@@ -31,9 +31,9 @@ export function withOrgFilter(path: string, filter: OrgFilter): string {
 }
 
 function assertReadPath(path: string) {
-  const clean = path.split('?')[0].toLowerCase();
-  if (clean.includes('/rpc/')) throw new Error('remote_write_forbidden');
-  if (/(insert|upsert|update|delete|patch)/i.test(path)) throw new Error('remote_write_forbidden');
+  const table = path.split('?')[0].toLowerCase();
+  if (table.includes('/rpc/')) throw new Error('remote_write_forbidden');
+  if (!/^[a-z_][a-z0-9_]*$/.test(table)) throw new Error('remote_table_invalid');
 }
 
 function readHeaders(serviceKey: string): HeadersInit {
@@ -95,7 +95,7 @@ export async function countFiltered(
   if (/(insert|upsert|update|delete|patch|or=|organization_id|org_id|team_id|select=)/i.test(extra)) {
     throw new Error('remote_write_forbidden');
   }
-  const path = `${table}?select=id&limit=1${extra}`;
+  const path = `${table}?select=*&limit=1${extra}`;
   const url = `${baseUrl.replace(/\/$/, '')}/rest/v1/${withOrgFilter(path, filter)}`;
   const res = await fetch(url, { method: 'GET', headers: readHeaders(serviceKey) });
   if (!res.ok) throw new Error(`remote_count_${res.status}`);

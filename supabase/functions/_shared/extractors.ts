@@ -473,23 +473,21 @@ export async function extractTraffic(
   const today = new Date().toISOString().slice(0, 10);
   const since = daysAgo(30);
 
+  // analytics_metrics is not team-scoped. kpi_metrics already has team_id.
   const rows = await restGet<Array<Record<string, unknown>>>(
     creds.url,
     creds.key,
-    `analytics_metrics?select=metric_name,metric_date,value,integration_type&metric_date=gte.${since}&limit=5000`,
+    `kpi_metrics?select=date,traffic,leads,new_members&date=gte.${since}&limit=5000`,
     filter,
   );
 
   const byDay = new Map<string, { sessions: number; users: number; pageviews: number; conversions: number }>();
   for (const row of rows) {
-    const day = String(row.metric_date || today);
+    const day = String(row.date || today).slice(0, 10);
     const cur = byDay.get(day) || { sessions: 0, users: 0, pageviews: 0, conversions: 0 };
-    const name = String(row.metric_name || '');
-    const value = Number(row.value || 0);
-    if (name === 'sessions') cur.sessions += value;
-    if (name === 'users') cur.users += value;
-    if (name === 'pageviews' || name === 'page_views') cur.pageviews += value;
-    if (name === 'conversions') cur.conversions += value;
+    cur.sessions += Number(row.traffic || 0);
+    cur.conversions += Number(row.leads || 0);
+    cur.users += Number(row.new_members || 0);
     byDay.set(day, cur);
   }
 

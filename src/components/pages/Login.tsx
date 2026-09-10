@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Eye, EyeOff, Mail, Lock, AlertCircle, CheckCircle } from 'lucide-react';
-import { isSupabaseConfigured, setRememberMePreference, isRememberMeEnabled } from '../../lib/supabase';
+import { isSupabaseConfigured } from '../../lib/supabase';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { validatePassword } from '../../lib/security';
@@ -40,8 +40,10 @@ export default function Login({ onLoginSuccess }: { onLoginSuccess?: () => void 
 
   useEffect(() => {
     const savedEmail = localStorage.getItem('mpb_remembered_email');
-    if (savedEmail) setEmail(savedEmail);
-    if (isRememberMeEnabled()) setRememberMe(true);
+    if (savedEmail) {
+      setEmail(savedEmail);
+      setRememberMe(true);
+    }
   }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -51,7 +53,6 @@ export default function Login({ onLoginSuccess }: { onLoginSuccess?: () => void 
     try {
       if (rememberMe) localStorage.setItem('mpb_remembered_email', email);
       else localStorage.removeItem('mpb_remembered_email');
-      setRememberMePreference(rememberMe);
       await authSignIn(email, password);
       onLoginSuccess?.();
       setSuccess('Signed in.');

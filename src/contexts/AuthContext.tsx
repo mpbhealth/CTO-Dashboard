@@ -568,6 +568,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
     });
 
+    const profileFetchTimers: ReturnType<typeof setTimeout>[] = [];
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'PASSWORD_RECOVERY' && typeof window !== 'undefined') {
         sessionStorage.setItem('cos_password_recovery', '1');
@@ -576,25 +578,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           return;
         }
       }
-      setSession(session);
-      setUser(session?.user ?? null);
+
+      // Only treat a real sign-out as logged out. Transient null sessions
+      // (TOKEN_REFRESHED races, REST 401 refresh, MFA rotation) must not wipe user.
+      if (event === 'SIGNED_OUT') {
+        setSession(null);
+        setUser(null);
+        setProfile(null);
+        setProfileReady(true);
+        profileCache.current.clear();
+        return;
+      }
+
       if (session?.user?.id) {
+        setSession(session);
+        setUser(session.user);
         const cachedProfile = loadCachedProfile(session.user.id);
         if (cachedProfile) {
           setProfile(cachedProfile);
           profileCache.current.set(session.user.id, cachedProfile);
           setProfileReady(true);
         }
-        fetchProfile(session.user.id);
-      } else {
-        setProfile(null);
-        setProfileReady(true);
+        const userId = session.user.id;
+        profileFetchTimers.push(setTimeout(() => {
+          fetchProfile(userId);
+        }, 0));
+        return;
       }
+
+      logger.warn(`Auth event ${event} had no session; keeping current user`);
     });
 
     return () => {
       subscription.unsubscribe();
       clearTimeout(loadingTimeout);
+      profileFetchTimers.forEach(clearTimeout);
     };
   }, [fetchProfile, loadCachedProfile]);
 

@@ -108,6 +108,14 @@ export async function enrollMFA(friendlyName?: string): Promise<{
   }
 }
 
+async function persistSessionAfterMfa(session: unknown) {
+  if (session) {
+    await supabase.auth.getSession();
+  } else {
+    await supabase.auth.refreshSession();
+  }
+}
+
 /**
  * Verify and activate a TOTP factor
  */
@@ -131,7 +139,7 @@ export async function verifyMFAEnrollment(
     }
 
     // Then verify with the code
-    const { error: verifyError } = await supabase.auth.mfa.verify({
+    const { data: verifyData, error: verifyError } = await supabase.auth.mfa.verify({
       factorId,
       challengeId: challengeData.id,
       code,
@@ -145,6 +153,8 @@ export async function verifyMFAEnrollment(
       });
       return { success: false, error: 'Invalid verification code' };
     }
+
+    await persistSessionAfterMfa(verifyData?.session);
 
     await logSecurityEvent('MFA_ENABLED', 'MFA successfully enabled', {
       severity: 'INFO',
@@ -200,7 +210,7 @@ export async function verifyMFACode(
   }
 
   try {
-    const { error } = await supabase.auth.mfa.verify({
+    const { data, error } = await supabase.auth.mfa.verify({
       factorId,
       challengeId,
       code,
@@ -214,6 +224,8 @@ export async function verifyMFACode(
       });
       return { success: false, error: 'Invalid verification code' };
     }
+
+    await persistSessionAfterMfa(data?.session);
 
     await logSecurityEvent('LOGIN', 'MFA verification successful', {
       severity: 'INFO',

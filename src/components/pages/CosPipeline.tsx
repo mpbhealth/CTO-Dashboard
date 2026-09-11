@@ -6,7 +6,7 @@ import { useOrg } from '@/contexts/OrgContext';
 import { OrgPicker } from '../cos/OrgPicker';
 import { CommandStat, CommandStrip } from '../cos/CommandStrip';
 import { Unlinked } from './CosFinance';
-import { CosPage, CosPageHero } from '../cos/CosPage';
+import { CosIslandLink, CosPage, CosPageHero } from '../cos/CosPage';
 
 export function CosPipeline() {
   const { orgId, linked } = useOrg();
@@ -57,9 +57,10 @@ export function CosPipeline() {
   return (
     <CosPage>
       <CosPageHero
-        eyebrow="Analytics"
+        eyebrow="CRM"
         title="Pipeline."
         lede="If-closed scenarios are not collected revenue. Closed-won stays in EnrollFlow billing."
+        actions={<CosIslandLink to="/crm">Records</CosIslandLink>}
         toolbar={<OrgPicker />}
       />
       <div className="mt-6 space-y-6">

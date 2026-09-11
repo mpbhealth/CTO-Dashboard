@@ -407,7 +407,7 @@ export function CosHome() {
             </CommandStrip>
           )}
 
-          <CommandStrip title="Marketing" href="/analytics/marketing" warning={!linked.traffic ? 'MarketFlow / Google Analytics is not linked.' : null}>
+          <CommandStrip title="Marketing" href="/marketing" warning={!linked.traffic ? 'MarketFlow / Google Analytics is not linked.' : null}>
             <CommandStat
               label="Sessions"
               value={formatFact(compactNumber, { linked: linked.traffic, loading: traffic.isLoading, hasRows: hasTrafficRows, value: marketing.sessions })}

@@ -12,7 +12,9 @@ import {
 } from '../hooks/useSidebar';
 import { 
   getNavigationForRole,
-  categories, 
+  categories,
+  collectNavPaths,
+  isNavPathActive, 
   type NavItem 
 } from '../config/navigation';
 import { NotificationBell } from './notifications';
@@ -176,21 +178,16 @@ function SidebarComponent({
   }, [navigate]);
 
   // Check if a route is active
+  const navPaths = useMemo(() => collectNavPaths(menuItems), [menuItems]);
+
   const isActiveRoute = useCallback((itemPath: string, itemId: string, submenu?: Array<{ id: string; path: string }>) => {
     const currentPath = location.pathname;
-
-    if (currentPath === itemPath || currentPath.startsWith(itemPath + '/')) {
-      return true;
+    if (submenu?.length) {
+      return currentPath === itemPath || submenu.some((sub) => isNavPathActive(currentPath, sub.path, navPaths));
     }
-
-    if (submenu) {
-      return submenu.some(sub =>
-        currentPath === sub.path || currentPath.startsWith(sub.path + '/')
-      );
-    }
-
-    return activeTab === itemId || (submenu && submenu.some((sub) => activeTab === sub.id));
-  }, [location.pathname, activeTab]);
+    if (isNavPathActive(currentPath, itemPath, navPaths)) return true;
+    return activeTab === itemId;
+  }, [activeTab, location.pathname, navPaths]);
 
   // Sidebar transform for drag gesture
   const sidebarTransform = internalSidebar.isDragging && isMobile

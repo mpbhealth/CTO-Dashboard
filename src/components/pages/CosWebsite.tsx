@@ -83,8 +83,8 @@ export function CosWebsite() {
   return (
     <CosPage>
       <CosPageHero
-        eyebrow="Analytics · Marketing"
-        title="The site."
+        eyebrow="Marketing"
+        title="Traffic."
         lede="Google Analytics lands through MarketFlow as daily warehouse facts. This page only reads those rows. It does not invent sessions or write back to GA."
         actions={
           isOperator ? (

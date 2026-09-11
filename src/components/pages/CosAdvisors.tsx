@@ -25,7 +25,7 @@ interface AdvisorRow {
   margin_pct: number | null;
 }
 
-type SortKey = 'mrr' | 'active_members' | 'retention_pct' | 'term_soon_90' | 'enrollments_30';
+type SortKey = 'mrr' | 'active_members' | 'retention_pct' | 'term_soon_90' | 'enrollments_30' | 'terminating_members' | 'mrr_added_90';
 
 export function CosAdvisors() {
   const { orgId, linked, rollup, memberships } = useOrg();
@@ -93,9 +93,14 @@ export function CosAdvisors() {
   return (
     <CosPage>
       <CosPageHero
-        eyebrow="Analytics · AdvisorIQ"
+        eyebrow="Advisors"
         title="Advisor books."
-        actions={<CosIslandLink href={`${ADVISORIQ_HREF}/command`}>Open AdvisorIQ</CosIslandLink>}
+        actions={
+          <>
+            <CosIslandLink to="/enrollments">Enrollment</CosIslandLink>
+            <CosIslandLink href={`${ADVISORIQ_HREF}/command`}>Open AdvisorIQ</CosIslandLink>
+          </>
+        }
         toolbar={<OrgPicker />}
       />
       <div className="mt-6">
@@ -141,7 +146,9 @@ export function CosAdvisors() {
           <option value="active_members">Sort by members</option>
           <option value="retention_pct">Sort by retention</option>
           <option value="term_soon_90">Sort by term soon</option>
+          <option value="terminating_members">Sort by terminating</option>
           <option value="enrollments_30">Sort by new 30d</option>
+          <option value="mrr_added_90">Sort by MRR added 90d</option>
         </select>
       </div>
       <div className="mt-4 overflow-x-auto">
@@ -150,6 +157,7 @@ export function CosAdvisors() {
             <tr>
               <th className="py-2">Advisor</th>
               <th>Members</th>
+              <th>Terminating</th>
               <th>Term soon</th>
               <th>Hold</th>
               <th>MRR</th>
@@ -157,6 +165,7 @@ export function CosAdvisors() {
               <th>Retention</th>
               <th>New 30d</th>
               <th>New 90d</th>
+              <th>MRR +90d</th>
               <th>Margin</th>
             </tr>
           </thead>
@@ -165,6 +174,7 @@ export function CosAdvisors() {
               <tr key={`${row.org_id}-${row.advisor_key}`} className="border-t border-aryx-line">
                 <td className="py-3">{row.display_name || row.advisor_key.slice(0, 8)}</td>
                 <td>{compactNumber(row.active_members)}</td>
+                <td>{compactNumber(row.terminating_members)}</td>
                 <td>{compactNumber(row.term_soon_90)}</td>
                 <td>{compactNumber(row.on_hold_members)}</td>
                 <td>{money(row.mrr)}</td>
@@ -172,6 +182,7 @@ export function CosAdvisors() {
                 <td>{row.retention_pct == null ? '—' : `${row.retention_pct}%`}</td>
                 <td>{compactNumber(row.enrollments_30)}</td>
                 <td>{compactNumber(row.enrollments_90)}</td>
+                <td>{money(row.mrr_added_90)}</td>
                 <td>{row.margin_pct == null ? '—' : `${row.margin_pct}%`}</td>
               </tr>
             ))}

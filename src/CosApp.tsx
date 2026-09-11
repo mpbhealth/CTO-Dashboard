@@ -178,8 +178,9 @@ function CosContent() {
             <Route path="/pipeline" element={<CosPipeline />} />
             <Route path="/tickets" element={<CosTickets />} />
             <Route path="/tickets/analytics" element={<CosTicketAnalytics />} />
-            <Route path="/analytics/website" element={<Navigate to="/analytics/marketing" replace />} />
-            <Route path="/analytics/marketing" element={<CosWebsite />} />
+            <Route path="/marketing" element={<CosWebsite />} />
+            <Route path="/analytics/website" element={<Navigate to="/marketing" replace />} />
+            <Route path="/analytics/marketing" element={<Navigate to="/marketing" replace />} />
             <Route path="/analytics" element={<LegacyRedirect />} />
             <Route path="/analytics/overview" element={<LegacyRedirect />} />
             <Route path="/analytics/member-engagement" element={<LegacyRedirect />} />

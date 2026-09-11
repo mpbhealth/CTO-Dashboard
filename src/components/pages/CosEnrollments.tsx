@@ -10,7 +10,7 @@ import { CommandStat, CommandStrip } from '../cos/CommandStrip';
 import { MovementTide } from '../cos/MovementTide';
 import { TrendSpark } from '../cos/TrendSpark';
 import { Unlinked } from './CosFinance';
-import { CosPage, CosPageHero } from '../cos/CosPage';
+import { CosIslandLink, CosPage, CosPageHero } from '../cos/CosPage';
 import { rollupTideMonths } from '@/lib/movementTide';
 
 export function CosEnrollments() {
@@ -136,8 +136,9 @@ export function CosEnrollments() {
   return (
     <CosPage>
       <CosPageHero
-        eyebrow="Analytics"
-        title="Enrollment."
+        eyebrow="Enrollment"
+        title="Members."
+        actions={<CosIslandLink to="/advisors">Advisor books</CosIslandLink>}
         toolbar={
           <>
             <OrgPicker />

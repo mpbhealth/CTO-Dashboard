@@ -3,56 +3,13 @@ import { Link, useLocation } from 'react-router-dom';
 import { ChevronRight, Home } from 'lucide-react';
 import {
   ceoNavigationItems,
-  ctoNavigationItems,
-  type NavItem,
-  type NavSubItem,
+  findNavMatch,
 } from '@/config/navigation';
 
 interface BreadcrumbSegment {
   label: string;
   path: string;
   isLast: boolean;
-}
-
-/**
- * Builds a lookup map from route paths to labels using the navigation config.
- */
-function buildPathLabelMap(items: NavItem[]): Record<string, string> {
-  const map: Record<string, string> = {};
-
-  for (const item of items) {
-    map[item.path] = item.label;
-
-    if (item.submenu) {
-      for (const sub of item.submenu) {
-        map[sub.path] = sub.label;
-      }
-    }
-  }
-
-  return map;
-}
-
-/**
- * Finds the matching nav item and sub-item for a given path.
- */
-function findNavMatch(
-  path: string,
-  items: NavItem[]
-): { parent?: NavItem; child?: NavSubItem } {
-  for (const item of items) {
-    if (item.submenu) {
-      for (const sub of item.submenu) {
-        if (path === sub.path || path.startsWith(sub.path + '/')) {
-          return { parent: item, child: sub };
-        }
-      }
-    }
-    if (path === item.path || path.startsWith(item.path + '/')) {
-      return { parent: item };
-    }
-  }
-  return {};
 }
 
 export function Breadcrumbs() {

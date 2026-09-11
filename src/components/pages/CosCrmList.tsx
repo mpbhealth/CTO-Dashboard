@@ -4,7 +4,7 @@ import { supabase } from '@/lib/supabase';
 import { useOrg } from '@/contexts/OrgContext';
 import { OrgPicker } from '../cos/OrgPicker';
 import { Unlinked } from './CosFinance';
-import { CosPage, CosPageHero } from '../cos/CosPage';
+import { CosIslandLink, CosPage, CosPageHero } from '../cos/CosPage';
 
 interface CrmRecord {
   id: string;
@@ -39,14 +39,15 @@ export function CosCrmList() {
   });
 
   if (!linked.crm) {
-    return <Unlinked title="Relationships" message="CRM is not linked for this organization." />;
+    return <Unlinked title="CRM" message="CRM is not linked for this organization." />;
   }
 
   return (
     <CosPage>
       <CosPageHero
-        eyebrow="ARYX CRM · read only"
-        title="Relationships."
+        eyebrow="CRM"
+        title="Records."
+        actions={<CosIslandLink to="/pipeline">Pipeline</CosIslandLink>}
         toolbar={<OrgPicker />}
       />
       {isLoading && <p className="text-aryx-muted">Loading…</p>}

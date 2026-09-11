@@ -23,14 +23,14 @@ export interface MFAChallenge {
   expires_at: number;
 }
 
-// Roles that require MFA
+const LOGIN_MFA_ENABLED = false;
 const MFA_REQUIRED_ROLES = ['cos', 'admin', 'hipaa_officer', 'privacy_officer', 'security_officer'];
 
 /**
  * Check if MFA is required for a user based on their role
  */
 export function isMFARequired(userRole?: string | null): boolean {
-  if (!userRole) return false;
+  if (!LOGIN_MFA_ENABLED || !userRole) return false;
   return MFA_REQUIRED_ROLES.includes(userRole.toLowerCase());
 }
 

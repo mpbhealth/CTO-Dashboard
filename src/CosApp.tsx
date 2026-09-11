@@ -8,7 +8,6 @@ import { buildRouteToTabMap, getNavigationForRole } from './config/navigation';
 import { Breadcrumbs } from './components/ui/Breadcrumbs';
 import { KeyboardShortcutsModal } from './components/ui/KeyboardShortcutsModal';
 import { SessionTimeoutWarning } from './components/security/SessionTimeoutWarning';
-import { MFARequiredGuard } from './components/security/MFARequiredGuard';
 import { UpdateBanner } from './components/ui/UpdateBanner';
 import { InstallAppBanner } from './components/ui/InstallAppBanner';
 import { remapLegacyPath } from './lib/cos';
@@ -193,11 +192,9 @@ function CosContent() {
 export default function CosApp() {
   return (
     <AppShell>
-      <MFARequiredGuard>
-        <OrgProvider>
-          <CosContent />
-        </OrgProvider>
-      </MFARequiredGuard>
+      <OrgProvider>
+        <CosContent />
+      </OrgProvider>
       <KeyboardShortcutsModal />
       <SessionTimeoutWarning />
       <UpdateBanner />

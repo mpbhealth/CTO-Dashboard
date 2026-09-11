@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { X, Building2, Save } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { Department, EmployeeProfile } from '../../hooks/useOrganizationalData';
-import { handleError } from '../../lib/errorHandler'; 
+import { handleError } from '../../lib/errorHandler';
+import { useOrg } from '../../contexts/OrgContext'; 
 
 interface AddDepartmentModalProps {
   onClose: () => void;
@@ -12,6 +13,7 @@ interface AddDepartmentModalProps {
 }
 
 export default function AddDepartmentModal({ onClose, onSuccess, departments, employees }: AddDepartmentModalProps) {
+  const { orgId } = useOrg();
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -45,20 +47,16 @@ export default function AddDepartmentModal({ onClose, onSuccess, departments, em
       }
       
       const departmentData = {
+        org_id: orgId,
         name: formData.name.trim(),
         code: formData.code.trim() || null,
-        description: formData.description,
-        strategic_purpose: formData.strategic_purpose,
-        location: formData.location,
-        contact_email: formData.contact_email,
-        mission_statement: formData.mission_statement,
-        key_objectives: formData.key_objectives ? formData.key_objectives.split(',').map(s => s.trim()).filter(s => s) : null,
-        tech_stack: formData.tech_stack ? formData.tech_stack.split(',').map(s => s.trim()).filter(s => s) : null,
+        description: formData.description || null,
+        location: formData.location || null,
+        contact_email: formData.contact_email || null,
         budget_allocated: formData.budget_allocated ? parseFloat(formData.budget_allocated) : null,
         headcount: parseInt(formData.headcount) || 0,
         parent_department_id: formData.parent_department_id || null,
         department_lead_id: formData.department_lead_id || null,
-        reporting_frequency: formData.reporting_frequency || 'weekly',
         is_active: true
       };
 

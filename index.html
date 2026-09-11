@@ -86,7 +86,7 @@
 
           if (!isStackBlitz || localStorage.getItem('debug') === 'true') {
             try {
-              originalConsoleError.call(console, '[MPB Health] Global Error:', {
+              originalConsoleError.call(console, '[ARYX COS] Global Error:', {
                 message: e.message || 'Unknown error',
                 filename: e.filename || 'Unknown',
                 lineno: e.lineno || 0,
@@ -105,7 +105,7 @@
           }
 
           if (!isStackBlitz || localStorage.getItem('debug') === 'true') {
-            console.error('[MPB Health] Unhandled Promise Rejection:', e.reason);
+            console.error('[ARYX COS] Unhandled Promise Rejection:', e.reason);
           }
         }, true);
       })();
@@ -173,9 +173,9 @@
             loadingText.style.color = '#dc2626';
           }
           
-          console.error('[MPB Health] Loading timeout - React did not mount within 10 seconds');
-          console.error('[MPB Health] Check for JavaScript errors above');
-          console.log('[MPB Health] Page info:', {
+          console.error('[ARYX COS] Loading timeout - React did not mount within 10 seconds');
+          console.error('[ARYX COS] Check for JavaScript errors above');
+          console.log('[ARYX COS] Page info:', {
             location: window.location.href,
             readyState: document.readyState,
             hasRoot: !!document.getElementById('root')

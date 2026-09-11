@@ -35,6 +35,7 @@ import {
   Clock,
   ChevronUp,
   ChevronDown,
+  Users,
 } from 'lucide-react';
 import { useShell } from './AppShell';
 import { usePinnedApps } from '@/hooks/usePinnedApps';
@@ -61,6 +62,7 @@ const iconMap: Record<string, React.ElementType> = {
   Map,
   Command,
   Sparkles,
+  Users,
 };
 
 /**
@@ -284,7 +286,7 @@ export function GalaxyDock({ onOpenMap }: GalaxyDockProps) {
     { key: 'inbox', name: 'Inbox', icon: 'Mail', href: '/inbox' },
     { key: 'crm', name: 'CRM', icon: 'Briefcase', href: '/crm' },
     { key: 'tickets', name: 'Support', icon: 'Ticket', href: '/tickets' },
-    { key: 'compliance', name: 'Compliance', icon: 'ShieldCheck', href: '/operations/compliance' },
+    { key: 'organization', name: 'Organization', icon: 'Users', href: '/operations/organization' },
   ];
 
   const dockItems = isLoading ? defaultApps : (pinnedApps.length > 0 ? pinnedApps : defaultApps);

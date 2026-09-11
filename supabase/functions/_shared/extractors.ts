@@ -22,10 +22,11 @@ import {
   yearStart,
   type PnlParts,
 } from './moneyMatch.ts';
-import { countFiltered, restGet, restGetOrgOrNull, restGetPages, restRpc, type OrgFilter } from './remote.ts';
+import { countFiltered, countUnscoped, restGet, restGetOrgOrNull, restGetPages, restGetUnscopedPages, restRpc, type OrgFilter } from './remote.ts';
 
 const OPEN_TICKETS = 'in.(new,open,awaiting_customer,on_hold)';
 const RESOLVED_TICKETS = 'in.(resolved,closed)';
+const TICKET_SAFE_SELECT = 'id,ticket_number,subject,status,priority,category,agent_name,assignee_id,created_at,resolved_at,sla_due_at';
 
 export interface ExtractorResult {
   source: string;
@@ -487,6 +488,31 @@ export async function extractCrm(
   return { source: 'aryx_crm', status: 'healthy', metrics };
 }
 
+async function restGetSafe(
+  url: string,
+  key: string,
+  path: string,
+  filter: OrgFilter,
+): Promise<Array<Record<string, unknown>>> {
+  try {
+    const rows = await restGet<Array<Record<string, unknown>>>(url, key, path, filter);
+    return Array.isArray(rows) ? rows : [];
+  } catch {
+    return [];
+  }
+}
+
+function monthKey(value: unknown): string | null {
+  const raw = String(value || '').slice(0, 10);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(raw)) return null;
+  return `${raw.slice(0, 7)}-01`;
+}
+
+function displayName(value: unknown): string | null {
+  const name = String(value || '').trim();
+  return name || null;
+}
+
 export async function extractAdvisorIq(
   admin: SupabaseClient,
   orgId: string,
@@ -498,33 +524,79 @@ export async function extractAdvisorIq(
   const filter: OrgFilter = { column: 'org_id', value: link.advisoriq_org_id };
   const today = new Date().toISOString().slice(0, 10);
 
-  const stats = await restGet<Array<Record<string, unknown>>>(
+  const stats = await restGetSafe(
     creds.url,
     creds.key,
-    'stats_overview?select=active_members,mrr,cost,net_mrr,retention_pct,enrollments_30&limit=1',
+    'stats_overview?select=active_members,terminating_members,term_soon_90,on_hold_members,mrr,cost,covered_mrr,net_mrr,retention_pct,enrollments_30,enrollments_90,active_agents&limit=1',
     filter,
   );
-  const intel = await restGet<Array<Record<string, unknown>>>(
+  const intel = await restGetSafe(
     creds.url,
     creds.key,
-    'advisor_intel?select=advisor_id,active_members,mrr,cost,net_mrr,retention_pct,enrollments_30,margin_pct&limit=500',
+    'advisor_intel?select=advisor_id,name,active_members,terminating_members,term_soon_90,on_hold_members,mrr,cost,net_mrr,retention_pct,enrollments_30,enrollments_90,mrr_added_90,margin_pct&limit=500',
     filter,
   );
-  let mix: Array<Record<string, unknown>> = [];
-  try {
-    mix = await restGet<Array<Record<string, unknown>>>(
-      creds.url,
-      creds.key,
-      'product_margin?select=product_label,active_members,mrr,cost,net_mrr&limit=200',
-      filter,
-    );
-  } catch {
-    mix = await restGet<Array<Record<string, unknown>>>(
+  let mix = await restGetSafe(
+    creds.url,
+    creds.key,
+    'product_margin?select=product_label,active_members,mrr,cost,net_mrr&limit=200',
+    filter,
+  );
+  if (mix.length === 0) {
+    mix = await restGetSafe(
       creds.url,
       creds.key,
       'product_mix?select=product_label,active_members,mrr&limit=200',
       filter,
-    ).catch(() => []);
+    );
+  }
+  const trend = await restGetSafe(
+    creds.url,
+    creds.key,
+    'mrr_trend?select=month,enrollments,terminations,mrr_added,mrr_lost,net_mrr_change&limit=36',
+    filter,
+  );
+  const forward = await restGetSafe(
+    creds.url,
+    creds.key,
+    'forward_risk?select=bucket,members,mrr_at_risk&limit=20',
+    filter,
+  );
+  const holds = await restGetSafe(
+    creds.url,
+    creds.key,
+    'hold_reason_mix?select=reason,holds,mrr_parked&limit=50',
+    filter,
+  );
+  let billing: Array<Record<string, unknown>> = [];
+  try {
+    billing = await restGetPages(
+      creds.url,
+      creds.key,
+      'billing_risk?select=member_id,full_name,agent_id,agent_label,product_label,monthly_fee,next_billing_date,paid,last_payment,risk_flag,status',
+      filter,
+      500,
+    );
+  } catch {
+    billing = [];
+  }
+  const actions = await restGetSafe(
+    creds.url,
+    creds.key,
+    'suggestions?select=id,idempotency_key,kind,title,href,advisor_id,status,payload&status=eq.proposed&limit=200',
+    filter,
+  );
+  let coverages: Array<Record<string, unknown>> = [];
+  try {
+    coverages = await restGetPages(
+      creds.url,
+      creds.key,
+      'member_products?select=inactive_reason,monthly_fee,inactive_date,product_created_date,active_date',
+      filter,
+      1000,
+    );
+  } catch {
+    coverages = [];
   }
 
   const overview = stats[0] || {};
@@ -533,12 +605,18 @@ export async function extractAdvisorIq(
     await admin.from('advisor_scorecards').upsert({
       org_id: orgId,
       advisor_key: key,
+      display_name: displayName(row.name),
       active_members: Number(row.active_members || 0),
+      terminating_members: Number(row.terminating_members || 0),
+      term_soon_90: Number(row.term_soon_90 || 0),
+      on_hold_members: Number(row.on_hold_members || 0),
       mrr: Number(row.mrr || 0),
       cost: Number(row.cost || 0),
       net_mrr: Number(row.net_mrr || 0),
       retention_pct: row.retention_pct == null ? null : Number(row.retention_pct),
       enrollments_30: Number(row.enrollments_30 || 0),
+      enrollments_90: Number(row.enrollments_90 || 0),
+      mrr_added_90: Number(row.mrr_added_90 || 0),
       margin_pct: row.margin_pct == null ? null : Number(row.margin_pct),
       metadata: {},
     }, { onConflict: 'org_id,advisor_key' });
@@ -559,12 +637,131 @@ export async function extractAdvisorIq(
       metadata: {},
     }, { onConflict: 'org_id,product_key' });
   }
+  for (const row of trend) {
+    const month = monthKey(row.month);
+    if (!month) continue;
+    await admin.from('fact_iq_mrr_monthly').upsert({
+      org_id: orgId,
+      month,
+      enrollments: Number(row.enrollments || 0),
+      terminations: Number(row.terminations || 0),
+      mrr_added: Number(row.mrr_added || 0),
+      mrr_lost: Number(row.mrr_lost || 0),
+      net_mrr_change: Number(row.net_mrr_change || 0),
+      metadata: {},
+    }, { onConflict: 'org_id,month' });
+  }
+  for (const row of forward) {
+    const bucket = String(row.bucket || 'unknown');
+    await admin.from('fact_iq_forward_risk').upsert({
+      org_id: orgId,
+      bucket,
+      members: Number(row.members || 0),
+      mrr_at_risk: Number(row.mrr_at_risk || 0),
+      metadata: {},
+    }, { onConflict: 'org_id,bucket' });
+  }
+  for (const row of holds) {
+    const reason = String(row.reason || 'unspecified');
+    await admin.from('fact_iq_reason_mix').upsert({
+      org_id: orgId,
+      kind: 'hold',
+      reason,
+      item_count: Number(row.holds || 0),
+      mrr: Number(row.mrr_parked || 0),
+      metadata: {},
+    }, { onConflict: 'org_id,kind,reason' });
+  }
 
-  const metrics = [
+  const churn = new Map<string, { count: number; mrr: number }>();
+  const cohorts = new Map<string, { size: number; retained: number }>();
+  for (const row of coverages) {
+    const inactive = String(row.inactive_date || '').slice(0, 10);
+    if (inactive) {
+      const reason = String(row.inactive_reason || 'unspecified').trim() || 'unspecified';
+      const cur = churn.get(reason) || { count: 0, mrr: 0 };
+      cur.count += 1;
+      cur.mrr += Number(row.monthly_fee || 0);
+      churn.set(reason, cur);
+    }
+    const created = monthKey(row.product_created_date || row.active_date);
+    if (created) {
+      const cur = cohorts.get(created) || { size: 0, retained: 0 };
+      cur.size += 1;
+      if (!inactive) cur.retained += 1;
+      cohorts.set(created, cur);
+    }
+  }
+  for (const [reason, row] of churn) {
+    await admin.from('fact_iq_reason_mix').upsert({
+      org_id: orgId,
+      kind: 'churn',
+      reason,
+      item_count: row.count,
+      mrr: Number(row.mrr.toFixed(2)),
+      metadata: {},
+    }, { onConflict: 'org_id,kind,reason' });
+  }
+  for (const [cohortMonth, row] of cohorts) {
+    await admin.from('fact_iq_cohorts').upsert({
+      org_id: orgId,
+      cohort_month: cohortMonth,
+      cohort_size: row.size,
+      retained: row.retained,
+      retention_pct: row.size === 0 ? null : Number(((row.retained / row.size) * 100).toFixed(2)),
+      metadata: {},
+    }, { onConflict: 'org_id,cohort_month' });
+  }
+
+  for (const row of billing) {
+    const memberKey = String(row.member_id || '');
+    if (!memberKey) continue;
+    await admin.from('book_billing_risk').upsert({
+      org_id: orgId,
+      member_key: memberKey,
+      display_name: displayName(row.full_name),
+      advisor_key: row.agent_id ? String(row.agent_id) : null,
+      advisor_label: displayName(row.agent_label),
+      product_key: String(row.product_label || ''),
+      monthly_fee: Number(row.monthly_fee || 0),
+      next_billing_date: row.next_billing_date || null,
+      paid: row.paid == null ? null : Boolean(row.paid),
+      last_payment: row.last_payment == null ? null : Number(row.last_payment),
+      risk_flag: row.risk_flag ? String(row.risk_flag) : null,
+      status: row.status ? String(row.status) : null,
+      metadata: {},
+    }, { onConflict: 'org_id,member_key,product_key' });
+  }
+  for (const row of actions) {
+    const actionKey = String(row.idempotency_key || row.id || '');
+    if (!actionKey) continue;
+    const payload = (row.payload && typeof row.payload === 'object') ? row.payload as Record<string, unknown> : {};
+    await admin.from('book_actions').upsert({
+      org_id: orgId,
+      action_key: actionKey,
+      kind: row.kind ? String(row.kind) : null,
+      title: row.title ? String(row.title) : null,
+      dollars: payload.dollars == null ? null : Number(payload.dollars),
+      advisor_key: row.advisor_id ? String(row.advisor_id) : null,
+      href: row.href ? String(row.href) : null,
+      status: row.status ? String(row.status) : null,
+      metadata: {},
+    }, { onConflict: 'org_id,action_key' });
+  }
+
+  const metrics = stats.length === 0 ? [] : [
     { metric_key: 'iq_active_members', value: Number(overview.active_members || 0) },
+    { metric_key: 'iq_terminating_members', value: Number(overview.terminating_members || 0) },
+    { metric_key: 'iq_term_soon_90', value: Number(overview.term_soon_90 || 0) },
+    { metric_key: 'iq_on_hold_members', value: Number(overview.on_hold_members || 0) },
     { metric_key: 'iq_mrr', value: Number(overview.mrr || 0) },
+    { metric_key: 'iq_cost', value: Number(overview.cost || 0) },
+    { metric_key: 'iq_covered_mrr', value: Number(overview.covered_mrr || 0) },
     { metric_key: 'iq_net_mrr', value: Number(overview.net_mrr || 0) },
     { metric_key: 'iq_retention_pct', value: Number(overview.retention_pct || 0) },
+    { metric_key: 'iq_enrollments_30', value: Number(overview.enrollments_30 || 0) },
+    { metric_key: 'iq_enrollments_90', value: Number(overview.enrollments_90 || 0) },
+    { metric_key: 'iq_active_agents', value: Number(overview.active_agents || 0) },
   ];
   for (const metric of metrics) {
     await upsertSnapshot(admin, orgId, 'aryx_advisoriq', metric.metric_key, metric.value, today);
@@ -573,6 +770,15 @@ export async function extractAdvisorIq(
 }
 
 const MPB_COS_ORG_ID = 'a0000000-0000-0000-0000-000000000001';
+
+function ticketAgeBucket(createdAt: string, nowMs: number): string {
+  const ageDays = (nowMs - new Date(createdAt).getTime()) / 86_400_000;
+  if (ageDays < 1) return '0_1';
+  if (ageDays < 3) return '1_3';
+  if (ageDays < 7) return '3_7';
+  if (ageDays < 30) return '7_30';
+  return '30_plus';
+}
 
 export async function extractTickets(
   admin: SupabaseClient,
@@ -587,25 +793,25 @@ export async function extractTickets(
   }
 
   const today = new Date().toISOString().slice(0, 10);
-  const openRes = await fetch(`${creds.url}/rest/v1/tickets?select=id&status=${OPEN_TICKETS}&limit=1`, {
-    method: 'GET',
-    headers: { apikey: creds.key, Authorization: `Bearer ${creds.key}`, Prefer: 'count=exact' },
-  });
-  const resolvedRes = await fetch(`${creds.url}/rest/v1/tickets?select=id&status=${RESOLVED_TICKETS}&limit=1`, {
-    method: 'GET',
-    headers: { apikey: creds.key, Authorization: `Bearer ${creds.key}`, Prefer: 'count=exact' },
-  });
-  if (!openRes.ok || !resolvedRes.ok) throw new Error('ticket_count_failed');
-  const open = Number((openRes.headers.get('content-range') || '0-0/0').split('/')[1] || 0);
-  const resolved = Number((resolvedRes.headers.get('content-range') || '0-0/0').split('/')[1] || 0);
-
-  const createdTodayRes = await fetch(`${creds.url}/rest/v1/tickets?select=id&created_at=gte.${today}T00:00:00Z&limit=1`, {
-    method: 'GET',
-    headers: { apikey: creds.key, Authorization: `Bearer ${creds.key}`, Prefer: 'count=exact' },
-  });
-  const created = Number((createdTodayRes.headers.get('content-range') || '0-0/0').split('/')[1] || 0);
+  const since = `${daysAgo(90)}T00:00:00Z`;
+  const [open, resolved, created, pending, breached, unassigned, statusNew, statusOpen, statusAwaiting, statusHold, statusResolved, statusClosed] = await Promise.all([
+    countUnscoped(creds.url, creds.key, 'tickets', `status=${OPEN_TICKETS}`),
+    countUnscoped(creds.url, creds.key, 'tickets', `status=${RESOLVED_TICKETS}`),
+    countUnscoped(creds.url, creds.key, 'tickets', `created_at=gte.${today}T00:00:00Z`),
+    countUnscoped(creds.url, creds.key, 'tickets', 'status=in.(awaiting_customer,on_hold)'),
+    countUnscoped(creds.url, creds.key, 'tickets', `status=${OPEN_TICKETS}&sla_due_at=lt.${new Date().toISOString()}`),
+    countUnscoped(creds.url, creds.key, 'tickets', `status=${OPEN_TICKETS}&assignee_id=is.null`),
+    countUnscoped(creds.url, creds.key, 'tickets', 'status=eq.new'),
+    countUnscoped(creds.url, creds.key, 'tickets', 'status=eq.open'),
+    countUnscoped(creds.url, creds.key, 'tickets', 'status=eq.awaiting_customer'),
+    countUnscoped(creds.url, creds.key, 'tickets', 'status=eq.on_hold'),
+    countUnscoped(creds.url, creds.key, 'tickets', 'status=eq.resolved'),
+    countUnscoped(creds.url, creds.key, 'tickets', 'status=eq.closed'),
+  ]);
 
   let slaPct: number | null = null;
+  let firstResponsePct: number | null = null;
+  let resolutionPct: number | null = null;
   try {
     const sla = await restRpc<Array<Record<string, unknown>>>(
       creds.url,
@@ -616,23 +822,186 @@ export async function extractTickets(
       monthStart(),
     );
     slaPct = Number(sla[0]?.overall_percentage ?? sla[0]?.resolution_percentage ?? null);
+    firstResponsePct = sla[0]?.first_response_percentage == null ? null : Number(sla[0].first_response_percentage);
+    resolutionPct = sla[0]?.resolution_percentage == null ? null : Number(sla[0].resolution_percentage);
   } catch {
     slaPct = null;
   }
 
+  let rows: Array<Record<string, unknown>> = [];
+  try {
+    rows = await restGetUnscopedPages(
+      creds.url,
+      creds.key,
+      `tickets?select=${TICKET_SAFE_SELECT}&created_at=gte.${since}&order=created_at.desc`,
+      500,
+    );
+  } catch {
+    rows = [];
+  }
+  let openRows: Array<Record<string, unknown>> = [];
+  try {
+    openRows = await restGetUnscopedPages(
+      creds.url,
+      creds.key,
+      `tickets?select=${TICKET_SAFE_SELECT}&status=${OPEN_TICKETS}&order=created_at.desc`,
+      200,
+    );
+  } catch {
+    openRows = [];
+  }
+
+  const nowMs = Date.now();
+  const since30 = daysAgo(30);
+  const daily = new Map<string, { created: number; resolved: number }>();
+  const mix = {
+    status: new Map<string, number>(),
+    priority: new Map<string, number>(),
+    category: new Map<string, number>(),
+  };
+  const aging = new Map<string, number>();
+  const agents = new Map<string, { name: string | null; open: number; resolved30: number; breached: number }>();
+
+  const bump = (map: Map<string, number>, key: string) => map.set(key, (map.get(key) || 0) + 1);
+  const agentRow = (name: unknown) => {
+    const label = displayName(name) || 'Unassigned';
+    const key = label.toLowerCase();
+    const cur = agents.get(key) || { name: displayName(name), open: 0, resolved30: 0, breached: 0 };
+    agents.set(key, cur);
+    return cur;
+  };
+
+  for (const row of rows) {
+    const createdDay = String(row.created_at || '').slice(0, 10);
+    if (createdDay) {
+      const cur = daily.get(createdDay) || { created: 0, resolved: 0 };
+      cur.created += 1;
+      daily.set(createdDay, cur);
+    }
+    const resolvedDay = String(row.resolved_at || '').slice(0, 10);
+    if (resolvedDay) {
+      const cur = daily.get(resolvedDay) || { created: 0, resolved: 0 };
+      cur.resolved += 1;
+      daily.set(resolvedDay, cur);
+    }
+    bump(mix.status, String(row.status || 'unknown'));
+    bump(mix.priority, String(row.priority || 'unknown'));
+    bump(mix.category, String(row.category || '').trim() || 'unspecified');
+    if (resolvedDay && resolvedDay >= since30) agentRow(row.agent_name).resolved30 += 1;
+  }
+
+  for (const row of openRows) {
+    bump(aging, ticketAgeBucket(String(row.created_at || today), nowMs));
+    const agent = agentRow(row.agent_name);
+    agent.open += 1;
+    if (row.sla_due_at && new Date(String(row.sla_due_at)).getTime() < nowMs) agent.breached += 1;
+  }
+
+  for (const [day, row] of daily) {
+    await admin.from('fact_tickets_daily').upsert({
+      org_id: orgId,
+      fact_date: day,
+      created_count: row.created,
+      resolved_count: row.resolved,
+      open_count: day === today ? open : 0,
+      pending_count: day === today ? pending : 0,
+      breached_count: day === today ? breached : 0,
+      unassigned_count: day === today ? unassigned : 0,
+      sla_pct: day === today ? slaPct : null,
+      first_response_pct: day === today ? firstResponsePct : null,
+      resolution_pct: day === today ? resolutionPct : null,
+      metadata: { scope: 'mpb_pilot' },
+    }, { onConflict: 'org_id,fact_date' });
+  }
+
+  const todayDaily = daily.get(today) || { created: 0, resolved: 0 };
   await admin.from('fact_tickets_daily').upsert({
     org_id: orgId,
     fact_date: today,
     created_count: created,
     open_count: open,
-    resolved_count: resolved,
+    resolved_count: todayDaily.resolved,
+    pending_count: pending,
+    breached_count: breached,
+    unassigned_count: unassigned,
     sla_pct: slaPct,
-    metadata: { scope: 'mpb_pilot' },
+    first_response_pct: firstResponsePct,
+    resolution_pct: resolutionPct,
+    metadata: { scope: 'mpb_pilot', resolved_all: resolved },
   }, { onConflict: 'org_id,fact_date' });
 
+  for (const [itemKey, itemCount] of [
+    ['new', statusNew],
+    ['open', statusOpen],
+    ['awaiting_customer', statusAwaiting],
+    ['on_hold', statusHold],
+    ['resolved', statusResolved],
+    ['closed', statusClosed],
+  ] as Array<[string, number]>) {
+    mix.status.set(itemKey, itemCount);
+  }
+
+  for (const [kind, map] of Object.entries(mix)) {
+    for (const [itemKey, itemCount] of map) {
+      await admin.from('fact_ticket_mix').upsert({
+        org_id: orgId,
+        kind,
+        item_key: itemKey,
+        item_count: itemCount,
+        metadata: { window: '90d' },
+      }, { onConflict: 'org_id,kind,item_key' });
+    }
+  }
+  for (const [bucket, tickets] of aging) {
+    await admin.from('fact_ticket_aging').upsert({
+      org_id: orgId,
+      bucket,
+      tickets,
+      metadata: {},
+    }, { onConflict: 'org_id,bucket' });
+  }
+  for (const [agentKey, row] of agents) {
+    await admin.from('fact_ticket_agents').upsert({
+      org_id: orgId,
+      agent_key: agentKey,
+      display_name: row.name,
+      open_count: row.open,
+      resolved_30: row.resolved30,
+      breached_count: row.breached,
+      metadata: {},
+    }, { onConflict: 'org_id,agent_key' });
+  }
+
+  for (const row of openRows.slice(0, 80)) {
+    const ticketKey = String(row.id || row.ticket_number || '');
+    if (!ticketKey) continue;
+    const number = row.ticket_number == null ? null : Number(row.ticket_number);
+    await admin.from('book_tickets').upsert({
+      org_id: orgId,
+      ticket_key: ticketKey,
+      ticket_number: Number.isFinite(number as number) ? number : null,
+      title: row.subject ? String(row.subject).slice(0, 180) : null,
+      status: row.status ? String(row.status) : null,
+      priority: row.priority ? String(row.priority) : null,
+      category: row.category ? String(row.category) : null,
+      agent_label: displayName(row.agent_name),
+      created_at: row.created_at || null,
+      sla_due_at: row.sla_due_at || null,
+      href: number ? `/tickets/${number}` : null,
+      metadata: {},
+    }, { onConflict: 'org_id,ticket_key' });
+  }
+
+  const created30 = [...daily.entries()]
+    .filter(([day]) => day >= since30)
+    .reduce((sum, [, row]) => sum + row.created, 0);
   const metrics = [
     { metric_key: 'open_ticket_count', value: open },
     { metric_key: 'resolved_ticket_count', value: resolved },
+    { metric_key: 'pending_ticket_count', value: pending },
+    { metric_key: 'breached_ticket_count', value: breached },
+    { metric_key: 'unassigned_ticket_count', value: unassigned },
+    { metric_key: 'created_ticket_30', value: created30 },
   ];
   for (const metric of metrics) {
     await upsertSnapshot(admin, orgId, 'it_ticketing', metric.metric_key, metric.value, today);

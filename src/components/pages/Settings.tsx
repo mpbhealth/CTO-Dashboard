@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Settings as SettingsIcon, 
@@ -17,10 +17,12 @@ import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
 import { NotificationSettings } from '../notifications';
 import { SourceHealth } from '../cos/SourceHealth';
+import { MFAEnrollment } from '../security/MFAEnrollment';
+import { getMFAFactors, unenrollMFA } from '../../lib/security';
 
 export default function Settings() {
   const navigate = useNavigate();
-  const { profile, user, isDemoMode, signOut } = useAuth();
+  const { profile, user, isDemoMode, signOut, updateProfileName } = useAuth();
   
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -31,8 +33,33 @@ export default function Settings() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [mfaOpen, setMfaOpen] = useState(false);
+  const [mfaEnabled, setMfaEnabled] = useState(false);
+  const [mfaLoading, setMfaLoading] = useState(true);
+  const [mfaFactorId, setMfaFactorId] = useState<string | null>(null);
+  const [mfaBusy, setMfaBusy] = useState(false);
+  const [name, setName] = useState(profile?.full_name || profile?.display_name || '');
+  const [savingName, setSavingName] = useState(false);
+  const [nameError, setNameError] = useState<string | null>(null);
+  const [nameSuccess, setNameSuccess] = useState<string | null>(null);
 
   const backPath = '/home';
+
+  const refreshMfa = async () => {
+    const factors = await getMFAFactors();
+    const verified = factors.find((factor) => factor.status === 'verified');
+    setMfaEnabled(Boolean(verified));
+    setMfaFactorId(verified?.id || null);
+    setMfaLoading(false);
+  };
+
+  useEffect(() => {
+    void refreshMfa();
+  }, []);
+
+  useEffect(() => {
+    setName(profile?.full_name || profile?.display_name || '');
+  }, [profile?.full_name, profile?.display_name]);
 
   const validatePassword = (password: string): string[] => {
     const errors: string[] = [];
@@ -148,7 +175,7 @@ export default function Settings() {
             </div>
             <div>
               <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Account Settings</h1>
-              <p className="text-sm text-gray-500">Manage your account security</p>
+              <p className="text-sm text-gray-500">Manage your profile and security</p>
             </div>
           </div>
         </div>
@@ -159,7 +186,27 @@ export default function Settings() {
             <User className="w-5 h-5 text-gray-400" />
             Profile Information
           </h2>
-          <div className="space-y-3">
+          <form
+            className="space-y-3"
+            onSubmit={async (e) => {
+              e.preventDefault();
+              setNameError(null);
+              setNameSuccess(null);
+              if (isDemoMode) {
+                setNameError('Profile cannot be changed in demo mode');
+                return;
+              }
+              setSavingName(true);
+              try {
+                await updateProfileName(name);
+                setNameSuccess('Name updated.');
+              } catch (err) {
+                setNameError(err instanceof Error ? err.message : 'Could not update name');
+              } finally {
+                setSavingName(false);
+              }
+            }}
+          >
             <div className="flex items-center gap-3 p-3 sm:p-4 bg-gray-50 rounded-xl">
               <Mail className="w-5 h-5 text-gray-400 flex-shrink-0" />
               <div className="min-w-0">
@@ -167,16 +214,22 @@ export default function Settings() {
                 <p className="text-gray-900 font-medium text-sm sm:text-base truncate">
                   {user?.email || profile?.email || 'Not set'}
                 </p>
+                <p className="text-xs text-gray-400 mt-1">Sign-in email is managed by your login, not here.</p>
               </div>
             </div>
             <div className="flex items-center gap-3 p-3 sm:p-4 bg-gray-50 rounded-xl">
               <User className="w-5 h-5 text-gray-400 flex-shrink-0" />
-              <div className="min-w-0">
+              <label className="min-w-0 flex-1">
                 <p className="text-xs text-gray-500 uppercase tracking-wide">Name</p>
-                <p className="text-gray-900 font-medium text-sm sm:text-base truncate">
-                  {profile?.full_name || profile?.display_name || 'Not set'}
-                </p>
-              </div>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  disabled={isDemoMode || savingName}
+                  maxLength={80}
+                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 disabled:opacity-50"
+                />
+              </label>
             </div>
             <div className="flex items-center gap-3 p-3 sm:p-4 bg-gray-50 rounded-xl">
               <Shield className="w-5 h-5 text-gray-400 flex-shrink-0" />
@@ -185,12 +238,80 @@ export default function Settings() {
                 <p className="text-gray-900 font-medium text-sm sm:text-base capitalize">
                   {profile?.role || 'Staff'}
                 </p>
+                <p className="text-xs text-gray-400 mt-1">Role is assigned by an owner. It cannot be changed here.</p>
               </div>
             </div>
-          </div>
+            {nameError && (
+              <p className="text-sm text-red-600">{nameError}</p>
+            )}
+            {nameSuccess && (
+              <p className="text-sm text-emerald-700">{nameSuccess}</p>
+            )}
+            <button
+              type="submit"
+              disabled={isDemoMode || savingName || !name.trim()}
+              className="rounded-xl bg-gray-900 px-4 py-2 text-sm text-white disabled:opacity-50"
+            >
+              {savingName ? 'Saving…' : 'Save name'}
+            </button>
+          </form>
         </div>
 
         <SourceHealth />
+
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6 mb-4 sm:mb-6">
+          <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 flex items-center gap-2">
+            <Shield className="w-5 h-5 text-gray-400" />
+            Two-factor authentication
+          </h2>
+          <p className="text-sm text-gray-500 mb-4">
+            Optional authenticator app. Login does not require it.
+          </p>
+          {mfaLoading ? (
+            <p className="text-sm text-gray-500">Checking status…</p>
+          ) : mfaEnabled ? (
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-sm text-green-700">Authenticator is enabled on this account.</p>
+              <button
+                type="button"
+                disabled={isDemoMode || mfaBusy || !mfaFactorId}
+                onClick={async () => {
+                  if (!mfaFactorId) return;
+                  setMfaBusy(true);
+                  const result = await unenrollMFA(mfaFactorId);
+                  setMfaBusy(false);
+                  if (result.success) {
+                    await refreshMfa();
+                    setSuccess('Two-factor authentication turned off');
+                  } else {
+                    setError(result.error || 'Could not turn off two-factor authentication');
+                  }
+                }}
+                className="rounded-xl border border-gray-200 px-4 py-2 text-sm text-gray-700 disabled:opacity-50"
+              >
+                {mfaBusy ? 'Turning off…' : 'Turn off'}
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              disabled={isDemoMode}
+              onClick={() => setMfaOpen(true)}
+              className="rounded-xl bg-gray-900 px-4 py-2 text-sm text-white disabled:opacity-50"
+            >
+              Set up authenticator
+            </button>
+          )}
+        </div>
+
+        <MFAEnrollment
+          isOpen={mfaOpen}
+          onClose={() => setMfaOpen(false)}
+          onSuccess={() => {
+            void refreshMfa();
+            setSuccess('Two-factor authentication enabled');
+          }}
+        />
 
         {/* Password Change Card */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6">

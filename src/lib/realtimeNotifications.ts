@@ -54,7 +54,7 @@ function handleApiIncident(
       source_table: 'api_incidents',
       source_id: record.id as string,
       data: {
-        url: '/ctod/infrastructure/api-status',
+        url: '/operations',
         actionType: 'navigate',
       },
     };
@@ -68,7 +68,7 @@ function handleApiIncident(
     source_table: 'api_incidents',
     source_id: record.id as string,
     data: {
-      url: '/ctod/infrastructure/api-status',
+      url: '/operations',
       actionType: 'navigate',
     },
   };
@@ -98,7 +98,7 @@ function handleDeploymentLog(
     source_table: 'deployment_logs',
     source_id: record.id as string,
     data: {
-      url: '/ctod/infrastructure/deployments',
+      url: '/operations/infrastructure/deployments',
       actionType: 'navigate',
     },
   };
@@ -123,10 +123,10 @@ function handleAssignment(
     priority: notificationPriority,
     title: isNew ? 'New Assignment' : 'Assignment Updated',
     body: record.title as string,
-    source_table: 'assignments',
+    source_table: 'tasks',
     source_id: record.id as string,
     data: {
-      url: '/ctod/development/assignments',
+      url: '/development/assignments',
       actionType: 'navigate',
     },
   };
@@ -166,44 +166,7 @@ function handleProject(
     source_table: 'projects',
     source_id: newRecord.id as string,
     data: {
-      url: '/ctod/development/projects',
-      actionType: 'navigate',
-    },
-  };
-}
-
-/**
- * Create notification payload for compliance tasks (high-priority/overdue)
- */
-function handleComplianceTask(
-  payload: RealtimePayload<Record<string, unknown>>
-): NotificationPayload | null {
-  const record = payload.new;
-  if (!record) return null;
-
-  const priority = (record.priority as string)?.toLowerCase();
-  const status = (record.status as string)?.toLowerCase();
-  
-  // Only notify on high-priority or overdue tasks
-  if (priority !== 'high' && priority !== 'critical' && status !== 'overdue') {
-    return null;
-  }
-  
-  const notificationPriority: NotificationPriority = 
-    priority === 'critical' ? 'critical' : 
-    priority === 'high' ? 'high' : 'info';
-
-  const isNew = payload.eventType === 'INSERT';
-
-  return {
-    type: 'compliance_alert',
-    priority: notificationPriority,
-    title: isNew ? 'New Compliance Task' : 'Compliance Task Updated',
-    body: (record.title || record.name) as string,
-    source_table: 'compliance_tasks',
-    source_id: record.id as string,
-    data: {
-      url: '/ctod/compliance/tasks',
+      url: '/development/projects',
       actionType: 'navigate',
     },
   };
@@ -235,7 +198,7 @@ function handleTicket(
     source_table: 'tickets_cache',
     source_id: record.id as string,
     data: {
-      url: '/ctod/operations/it-support',
+      url: '/tickets',
       actionType: 'navigate',
     },
   };
@@ -254,7 +217,7 @@ const ctoSubscriptions: SubscriptionConfig[] = [
     handler: handleDeploymentLog,
   },
   {
-    table: 'assignments',
+    table: 'tasks',
     event: '*',
     handler: handleAssignment,
   },
@@ -262,11 +225,6 @@ const ctoSubscriptions: SubscriptionConfig[] = [
     table: 'projects',
     event: 'UPDATE',
     handler: handleProject,
-  },
-  {
-    table: 'compliance_tasks',
-    event: '*',
-    handler: handleComplianceTask,
   },
   {
     table: 'tickets_cache',
@@ -282,11 +240,6 @@ const ceoSubscriptions: SubscriptionConfig[] = [
     event: '*',
     filter: 'severity=eq.critical',
     handler: handleApiIncident,
-  },
-  {
-    table: 'compliance_tasks',
-    event: '*',
-    handler: handleComplianceTask,
   },
 ];
 

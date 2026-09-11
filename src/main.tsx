@@ -207,21 +207,8 @@ function ErrorBoundary({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
-// Service Worker registration (optional - won't break if missing)
-if ('serviceWorker' in navigator && !Environment.isStackBlitz()) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then((registration) => {
-        Environment.log('Service Worker registered successfully', registration);
-        // Store registration for update checking (useAppUpdate hook)
-        (window as unknown as Record<string, unknown>).__SW_REGISTRATION__ = registration;
-      })
-      .catch((registrationError) => {
-        // Service worker failure should not prevent app from loading
-        Environment.warn('Service Worker registration failed (non-critical)', registrationError);
-      });
-  });
-}
+// Do not register /sw.js. index.html unregisters workers on boot so a cached
+// shell cannot point at a hashed bundle that the next deploy already deleted.
 
 // Production environment check - only log errors
 if (import.meta.env.PROD && isSupabaseConfigured) {

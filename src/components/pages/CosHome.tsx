@@ -4,12 +4,13 @@ import { Link } from 'react-router-dom';
 import { RefreshCw } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { syncConnectors } from '@/lib/connectors';
-import { money, compactNumber, periodBounds, grainForPeriod, type PeriodKey } from '@/lib/cos';
+import { money, compactNumber, periodBounds, grainForPeriod, type PeriodKey, ADVISORIQ_HREF } from '@/lib/cos';
 import { computeForecast, forecastSentence, preferCompleteMonth } from '@/lib/forecast';
 import { useOrg } from '@/contexts/OrgContext';
 import { OrgPicker } from '../cos/OrgPicker';
 import { PeriodToggle } from '../cos/PeriodToggle';
 import { CommandStat, CommandStrip } from '../cos/CommandStrip';
+import { TrendSpark } from '../cos/TrendSpark';
 import { AryxLogo } from '../brand/AryxLogo';
 
 interface Snapshot {
@@ -35,6 +36,37 @@ interface PnlRow {
     commissions_pending?: number;
     missing_vendor_matches?: number;
   };
+}
+
+interface AdvisorRow {
+  org_id: string;
+  advisor_key: string;
+  display_name: string | null;
+  active_members: number;
+  mrr: number;
+  net_mrr: number;
+  retention_pct: number | null;
+  term_soon_90: number;
+  enrollments_30: number;
+  margin_pct: number | null;
+}
+
+const RISK_LABELS: Record<string, string> = {
+  '0_30': '0–30 days',
+  '31_60': '31–60 days',
+  '61_90': '61–90 days',
+  '90_plus': '90+ days',
+};
+
+function iqHref(path?: string | null): string {
+  if (!path) return ADVISORIQ_HREF;
+  if (path.startsWith('http')) return path;
+  return `${ADVISORIQ_HREF}${path.startsWith('/') ? path : `/${path}`}`;
+}
+
+function shown(linked: boolean, value: number | null | undefined, format: (n: number) => string): string {
+  if (!linked || value == null || Number.isNaN(Number(value))) return '—';
+  return format(Number(value));
 }
 
 export function CosHome() {
@@ -73,6 +105,32 @@ export function CosHome() {
         .gte('period_start', bounds.start);
       if (error) throw error;
       return (data || []) as PnlRow[];
+    },
+  });
+
+  const book = useQuery({
+    queryKey: ['command-book', orgIds.join(','), bounds.start],
+    enabled: orgIds.length > 0 && linked.advisoriq,
+    queryFn: async () => {
+      const [trend, risk, reasons, advisors, billing, actions] = await Promise.all([
+        supabase.from('fact_iq_mrr_monthly').select('month, enrollments, terminations, mrr_added, mrr_lost, net_mrr_change').in('org_id', orgIds).gte('month', bounds.start).order('month'),
+        supabase.from('fact_iq_forward_risk').select('bucket, members, mrr_at_risk').in('org_id', orgIds),
+        supabase.from('fact_iq_reason_mix').select('kind, reason, item_count, mrr').in('org_id', orgIds).eq('kind', 'churn').order('item_count', { ascending: false }).limit(8),
+        supabase.from('advisor_scorecards').select('org_id, advisor_key, display_name, active_members, mrr, net_mrr, retention_pct, term_soon_90, enrollments_30, margin_pct').in('org_id', orgIds).order('mrr', { ascending: false }).limit(12),
+        supabase.from('book_billing_risk').select('member_key, display_name, advisor_label, product_key, monthly_fee, next_billing_date, paid, risk_flag, status').in('org_id', orgIds).order('next_billing_date', { ascending: true, nullsFirst: false }).limit(20),
+        supabase.from('book_actions').select('action_key, kind, title, dollars, href, status').in('org_id', orgIds).eq('status', 'proposed').limit(20),
+      ]);
+      for (const result of [trend, risk, reasons, advisors, billing, actions]) {
+        if (result.error) throw result.error;
+      }
+      return {
+        trend: trend.data || [],
+        risk: risk.data || [],
+        reasons: reasons.data || [],
+        advisors: (advisors.data || []) as AdvisorRow[],
+        billing: billing.data || [],
+        actions: actions.data || [],
+      };
     },
   });
 
@@ -129,6 +187,42 @@ export function CosHome() {
     }
     return map;
   }, [snapshots.data]);
+
+  const metric = (key: string): number | null => {
+    const row = latest.get(key);
+    return row?.value == null ? null : Number(row.value);
+  };
+
+  const hasTrend = (book.data?.trend || []).length > 0;
+  const movement = useMemo(() => {
+    return (book.data?.trend || []).reduce((acc, row) => ({
+      gained: acc.gained + Number(row.enrollments),
+      lost: acc.lost + Number(row.terminations),
+      added: acc.added + Number(row.mrr_added),
+      dropped: acc.dropped + Number(row.mrr_lost),
+    }), { gained: 0, lost: 0, added: 0, dropped: 0 });
+  }, [book.data?.trend]);
+
+  const thisMonth = useMemo(() => {
+    const key = new Date().toISOString().slice(0, 7);
+    const row = (book.data?.trend || []).find((item) => String(item.month).slice(0, 7) === key);
+    return row ? Number(row.enrollments) : null;
+  }, [book.data?.trend]);
+
+  const uncoveredMrr = (() => {
+    const mrr = metric('iq_mrr');
+    const covered = metric('iq_covered_mrr');
+    if (mrr == null || covered == null) return null;
+    return mrr - covered;
+  })();
+
+  const spark = useMemo(() => {
+    return (book.data?.trend || []).map((row) => ({
+      month: String(row.month).slice(0, 7),
+      gained: Number(row.enrollments),
+      lost: Number(row.terminations),
+    }));
+  }, [book.data?.trend]);
 
   const pnlSum = useMemo(() => {
     return (pnl.data || []).reduce((acc, row) => ({
@@ -188,15 +282,15 @@ export function CosHome() {
       <div className="cos-page w-full">
         <AryxLogo wordmark />
         <p className="mb-4 mt-6 inline-flex rounded-full border border-aryx-line bg-aryx-elevated px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-aryx-muted">
-          ARYX CEO
+          Command
         </p>
         <div className="mb-8 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
-            <h1 className="font-display text-4xl font-semibold tracking-tight md:text-6xl">Company, in one view.</h1>
+            <h1 className="font-display text-4xl font-semibold tracking-tight md:text-6xl">The whole book.</h1>
             <p className="mt-4 max-w-xl text-sm text-aryx-muted">
               {forecast
                 ? forecastSentence(90, forecast.pnl, money)
-                : 'Read-only money, pipeline, people, and traffic. Action stays in the source apps.'}
+                : 'Members, advisors, billing, and payables. Action stays in AdvisorIQ and EnrollFlow.'}
             </p>
           </div>
           {isOperator && (
@@ -227,17 +321,77 @@ export function CosHome() {
         </div>
 
         <div className="space-y-6">
+          <CommandStrip title="Members" href="/enrollments" warning={!linked.advisoriq ? 'AdvisorIQ is not linked.' : null}>
+            <CommandStat label="Active now" value={shown(linked.advisoriq, metric('iq_active_members'), compactNumber)} hint="AdvisorIQ book" />
+            <CommandStat label="Gained" value={shown(linked.advisoriq && hasTrend, movement.gained, compactNumber)} hint="Period enrollments" />
+            <CommandStat label="Lost" value={shown(linked.advisoriq && hasTrend, movement.lost, compactNumber)} hint="Period terminations" />
+            <CommandStat label="On hold" value={shown(linked.advisoriq, metric('iq_on_hold_members'), compactNumber)} />
+          </CommandStrip>
+
+          <CommandStrip title="Leaving" href="/enrollments" warning={!linked.advisoriq ? 'AdvisorIQ is not linked.' : null}>
+            <CommandStat label="Terminating now" value={shown(linked.advisoriq, metric('iq_terminating_members'), compactNumber)} />
+            <CommandStat label="Term soon 90d" value={shown(linked.advisoriq, metric('iq_term_soon_90'), compactNumber)} hint="Projected to leave" />
+            {(book.data?.risk || []).map((row) => (
+              <CommandStat
+                key={row.bucket}
+                label={RISK_LABELS[row.bucket] || row.bucket}
+                value={shown(true, row.members, compactNumber)}
+                hint={money(Number(row.mrr_at_risk))}
+              />
+            ))}
+          </CommandStrip>
+
+          {(book.data?.reasons || []).length > 0 && (
+            <div className="rounded-[2rem] bg-aryx-ink/5 p-1.5 ring-1 ring-aryx-line">
+              <div className="rounded-[calc(2rem-0.375rem)] bg-aryx-elevated p-6">
+                <h2 className="mb-4 text-[10px] uppercase tracking-[0.2em] text-aryx-faint">Why they left</h2>
+                <div className="space-y-2 text-sm">
+                  {book.data?.reasons.map((row) => (
+                    <div key={row.reason} className="flex justify-between gap-4">
+                      <span>{row.reason}</span>
+                      <span className="text-aryx-faint">{compactNumber(row.item_count)} · {money(Number(row.mrr))}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          <CommandStrip title="Enrollments" href="/enrollments">
+            <CommandStat label="This month" value={shown(linked.advisoriq, thisMonth, compactNumber)} />
+            <CommandStat label="New 30d" value={shown(linked.advisoriq, metric('iq_enrollments_30'), compactNumber)} />
+            <CommandStat label="New 90d" value={shown(linked.advisoriq, metric('iq_enrollments_90'), compactNumber)} />
+            <CommandStat label="MRR added" value={shown(linked.advisoriq && hasTrend, movement.added, money)} hint="Period" />
+          </CommandStrip>
+
+          {spark.length > 0 && (
+            <div>
+              <p className="mb-3 text-[10px] uppercase tracking-[0.16em] text-aryx-faint">Monthly gained / lost</p>
+              <TrendSpark data={spark} xKey="month" series={[{ key: 'gained', color: '#FF5A1F' }, { key: 'lost', color: '#888' }]} />
+            </div>
+          )}
+
+          <CommandStrip title="Billing" href="/advisors" warning={!linked.advisoriq ? 'AdvisorIQ is not linked.' : null}>
+            <CommandStat label="MRR" value={shown(linked.advisoriq, metric('iq_mrr'), money)} />
+            <CommandStat label="Covered MRR" value={shown(linked.advisoriq, metric('iq_covered_mrr'), money)} />
+            <CommandStat label="Uncovered" value={shown(linked.advisoriq, uncoveredMrr, money)} hint="MRR minus covered" />
+            <CommandStat label="Cost" value={shown(linked.advisoriq, metric('iq_cost'), money)} />
+            <CommandStat label="Net MRR" value={shown(linked.advisoriq, metric('iq_net_mrr'), money)} />
+            <CommandStat label="Retention" value={shown(linked.advisoriq, metric('iq_retention_pct'), (n) => `${n}%`)} />
+            <CommandStat label="Active agents" value={shown(linked.advisoriq, metric('iq_active_agents'), compactNumber)} />
+          </CommandStrip>
+
           {linked.enrollment && (
             <CommandStrip
-              title="Money"
+              title="Payables"
               href="/finance"
               warning={pnlSum.coverage < 90 ? `Vendor coverage ${pnlSum.coverage}%` : null}
             >
               <CommandStat label="Collected" value={money(pnlSum.collected)} hint="EnrollFlow billing" />
               <CommandStat label="Pending" value={money(pnlSum.pending + pnlSum.pendingCommissions)} hint="AR + unpaid commissions" />
+              <CommandStat label="Failed" value={money(pnlSum.failed)} />
               <CommandStat label="Vendor" value={money(pnlSum.vendor)} />
               <CommandStat label="Commissions" value={money(pnlSum.commissions)} hint="Paid only" />
-              <CommandStat label="SaaS" value={money(pnlSum.saas)} />
               <CommandStat label="Net" value={money(pnlSum.net)} hint="Collected − vendor − commissions − SaaS" />
             </CommandStrip>
           )}
@@ -256,9 +410,13 @@ export function CosHome() {
             </CommandStrip>
           )}
 
-          <CommandStrip title="Risk" href="/operations/integrations" warning={riskNotes[0] || null}>
+          <CommandStrip title="Ops risk" href={linked.tickets ? '/tickets' : '/operations/integrations'} warning={riskNotes[0] || null}>
             {linked.tickets && (
-              <CommandStat label="Open tickets" value={compactNumber(Number(latest.get('open_ticket_count')?.value || 0))} hint={ticketSpike ? 'Spike vs 7-day baseline' : 'Support'} />
+              <>
+                <CommandStat label="Open tickets" value={compactNumber(Number(latest.get('open_ticket_count')?.value || 0))} hint={ticketSpike ? 'Spike vs 7-day baseline' : 'ITSTS'} />
+                <CommandStat label="SLA breach" value={shown(true, latest.get('breached_ticket_count')?.value, compactNumber)} />
+                <CommandStat label="Unassigned" value={shown(true, latest.get('unassigned_ticket_count')?.value, compactNumber)} />
+              </>
             )}
             {linked.enrollment && (
               <CommandStat label="Vendor coverage" value={`${pnlSum.coverage}%`} hint={pnlSum.coverage < 90 ? 'Below 90%' : 'Carrier match'} />
@@ -269,9 +427,99 @@ export function CosHome() {
           </CommandStrip>
         </div>
 
-        {!linked.enrollment && !linked.crm && (
+        {linked.advisoriq && (book.data?.advisors || []).length > 0 && (
+          <div className="mt-10">
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="text-[10px] uppercase tracking-[0.2em] text-aryx-faint">Advisors</h2>
+              <Link to="/advisors" className="text-[10px] uppercase tracking-[0.16em] text-aryx-accent">Open</Link>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <thead className="text-[10px] uppercase tracking-[0.16em] text-aryx-faint">
+                  <tr>
+                    <th className="py-2">Advisor</th>
+                    <th>Members</th>
+                    <th>MRR</th>
+                    <th>Net</th>
+                    <th>Retention</th>
+                    <th>Term soon</th>
+                    <th>New 30d</th>
+                    <th>Margin</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {book.data?.advisors.map((row) => (
+                    <tr key={`${row.org_id}-${row.advisor_key}`} className="border-t border-aryx-line">
+                      <td className="py-3">{row.display_name || row.advisor_key.slice(0, 8)}</td>
+                      <td>{compactNumber(row.active_members)}</td>
+                      <td>{money(row.mrr)}</td>
+                      <td>{money(row.net_mrr)}</td>
+                      <td>{row.retention_pct == null ? '—' : `${row.retention_pct}%`}</td>
+                      <td>{compactNumber(row.term_soon_90)}</td>
+                      <td>{compactNumber(row.enrollments_30)}</td>
+                      <td>{row.margin_pct == null ? '—' : `${row.margin_pct}%`}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {linked.advisoriq && (
+          <div className="mt-10 grid gap-6 md:grid-cols-2">
+            <div className="rounded-[2rem] bg-aryx-ink/5 p-1.5 ring-1 ring-aryx-line">
+              <div className="rounded-[calc(2rem-0.375rem)] bg-aryx-elevated p-6">
+                <div className="mb-4 flex items-center justify-between">
+                  <h2 className="text-[10px] uppercase tracking-[0.2em] text-aryx-faint">Billing risk</h2>
+                  <a href={iqHref('/command')} className="text-[10px] uppercase tracking-[0.16em] text-aryx-accent" target="_blank" rel="noreferrer">AdvisorIQ</a>
+                </div>
+                {(book.data?.billing || []).length === 0 && <p className="text-sm text-aryx-muted">No billing-risk rows yet.</p>}
+                <ul className="space-y-3 text-sm">
+                  {(book.data?.billing || []).map((row) => (
+                    <li key={`${row.member_key}-${row.product_key}`} className="flex justify-between gap-4">
+                      <span>
+                        {row.display_name || 'Member'}
+                        <span className="block text-xs text-aryx-faint">{row.product_key} · {row.advisor_label || '—'}</span>
+                      </span>
+                      <span className="text-right text-aryx-faint">
+                        {money(Number(row.monthly_fee))}
+                        <span className="block text-xs">{row.risk_flag || row.status || '—'}</span>
+                        <a href={iqHref('/command')} className="block text-xs text-aryx-accent" target="_blank" rel="noreferrer">Open in AdvisorIQ</a>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+            <div className="rounded-[2rem] bg-aryx-ink/5 p-1.5 ring-1 ring-aryx-line">
+              <div className="rounded-[calc(2rem-0.375rem)] bg-aryx-elevated p-6">
+                <div className="mb-4 flex items-center justify-between">
+                  <h2 className="text-[10px] uppercase tracking-[0.2em] text-aryx-faint">Queue</h2>
+                  <a href={iqHref('/command')} className="text-[10px] uppercase tracking-[0.16em] text-aryx-accent" target="_blank" rel="noreferrer">AdvisorIQ</a>
+                </div>
+                {(book.data?.actions || []).length === 0 && <p className="text-sm text-aryx-muted">No open actions yet.</p>}
+                <ul className="space-y-3 text-sm">
+                  {(book.data?.actions || []).map((row) => (
+                    <li key={row.action_key}>
+                      <a href={iqHref(row.href)} className="hover:text-aryx-accent" target="_blank" rel="noreferrer">
+                        {row.title || row.kind}
+                      </a>
+                      <span className="block text-xs text-aryx-faint">
+                        {row.kind}{row.dollars != null ? ` · ${money(Number(row.dollars))}` : ''}
+                      </span>
+                      <a href={iqHref(row.href)} className="text-xs text-aryx-accent" target="_blank" rel="noreferrer">Open in AdvisorIQ</a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {!linked.enrollment && !linked.crm && !linked.advisoriq && (
           <div className="mt-8 rounded-[2rem] bg-aryx-elevated p-10 text-aryx-muted ring-1 ring-aryx-line">
-            Sources are not linked for this organization. Remote maps are server-owned so tenants cannot point ARYX CEO at another project. Home will not invent zeros.
+            Sources are not linked for this organization. Remote maps are server-owned so tenants cannot point ARYX CEO at another project. Command will not invent zeros.
           </div>
         )}
 

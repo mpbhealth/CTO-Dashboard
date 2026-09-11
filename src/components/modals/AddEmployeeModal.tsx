@@ -3,6 +3,7 @@ import { X, UserPlus } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { Department } from '../../hooks/useOrganizationalData';
 import { handleError } from '../../lib/errorHandler';
+import { useOrg } from '../../contexts/OrgContext';
 
 interface AddEmployeeModalProps {
   isOpen: boolean;
@@ -13,6 +14,7 @@ interface AddEmployeeModalProps {
 }
 
 export default function AddEmployeeModal({ isOpen, onClose, onSuccess, departments, managers }: AddEmployeeModalProps) {
+  const { orgId } = useOrg();
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
@@ -44,14 +46,10 @@ export default function AddEmployeeModal({ isOpen, onClose, onSuccess, departmen
         .map(skill => skill.trim())
         .filter(skill => skill.length > 0);
 
-      const certificationsArray = formData.certifications
-        .split(',')
-        .map(cert => cert.trim())
-        .filter(cert => cert.length > 0);
-
       const { error: insertError } = await supabase
         .from('employee_profiles')
         .insert([{
+          org_id: orgId,
           first_name: formData.first_name,
           last_name: formData.last_name,
           title: formData.title,
@@ -64,8 +62,7 @@ export default function AddEmployeeModal({ isOpen, onClose, onSuccess, departmen
           employment_type: formData.employment_type,
           location: formData.location || null,
           start_date: formData.start_date || null,
-          skills: skillsArray.length > 0 ? skillsArray : null,
-          certifications: certificationsArray.length > 0 ? certificationsArray : null
+          skills: skillsArray.length > 0 ? skillsArray : [],
         }]);
 
       if (insertError) throw insertError;

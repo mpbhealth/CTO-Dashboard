@@ -25,13 +25,14 @@ function logSoftQueryError(table: string, error: QueryErrorLike) {
 }
 
 const LINKS = [
-  { href: '/operations/compliance', label: 'Compliance' },
   { href: '/operations/saas-spend', label: 'SaaS spend' },
   { href: '/tickets', label: 'Support' },
   { href: '/operations/integrations', label: 'Integrations' },
   { href: '/operations/policy-manager', label: 'Policy' },
   { href: '/operations/organization', label: 'Organization' },
+  { href: '/operations/performance-evaluation', label: 'Staff' },
   { href: '/operations/infrastructure/deployments', label: 'Deployments' },
+  { href: '/files', label: 'Files' },
 ];
 
 function countOrZero(
@@ -65,18 +66,18 @@ export function CosOperations() {
   const counts = useQuery({
     queryKey: ['operations-counts'],
     queryFn: async () => {
-      const [vendors, expenses, incidents, policies, mail] = await Promise.all([
+      const [vendors, expenses, people, policies, mail] = await Promise.all([
         supabase.from('vendors').select('id', { count: 'exact', head: true }),
         supabase.from('saas_expenses').select('id', { count: 'exact', head: true }),
-        supabase.from('hipaa_incidents').select('id', { count: 'exact', head: true }),
-        supabase.from('hipaa_policies').select('id', { count: 'exact', head: true }),
+        supabase.from('employee_profiles').select('id', { count: 'exact', head: true }),
+        supabase.from('policies').select('id', { count: 'exact', head: true }),
         supabase.from('mail_accounts').select('id', { count: 'exact', head: true }),
       ]);
       return {
         vendors: countOrZero('vendors', vendors),
         expenses: countOrZero('saas_expenses', expenses),
-        incidents: countOrZero('hipaa_incidents', incidents),
-        policies: countOrZero('hipaa_policies', policies),
+        people: countOrZero('employee_profiles', people),
+        policies: countOrZero('policies', policies),
         mail: countOrZero('mail_accounts', mail),
       };
     },
@@ -103,8 +104,8 @@ export function CosOperations() {
   const cards = [
     { label: 'Vendors', value: counts.data?.vendors },
     { label: 'SaaS expenses', value: counts.data?.expenses },
-    { label: 'HIPAA policies', value: counts.data?.policies },
-    { label: 'Incidents', value: counts.data?.incidents },
+    { label: 'Policies', value: counts.data?.policies },
+    { label: 'Staff', value: counts.data?.people },
     { label: 'Mailboxes', value: counts.data?.mail },
     { label: 'Sources', value: sources.data?.length },
   ];

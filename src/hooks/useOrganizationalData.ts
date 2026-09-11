@@ -229,7 +229,7 @@ export function usePolicyDocuments() {
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
-    if (!shouldQueryCosTable('policy_documents')) {
+    if (!shouldQueryCosTable('policies')) {
       setData([]);
       setError(null);
       setLoading(false);
@@ -238,12 +238,16 @@ export function usePolicyDocuments() {
     setLoading(true);
     try {
       const { data: policies, error: policiesError } = await supabase
-        .from('policy_documents')
+        .from('policies')
         .select('*')
         .order('created_at', { ascending: false });
 
       if (policiesError) throw policiesError;
-      setData(policies || []);
+      setData((policies || []).map((row) => ({
+        ...row,
+        content: row.body || row.content || '',
+        version: row.version || '1.0',
+      })));
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');

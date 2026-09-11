@@ -22,7 +22,7 @@ interface AIAssistantContextType extends AIAssistantState {
 
 const AIAssistantContext = createContext<AIAssistantContextType | undefined>(undefined);
 
-const SESSION_STORAGE_KEY = 'mpb_ai_assistant_state';
+const SESSION_STORAGE_KEY = 'aryx_cos_ai_assistant_state';
 
 interface SerializedState {
   messages: Array<{

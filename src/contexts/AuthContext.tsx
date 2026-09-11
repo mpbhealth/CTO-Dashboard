@@ -47,6 +47,7 @@ interface AuthContextType {
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
   updatePassword: (currentPassword: string, newPassword: string) => Promise<void>;
+  updateProfileName: (name: string) => Promise<void>;
   /** Reset activity timer (call on user interaction) */
   resetActivityTimer: () => void;
   /** Dismiss timeout warning and extend session */
@@ -776,6 +777,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     logger.log('Password updated successfully');
   }, [isDemoMode, user?.email, user?.id]);
 
+  const updateProfileName = useCallback(async (name: string) => {
+    if (isDemoMode) {
+      throw new Error('Profile cannot be changed in demo mode');
+    }
+    if (!user?.id) {
+      throw new Error('Not signed in');
+    }
+    const next = name.trim();
+    if (!next) {
+      throw new Error('Name is required');
+    }
+    if (next.length > 80) {
+      throw new Error('Name is too long');
+    }
+
+    const { data, error } = await supabase
+      .from('profiles')
+      .update({
+        display_name: next,
+        full_name: next,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('user_id', user.id)
+      .select('user_id')
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!data) throw new Error('Could not update profile');
+    await refreshProfile();
+  }, [isDemoMode, refreshProfile, user?.id]);
+
   const value = useMemo(() => ({
     user,
     session,
@@ -792,6 +824,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signOut,
     refreshProfile,
     updatePassword,
+    updateProfileName,
     resetActivityTimer,
     extendSession,
     updateSessionTimeoutConfig,
@@ -811,6 +844,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signOut,
     refreshProfile,
     updatePassword,
+    updateProfileName,
     resetActivityTimer,
     extendSession,
     updateSessionTimeoutConfig,

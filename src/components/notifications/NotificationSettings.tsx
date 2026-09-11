@@ -189,13 +189,6 @@ export function NotificationSettings({ className = '' }: NotificationSettingsPro
       icon: FolderKanban,
       iconColor: 'text-green-500',
     },
-    {
-      key: 'compliance_alerts' as const,
-      label: 'Compliance Alerts',
-      description: 'HIPAA and regulatory compliance issues',
-      icon: Shield,
-      iconColor: 'text-indigo-500',
-    },
   ];
 
   return (

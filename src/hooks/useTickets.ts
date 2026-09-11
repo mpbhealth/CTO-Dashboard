@@ -41,61 +41,38 @@ export function useTicketStats() {
 
   useEffect(() => {
     async function fetchStats() {
-      if (!shouldQueryCosTable('tickets_cache')) {
+      if (!shouldQueryCosTable('fact_tickets_daily')) {
         setLoading(false);
         return;
       }
       try {
-        const { data: tickets, error: ticketsError } = await supabase.from('tickets_cache').select('*');
+        const { data: tickets, error: ticketsError } = await supabase
+          .from('fact_tickets_daily')
+          .select('created_count, open_count, resolved_count, sla_pct')
+          .order('fact_date', { ascending: false })
+          .limit(30);
 
         if (ticketsError) throw ticketsError;
 
         const ticketData = tickets || [];
-        const total_tickets = ticketData.length;
-        const open_tickets = ticketData.filter(t => t.status === 'open').length;
-        const in_progress_tickets = ticketData.filter(t => t.status === 'in_progress').length;
-        const closed_tickets = ticketData.filter(t => t.status === 'closed').length;
-        const resolved_tickets = ticketData.filter(t => t.status === 'resolved').length;
-
-        const closedTickets = ticketData.filter(t => t.status === 'closed' && t.created_at && t.updated_at);
-        const avg_resolution_time_hours = closedTickets.length > 0
-          ? closedTickets.reduce((sum, t) => {
-              const created = new Date(t.created_at).getTime();
-              const updated = new Date(t.updated_at).getTime();
-              return sum + (updated - created) / (1000 * 60 * 60);
-            }, 0) / closedTickets.length
-          : 0;
-
-        // Calculate SLA compliance (assuming 24-hour SLA for now)
-        const sla_hours = 24;
-        const slaCompliantTickets = closedTickets.filter(t => {
-          const created = new Date(t.created_at).getTime();
-          const updated = new Date(t.updated_at).getTime();
-          const resolutionTimeHours = (updated - created) / (1000 * 60 * 60);
-          return resolutionTimeHours <= sla_hours;
-        }).length;
-        const sla_compliance_percentage = closedTickets.length > 0 
-          ? (slaCompliantTickets / closedTickets.length) * 100 
-          : 0;
-
-        // Calculate tickets by priority
-        const tickets_by_priority = {
-          critical: ticketData.filter(t => t.priority === 'critical').length,
-          urgent: ticketData.filter(t => t.priority === 'urgent').length,
-          high: ticketData.filter(t => t.priority === 'high').length,
-          medium: ticketData.filter(t => t.priority === 'medium').length,
-          low: ticketData.filter(t => t.priority === 'low').length,
-        };
-
-        setStats({ 
-          total_tickets, 
-          open_tickets, 
-          in_progress_tickets, 
-          closed_tickets,
-          resolved_tickets,
-          avg_resolution_time_hours,
-          sla_compliance_percentage,
-          tickets_by_priority
+        const latest = ticketData[0];
+        const created = ticketData.reduce((sum, row) => sum + Number(row.created_count || 0), 0);
+        const resolved = ticketData.reduce((sum, row) => sum + Number(row.resolved_count || 0), 0);
+        setStats({
+          total_tickets: created,
+          open_tickets: Number(latest?.open_count || 0),
+          in_progress_tickets: 0,
+          closed_tickets: resolved,
+          resolved_tickets: resolved,
+          avg_resolution_time_hours: 0,
+          sla_compliance_percentage: Number(latest?.sla_pct || 0),
+          tickets_by_priority: {
+            critical: 0,
+            urgent: 0,
+            high: 0,
+            medium: 0,
+            low: 0,
+          },
         });
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred');
@@ -122,40 +99,24 @@ export function useTicketTrends(days: number = 30) {
 
   useEffect(() => {
     async function fetchTrends() {
-      if (!shouldQueryCosTable('tickets_cache')) {
+      if (!shouldQueryCosTable('fact_tickets_daily')) {
         setLoading(false);
         return;
       }
       try {
-        const daysAgo = new Date();
-        daysAgo.setDate(daysAgo.getDate() - days);
-
         const { data: tickets, error: ticketsError } = await supabase
-          .from('tickets_cache')
-          .select('*')
-          .gte('created_at', daysAgo.toISOString())
-          .order('created_at', { ascending: true });
+          .from('fact_tickets_daily')
+          .select('fact_date, created_count, resolved_count')
+          .order('fact_date', { ascending: true })
+          .limit(days);
 
         if (ticketsError) throw ticketsError;
 
-        const ticketsByDay: { [key: string]: { created: number; closed: number } } = {};
-        (tickets || []).forEach(ticket => {
-          const date = new Date(ticket.created_at).toISOString().split('T')[0];
-          if (!ticketsByDay[date]) {
-            ticketsByDay[date] = { created: 0, closed: 0 };
-          }
-          ticketsByDay[date].created++;
-          if (ticket.status === 'closed') {
-            ticketsByDay[date].closed++;
-          }
-        });
-
-        const trendsData = Object.entries(ticketsByDay).map(([date, counts]) => ({
-          date,
-          ...counts,
-        }));
-
-        setTrends(trendsData);
+        setTrends((tickets || []).map((row) => ({
+          date: row.fact_date,
+          created: Number(row.created_count || 0),
+          closed: Number(row.resolved_count || 0),
+        })));
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred');
       } finally {

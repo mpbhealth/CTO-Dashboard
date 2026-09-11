@@ -7,6 +7,17 @@ describe('shouldQueryCosTable', () => {
     expect(shouldQueryCosTable('roadmap_items')).toBe(true);
     expect(shouldQueryCosTable('audit_events')).toBe(true);
     expect(shouldQueryCosTable('analytics_snapshots')).toBe(true);
+    expect(shouldQueryCosTable('departments')).toBe(true);
+    expect(shouldQueryCosTable('employee_profiles')).toBe(true);
+    expect(shouldQueryCosTable('policies')).toBe(true);
+    expect(shouldQueryCosTable('deployment_logs')).toBe(true);
+    expect(shouldQueryCosTable('files')).toBe(true);
+    expect(shouldQueryCosTable('tasks')).toBe(true);
+    expect(shouldQueryCosTable('fact_iq_mrr_monthly')).toBe(true);
+    expect(shouldQueryCosTable('book_billing_risk')).toBe(true);
+    expect(shouldQueryCosTable('book_actions')).toBe(true);
+    expect(shouldQueryCosTable('fact_ticket_mix')).toBe(true);
+    expect(shouldQueryCosTable('book_tickets')).toBe(true);
   });
 
   it('blocks leftover MPB tables that 404 on COS', () => {
@@ -18,11 +29,13 @@ describe('shouldQueryCosTable', () => {
       'security_audit_log',
       'kpis',
       'team_members',
-      'departments',
-      'employee_profiles',
       'department_metrics',
       'tickets_cache',
       'compliance_audits',
+      'hipaa_policies',
+      'policy_documents',
+      'assignments',
+      'workspaces',
     ]) {
       expect(shouldQueryCosTable(table)).toBe(false);
     }

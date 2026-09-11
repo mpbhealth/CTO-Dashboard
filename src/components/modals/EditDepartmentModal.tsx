@@ -78,35 +78,19 @@ export default function EditDepartmentModal({
         return;
       }
 
-      const keyObjectivesArray = formData.key_objectives
-        .split(',')
-        .map(obj => obj.trim())
-        .filter(obj => obj.length > 0);
-
-      const techStackArray = formData.tech_stack
-        .split(',')
-        .map(tech => tech.trim())
-        .filter(tech => tech.length > 0);
-
       const { error: updateError } = await supabase
         .from('departments')
         .update({
           name: formData.name.trim(),
           code: formData.code.trim() || null,
           description: formData.description || null,
-          strategic_purpose: formData.strategic_purpose || null,
           location: formData.location || null,
           contact_email: formData.contact_email || null,
-          mission_statement: formData.mission_statement || null,
-          key_objectives: keyObjectivesArray.length > 0 ? keyObjectivesArray : null,
-          tech_stack: techStackArray.length > 0 ? techStackArray : null,
           budget_allocated: formData.budget_allocated ? parseFloat(formData.budget_allocated) : null,
           headcount: parseInt(formData.headcount) || 0,
           parent_department_id: formData.parent_department_id || null,
           department_lead_id: formData.department_lead_id || null,
-          reporting_frequency: formData.reporting_frequency || 'weekly',
           is_active: formData.is_active,
-          updated_at: new Date().toISOString()
         })
         .eq('id', department.id);
 

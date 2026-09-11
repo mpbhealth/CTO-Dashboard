@@ -1,6 +1,7 @@
 export const MPB_COS_ORG_ID = 'a0000000-0000-0000-0000-000000000001';
 export const ARYX_CRM_HREF = 'https://crm.aryx.com';
 export const ADVISORIQ_HREF = 'https://advisoriq.aryx.pro';
+export const ITSTS_HREF = 'https://support.aryx.pro';
 
 export type CosMembershipRole = 'owner' | 'admin' | 'viewer' | 'cos';
 
@@ -30,6 +31,9 @@ export function remapLegacyPath(pathname: string): string | null {
     '/analytics/advisor-performance': '/advisors',
     '/analytics/marketing': '/analytics/website',
     '/operations/it-support': '/tickets',
+    '/analytics/tickets': '/tickets/analytics',
+    '/ctod/compliance': '/operations',
+    '/ctod/compliance/dashboard': '/operations',
   };
 
   if (exact[pathname]) return exact[pathname];
@@ -42,8 +46,8 @@ export function remapLegacyPath(pathname: string): string | null {
   if (pathname.startsWith('/ceod/operations') || pathname.startsWith('/ctod/operations')) {
     return pathname.replace(/^\/(ceod|ctod)/, '');
   }
-  if (pathname.startsWith('/ctod/compliance')) {
-    return pathname.replace('/ctod/compliance', '/operations/compliance');
+  if (pathname.startsWith('/ctod/compliance') || pathname.startsWith('/operations/compliance')) {
+    return '/operations';
   }
   if (pathname.startsWith('/ctod/infrastructure')) {
     return pathname.replace('/ctod/infrastructure', '/operations/infrastructure');

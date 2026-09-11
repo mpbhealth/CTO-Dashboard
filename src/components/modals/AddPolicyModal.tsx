@@ -3,6 +3,7 @@ import { X, FileText, Save, Eye, Calendar, Upload, Share2, AlertCircle, Check, P
 import { supabase } from '../../lib/supabase';
 import { Department } from '../../hooks/useOrganizationalData';
 import { handleError } from '../../lib/errorHandler';
+import { useOrg } from '../../contexts/OrgContext';
 
 interface AddPolicyModalProps {
   isOpen: boolean;
@@ -12,6 +13,7 @@ interface AddPolicyModalProps {
 }
 
 export default function AddPolicyModal({ isOpen, onClose, onSuccess, departments }: AddPolicyModalProps) {
+  const { orgId } = useOrg();
   const [formData, setFormData] = useState({
     title: '',
     document_number: '',
@@ -43,7 +45,7 @@ export default function AddPolicyModal({ isOpen, onClose, onSuccess, departments
     { value: 'policy', label: 'HR Policy' },
     { value: 'sop', label: 'Operations' },
     { value: 'procedure', label: 'Safety' },
-    { value: 'guideline', label: 'Compliance' },
+    { value: 'guideline', label: 'Guideline' },
     { value: 'handbook', label: 'Other' }
   ];
 
@@ -86,21 +88,22 @@ ${formData.key_requirements}
 ## Affected Departments/Roles
 ${formData.affected_roles}
 
-## Compliance Measures
+## Enforcement
 ${formData.compliance_measures}
       `.trim();
 
       const { error: insertError } = await supabase
-        .from('policy_documents')
+        .from('policies')
         .insert([{
+          org_id: orgId,
           title: formData.title,
           document_type: formData.document_type,
-          content: formattedContent,
+          body: formattedContent,
           department_id: formData.department_id || null,
           version: formData.version,
           status: isDraft ? 'draft' : 'review',
           review_date: formData.review_date || null,
-          tags: tagsArray.length > 0 ? tagsArray : null,
+          tags: tagsArray,
         }]);
 
       if (insertError) throw insertError;
@@ -294,7 +297,7 @@ ${formData.compliance_measures}
                 <h2 className="text-xl font-semibold text-slate-900 mb-3">Affected Departments/Roles</h2>
                 <div className="mb-6 text-slate-700 whitespace-pre-wrap">{formData.affected_roles}</div>
                 
-                <h2 className="text-xl font-semibold text-slate-900 mb-3">Compliance Measures</h2>
+                <h2 className="text-xl font-semibold text-slate-900 mb-3">Enforcement</h2>
                 <div className="mb-6 text-slate-700 whitespace-pre-wrap">{formData.compliance_measures}</div>
               </div>
               
@@ -537,7 +540,7 @@ ${formData.compliance_measures}
 
                   <div>
                     <label htmlFor="compliance_measures" className="block text-sm font-medium text-slate-700 mb-1">
-                      Compliance Measures *
+                      How this is enforced *
                     </label>
                     <textarea
                       id="compliance_measures"
@@ -547,7 +550,7 @@ ${formData.compliance_measures}
                       value={formData.compliance_measures}
                       onChange={handleInputChange}
                       className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-indigo-500"
-                      placeholder="Describe how compliance with this policy will be measured and enforced..."
+                      placeholder="Describe how this policy is measured and enforced..."
                     />
                   </div>
 

@@ -5,6 +5,7 @@ import { GitBranch, CheckCircle, XCircle, Clock, Filter, Plus, Edit, Trash2, Sav
 import { supabase } from '../../lib/supabase';
 import { Database } from '../../types/database';
 import ExportDropdown from '../ui/ExportDropdown';
+import { useOrg } from '../../contexts/OrgContext';
 
 type DeploymentLog = Database['public']['Tables']['deployment_logs']['Row'];
 
@@ -17,6 +18,7 @@ interface DeploymentFormData {
 }
 
 export default function Deployments() {
+  const { orgId } = useOrg();
   const { data: deploymentLogs, loading, error, refetch } = useDeploymentLogs();
   const { data: projects, loading: projectsLoading } = useProjects();
   const { data: roadmapItems, loading: roadmapLoading } = useRoadmapItems();
@@ -64,6 +66,7 @@ export default function Deployments() {
             await supabase
               .from('deployment_logs')
               .insert([{
+                org_id: orgId,
                 project: correspondingProject.name,
                 env: 'Production',
                 status: 'Success',
@@ -165,6 +168,7 @@ export default function Deployments() {
       const { error: insertError } = await supabase
         .from('deployment_logs')
         .insert([{
+          org_id: orgId,
           project: formData.project,
           env: formData.env,
           status: formData.status,

@@ -17,7 +17,7 @@ import {
   MoreVertical
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 interface Employee {
   id: string;
@@ -79,7 +79,6 @@ export default function EmployeeManagement({
   searchTerm: externalSearchTerm,
 }: EmployeeManagementProps) {
   const navigate = useNavigate();
-  const location = useLocation();
   const [internalSearchTerm, setInternalSearchTerm] = useState('');
   const [selectedDepartment, setSelectedDepartment] = useState<string>('all');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
@@ -114,12 +113,7 @@ export default function EmployeeManagement({
     return dept?.name || 'Unknown';
   };
 
-  const getPerformanceRoute = () => {
-    if (location.pathname.startsWith('/ceod')) {
-      return '/ceod/operations/performance-evaluation';
-    }
-    return '/ctod/operations/performance-evaluation';
-  };
+  const getPerformanceRoute = () => '/operations/performance-evaluation';
 
   const handleViewPerformance = (employeeId: string) => {
     navigate(`${getPerformanceRoute()}?employee=${employeeId}`);

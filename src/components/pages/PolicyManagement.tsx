@@ -77,7 +77,7 @@ export default function PolicyManagement() {
       setDeletingId(policy.id);
       try {
         const { error } = await supabase
-          .from('policy_documents')
+          .from('policies')
           .delete()
           .eq('id', policy.id);
 
@@ -192,7 +192,7 @@ Last Updated: ${new Date(policy.updated_at).toLocaleDateString()}
       case 'procedure':
         return 'Safety';
       case 'guideline':
-        return 'Compliance';
+        return 'Guideline';
       case 'handbook':
         return 'Other';
       default:
@@ -267,7 +267,7 @@ Last Updated: ${new Date(policy.updated_at).toLocaleDateString()}
             <option value="policy">HR Policies</option>
             <option value="sop">Operations</option>
             <option value="procedure">Safety</option>
-            <option value="guideline">Compliance</option>
+            <option value="guideline">Guideline</option>
             <option value="handbook">Other</option>
           </select>
 

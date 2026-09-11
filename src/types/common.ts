@@ -27,26 +27,6 @@ export interface SaaSExpense extends BaseEntity {
   notes?: string;
 }
 
-export interface ComplianceTask extends BaseEntity {
-  title: string;
-  description?: string;
-  status: 'pending' | 'in_progress' | 'completed';
-  priority: 'low' | 'medium' | 'high' | 'critical';
-  due_date?: string;
-  assigned_to?: string;
-  category: string;
-}
-
-export interface ComplianceDocument extends BaseEntity {
-  title: string;
-  document_type: string;
-  file_path?: string;
-  status: 'draft' | 'review' | 'approved' | 'archived';
-  version: string;
-  approved_by?: string;
-  approved_at?: string;
-}
-
 export interface PolicyDocument extends BaseEntity {
   title: string;
   description?: string;

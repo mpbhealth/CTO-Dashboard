@@ -31,6 +31,7 @@ export function withOrgFilter(path: string, filter: OrgFilter): string {
 }
 
 const SHARED_CATALOG_TABLES = new Set(['vendor_costs', 'products']);
+const UNFILTERED_READ_TABLES = new Set(['tickets']);
 
 export function withOrgOrNullFilter(path: string, filter: OrgFilter): string {
   const safe = requireOrgFilter(filter);
@@ -81,6 +82,60 @@ export async function restGetOrgOrNull<T>(
   assertReadPath(path);
   const url = `${baseUrl.replace(/\/$/, '')}/rest/v1/${withOrgOrNullFilter(path.replace(/^\//, ''), filter)}`;
   return await getJson<T>(url, serviceKey, 'remote_http');
+}
+
+export async function restGetUnscoped<T>(
+  baseUrl: string,
+  serviceKey: string,
+  path: string,
+): Promise<T> {
+  assertReadPath(path);
+  const table = path.split('?')[0].toLowerCase();
+  if (!UNFILTERED_READ_TABLES.has(table)) throw new Error('remote_unscoped_forbidden');
+  const url = `${baseUrl.replace(/\/$/, '')}/rest/v1/${path.replace(/^\//, '')}`;
+  return await getJson<T>(url, serviceKey, 'remote_http');
+}
+
+export async function restGetUnscopedPages<T extends Array<Record<string, unknown>>>(
+  baseUrl: string,
+  serviceKey: string,
+  path: string,
+  pageSize = 1000,
+): Promise<T> {
+  const rows: Array<Record<string, unknown>> = [];
+  let offset = 0;
+  while (offset < 20000) {
+    const joiner = path.includes('?') ? '&' : '?';
+    const page = await restGetUnscoped<T>(
+      baseUrl,
+      serviceKey,
+      `${path}${joiner}limit=${pageSize}&offset=${offset}`,
+    );
+    if (!Array.isArray(page) || page.length === 0) break;
+    rows.push(...page);
+    if (page.length < pageSize) break;
+    offset += pageSize;
+  }
+  return rows as T;
+}
+
+export async function countUnscoped(
+  baseUrl: string,
+  serviceKey: string,
+  table: string,
+  extraQuery = '',
+): Promise<number> {
+  if (!UNFILTERED_READ_TABLES.has(table)) throw new Error('remote_unscoped_forbidden');
+  if (!/^[a-z_][a-z0-9_]*$/i.test(table)) throw new Error('remote_table_invalid');
+  const extra = extraQuery ? `&${extraQuery.replace(/^\?/, '').replace(/^&/, '')}` : '';
+  if (/(insert|upsert|update|delete|patch)/i.test(extra)) {
+    throw new Error('remote_write_forbidden');
+  }
+  const url = `${baseUrl.replace(/\/$/, '')}/rest/v1/${table}?select=id&limit=1${extra}`;
+  const res = await fetch(url, { method: 'GET', headers: readHeaders(serviceKey) });
+  if (!res.ok) throw new Error(`remote_count_${res.status}`);
+  const range = res.headers.get('content-range') || '0-0/0';
+  return Number(range.split('/')[1] || 0);
 }
 
 export async function restGetPages<T extends Array<Record<string, unknown>>>(

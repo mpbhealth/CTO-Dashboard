@@ -93,11 +93,6 @@ export default function EditEmployeeModal({
         .map(skill => skill.trim())
         .filter(skill => skill.length > 0);
 
-      const certificationsArray = formData.certifications
-        .split(',')
-        .map(cert => cert.trim())
-        .filter(cert => cert.length > 0);
-
       const { error: updateError } = await supabase
         .from('employee_profiles')
         .update({
@@ -113,9 +108,7 @@ export default function EditEmployeeModal({
           employment_type: formData.employment_type,
           location: formData.location || null,
           start_date: formData.start_date || null,
-          skills: skillsArray.length > 0 ? skillsArray : null,
-          certifications: certificationsArray.length > 0 ? certificationsArray : null,
-          updated_at: new Date().toISOString()
+          skills: skillsArray,
         })
         .eq('id', employee.id);
 

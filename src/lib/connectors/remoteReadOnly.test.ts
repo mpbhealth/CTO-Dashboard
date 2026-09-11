@@ -15,6 +15,25 @@ describe('remote extractors stay read-only', () => {
     expect(remote).not.toMatch(/method:\s*'DELETE'/);
   });
 
+  it('does not copy contact PII from ITSTS tickets into COS', () => {
+    const src = readFileSync(resolve(process.cwd(), 'supabase/functions/_shared/extractors.ts'), 'utf8');
+    expect(src).toMatch(/TICKET_SAFE_SELECT = 'id,ticket_number,subject,status/);
+    const start = src.indexOf('export async function extractTickets');
+    const end = src.indexOf('export async function extractTraffic');
+    const body = src.slice(start, end);
+    expect(body).toContain('book_tickets');
+    expect(body).not.toMatch(/submitter_email|submitter_phone|satisfaction_comment|resolution_notes/i);
+  });
+
+  it('does not copy contact PII from AdvisorIQ into COS', () => {
+    const src = readFileSync(resolve(process.cwd(), 'supabase/functions/_shared/extractors.ts'), 'utf8');
+    const start = src.indexOf('export async function extractAdvisorIq');
+    const end = src.indexOf('export async function extractTickets');
+    const body = src.slice(start, end);
+    expect(body).toContain('display_name');
+    expect(body).not.toMatch(/\b(email|phone|ssn|date_of_birth|address)\b/i);
+  });
+
   it('does not write into EnrollFlow or CRM from COS functions', () => {
     const files = [
       'supabase/functions/_shared/extractors.ts',

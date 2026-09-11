@@ -14,13 +14,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useAgentChat, ChatEntry } from '../../hooks/useAgentChat';
 import { ToolCallVisualization } from './ToolCallVisualization';
 
-const DEFAULT_SYSTEM_PROMPT = `You are an AI assistant for the MPB Health dashboard. You help staff with:
-- Managing support tickets
-- Looking up member information
-- Searching the knowledge base
-- Answering questions about policies and procedures
-
-Be helpful, concise, and professional. When you need to take actions, explain what you're doing.`;
+const DEFAULT_SYSTEM_PROMPT = `You are the ARYX CEO assistant. Help the owner see company health: finances, staff, sales, vendors, projects, and operations. Be concise. Do not invent numbers. If a figure is missing, say so.`;
 
 export function GlobalAIAssistant() {
   const { user, profileReady } = useAuth();

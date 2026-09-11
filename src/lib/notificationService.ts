@@ -468,7 +468,7 @@ export function getNotificationUrl(
     case 'project_update':
       return `${prefix}/development/projects`;
     case 'compliance_alert':
-      return `${prefix}/compliance`;
+      return `${prefix}/operations`;
     case 'sla_breach':
       return `${prefix}/tickets`;
     case 'ticket_escalation':

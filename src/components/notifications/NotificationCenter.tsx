@@ -281,7 +281,7 @@ export function NotificationCenter({ onClose }: NotificationCenterProps) {
         )}
         <button
           onClick={() => {
-            navigate('/ctod/settings');
+            navigate('/settings');
             onClose();
           }}
           className="flex items-center gap-1.5 text-xs font-medium text-gray-600 hover:text-gray-800 transition-colors ml-auto"

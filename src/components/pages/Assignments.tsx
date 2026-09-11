@@ -322,9 +322,9 @@ export default function Assignments() {
 
   // Group assignments by status for kanban view
   const groupedAssignments = useMemo(() => ({
-    todo: filteredAssignments.filter(a => a.status === 'todo'),
+    todo: filteredAssignments.filter(a => a.status === 'todo' || a.status === 'pending'),
     in_progress: filteredAssignments.filter(a => a.status === 'in_progress'),
-    done: filteredAssignments.filter(a => a.status === 'done')
+    done: filteredAssignments.filter(a => a.status === 'done' || a.status === 'completed')
   }), [filteredAssignments]);
 
   const renderKanbanColumn = (status: string, title: string, assignments: AssignmentWithDetails[]) => (

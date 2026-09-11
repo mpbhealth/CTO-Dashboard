@@ -47,6 +47,20 @@ export function CosEnrollments() {
     },
   });
 
+  const iqBook = useQuery({
+    queryKey: ['enroll-iq-book', orgIds.join(',')],
+    enabled: orgIds.length > 0 && linked.advisoriq,
+    queryFn: async () => {
+      const [trend, risk] = await Promise.all([
+        supabase.from('fact_iq_mrr_monthly').select('month, enrollments, terminations, mrr_added, mrr_lost').in('org_id', orgIds).order('month').limit(24),
+        supabase.from('fact_iq_forward_risk').select('bucket, members, mrr_at_risk').in('org_id', orgIds),
+      ]);
+      if (trend.error) throw trend.error;
+      if (risk.error) throw risk.error;
+      return { trend: trend.data || [], risk: risk.data || [] };
+    },
+  });
+
   const forecastFacts = useQuery({
     queryKey: ['enroll-forecast', orgIds.join(',')],
     enabled: orgIds.length > 0 && linked.enrollment,
@@ -90,6 +104,21 @@ export function CosEnrollments() {
     return [...byDay.values()].reverse();
   }, [sparkRows.data]);
 
+  const iqSpark = useMemo(() => {
+    return (iqBook.data?.trend || []).map((row) => ({
+      month: String(row.month).slice(0, 7),
+      gained: Number(row.enrollments),
+      lost: Number(row.terminations),
+    }));
+  }, [iqBook.data?.trend]);
+
+  const riskLabels: Record<string, string> = {
+    '0_30': '0–30 days',
+    '31_60': '31–60 days',
+    '61_90': '61–90 days',
+    '90_plus': '90+ days',
+  };
+
   const projection = useMemo(() => {
     if (!forecastFacts.data) return null;
     return computeForecast({ ...forecastFacts.data, pnl: preferCompleteMonth(forecastFacts.data.pnl) }, {
@@ -103,8 +132,8 @@ export function CosEnrollments() {
     }).members;
   }, [forecastFacts.data]);
 
-  if (!linked.enrollment) {
-    return <Unlinked title="Enrollments" message="EnrollFlow is not linked for this organization." />;
+  if (!linked.enrollment && !linked.advisoriq) {
+    return <Unlinked title="Enrollments" message="EnrollFlow and AdvisorIQ are not linked for this organization." />;
   }
 
   return (
@@ -115,12 +144,14 @@ export function CosEnrollments() {
         <OrgPicker />
         <PeriodToggle value={period} onChange={setPeriod} />
       </div>
+      {linked.enrollment && (
       <CommandStrip title="Period totals">
         <CommandStat label="New" value={compactNumber(totals.neu)} />
         <CommandStat label="Inactive" value={compactNumber(totals.inactive)} />
         <CommandStat label="Net adds" value={compactNumber(totals.neu - totals.inactive)} />
       </CommandStrip>
-      {projection && (
+      )}
+      {linked.enrollment && projection && (
         <div className="mt-6">
           <CommandStrip title="90-day member projection">
             <CommandStat label="Pessimistic" value={compactNumber(projection.pessimistic)} />
@@ -129,10 +160,34 @@ export function CosEnrollments() {
           </CommandStrip>
         </div>
       )}
+      {linked.enrollment && (
       <div className="mt-8">
-        <p className="mb-3 text-[10px] uppercase tracking-[0.16em] text-aryx-faint">90-day trend</p>
+        <p className="mb-3 text-[10px] uppercase tracking-[0.16em] text-aryx-faint">90-day EnrollFlow trend</p>
         <TrendSpark data={spark} xKey="date" series={[{ key: 'new', color: '#FF5A1F' }, { key: 'inactive', color: '#888' }]} />
       </div>
+      )}
+      {linked.advisoriq && iqSpark.length > 0 && (
+        <div className="mt-8">
+          <p className="mb-3 text-[10px] uppercase tracking-[0.16em] text-aryx-faint">AdvisorIQ monthly gained / lost</p>
+          <TrendSpark data={iqSpark} xKey="month" series={[{ key: 'gained', color: '#FF5A1F' }, { key: 'lost', color: '#888' }]} />
+        </div>
+      )}
+      {linked.advisoriq && (iqBook.data?.risk || []).length > 0 && (
+        <div className="mt-8">
+          <CommandStrip title="Term soon">
+            {(iqBook.data?.risk || []).map((row) => (
+              <CommandStat
+                key={row.bucket}
+                label={riskLabels[row.bucket] || row.bucket}
+                value={compactNumber(row.members)}
+                hint={money(Number(row.mrr_at_risk))}
+              />
+            ))}
+          </CommandStrip>
+        </div>
+      )}
+      {linked.enrollment && (
+        <>
       <h2 className="mb-3 mt-10 text-sm uppercase tracking-[0.16em] text-aryx-faint">Product / plan mix</h2>
       <div className="space-y-2">
         {mix.map(([label, row]) => (
@@ -142,6 +197,8 @@ export function CosEnrollments() {
           </div>
         ))}
       </div>
+        </>
+      )}
     </div>
   );
 }

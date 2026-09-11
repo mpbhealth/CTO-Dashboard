@@ -1,5 +1,4 @@
 import {
-  ShieldCheck,
   Activity,
   BarChart3,
   Users,
@@ -45,7 +44,7 @@ export const categories: Record<string, string> = {
 };
 
 export const cosNavigationItems: NavItem[] = [
-  { id: 'home', label: 'Home', path: '/home', icon: LayoutDashboard, category: 'main' },
+  { id: 'home', label: 'Command', path: '/home', icon: LayoutDashboard, category: 'main' },
   { id: 'organizer', label: 'Organizer', path: '/organizer', icon: LayoutGrid, category: 'main' },
   { id: 'inbox', label: 'Inbox', path: '/inbox', icon: Mail, category: 'main' },
   { id: 'crm', label: 'CRM', path: '/crm', icon: Briefcase, category: 'crm' },
@@ -72,6 +71,7 @@ export const cosNavigationItems: NavItem[] = [
       { id: 'advisors', label: 'Advisors', path: '/advisors', icon: Award },
       { id: 'pipeline', label: 'Pipeline', path: '/pipeline', icon: LineChart },
       { id: 'tickets', label: 'Support', path: '/tickets', icon: Ticket },
+      { id: 'ticket-analytics', label: 'Support analytics', path: '/tickets/analytics', icon: BarChart3 },
       { id: 'website', label: 'Website', path: '/analytics/website', icon: LineChart },
     ],
   },
@@ -100,11 +100,11 @@ export const cosNavigationItems: NavItem[] = [
     category: 'operations',
     submenu: [
       { id: 'ops-overview', label: 'Overview', path: '/operations' },
-      { id: 'ops-compliance', label: 'Compliance', path: '/operations/compliance', icon: ShieldCheck },
       { id: 'ops-saas', label: 'SaaS Spend', path: '/operations/saas-spend' },
       { id: 'ops-integrations', label: 'Integrations', path: '/operations/integrations' },
       { id: 'ops-policy', label: 'Policy', path: '/operations/policy-manager' },
       { id: 'ops-org', label: 'Organization', path: '/operations/organization' },
+      { id: 'ops-staff', label: 'Staff', path: '/operations/performance-evaluation' },
       { id: 'ops-deployments', label: 'Deployments', path: '/operations/infrastructure/deployments' },
     ],
   },
@@ -117,7 +117,7 @@ export const ctoNavigationItems = cosNavigationItems;
 export const advisorNavigationItems = cosNavigationItems;
 
 export function buildRouteToTabMap(items: NavItem[]): Record<string, string> {
-  const map: Record<string, string> = {};
+  const map: Record<string, string> = { '/command': 'home' };
   items.forEach((item) => {
     map[item.path] = item.id;
     item.submenu?.forEach((sub) => {
@@ -147,7 +147,7 @@ export function getNavigationForRole(
     return {
       ...item,
       submenu: item.submenu?.filter((sub) => {
-        if (sub.id === 'tickets') return Boolean(flags?.tickets);
+        if (sub.id === 'tickets' || sub.id === 'ticket-analytics') return Boolean(flags?.tickets);
         if (sub.id === 'website') return Boolean(flags?.traffic);
         return true;
       }),

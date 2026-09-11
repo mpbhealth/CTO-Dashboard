@@ -13,6 +13,8 @@ import { InstallAppBanner } from './components/ui/InstallAppBanner';
 import { remapLegacyPath } from './lib/cos';
 import { ThemeToggle } from './components/brand/ThemeToggle';
 import { OrgProvider, useOrg } from './contexts/OrgContext';
+import { AIAssistantProvider } from './providers/AIAssistantProvider';
+import { GlobalAIAssistant } from './components/ai/GlobalAIAssistant';
 
 const CosHome = lazy(() => import('./components/pages/CosHome'));
 const CosInbox = lazy(() => import('./components/pages/CosInbox'));
@@ -25,13 +27,14 @@ const CosEnrollments = lazy(() => import('./components/pages/CosEnrollments'));
 const CosAdvisors = lazy(() => import('./components/pages/CosAdvisors'));
 const CosPipeline = lazy(() => import('./components/pages/CosPipeline'));
 const CosTickets = lazy(() => import('./components/pages/CosTickets'));
+const CosTicketAnalytics = lazy(() => import('./components/pages/CosTicketAnalytics'));
 const CosWebsite = lazy(() => import('./components/pages/CosWebsite'));
 const CosIntegrations = lazy(() => import('./components/pages/CosIntegrations'));
 const DailyOrganizer = lazy(() => import('./components/pages/DailyOrganizer'));
 const Settings = lazy(() => import('./components/pages/Settings'));
 const OAuthCallback = lazy(() => import('./components/pages/OAuthCallback').then(m => ({ default: m.OAuthCallback })));
 
-const DevelopmentOverview = lazy(() => import('./components/pages/ctod/development/CTODevelopmentOverview').then(m => ({ default: m.CTODevelopmentOverview })));
+const DevelopmentOverview = lazy(() => import('./components/pages/CosDevelopment'));
 const TechStack = lazy(() => import('./components/pages/TechStack'));
 const QuickLinks = lazy(() => import('./components/pages/QuickLinks'));
 const Roadmap = lazy(() => import('./components/pages/Roadmap'));
@@ -41,12 +44,12 @@ const Assignments = lazy(() => import('./components/pages/Assignments'));
 const Notepad = lazy(() => import('./components/pages/Notepad'));
 
 const Operations = lazy(() => import('./components/pages/CosOperations'));
-const Compliance = lazy(() => import('./components/pages/ctod/compliance/CTOComplianceDashboard').then(m => ({ default: m.CTOComplianceDashboard })));
+const EmployeePerformance = lazy(() => import('./components/pages/EmployeePerformance'));
 const SaaSSpend = lazy(() => import('./components/pages/SaaSSpend'));
 const PolicyManagement = lazy(() => import('./components/pages/PolicyManagement'));
 const OrganizationalStructure = lazy(() => import('./components/pages/OrganizationalStructure'));
 const Deployments = lazy(() => import('./components/pages/Deployments'));
-const Files = lazy(() => import('./components/pages/ctod/CTOFiles').then(m => ({ default: m.CTOFiles })));
+const Files = lazy(() => import('./components/pages/CosFiles'));
 
 const LoadingFallback = () => (
   <div className="flex min-h-[50vh] items-center justify-center bg-aryx-bg" role="status">
@@ -139,6 +142,7 @@ function CosContent() {
           <Routes>
             <Route path="/" element={<Navigate to="/home" replace />} />
             <Route path="/home" element={<CosHome />} />
+            <Route path="/command" element={<CosHome />} />
             <Route path="/inbox" element={<CosInbox />} />
             <Route path="/organizer" element={<DailyOrganizer dashboardRole="cos" />} />
             <Route path="/crm" element={<CosCrmList />} />
@@ -150,6 +154,7 @@ function CosContent() {
             <Route path="/advisors" element={<CosAdvisors />} />
             <Route path="/pipeline" element={<CosPipeline />} />
             <Route path="/tickets" element={<CosTickets />} />
+            <Route path="/tickets/analytics" element={<CosTicketAnalytics />} />
             <Route path="/analytics/website" element={<CosWebsite />} />
             <Route path="/analytics" element={<LegacyRedirect />} />
             <Route path="/analytics/overview" element={<LegacyRedirect />} />
@@ -166,12 +171,14 @@ function CosContent() {
             <Route path="/development/assignments" element={<Assignments />} />
             <Route path="/development/notepad" element={<Notepad />} />
             <Route path="/operations" element={<Operations />} />
-            <Route path="/operations/compliance" element={<Compliance />} />
+            <Route path="/operations/compliance" element={<Navigate to="/operations" replace />} />
+            <Route path="/operations/compliance/*" element={<Navigate to="/operations" replace />} />
             <Route path="/operations/saas-spend" element={<SaaSSpend />} />
             <Route path="/operations/it-support" element={<Navigate to="/tickets" replace />} />
             <Route path="/operations/integrations" element={<CosIntegrations />} />
             <Route path="/operations/policy-manager" element={<PolicyManagement />} />
             <Route path="/operations/organization" element={<OrganizationalStructure />} />
+            <Route path="/operations/performance-evaluation" element={<EmployeePerformance />} />
             <Route path="/operations/infrastructure/deployments" element={<Deployments />} />
             <Route path="/files" element={<Files />} />
             <Route path="/settings" element={<Settings />} />
@@ -191,14 +198,17 @@ function CosContent() {
 
 export default function CosApp() {
   return (
-    <AppShell>
-      <OrgProvider>
-        <CosContent />
-      </OrgProvider>
-      <KeyboardShortcutsModal />
-      <SessionTimeoutWarning />
-      <UpdateBanner />
-      <InstallAppBanner />
-    </AppShell>
+    <AIAssistantProvider>
+      <AppShell>
+        <OrgProvider>
+          <CosContent />
+        </OrgProvider>
+        <KeyboardShortcutsModal />
+        <SessionTimeoutWarning />
+        <UpdateBanner />
+        <InstallAppBanner />
+        <GlobalAIAssistant />
+      </AppShell>
+    </AIAssistantProvider>
   );
 }

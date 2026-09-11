@@ -4,6 +4,7 @@ import { supabase } from '@/lib/supabase';
 import { ARYX_CRM_HREF } from '@/lib/cos';
 import { useOrg } from '@/contexts/OrgContext';
 import { Unlinked } from './CosFinance';
+import { CosBezel, CosIslandLink, CosPage } from '../cos/CosPage';
 
 export function CosCrmDetail() {
   const { kind, id } = useParams<{ kind: string; id: string }>();
@@ -43,31 +44,26 @@ export function CosCrmDetail() {
   }
 
   return (
-    <div className="w-full bg-aryx-bg py-10 text-aryx-ink">
+    <CosPage>
       <Link to="/crm" className="text-xs uppercase tracking-[0.18em] text-aryx-faint">
         Back to CRM
       </Link>
       {isLoading && <p className="mt-6 text-aryx-muted">Loading…</p>}
       {error && <p className="mt-6 text-amber-700 dark:text-amber-200">{(error as Error).message}</p>}
       {data && (
-        <div className="mt-6 w-full rounded-[2rem] bg-aryx-ink/5 p-1.5 ring-1 ring-aryx-line">
-          <div className="rounded-[calc(2rem-0.375rem)] bg-aryx-elevated p-8">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-aryx-faint">{data.kind}</p>
-            <h1 className="mt-2 font-display text-3xl font-semibold text-aryx-ink">{data.name}</h1>
-            <p className="mt-2 text-aryx-muted">{data.email || 'No email on file'}</p>
-            <p className="mt-6 text-sm text-aryx-faint">Status · {data.status || '—'}</p>
-            <a
-              href={data.href || `${ARYX_CRM_HREF}/${data.kind}/${data.id}`}
-              target="_blank"
-              rel="noreferrer"
-              className="mt-8 inline-flex rounded-full bg-aryx-accent px-5 py-2 text-sm text-white"
-            >
+        <CosBezel className="mt-6">
+          <p className="text-[10px] uppercase tracking-[0.2em] text-aryx-faint">{data.kind}</p>
+          <h1 className="mt-2 font-display text-3xl font-semibold text-aryx-ink md:text-5xl">{data.name}</h1>
+          <p className="mt-2 text-aryx-muted">{data.email || 'No email on file'}</p>
+          <p className="mt-6 text-sm text-aryx-faint">Status · {data.status || '—'}</p>
+          <div className="mt-8">
+            <CosIslandLink href={data.href || `${ARYX_CRM_HREF}/${data.kind}/${data.id}`}>
               Open in ARYX CRM
-            </a>
+            </CosIslandLink>
           </div>
-        </div>
+        </CosBezel>
       )}
-    </div>
+    </CosPage>
   );
 }
 

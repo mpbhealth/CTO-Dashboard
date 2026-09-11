@@ -4,6 +4,7 @@ import { money } from '@/lib/cos';
 import { useOrg } from '@/contexts/OrgContext';
 import { OrgPicker } from '../cos/OrgPicker';
 import { Unlinked } from './CosFinance';
+import { CosPage, CosPageHero } from '../cos/CosPage';
 
 export function CosVendors() {
   const { orgId, linked, rollup, memberships } = useOrg();
@@ -49,10 +50,8 @@ export function CosVendors() {
   const unmatched = (vendor.data || []).reduce((sum, row) => sum + Number(row.missing_match_count || 0), 0);
 
   return (
-    <div className="w-full bg-aryx-bg py-10 text-aryx-ink">
-      <p className="mb-3 text-[10px] uppercase tracking-[0.2em] text-aryx-faint">Finance</p>
-      <h1 className="mb-6 font-display text-4xl font-semibold">Vendors</h1>
-      <OrgPicker />
+    <CosPage>
+      <CosPageHero eyebrow="Finance" title="Vendors." toolbar={<OrgPicker />} />
       {unmatched > 0 && (
         <p className="mt-4 rounded-2xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm">
           {unmatched} active enrollments have no matching vendor cost row.
@@ -76,7 +75,7 @@ export function CosVendors() {
           </div>
         ))}
       </div>
-    </div>
+    </CosPage>
   );
 }
 

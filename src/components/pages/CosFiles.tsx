@@ -4,6 +4,7 @@ import { FileText, Upload, Download, Trash2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useOrg } from '@/contexts/OrgContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { CosPage, CosPageHero } from '../cos/CosPage';
 
 interface CosFile {
   id: string;
@@ -93,10 +94,12 @@ export function CosFiles() {
   };
 
   return (
-    <div className="w-full bg-aryx-bg py-10 text-aryx-ink">
-      <p className="mb-3 text-[10px] uppercase tracking-[0.2em] text-aryx-faint">Files</p>
-      <h1 className="mb-2 font-display text-4xl font-semibold">Company files</h1>
-      <p className="mb-8 max-w-xl text-sm text-aryx-muted">Upload and share operating documents for this org.</p>
+    <CosPage>
+      <CosPageHero
+        eyebrow="Files"
+        title="Company files."
+        lede="Upload and share operating documents for this org."
+      />
 
       <div className="mb-8 flex flex-wrap items-center gap-3">
         <input
@@ -153,7 +156,7 @@ export function CosFiles() {
           </div>
         )}
       </div>
-    </div>
+    </CosPage>
   );
 }
 

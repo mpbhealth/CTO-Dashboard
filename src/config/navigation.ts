@@ -13,6 +13,7 @@ import {
   Briefcase,
   Wallet,
   Ticket,
+  Globe,
 } from 'lucide-react';
 
 export interface NavSubItem {
@@ -72,7 +73,7 @@ export const cosNavigationItems: NavItem[] = [
       { id: 'pipeline', label: 'Pipeline', path: '/pipeline', icon: LineChart },
       { id: 'tickets', label: 'Support', path: '/tickets', icon: Ticket },
       { id: 'ticket-analytics', label: 'Support analytics', path: '/tickets/analytics', icon: BarChart3 },
-      { id: 'website', label: 'Website', path: '/analytics/website', icon: LineChart },
+      { id: 'website', label: 'Marketing', path: '/analytics/marketing', icon: Globe },
     ],
   },
   {
@@ -148,7 +149,6 @@ export function getNavigationForRole(
       ...item,
       submenu: item.submenu?.filter((sub) => {
         if (sub.id === 'tickets' || sub.id === 'ticket-analytics') return Boolean(flags?.tickets);
-        if (sub.id === 'website') return Boolean(flags?.traffic);
         return true;
       }),
     };

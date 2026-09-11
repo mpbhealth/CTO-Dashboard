@@ -14,21 +14,32 @@ export function TrendSpark({
   }
 
   return (
-    <div className="h-48 w-full">
+    <div className="h-52 w-full min-w-0 md:h-64">
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={data}>
+        <LineChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
           <XAxis dataKey={xKey} hide />
           <YAxis hide />
           <Tooltip
             contentStyle={{
-              background: 'var(--aryx-elevated, #111)',
-              border: '1px solid var(--aryx-line, #333)',
-              borderRadius: 12,
+              background: 'var(--aryx-bg-elevated)',
+              border: 'none',
+              borderRadius: 16,
+              boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.12)',
               fontSize: 12,
+              color: 'var(--aryx-ink)',
             }}
           />
           {series.map((line) => (
-            <Line key={line.key} type="monotone" dataKey={line.key} stroke={line.color} dot={false} strokeWidth={2} />
+            <Line
+              key={line.key}
+              type="monotone"
+              dataKey={line.key}
+              stroke={line.color}
+              dot={false}
+              strokeWidth={2}
+              animationDuration={800}
+              animationEasing="ease-out"
+            />
           ))}
         </LineChart>
       </ResponsiveContainer>

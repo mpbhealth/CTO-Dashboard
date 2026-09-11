@@ -6,10 +6,10 @@ export function OrgPicker() {
 
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <label className="text-[10px] uppercase tracking-[0.18em] text-aryx-faint">
+      <label className="flex min-h-11 items-center gap-2 text-[10px] uppercase tracking-[0.18em] text-aryx-faint">
         Organization
         <select
-          className="ml-2 rounded-full border border-aryx-line bg-aryx-elevated px-3 py-1 text-xs text-aryx-ink"
+          className="min-h-11 min-w-0 max-w-full rounded-full bg-aryx-elevated px-4 py-2 text-xs text-aryx-ink ring-1 ring-aryx-line"
           value={orgId || ''}
           onChange={(event) => {
             if (event.target.value) void switchOrg(event.target.value);
@@ -23,10 +23,10 @@ export function OrgPicker() {
         </select>
       </label>
       {memberships.length > 1 && (
-        <label className="text-[10px] uppercase tracking-[0.18em] text-aryx-faint">
+        <label className="flex min-h-11 items-center text-[10px] uppercase tracking-[0.18em] text-aryx-faint">
           <input
             type="checkbox"
-            className="mr-2"
+            className="mr-2 h-4 w-4 accent-aryx-accent"
             checked={rollup}
             onChange={(event) => setRollup(event.target.checked)}
           />

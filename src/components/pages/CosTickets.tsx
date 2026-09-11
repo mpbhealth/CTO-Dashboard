@@ -1,12 +1,12 @@
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { compactNumber, ITSTS_HREF } from '@/lib/cos';
 import { useOrg } from '@/contexts/OrgContext';
 import { OrgPicker } from '../cos/OrgPicker';
 import { CommandStat, CommandStrip } from '../cos/CommandStrip';
 import { Unlinked } from './CosFinance';
+import { CosIslandLink, CosPage, CosPageHero } from '../cos/CosPage';
 
 interface BookTicket {
   ticket_key: string;
@@ -103,16 +103,18 @@ export function CosTickets() {
   const status = mix.data || {};
 
   return (
-    <div className="w-full bg-aryx-bg py-10 text-aryx-ink">
-      <p className="mb-3 text-[10px] uppercase tracking-[0.2em] text-aryx-faint">Support · ITSTS</p>
-      <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <h1 className="font-display text-4xl font-semibold">Tickets</h1>
-        <div className="flex gap-4 text-sm">
-          <Link to="/tickets/analytics" className="text-aryx-accent">Analytics</Link>
-          <a href={ITSTS_HREF} className="text-aryx-accent" target="_blank" rel="noreferrer">Open ITSTS</a>
-        </div>
-      </div>
-      <OrgPicker />
+    <CosPage>
+      <CosPageHero
+        eyebrow="Support · ITSTS"
+        title="Tickets."
+        actions={
+          <>
+            <CosIslandLink to="/tickets/analytics">Analytics</CosIslandLink>
+            <CosIslandLink href={ITSTS_HREF}>Open ITSTS</CosIslandLink>
+          </>
+        }
+        toolbar={<OrgPicker />}
+      />
       <div className="mt-6">
         <CommandStrip title="Queue" href="/tickets/analytics" warning={Number(snap?.breached_count || 0) > 0 ? `${compactNumber(snap?.breached_count)} open tickets are past SLA.` : null}>
           <CommandStat label="Open now" value={compactNumber(snap?.open_count)} hint="New + open + waiting + hold" />
@@ -181,7 +183,7 @@ export function CosTickets() {
           <p className="mt-6 text-sm text-aryx-muted">No open tickets in the warehouse yet. Refresh sources after ITSTS sync.</p>
         )}
       </div>
-    </div>
+    </CosPage>
   );
 }
 

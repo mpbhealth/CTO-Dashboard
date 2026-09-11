@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  Settings as SettingsIcon, 
   Lock, 
   Eye, 
   EyeOff, 
@@ -10,11 +9,11 @@ import {
   User,
   Mail,
   Shield,
-  ArrowLeft,
   LogOut
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
+import { CosPage, CosPageHero } from '../cos/CosPage';
 import { NotificationSettings } from '../notifications';
 import { SourceHealth } from '../cos/SourceHealth';
 import { MFAEnrollment } from '../security/MFAEnrollment';
@@ -151,34 +150,23 @@ export default function Settings() {
   const passwordStrength = getPasswordStrength(newPassword);
 
   return (
-    <div className="w-full min-h-full py-4 sm:py-6 md:py-8">
+    <CosPage>
       <div className="cos-page w-full">
-        {/* Header */}
-        <div className="mb-6 sm:mb-8">
-          <button
-            onClick={() => navigate(backPath)}
-            className="
-              flex items-center gap-2 
-              text-gray-600 hover:text-gray-900 
-              mb-4 transition-colors
-              py-2 -ml-2 px-2 rounded-lg
-              hover:bg-gray-100 active:bg-gray-200
-              touch-manipulation min-h-[44px]
-            "
-          >
-            <ArrowLeft className="w-5 h-5" />
-            <span className="text-sm font-medium">Back to Dashboard</span>
-          </button>
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 sm:p-3 bg-gradient-to-br from-sky-500 to-blue-600 rounded-xl shadow-lg">
-              <SettingsIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-            </div>
-            <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Account Settings</h1>
-              <p className="text-sm text-gray-500">Manage your profile and security</p>
-            </div>
-          </div>
-        </div>
+        <CosPageHero
+          eyebrow="Account"
+          title="Settings."
+          lede="Manage your profile and security."
+          actions={
+            <button
+              type="button"
+              onClick={() => navigate(backPath)}
+              className="group inline-flex min-h-11 items-center gap-3 rounded-full bg-aryx-ink/[0.04] py-2.5 pl-5 pr-1.5 text-sm font-medium text-aryx-ink ring-1 ring-aryx-line transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] active:scale-[0.98]"
+            >
+              Back to Command
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-aryx-ink/5 text-xs">←</span>
+            </button>
+          }
+        />
 
         {/* Profile Info Card */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6 mb-4 sm:mb-6">
@@ -604,6 +592,6 @@ export default function Settings() {
           </button>
         </div>
       </div>
-    </div>
+    </CosPage>
   );
 }

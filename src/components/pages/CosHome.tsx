@@ -1,17 +1,19 @@
 import { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import { RefreshCw } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { syncConnectors } from '@/lib/connectors';
 import { money, compactNumber, periodBounds, grainForPeriod, type PeriodKey, ADVISORIQ_HREF } from '@/lib/cos';
 import { computeForecast, forecastSentence, preferCompleteMonth } from '@/lib/forecast';
+import { conversionRate, formatFact } from '@/lib/marketingFacts';
+import { useTrafficFacts } from '@/hooks/useTrafficFacts';
 import { useOrg } from '@/contexts/OrgContext';
+import { CosBezel, CosIslandButton, CosPage, CosPageHero, CosTable } from '../cos/CosPage';
+import { AryxLogo } from '../brand/AryxLogo';
 import { OrgPicker } from '../cos/OrgPicker';
 import { PeriodToggle } from '../cos/PeriodToggle';
 import { CommandStat, CommandStrip } from '../cos/CommandStrip';
 import { MovementTide } from '../cos/MovementTide';
-import { AryxLogo } from '../brand/AryxLogo';
 import { rollupTideMonths, tideWindowStart } from '@/lib/movementTide';
 
 interface Snapshot {
@@ -148,6 +150,8 @@ export function CosHome() {
     },
   });
 
+  const traffic = useTrafficFacts(orgIds, bounds.start, bounds.end, orgIds.length > 0 && linked.traffic);
+
   const tickets = useQuery({
     queryKey: ['fact-tickets', orgIds.join(',')],
     enabled: orgIds.length > 0 && linked.tickets,
@@ -255,6 +259,9 @@ export function CosHome() {
   const aging = (forecastFacts.data?.pipe || []).reduce((sum, row) => sum + Number(row.aging_over_7 || 0), 0);
   const ifClosed = Number(pipeLatest?.weighted_amount || latest.get('weighted_forecast')?.value || 0);
 
+  const marketing = traffic.totals;
+  const hasTrafficRows = traffic.rows.length > 0;
+
   const ticketSpike = useMemo(() => {
     const rows = tickets.data || [];
     if (rows.length < 8) return false;
@@ -271,54 +278,54 @@ export function CosHome() {
 
   if (!orgId) {
     return (
-      <div className="cos-page py-16 text-aryx-muted">
-        No organization assigned. Ask an owner to invite you, or open ARYX CEO from Aryx Accounts.
-      </div>
+      <CosPage>
+        <p className="text-aryx-muted">
+          No organization assigned. Ask an owner to invite you, or open ARYX CEO from Aryx Accounts.
+        </p>
+      </CosPage>
     );
   }
 
   return (
-    <div className="relative w-full bg-aryx-bg py-10 text-aryx-ink md:py-16">
-      <div className="cos-page w-full">
+    <CosPage>
+      <div className="mb-8">
         <AryxLogo wordmark />
-        <p className="mb-4 mt-6 inline-flex rounded-full border border-aryx-line bg-aryx-elevated px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-aryx-muted">
-          Command
-        </p>
-        <div className="mb-8 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <div>
-            <h1 className="font-display text-4xl font-semibold tracking-tight md:text-6xl">The whole book.</h1>
-            <p className="mt-4 max-w-xl text-sm text-aryx-muted">
-              {forecast
-                ? forecastSentence(90, forecast.pnl, money)
-                : 'Members, advisors, billing, and payables. Action stays in AdvisorIQ and EnrollFlow.'}
-            </p>
-          </div>
-          {isOperator && (
-            <button
-              type="button"
+      </div>
+      <CosPageHero
+        eyebrow="Command"
+        title="The whole book."
+        lede={
+          forecast
+            ? forecastSentence(90, forecast.pnl, money)
+            : 'Members, advisors, billing, and payables. Action stays in AdvisorIQ and EnrollFlow.'
+        }
+        actions={
+          isOperator ? (
+            <CosIslandButton
               onClick={() => refresh.mutate()}
               disabled={refresh.isPending}
-              className="inline-flex items-center gap-3 rounded-full bg-aryx-accent px-6 py-3 text-sm font-medium text-white"
+              trailing={refresh.isPending ? '…' : '↻'}
             >
-              <RefreshCw className={`h-4 w-4 ${refresh.isPending ? 'animate-spin' : ''}`} />
               Refresh sources
-            </button>
-          )}
-        </div>
-
-        <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <OrgPicker />
-          <PeriodToggle
-            value={period}
-            onChange={setPeriod}
-            customStart={customStart}
-            customEnd={customEnd}
-            onCustom={(start, end) => {
-              setCustomStart(start);
-              setCustomEnd(end);
-            }}
-          />
-        </div>
+            </CosIslandButton>
+          ) : undefined
+        }
+        toolbar={
+          <>
+            <OrgPicker />
+            <PeriodToggle
+              value={period}
+              onChange={setPeriod}
+              customStart={customStart}
+              customEnd={customEnd}
+              onCustom={(start, end) => {
+                setCustomStart(start);
+                setCustomEnd(end);
+              }}
+            />
+          </>
+        }
+      />
 
         <div className="space-y-6">
           {linked.advisoriq && tideHistory.length > 0 && (
@@ -355,19 +362,17 @@ export function CosHome() {
           </CommandStrip>
 
           {(book.data?.reasons || []).length > 0 && (
-            <div className="rounded-[2rem] bg-aryx-ink/5 p-1.5 ring-1 ring-aryx-line">
-              <div className="rounded-[calc(2rem-0.375rem)] bg-aryx-elevated p-6">
-                <h2 className="mb-4 text-[10px] uppercase tracking-[0.2em] text-aryx-faint">Why they left</h2>
-                <div className="space-y-2 text-sm">
-                  {book.data?.reasons.map((row) => (
-                    <div key={row.reason} className="flex justify-between gap-4">
-                      <span>{row.reason}</span>
-                      <span className="text-aryx-faint">{compactNumber(row.item_count)} · {money(Number(row.mrr))}</span>
-                    </div>
-                  ))}
-                </div>
+            <CosBezel>
+              <h2 className="mb-4 text-[10px] uppercase tracking-[0.2em] text-aryx-faint">Why they left</h2>
+              <div className="space-y-2 text-sm">
+                {book.data?.reasons.map((row) => (
+                  <div key={row.reason} className="flex justify-between gap-4">
+                    <span>{row.reason}</span>
+                    <span className="text-aryx-faint">{compactNumber(row.item_count)} · {money(Number(row.mrr))}</span>
+                  </div>
+                ))}
               </div>
-            </div>
+            </CosBezel>
           )}
 
           <CommandStrip title="Enrollments" href="/enrollments">
@@ -401,6 +406,23 @@ export function CosHome() {
               <CommandStat label="Net" value={money(pnlSum.net)} hint="Collected − vendor − commissions − SaaS" />
             </CommandStrip>
           )}
+
+          <CommandStrip title="Marketing" href="/analytics/marketing" warning={!linked.traffic ? 'MarketFlow / Google Analytics is not linked.' : null}>
+            <CommandStat
+              label="Sessions"
+              value={formatFact(compactNumber, { linked: linked.traffic, loading: traffic.isLoading, hasRows: hasTrafficRows, value: marketing.sessions })}
+              hint="Website"
+            />
+            <CommandStat
+              label="Conversions"
+              value={formatFact(compactNumber, { linked: linked.traffic, loading: traffic.isLoading, hasRows: hasTrafficRows, value: marketing.conversions })}
+              hint="GA / MarketFlow"
+            />
+            <CommandStat
+              label="Conv. rate"
+              value={linked.traffic && hasTrafficRows ? conversionRate(marketing.conversions, marketing.sessions) : '—'}
+            />
+          </CommandStrip>
 
           {(linked.crm || linked.enrollment) && (
             <CommandStrip title="Forward" href="/finance/forecast">
@@ -439,7 +461,7 @@ export function CosHome() {
               <h2 className="text-[10px] uppercase tracking-[0.2em] text-aryx-faint">Advisors</h2>
               <Link to="/advisors" className="text-[10px] uppercase tracking-[0.16em] text-aryx-accent">Open</Link>
             </div>
-            <div className="overflow-x-auto">
+            <CosTable>
               <table className="w-full text-left text-sm">
                 <thead className="text-[10px] uppercase tracking-[0.16em] text-aryx-faint">
                   <tr>
@@ -468,14 +490,13 @@ export function CosHome() {
                   ))}
                 </tbody>
               </table>
-            </div>
+            </CosTable>
           </div>
         )}
 
         {linked.advisoriq && (
           <div className="mt-10 grid gap-6 md:grid-cols-2">
-            <div className="rounded-[2rem] bg-aryx-ink/5 p-1.5 ring-1 ring-aryx-line">
-              <div className="rounded-[calc(2rem-0.375rem)] bg-aryx-elevated p-6">
+            <CosBezel>
                 <div className="mb-4 flex items-center justify-between">
                   <h2 className="text-[10px] uppercase tracking-[0.2em] text-aryx-faint">Billing risk</h2>
                   <a href={iqHref('/command')} className="text-[10px] uppercase tracking-[0.16em] text-aryx-accent" target="_blank" rel="noreferrer">AdvisorIQ</a>
@@ -496,10 +517,8 @@ export function CosHome() {
                     </li>
                   ))}
                 </ul>
-              </div>
-            </div>
-            <div className="rounded-[2rem] bg-aryx-ink/5 p-1.5 ring-1 ring-aryx-line">
-              <div className="rounded-[calc(2rem-0.375rem)] bg-aryx-elevated p-6">
+            </CosBezel>
+            <CosBezel>
                 <div className="mb-4 flex items-center justify-between">
                   <h2 className="text-[10px] uppercase tracking-[0.2em] text-aryx-faint">Queue</h2>
                   <a href={iqHref('/command')} className="text-[10px] uppercase tracking-[0.16em] text-aryx-accent" target="_blank" rel="noreferrer">AdvisorIQ</a>
@@ -518,26 +537,26 @@ export function CosHome() {
                     </li>
                   ))}
                 </ul>
-              </div>
-            </div>
+            </CosBezel>
           </div>
         )}
 
         {!linked.enrollment && !linked.crm && !linked.advisoriq && (
-          <div className="mt-8 rounded-[2rem] bg-aryx-elevated p-10 text-aryx-muted ring-1 ring-aryx-line">
-            Sources are not linked for this organization. Remote maps are server-owned so tenants cannot point ARYX CEO at another project. Command will not invent zeros.
-          </div>
+          <CosBezel className="mt-8">
+            <p className="text-aryx-muted">
+              Sources are not linked for this organization. Remote maps are server-owned so tenants cannot point ARYX CEO at another project. Command will not invent zeros.
+            </p>
+          </CosBezel>
         )}
 
         <div className="mt-8 flex flex-wrap gap-2">
           {(sources.data || []).map((source) => (
-            <span key={source.key} className="rounded-full border border-aryx-line px-3 py-1 text-[10px] uppercase tracking-wider text-aryx-faint">
+            <span key={source.key} className="rounded-full bg-aryx-ink/[0.04] px-3 py-1 text-[10px] uppercase tracking-wider text-aryx-faint ring-1 ring-aryx-line">
               {source.key} · {source.status}
             </span>
           ))}
         </div>
-      </div>
-    </div>
+    </CosPage>
   );
 }
 

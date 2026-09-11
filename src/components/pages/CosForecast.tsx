@@ -5,6 +5,7 @@ import { money, compactNumber } from '@/lib/cos';
 import { useOrg } from '@/contexts/OrgContext';
 import { OrgPicker } from '../cos/OrgPicker';
 import { Unlinked } from './CosFinance';
+import { CosPage, CosPageHero } from '../cos/CosPage';
 import { computeForecast, forecastSentence, HORIZON_PRESETS, preferCompleteMonth, priorForecastDelta, type ForecastAssumptions } from '@/lib/forecast';
 
 export function CosForecast() {
@@ -76,15 +77,17 @@ export function CosForecast() {
   }
 
   return (
-    <div className="w-full bg-aryx-bg py-10 text-aryx-ink">
-      <p className="mb-3 text-[10px] uppercase tracking-[0.2em] text-aryx-faint">Finance</p>
-      <h1 className="mb-2 font-display text-4xl font-semibold">Forecasts</h1>
-      <p className="mb-6 max-w-2xl text-sm text-aryx-muted">
-        {computed
-          ? forecastSentence(assumptions.horizonDays, computed.pnl, money)
-          : 'Trailing run-rate × seasonality ± CRM weighted pipeline. Not a guarantee.'}
-      </p>
-      <OrgPicker />
+    <CosPage>
+      <CosPageHero
+        eyebrow="Finance"
+        title="Forecasts."
+        lede={
+          computed
+            ? forecastSentence(assumptions.horizonDays, computed.pnl, money)
+            : 'Trailing run-rate × seasonality ± CRM weighted pipeline. Not a guarantee.'
+        }
+        toolbar={<OrgPicker />}
+      />
       <div className="mt-6 flex flex-wrap gap-2">
         {HORIZON_PRESETS.map((days) => (
           <button
@@ -163,7 +166,7 @@ export function CosForecast() {
           Save run
         </button>
       )}
-    </div>
+    </CosPage>
   );
 }
 

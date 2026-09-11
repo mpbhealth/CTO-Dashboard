@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useOrg } from '@/contexts/OrgContext';
+import { CosBezel, CosPage, CosPageHero } from '../cos/CosPage';
 import { OrgPicker } from '../cos/OrgPicker';
 
 export function CosIntegrations() {
@@ -20,38 +21,58 @@ export function CosIntegrations() {
   });
 
   return (
-    <div className="w-full bg-aryx-bg py-10 text-aryx-ink">
-      <p className="mb-3 text-[10px] uppercase tracking-[0.2em] text-aryx-faint">Operations</p>
-      <h1 className="mb-4 font-display text-4xl font-semibold">Integrations</h1>
-      <p className="mb-6 max-w-2xl text-sm text-aryx-muted">
-        Status only. Remote organization maps are server-owned so one tenant cannot point ARYX CEO at another project. ARYX CEO never writes to EnrollFlow, CRM, AdvisorIQ, tickets, or MarketFlow.
-      </p>
-      <OrgPicker />
-      <div className="mt-8 grid gap-3">
-        <Status label="EnrollFlow" on={linked.enrollment} />
-        <Status label="ARYX CRM" on={linked.crm} />
-        <Status label="AdvisorIQ" on={linked.advisoriq} />
-        <Status label="Support tickets" on={linked.tickets} />
-        <Status label="MarketFlow" on={linked.traffic} />
+    <CosPage>
+      <CosPageHero
+        eyebrow="Operations"
+        title="Sources."
+        lede="Status only. Remote organization maps are server-owned so one tenant cannot point ARYX CEO at another project. ARYX CEO never writes to EnrollFlow, CRM, AdvisorIQ, tickets, or MarketFlow."
+        toolbar={<OrgPicker />}
+      />
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-12">
+        <Status className="md:col-span-7" label="MarketFlow / Google Analytics" on={linked.traffic} hint="Feeds fact_traffic_daily" />
+        <Status className="md:col-span-5" label="EnrollFlow" on={linked.enrollment} />
+        <Status className="md:col-span-4" label="ARYX CRM" on={linked.crm} />
+        <Status className="md:col-span-4" label="AdvisorIQ" on={linked.advisoriq} />
+        <Status className="md:col-span-4" label="Support tickets" on={linked.tickets} />
       </div>
       <div className="mt-8 grid gap-3">
         {(sources.data || []).map((row) => (
-          <div key={row.key} className="rounded-2xl bg-aryx-elevated px-5 py-3 ring-1 ring-aryx-line">
+          <CosBezel key={row.key}>
             <p className="text-sm">{row.key} · {row.status}</p>
-            <p className="text-xs text-aryx-faint">{row.last_success_at || 'never synced'} {row.last_error ? `· ${row.last_error}` : ''}</p>
-          </div>
+            <p className="mt-1 text-xs text-aryx-faint">
+              {row.last_success_at || 'never synced'}
+              {row.last_error ? ` · ${row.last_error}` : ''}
+            </p>
+          </CosBezel>
         ))}
       </div>
-    </div>
+    </CosPage>
   );
 }
 
-function Status({ label, on }: { label: string; on: boolean }) {
+function Status({
+  label,
+  on,
+  hint,
+  className = '',
+}: {
+  label: string;
+  on: boolean;
+  hint?: string;
+  className?: string;
+}) {
   return (
-    <div className="flex items-center justify-between rounded-2xl bg-aryx-elevated px-5 py-3 ring-1 ring-aryx-line">
-      <span>{label}</span>
-      <span className="text-[10px] uppercase tracking-[0.16em] text-aryx-faint">{on ? 'linked' : 'not linked'}</span>
-    </div>
+    <CosBezel className={className}>
+      <div className="flex items-end justify-between gap-4">
+        <div>
+          <p className="text-sm text-aryx-ink">{label}</p>
+          {hint && <p className="mt-1 text-xs text-aryx-faint">{hint}</p>}
+        </div>
+        <span className="text-[10px] uppercase tracking-[0.16em] text-aryx-faint">
+          {on ? 'linked' : 'not linked'}
+        </span>
+      </div>
+    </CosBezel>
   );
 }
 

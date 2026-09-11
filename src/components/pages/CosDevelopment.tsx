@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { compactNumber } from '@/lib/cos';
 import { useOrg } from '@/contexts/OrgContext';
 import { CommandStat, CommandStrip } from '../cos/CommandStrip';
+import { CosPage, CosPageHero } from '../cos/CosPage';
 
 function monthlyAmount(row: { amount?: number | null; cadence?: string | null }): number {
   const amount = Number(row.amount || 0);
@@ -87,12 +88,12 @@ export function CosDevelopment() {
   }, [projects.data, tasks.data, staff.data]);
 
   return (
-    <div className="w-full bg-aryx-bg py-10 text-aryx-ink">
-      <p className="mb-3 text-[10px] uppercase tracking-[0.2em] text-aryx-faint">Development</p>
-      <h1 className="mb-2 font-display text-4xl font-semibold">Build health</h1>
-      <p className="mb-8 max-w-xl text-sm text-aryx-muted">
-        Projects, assignments, staff, and spend for this company. No invented KPIs.
-      </p>
+    <CosPage>
+      <CosPageHero
+        eyebrow="Development"
+        title="Build health."
+        lede="Projects, assignments, staff, and spend for this company. No invented KPIs."
+      />
 
       <div className="space-y-6">
         <CommandStrip title="Delivery" href="/development/projects">
@@ -122,7 +123,7 @@ export function CosDevelopment() {
         <Link to="/files" className="rounded-full border border-aryx-line px-4 py-2">Files</Link>
         <Link to="/operations/organization" className="rounded-full border border-aryx-line px-4 py-2">Organization</Link>
       </div>
-    </div>
+    </CosPage>
   );
 }
 

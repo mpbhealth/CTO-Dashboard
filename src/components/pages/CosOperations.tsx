@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
+import { CosBezel, CosPage, CosPageHero } from '../cos/CosPage';
 
 interface SourceRow {
   key: string;
@@ -111,17 +112,12 @@ export function CosOperations() {
   ];
 
   return (
-    <div className="relative w-full bg-aryx-bg px-4 py-10 text-aryx-ink md:py-16">
-      <div className="cos-page w-full">
-        <p className="mb-4 inline-flex rounded-full border border-aryx-line bg-aryx-elevated px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-aryx-muted">
-          Operations
-        </p>
-        <h1 className="font-display text-4xl font-semibold tracking-tight text-aryx-ink md:text-6xl">
-          Company operations.
-        </h1>
-        <p className="mt-4 max-w-xl text-sm text-aryx-muted md:text-base">
-          Live warehouse counts. Churn analytics stay in enrollment until that connector is configured.
-        </p>
+    <CosPage>
+      <CosPageHero
+        eyebrow="Operations"
+        title="Company operations."
+        lede="Live warehouse counts. Churn analytics stay in enrollment until that connector is configured."
+      />
 
         {(counts.isError || sources.isError) && (
           <p className="mt-6 text-sm text-red-600 dark:text-red-300">
@@ -129,16 +125,14 @@ export function CosOperations() {
           </p>
         )}
 
-        <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-12">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-12 md:gap-5">
           {cards.map((card) => (
-            <div key={card.label} className="rounded-[2rem] bg-aryx-ink/5 p-1.5 ring-1 ring-aryx-line md:col-span-4">
-              <div className="rounded-[calc(2rem-0.375rem)] bg-aryx-elevated p-6">
-                <p className="text-[10px] uppercase tracking-[0.18em] text-aryx-faint">{card.label}</p>
-                <p className="mt-3 text-4xl font-semibold text-aryx-ink">
-                  {counts.isLoading || sources.isLoading ? '—' : card.value ?? 0}
-                </p>
-              </div>
-            </div>
+            <CosBezel key={card.label} className="md:col-span-4">
+              <p className="text-[10px] uppercase tracking-[0.18em] text-aryx-faint">{card.label}</p>
+              <p className="mt-3 font-display text-4xl font-semibold text-aryx-ink">
+                {counts.isLoading || sources.isLoading ? '—' : card.value ?? 0}
+              </p>
+            </CosBezel>
           ))}
         </div>
 
@@ -165,30 +159,27 @@ export function CosOperations() {
           ))}
         </div>
 
-        <div className="mt-10 rounded-[2rem] bg-aryx-ink/5 p-1.5 ring-1 ring-aryx-line">
-          <div className="rounded-[calc(2rem-0.375rem)] bg-aryx-elevated p-6">
-            <p className="text-[10px] uppercase tracking-[0.18em] text-aryx-faint">Recent sync runs</p>
-            {syncs.isError && (
-              <p className="mt-3 text-sm text-red-600 dark:text-red-300">Could not load sync history.</p>
-            )}
-            {(syncs.data || []).length === 0 && !syncs.isLoading && !syncs.isError && (
-              <p className="mt-3 text-sm text-aryx-muted">No sync runs yet.</p>
-            )}
-            <ul className="mt-4 space-y-2 text-sm text-aryx-ink">
-              {(syncs.data || []).map((run, index) => (
-                <li key={`${run.source_key}-${run.started_at}-${index}`} className="flex justify-between gap-4">
-                  <span>{run.source_key}</span>
-                  <span className="text-aryx-faint">
-                    {run.status}
-                    {run.started_at ? ` · ${new Date(run.started_at).toLocaleString()}` : ''}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
+        <CosBezel className="mt-10">
+          <p className="text-[10px] uppercase tracking-[0.18em] text-aryx-faint">Recent sync runs</p>
+          {syncs.isError && (
+            <p className="mt-3 text-sm text-red-600 dark:text-red-300">Could not load sync history.</p>
+          )}
+          {(syncs.data || []).length === 0 && !syncs.isLoading && !syncs.isError && (
+            <p className="mt-3 text-sm text-aryx-muted">No sync runs yet.</p>
+          )}
+          <ul className="mt-4 space-y-2 text-sm text-aryx-ink">
+            {(syncs.data || []).map((run, index) => (
+              <li key={`${run.source_key}-${run.started_at}-${index}`} className="flex justify-between gap-4">
+                <span>{run.source_key}</span>
+                <span className="text-aryx-faint">
+                  {run.status}
+                  {run.started_at ? ` · ${new Date(run.started_at).toLocaleString()}` : ''}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </CosBezel>
+    </CosPage>
   );
 }
 

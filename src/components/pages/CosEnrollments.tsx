@@ -10,6 +10,7 @@ import { CommandStat, CommandStrip } from '../cos/CommandStrip';
 import { MovementTide } from '../cos/MovementTide';
 import { TrendSpark } from '../cos/TrendSpark';
 import { Unlinked } from './CosFinance';
+import { CosPage, CosPageHero } from '../cos/CosPage';
 import { rollupTideMonths } from '@/lib/movementTide';
 
 export function CosEnrollments() {
@@ -133,13 +134,17 @@ export function CosEnrollments() {
   }
 
   return (
-    <div className="w-full bg-aryx-bg py-10 text-aryx-ink">
-      <p className="mb-3 text-[10px] uppercase tracking-[0.2em] text-aryx-faint">Analytics</p>
-      <h1 className="mb-6 font-display text-4xl font-semibold">Enrollment</h1>
-      <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <OrgPicker />
-        <PeriodToggle value={period} onChange={setPeriod} />
-      </div>
+    <CosPage>
+      <CosPageHero
+        eyebrow="Analytics"
+        title="Enrollment."
+        toolbar={
+          <>
+            <OrgPicker />
+            <PeriodToggle value={period} onChange={setPeriod} />
+          </>
+        }
+      />
       {linked.enrollment && (
       <CommandStrip title="Period totals">
         <CommandStat label="New" value={compactNumber(totals.neu)} />
@@ -194,7 +199,7 @@ export function CosEnrollments() {
       </div>
         </>
       )}
-    </div>
+    </CosPage>
   );
 }
 

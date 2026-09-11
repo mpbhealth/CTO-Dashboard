@@ -29,7 +29,7 @@ export function remapLegacyPath(pathname: string): string | null {
     '/analytics/member-engagement': '/enrollments',
     '/analytics/member-retention': '/enrollments',
     '/analytics/advisor-performance': '/advisors',
-    '/analytics/marketing': '/analytics/website',
+    '/analytics/website': '/analytics/marketing',
     '/operations/it-support': '/tickets',
     '/analytics/tickets': '/tickets/analytics',
     '/ctod/compliance': '/operations',

@@ -7,6 +7,7 @@ import { useOrg } from '@/contexts/OrgContext';
 import { OrgPicker } from '../cos/OrgPicker';
 import { PeriodToggle } from '../cos/PeriodToggle';
 import { CommandStat, CommandStrip } from '../cos/CommandStrip';
+import { CosPage, CosPageHero } from '../cos/CosPage';
 
 interface PnlRow {
   period_start: string;
@@ -72,40 +73,44 @@ export function CosFinance() {
   }
 
   return (
-    <div className="w-full bg-aryx-bg py-10 text-aryx-ink">
-      <p className="mb-3 text-[10px] uppercase tracking-[0.2em] text-aryx-faint">Finance</p>
-      <h1 className="mb-6 font-display text-4xl font-semibold">Profit & Loss</h1>
-      <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <OrgPicker />
-        <div className="flex flex-wrap items-center gap-3">
-          <PeriodToggle value={period} onChange={setPeriod} />
-          <div className="flex gap-2">
-            {GRAINS.map((id) => (
-              <button
-                key={id}
-                type="button"
-                onClick={() => setGrain(id)}
-                className={`rounded-full px-3 py-1 text-[10px] uppercase tracking-[0.16em] ${
-                  grain === id ? 'bg-aryx-accent text-white' : 'border border-aryx-line text-aryx-muted'
-                }`}
-              >
-                {id}
-              </button>
-            ))}
-          </div>
-          {isOperator && (
-            <button
-              type="button"
-              className="rounded-full border border-aryx-line px-3 py-1 text-[10px] uppercase tracking-[0.16em] text-aryx-muted"
-              onClick={() => downloadCsv(`cos-pnl-${bounds.start}.csv`, (rows.data || []) as Array<Record<string, unknown>>)}
-            >
-              Export CSV
-            </button>
-          )}
-        </div>
-      </div>
+    <CosPage>
+      <CosPageHero
+        eyebrow="Finance"
+        title="Profit & Loss."
+        toolbar={
+          <>
+            <OrgPicker />
+            <div className="flex flex-wrap items-center gap-3">
+              <PeriodToggle value={period} onChange={setPeriod} />
+              <div className="flex gap-2">
+                {GRAINS.map((id) => (
+                  <button
+                    key={id}
+                    type="button"
+                    onClick={() => setGrain(id)}
+                    className={`rounded-full px-3 py-2.5 text-[10px] uppercase tracking-[0.16em] ${
+                      grain === id ? 'bg-aryx-accent text-white' : 'bg-aryx-ink/[0.04] text-aryx-muted ring-1 ring-aryx-line'
+                    }`}
+                  >
+                    {id}
+                  </button>
+                ))}
+              </div>
+              {isOperator && (
+                <button
+                  type="button"
+                  className="rounded-full bg-aryx-ink/[0.04] px-4 py-2.5 text-[10px] uppercase tracking-[0.16em] text-aryx-muted ring-1 ring-aryx-line"
+                  onClick={() => downloadCsv(`cos-pnl-${bounds.start}.csv`, (rows.data || []) as unknown as Array<Record<string, unknown>>)}
+                >
+                  Export CSV
+                </button>
+              )}
+            </div>
+          </>
+        }
+      />
       {total.coverage < 90 && (
-        <p className="mb-6 rounded-2xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm">
+        <p className="mb-6 rounded-[1.5rem] bg-amber-500/10 px-4 py-3 text-sm ring-1 ring-amber-500/30">
           Vendor coverage is {total.coverage}%. {total.missing} active enrollments have no carrier cost row.
         </p>
       )}
@@ -127,7 +132,7 @@ export function CosFinance() {
           ['− SaaS', -total.saas],
           ['Net', total.net],
         ].map(([label, value]) => (
-          <div key={String(label)} className="flex items-center justify-between rounded-2xl bg-aryx-elevated px-5 py-3 ring-1 ring-aryx-line">
+          <div key={String(label)} className="flex items-center justify-between rounded-[1.5rem] bg-aryx-elevated px-5 py-3 ring-1 ring-aryx-line">
             <span>{label}</span>
             <span className="font-semibold">{money(Number(value))}</span>
           </div>
@@ -163,16 +168,15 @@ export function CosFinance() {
           </tbody>
         </table>
       </div>
-    </div>
+    </CosPage>
   );
 }
 
 export function Unlinked({ title, message }: { title: string; message: string }) {
   return (
-    <div className="w-full bg-aryx-bg py-10 text-aryx-ink">
-      <h1 className="mb-4 font-display text-4xl font-semibold">{title}</h1>
-      <p className="text-aryx-muted">{message}</p>
-    </div>
+    <CosPage>
+      <CosPageHero eyebrow="Command" title={`${title}.`} lede={message} />
+    </CosPage>
   );
 }
 

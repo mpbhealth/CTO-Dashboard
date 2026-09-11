@@ -4,6 +4,7 @@ import { supabase } from '@/lib/supabase';
 import { useOrg } from '@/contexts/OrgContext';
 import { OrgPicker } from '../cos/OrgPicker';
 import { Unlinked } from './CosFinance';
+import { CosPage, CosPageHero } from '../cos/CosPage';
 
 interface CrmRecord {
   id: string;
@@ -42,10 +43,12 @@ export function CosCrmList() {
   }
 
   return (
-    <div className="w-full bg-aryx-bg py-10 text-aryx-ink">
-      <p className="mb-3 text-[10px] uppercase tracking-[0.2em] text-aryx-faint">ARYX CRM · read only</p>
-      <h1 className="mb-4 font-display text-4xl font-semibold text-aryx-ink">Relationships</h1>
-      <div className="mb-8"><OrgPicker /></div>
+    <CosPage>
+      <CosPageHero
+        eyebrow="ARYX CRM · read only"
+        title="Relationships."
+        toolbar={<OrgPicker />}
+      />
       {isLoading && <p className="text-aryx-muted">Loading…</p>}
       {error && <p className="text-amber-700 dark:text-amber-200">{(error as Error).message}</p>}
       {!isLoading && !error && (data || []).length === 0 && (
@@ -72,7 +75,7 @@ export function CosCrmList() {
           </Link>
         ))}
       </div>
-    </div>
+    </CosPage>
   );
 }
 

@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { compactNumber, ITSTS_HREF } from '@/lib/cos';
 import { useOrg } from '@/contexts/OrgContext';
@@ -8,6 +7,7 @@ import { OrgPicker } from '../cos/OrgPicker';
 import { CommandStat, CommandStrip } from '../cos/CommandStrip';
 import { TrendSpark } from '../cos/TrendSpark';
 import { Unlinked } from './CosFinance';
+import { CosIslandLink, CosPage, CosPageHero } from '../cos/CosPage';
 
 const AGE_LABELS: Record<string, string> = {
   '0_1': '0–1 day',
@@ -85,16 +85,18 @@ export function CosTicketAnalytics() {
   }
 
   return (
-    <div className="w-full bg-aryx-bg py-10 text-aryx-ink">
-      <p className="mb-3 text-[10px] uppercase tracking-[0.2em] text-aryx-faint">Support · ITSTS analytics</p>
-      <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <h1 className="font-display text-4xl font-semibold">Support analytics</h1>
-        <div className="flex gap-4 text-sm">
-          <Link to="/tickets" className="text-aryx-accent">Tickets</Link>
-          <a href={`${ITSTS_HREF}/analytics`} className="text-aryx-accent" target="_blank" rel="noreferrer">Open ITSTS</a>
-        </div>
-      </div>
-      <OrgPicker />
+    <CosPage>
+      <CosPageHero
+        eyebrow="Support · ITSTS analytics"
+        title="Support analytics."
+        actions={
+          <>
+            <CosIslandLink to="/tickets">Tickets</CosIslandLink>
+            <CosIslandLink href={`${ITSTS_HREF}/analytics`}>Open ITSTS</CosIslandLink>
+          </>
+        }
+        toolbar={<OrgPicker />}
+      />
       <div className="mt-6 space-y-6">
         <CommandStrip title="Desk" href="/tickets" warning={Number(latest?.breached_count || 0) > 0 ? 'Open SLA breaches need a look in ITSTS.' : null}>
           <CommandStat label="Open" value={compactNumber(latest?.open_count)} />
@@ -157,7 +159,7 @@ export function CosTicketAnalytics() {
           </div>
         )}
       </div>
-    </div>
+    </CosPage>
   );
 }
 

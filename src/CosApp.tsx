@@ -1,6 +1,5 @@
 import { lazy, Suspense, useState, useEffect, useMemo, useCallback } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { Menu } from 'lucide-react';
 import { useAuth } from './contexts/AuthContext';
 import Sidebar from './components/Sidebar';
 import { AppShell } from './components/shell/AppShell';
@@ -110,6 +109,7 @@ function CosContent() {
 
   return (
     <div className="flex min-h-[100dvh] overflow-x-hidden bg-aryx-bg text-aryx-ink">
+      <div className="cos-grain" aria-hidden="true" />
       <Sidebar
         activeTab={activeTab}
         onTabChange={handleTabChange}
@@ -117,27 +117,50 @@ function CosContent() {
         onSidebarToggle={() => setIsSidebarExpanded((v) => !v)}
       />
 
-      {isMobile && !isSidebarExpanded && (
-        <button
-          className="fixed left-4 top-4 z-[70] flex h-11 w-11 items-center justify-center rounded-full bg-aryx-void text-[#F4F1EA] ring-1 ring-white/15"
-          onClick={() => setIsSidebarExpanded(true)}
-          aria-label="Open navigation"
-        >
-          <Menu className="h-5 w-5" />
-        </button>
-      )}
-
       <main
         id="main-content"
         className={`min-h-[100dvh] flex-1 overflow-y-auto ${
           isSidebarExpanded ? 'md:pl-80' : 'md:pl-20'
         }`}
       >
-        <div className={`flex items-center justify-end px-4 pt-4 ${isMobile ? 'pr-4' : ''}`}>
-          <ThemeToggle />
-        </div>
+        {isMobile ? (
+          <div className="sticky top-0 z-[60] px-4 pb-2 pt-[max(0.75rem,env(safe-area-inset-top))]">
+            <div className="flex items-center justify-between rounded-full bg-aryx-elevated/90 px-2 py-1.5 ring-1 ring-aryx-line backdrop-blur-xl">
+              <button
+                type="button"
+                className="flex h-11 w-11 items-center justify-center rounded-full text-aryx-ink"
+                onClick={() => setIsSidebarExpanded((open) => !open)}
+                aria-label={isSidebarExpanded ? 'Close navigation' : 'Open navigation'}
+              >
+                <span className="relative block h-3.5 w-4">
+                  <span
+                    className={`absolute left-0 top-0 h-px w-full bg-current transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+                      isSidebarExpanded ? 'translate-y-[7px] rotate-45' : ''
+                    }`}
+                  />
+                  <span
+                    className={`absolute left-0 top-[7px] h-px w-full bg-current transition-opacity duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+                      isSidebarExpanded ? 'opacity-0' : ''
+                    }`}
+                  />
+                  <span
+                    className={`absolute left-0 top-[14px] h-px w-full bg-current transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+                      isSidebarExpanded ? '-translate-y-[7px] -rotate-45' : ''
+                    }`}
+                  />
+                </span>
+              </button>
+              <span className="font-display text-[11px] font-semibold tracking-[0.28em]">ARYX</span>
+              <ThemeToggle />
+            </div>
+          </div>
+        ) : (
+          <div className="flex items-center justify-end px-4 pt-4">
+            <ThemeToggle />
+          </div>
+        )}
         <Breadcrumbs />
-        <div className="cos-page w-full min-w-0 px-4 pb-8 sm:px-6 md:px-8">
+        <div className="cos-page w-full min-w-0 px-4 pb-16 sm:px-6 md:px-8">
           <Suspense fallback={<LoadingFallback />}>
           <Routes>
             <Route path="/" element={<Navigate to="/home" replace />} />
@@ -155,13 +178,13 @@ function CosContent() {
             <Route path="/pipeline" element={<CosPipeline />} />
             <Route path="/tickets" element={<CosTickets />} />
             <Route path="/tickets/analytics" element={<CosTicketAnalytics />} />
-            <Route path="/analytics/website" element={<CosWebsite />} />
+            <Route path="/analytics/website" element={<Navigate to="/analytics/marketing" replace />} />
+            <Route path="/analytics/marketing" element={<CosWebsite />} />
             <Route path="/analytics" element={<LegacyRedirect />} />
             <Route path="/analytics/overview" element={<LegacyRedirect />} />
             <Route path="/analytics/member-engagement" element={<LegacyRedirect />} />
             <Route path="/analytics/member-retention" element={<LegacyRedirect />} />
             <Route path="/analytics/advisor-performance" element={<LegacyRedirect />} />
-            <Route path="/analytics/marketing" element={<LegacyRedirect />} />
             <Route path="/development" element={<DevelopmentOverview />} />
             <Route path="/development/tech-stack" element={<TechStack />} />
             <Route path="/development/quicklinks" element={<QuickLinks />} />

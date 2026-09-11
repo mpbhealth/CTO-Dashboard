@@ -6,6 +6,7 @@ import { useOrg } from '@/contexts/OrgContext';
 import { OrgPicker } from '../cos/OrgPicker';
 import { CommandStat, CommandStrip } from '../cos/CommandStrip';
 import { Unlinked } from './CosFinance';
+import { CosIslandLink, CosPage, CosPageHero } from '../cos/CosPage';
 
 interface AdvisorRow {
   org_id: string;
@@ -90,13 +91,13 @@ export function CosAdvisors() {
   }
 
   return (
-    <div className="w-full bg-aryx-bg py-10 text-aryx-ink">
-      <p className="mb-3 text-[10px] uppercase tracking-[0.2em] text-aryx-faint">Analytics · AdvisorIQ</p>
-      <h1 className="mb-6 font-display text-4xl font-semibold">Advisor books</h1>
-      <OrgPicker />
-      <a href={`${ADVISORIQ_HREF}/command`} className="mt-4 inline-block text-sm text-aryx-accent" target="_blank" rel="noreferrer">
-        Open AdvisorIQ
-      </a>
+    <CosPage>
+      <CosPageHero
+        eyebrow="Analytics · AdvisorIQ"
+        title="Advisor books."
+        actions={<CosIslandLink href={`${ADVISORIQ_HREF}/command`}>Open AdvisorIQ</CosIslandLink>}
+        toolbar={<OrgPicker />}
+      />
       <div className="mt-6">
         <CommandStrip title="Company rollup">
           <CommandStat label="Books" value={compactNumber(rollupStats.books)} />
@@ -177,7 +178,7 @@ export function CosAdvisors() {
           </tbody>
         </table>
       </div>
-    </div>
+    </CosPage>
   );
 }
 

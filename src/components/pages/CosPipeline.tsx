@@ -6,6 +6,7 @@ import { useOrg } from '@/contexts/OrgContext';
 import { OrgPicker } from '../cos/OrgPicker';
 import { CommandStat, CommandStrip } from '../cos/CommandStrip';
 import { Unlinked } from './CosFinance';
+import { CosPage, CosPageHero } from '../cos/CosPage';
 
 export function CosPipeline() {
   const { orgId, linked } = useOrg();
@@ -54,13 +55,13 @@ export function CosPipeline() {
   }
 
   return (
-    <div className="w-full bg-aryx-bg py-10 text-aryx-ink">
-      <p className="mb-3 text-[10px] uppercase tracking-[0.2em] text-aryx-faint">Analytics</p>
-      <h1 className="mb-6 font-display text-4xl font-semibold">Pipeline</h1>
-      <OrgPicker />
-      <p className="mt-4 max-w-2xl text-sm text-aryx-muted">
-        If-closed scenarios are not collected revenue. Closed-won stays in EnrollFlow billing.
-      </p>
+    <CosPage>
+      <CosPageHero
+        eyebrow="Analytics"
+        title="Pipeline."
+        lede="If-closed scenarios are not collected revenue. Closed-won stays in EnrollFlow billing."
+        toolbar={<OrgPicker />}
+      />
       <div className="mt-6 space-y-6">
         <CommandStrip title="Quoted vs if-closed">
           <CommandStat label="Quoted (open)" value={money(quoted)} hint="Not collected" />
@@ -98,7 +99,7 @@ export function CosPipeline() {
           </tbody>
         </table>
       </div>
-    </div>
+    </CosPage>
   );
 }
 

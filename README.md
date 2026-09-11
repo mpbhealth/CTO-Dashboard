@@ -1,6 +1,6 @@
-# MPB Health CTO Dashboard
+# ARYX CEO
 
-A comprehensive executive dashboard built with React, TypeScript, and Supabase for MPB Health's technology leadership team.
+ARYX Chief Executive Officer workspace for mail, CRM, and company operations.
 
 ## 🚀 Features
 
@@ -401,7 +401,7 @@ This project is proprietary to MPB Health. All rights reserved.
 ## 📞 **Support**
 
 For technical support or questions:
-- Internal Slack: #cto-dashboard
+- Internal Slack: #aryx-ceo
 - Email: tech-support@mpbhealth.com
 - Documentation: Internal Wiki
 

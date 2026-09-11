@@ -1,8 +1,10 @@
 const DEFAULT_ORIGINS = [
   'http://localhost:5173',
   'http://127.0.0.1:5173',
+  'https://ceo.aryx.pro',
   'https://cos.aryxtech.com',
-  'https://cto-dashboard-mpb-healths-projects.vercel.app',
+  'https://aryx-ceo.vercel.app',
+  'https://aryx-cos.vercel.app',
 ];
 
 function allowedOrigins(): string[] {

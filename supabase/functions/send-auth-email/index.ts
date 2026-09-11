@@ -1,6 +1,6 @@
 import { Webhook } from 'https://esm.sh/standardwebhooks@1.0.0';
 
-const APP_URL = 'https://cos.aryxtech.com';
+const APP_URL = 'https://ceo.aryx.pro';
 const FROM = 'ARYX CEO <noreply@aryx.pro>';
 
 const TEMPLATE_BY_TYPE: Record<string, string> = {

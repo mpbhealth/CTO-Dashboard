@@ -1,4 +1,4 @@
-const PRODUCTION_ORIGIN = 'https://cos.aryxtech.com';
+const PRODUCTION_ORIGIN = 'https://ceo.aryx.pro';
 
 export function getAppOrigin(): string {
   if (typeof window === 'undefined') return PRODUCTION_ORIGIN;

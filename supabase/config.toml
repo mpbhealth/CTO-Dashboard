@@ -14,15 +14,19 @@ major_version = 17
 
 [auth]
 enabled = true
-# Local only. Live COS Site URL is https://cos.aryxtech.com — do not config-push this localhost value.
+# Local only. Live Site URL is https://ceo.aryx.pro — do not config-push this localhost value.
 site_url = "http://localhost:5173"
 additional_redirect_urls = [
   "http://localhost:5173/**",
   "http://localhost:5173/auth/callback",
   "http://localhost:5173/auth/reset-password",
+  "https://ceo.aryx.pro/**",
+  "https://ceo.aryx.pro/auth/callback",
+  "https://ceo.aryx.pro/auth/reset-password",
   "https://cos.aryxtech.com/**",
   "https://cos.aryxtech.com/auth/callback",
   "https://cos.aryxtech.com/auth/reset-password",
+  "https://aryx-ceo.vercel.app/**",
   "https://aryx-cos.vercel.app/**",
 ]
 jwt_expiry = 3600

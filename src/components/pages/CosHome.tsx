@@ -10,8 +10,9 @@ import { useOrg } from '@/contexts/OrgContext';
 import { OrgPicker } from '../cos/OrgPicker';
 import { PeriodToggle } from '../cos/PeriodToggle';
 import { CommandStat, CommandStrip } from '../cos/CommandStrip';
-import { TrendSpark } from '../cos/TrendSpark';
+import { MovementTide } from '../cos/MovementTide';
 import { AryxLogo } from '../brand/AryxLogo';
+import { rollupTideMonths, tideWindowStart } from '@/lib/movementTide';
 
 interface Snapshot {
   source: string;
@@ -109,11 +110,11 @@ export function CosHome() {
   });
 
   const book = useQuery({
-    queryKey: ['command-book', orgIds.join(','), bounds.start],
+    queryKey: ['command-book', orgIds.join(',')],
     enabled: orgIds.length > 0 && linked.advisoriq,
     queryFn: async () => {
       const [trend, risk, reasons, advisors, billing, actions] = await Promise.all([
-        supabase.from('fact_iq_mrr_monthly').select('month, enrollments, terminations, mrr_added, mrr_lost, net_mrr_change').in('org_id', orgIds).gte('month', bounds.start).order('month'),
+        supabase.from('fact_iq_mrr_monthly').select('month, enrollments, terminations, mrr_added, mrr_lost, net_mrr_change').in('org_id', orgIds).gte('month', tideWindowStart()).order('month'),
         supabase.from('fact_iq_forward_risk').select('bucket, members, mrr_at_risk').in('org_id', orgIds),
         supabase.from('fact_iq_reason_mix').select('kind, reason, item_count, mrr').in('org_id', orgIds).eq('kind', 'churn').order('item_count', { ascending: false }).limit(8),
         supabase.from('advisor_scorecards').select('org_id, advisor_key, display_name, active_members, mrr, net_mrr, retention_pct, term_soon_90, enrollments_30, margin_pct').in('org_id', orgIds).order('mrr', { ascending: false }).limit(12),
@@ -193,21 +194,28 @@ export function CosHome() {
     return row?.value == null ? null : Number(row.value);
   };
 
-  const hasTrend = (book.data?.trend || []).length > 0;
+  const tideHistory = useMemo(() => rollupTideMonths(book.data?.trend || []), [book.data?.trend]);
+  const periodMonths = useMemo(() => {
+    const start = bounds.start.slice(0, 7);
+    return tideHistory.filter((row) => row.month >= start);
+  }, [bounds.start, tideHistory]);
+  const hasTrend = periodMonths.length > 0;
   const movement = useMemo(() => {
-    return (book.data?.trend || []).reduce((acc, row) => ({
-      gained: acc.gained + Number(row.enrollments),
-      lost: acc.lost + Number(row.terminations),
-      added: acc.added + Number(row.mrr_added),
-      dropped: acc.dropped + Number(row.mrr_lost),
-    }), { gained: 0, lost: 0, added: 0, dropped: 0 });
-  }, [book.data?.trend]);
+    return (book.data?.trend || []).reduce((acc, row) => {
+      if (String(row.month).slice(0, 7) < bounds.start.slice(0, 7)) return acc;
+      return {
+        gained: acc.gained + Number(row.enrollments),
+        lost: acc.lost + Number(row.terminations),
+        added: acc.added + Number(row.mrr_added),
+        dropped: acc.dropped + Number(row.mrr_lost),
+      };
+    }, { gained: 0, lost: 0, added: 0, dropped: 0 });
+  }, [book.data?.trend, bounds.start]);
 
   const thisMonth = useMemo(() => {
     const key = new Date().toISOString().slice(0, 7);
-    const row = (book.data?.trend || []).find((item) => String(item.month).slice(0, 7) === key);
-    return row ? Number(row.enrollments) : null;
-  }, [book.data?.trend]);
+    return tideHistory.find((item) => item.month === key)?.gained ?? null;
+  }, [tideHistory]);
 
   const uncoveredMrr = (() => {
     const mrr = metric('iq_mrr');
@@ -215,14 +223,6 @@ export function CosHome() {
     if (mrr == null || covered == null) return null;
     return mrr - covered;
   })();
-
-  const spark = useMemo(() => {
-    return (book.data?.trend || []).map((row) => ({
-      month: String(row.month).slice(0, 7),
-      gained: Number(row.enrollments),
-      lost: Number(row.terminations),
-    }));
-  }, [book.data?.trend]);
 
   const pnlSum = useMemo(() => {
     return (pnl.data || []).reduce((acc, row) => ({
@@ -321,6 +321,19 @@ export function CosHome() {
         </div>
 
         <div className="space-y-6">
+          {linked.advisoriq && tideHistory.length > 0 && (
+            <MovementTide
+              history={tideHistory}
+              membersNow={metric('iq_active_members')}
+              href="/enrollments"
+              headline={{
+                gained: movement.gained,
+                lost: movement.lost,
+                caption: period === 'ytd' ? 'This year' : period === 'qtd' ? 'This quarter' : period === 'custom' ? 'Selected range' : 'This month',
+              }}
+            />
+          )}
+
           <CommandStrip title="Members" href="/enrollments" warning={!linked.advisoriq ? 'AdvisorIQ is not linked.' : null}>
             <CommandStat label="Active now" value={shown(linked.advisoriq, metric('iq_active_members'), compactNumber)} hint="AdvisorIQ book" />
             <CommandStat label="Gained" value={shown(linked.advisoriq && hasTrend, movement.gained, compactNumber)} hint="Period enrollments" />
@@ -363,13 +376,6 @@ export function CosHome() {
             <CommandStat label="New 90d" value={shown(linked.advisoriq, metric('iq_enrollments_90'), compactNumber)} />
             <CommandStat label="MRR added" value={shown(linked.advisoriq && hasTrend, movement.added, money)} hint="Period" />
           </CommandStrip>
-
-          {spark.length > 0 && (
-            <div>
-              <p className="mb-3 text-[10px] uppercase tracking-[0.16em] text-aryx-faint">Monthly gained / lost</p>
-              <TrendSpark data={spark} xKey="month" series={[{ key: 'gained', color: '#FF5A1F' }, { key: 'lost', color: '#888' }]} />
-            </div>
-          )}
 
           <CommandStrip title="Billing" href="/advisors" warning={!linked.advisoriq ? 'AdvisorIQ is not linked.' : null}>
             <CommandStat label="MRR" value={shown(linked.advisoriq, metric('iq_mrr'), money)} />

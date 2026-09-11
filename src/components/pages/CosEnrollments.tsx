@@ -7,8 +7,10 @@ import { useOrg } from '@/contexts/OrgContext';
 import { OrgPicker } from '../cos/OrgPicker';
 import { PeriodToggle } from '../cos/PeriodToggle';
 import { CommandStat, CommandStrip } from '../cos/CommandStrip';
+import { MovementTide } from '../cos/MovementTide';
 import { TrendSpark } from '../cos/TrendSpark';
 import { Unlinked } from './CosFinance';
+import { rollupTideMonths } from '@/lib/movementTide';
 
 export function CosEnrollments() {
   const { orgId, linked, rollup, memberships } = useOrg();
@@ -104,13 +106,7 @@ export function CosEnrollments() {
     return [...byDay.values()].reverse();
   }, [sparkRows.data]);
 
-  const iqSpark = useMemo(() => {
-    return (iqBook.data?.trend || []).map((row) => ({
-      month: String(row.month).slice(0, 7),
-      gained: Number(row.enrollments),
-      lost: Number(row.terminations),
-    }));
-  }, [iqBook.data?.trend]);
+  const tideHistory = useMemo(() => rollupTideMonths(iqBook.data?.trend || []), [iqBook.data?.trend]);
 
   const riskLabels: Record<string, string> = {
     '0_30': '0–30 days',
@@ -166,10 +162,9 @@ export function CosEnrollments() {
         <TrendSpark data={spark} xKey="date" series={[{ key: 'new', color: '#FF5A1F' }, { key: 'inactive', color: '#888' }]} />
       </div>
       )}
-      {linked.advisoriq && iqSpark.length > 0 && (
+      {linked.advisoriq && tideHistory.length > 0 && (
         <div className="mt-8">
-          <p className="mb-3 text-[10px] uppercase tracking-[0.16em] text-aryx-faint">AdvisorIQ monthly gained / lost</p>
-          <TrendSpark data={iqSpark} xKey="month" series={[{ key: 'gained', color: '#FF5A1F' }, { key: 'lost', color: '#888' }]} />
+          <MovementTide history={tideHistory} />
         </div>
       )}
       {linked.advisoriq && (iqBook.data?.risk || []).length > 0 && (
